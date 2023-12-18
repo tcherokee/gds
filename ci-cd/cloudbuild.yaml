@@ -1,0 +1,100 @@
+# Build the strapi image
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '--build-arg',
+        'output_dist_path=${_OUTPUT_DIST_PATH}',
+        '--build-arg',
+        'API_URL=${_API_URL}',
+        '--build-arg',
+        'SITE_ID=${_SITE_ID}',
+        '--build-arg',
+        'API_TOKEN=${_API_TOKEN}',
+        '--build-arg',
+        'MEILISEARCH_HOST=${_MEILISEARCH_HOST}',
+        '--build-arg',
+        'MEILISEARCH_SEARCH_KEY=${_MEILISEARCH_SEARCH_KEY}',
+        '--build-arg',
+        'MEILISEARCH_INDEX_NAME=${_MEILISEARCH_INDEX_NAME}',
+        '--build-arg',
+        'ROOT_DOMAIN=${_ROOT_DOMAIN}',
+        '--build-arg',
+        'HOSTNAME=${_HOSTNAME}',
+        '--build-arg',
+        'FULL_URL=${_FULL_URL}',
+        '--build-arg',
+        'LANG=${_LANG}',
+        '-t',
+        'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
+        '.'
+      ]
+
+  # push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$_DEPLOY_PROJECT/$_SERVICE_NAME']
+
+  # Deploy container image to Cloud Run
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '$_SERVICE_NAME'
+      - '--image'
+      - 'gcr.io/$_DEPLOY_PROJECT/$_SERVICE_NAME'
+      - '--region'
+      - '$_REGION'
+      - '--platform'
+      - 'managed'
+      - '--project'
+      - '$_DEPLOY_PROJECT'
+      - '--vpc-connector'
+      - '$_VPC_CONNECTOR_NAME'
+      - '--vpc-egress'
+      - '$_VPC_ACCESS_EGRESS'
+      - '--add-cloudsql-instances'
+      - '$_SQL_INSTANCE'
+      - '--set-env-vars'
+      - 'API_URL=${_API_URL}'
+      - '--set-env-vars'
+      - 'SITE_ID=${_SITE_ID}'
+      - '--set-env-vars'
+      - 'API_TOKEN=${_API_TOKEN}'
+      - '--set-env-vars'
+      - 'MEILISEARCH_HOST=${_MEILISEARCH_HOST}'
+      - '--set-env-vars'
+      - 'MEILISEARCH_SEARCH_KEY=${_MEILISEARCH_SEARCH_KEY}'
+      - '--set-env-vars'
+      - 'MEILISEARCH_INDEX_NAME=${_MEILISEARCH_INDEX_NAME}'
+      - '--set-env-vars'
+      - 'ROOT_DOMAIN=${_ROOT_DOMAIN}'
+      - '--set-env-vars'
+      - 'HOSTNAME=${_HOSTNAME}'
+      - '--set-env-vars'
+      - 'FULL_URL=${_FULL_URL}'
+      - '--set-env-vars'
+      - 'LANG=${_LANG}'
+
+substitutions:
+  _OUTPUT_DIST_PATH: '/'
+  _NODE_ENV: 'production'
+  _DEPLOY_PROJECT: ''
+  _SERVICE_NAME: ''
+  _REGION: 'europe-west8'
+  _AUTH_OPTION: '--allow-unauthenticated'
+  _VPC_CONNECTOR_NAME: ''
+  _VPC_ACCESS_EGRESS: 'private-ranges-only'
+  _API_URL: ''
+  _SITE_ID: ''
+  _API_TOKEN: ''
+  _MEILISEARCH_HOST: ''
+  _MEILISEARCH_SEARCH_KEY: ''
+  _MEILISEARCH_INDEX_NAME: ''
+  _ROOT_DOMAIN: ''
+  _HOSTNAME: ''
+  _FULL_URL: ''
+  _LANG: ''
+
+timeout: 2700s
