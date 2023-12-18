@@ -1,0 +1,145 @@
+---
+
+import dayjs from 'dayjs'
+import { SVG } from "splendid-ui/svelte";
+import advancedFormat from 'dayjs/plugin/advancedFormat'
+import 'dayjs/locale/it'
+
+import Image from "../helpers/images.astro"
+import Link from "../helpers/link.astro"
+
+dayjs.extend(advancedFormat)
+dayjs.locale(import.meta.env.LANG)
+
+const { data } = Astro.props
+
+---
+{
+	data.map(blog => (
+		<div class="blog-card p-0">
+			<figure>
+				<div class="blog-date">
+					<div class="blog-day">{dayjs(blog?.attributes?.createdAt).format('D')}</div>
+					<div class="blog-month">{dayjs(blog?.attributes?.createdAt).format('MMM')}</div>
+				</div>
+				<Image
+					classes="blog-image"
+					src ={blog?.attributes?.images?.data?.attributes?.url}
+					imageAlt={blog?.attributes?.title}
+					imageWidth={430}
+					imageHeight={380}
+				/>
+			</figure>
+			<div class="blog-content">
+				<h4>
+					<Link href=`/${blog?.attributes?.slug}` text={blog?.attributes?.title} />
+				</h4>
+				<p>{blog?.attributes?.content1}</p>
+				<div class="blog-meta flex items-center">
+					<div class="author-icon"><SVG icon="user-fill" height="20px" /></div>
+					<div class="author-title px-1">Scritto da:</div>
+					<div class="author-name">
+						<Link href=`${blog?.attributes?.author?.data?.attributes?.firstName.toLowerCase()}.${blog?.attributes?.author?.data?.attributes?.lastName.toLowerCase()}` text=`${blog?.attributes?.author?.data?.attributes?.firstName} ${blog?.attributes?.author?.data?.attributes?.lastName}` />
+					</div>
+				</div>
+			</div>
+		</div>))
+}
+
+<style lang="postcss">
+	.blog-card {
+		@apply shadow-[0_0.125rem_0.25rem_rgba(theme('colors.black')_0.075)];
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		height: 430px;
+		border-radius: 4px;
+		overflow: hidden;
+
+		figure {
+			background: theme('colors.blog-card-figure-bkg');
+			height: 385px;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+
+			.blog-date {
+				position: absolute;
+				top: 20px;
+				right: 20px;
+				z-index: 1;
+				background: theme('colors.blog-card-date-bkg');
+				width: 55px;
+				height: 55px;
+				padding: 12.5px 0;
+				border-radius: 100%;
+				color: theme('colors.blog-card-date-text');
+				font-weight: 700;
+				text-align: center;
+				box-sizing: border-box;
+
+				.blog-day {
+					font-size: 16px;
+					line-height: 16px;
+				}
+
+				.blog-month {
+					font-size: 10px;
+					text-transform: uppercase;
+				}
+			}
+
+			:global(.blog-image) {
+				display: block;
+				width: 100%;
+				opacity: 0.9;
+				transition: all 0.3s cubic-bezier(0.37, 0.75, 0.61, 1.05) 0s;
+			}
+		}
+
+		.blog-content {
+			position: absolute;
+			bottom: 0;
+			background: theme('colors.blog-content-bkg');
+			width: 100%;
+			padding: 15px;
+			box-sizing: border-box;
+
+			h4 {
+				a {
+					text-decoration: none;
+					color: theme('colors.blog-content-header-anchor');
+				}
+			}
+
+			p {
+				overflow: hidden;
+				height: 0;
+				transition: all 0.3s cubic-bezier(0.37, 0.75, 0.61, 1.05) 0s;
+			}
+		}
+
+		.blog-meta {
+			font-size: 14px;
+			color: theme('colors.blog-meta');
+		}
+
+		&:hover {
+			box-shadow: 0px 1px 35px 0px theme('colors.blog-card-hover-shadow');
+
+			:global(.blog-image) {
+				transition: all 0.3s cubic-bezier(0.37, 0.75, 0.61, 1.05) 0s;
+				opacity: 0.7;
+				transform: scale(1.1);
+			}
+
+			.blog-content {
+				p {
+					height: 80px;
+					transition: all 0.3s cubic-bezier(0.37, 0.75, 0.61, 1.05) 0s;
+				}
+			}
+		}
+	}
+</style>

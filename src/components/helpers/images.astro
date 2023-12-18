@@ -1,0 +1,54 @@
+---
+import { Image } from "astro:assets";
+
+const {
+  src,
+  originalWidth,
+  imageWidth,
+  originalHeight,
+  imageHeight,
+  alt,
+  classes,
+} = Astro.props;
+
+let imageWatermark: string | null = null;
+let imageQuality: number = 100;
+let fitin: boolean = false;
+let resizedWidth: number | undefined;
+let resizedHeight: number | undefined;
+let transformed: string;
+let lowres: string;
+
+// Calculate resized dimensions
+if (originalWidth > 0 && imageHeight > 0) {
+  resizedWidth = Math.round((originalWidth / originalHeight) * imageHeight);
+}
+if (originalHeight > 0 && imageWidth > 0) {
+  resizedHeight = Math.round((originalHeight / originalWidth) * imageWidth);
+}
+
+// Construct image URLs
+if (src) {
+  const basePath: string = src.substring(src.indexOf(".com") + 4);
+  const watermark: string = imageWatermark ? `:watermark${imageWatermark}` : "";
+  const quality: string = `:quality(${imageQuality})`;
+  const pathPrefix: string = `https://images.${import.meta.env.HOSTNAME}${
+    fitin ? "/fit-in" : ""
+  }`;
+  const filters: string = `${imageWidth}x${imageHeight}/filters${watermark}${quality}`;
+
+  transformed = `${pathPrefix}/${filters}${basePath}`;
+  lowres = `${pathPrefix}/${filters}:quality(1)${basePath}`;
+} else {
+  transformed = "";
+  lowres = "";
+}
+---
+
+<img
+  src={transformed}
+  alt={alt}
+  width={imageWidth || resizedWidth}
+  height={imageHeight || resizedHeight}
+  class={classes}
+/>

@@ -1,0 +1,46 @@
+---
+import { Image } from "astro:assets";
+import { SVG } from "splendid-ui/svelte";
+import Search from "../helpers/search.astro";
+import Navigation from "../navigation/Navigation.svelte";
+
+//variable for toggling favourites
+let toggleFavourite = false;
+
+const handleFaveToggle = () => {
+  toggleFavourite = !toggleFavourite;
+};
+
+const { mainNavigation, logo } = Astro.props;
+---
+
+<nav
+  class="mx-auto h-16 flex xl:container relative items-center justify-between p-2"
+  aria-label="Global"
+>
+  <div
+    class="absolute left-1/2 -translate-x-2/4 lg:translate-x-0 lg:relative lg:left-auto flex lg:flex-1"
+  >
+    <a href="/" href="home">
+      <span class="sr-only">Giochi Di Slots</span>
+      <Image src={logo} height="50" width="120" alt="logo" />
+    </a>
+  </div>
+  <Navigation mainNavigation={mainNavigation} client:load />
+  <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
+    <div class="favourites flex pointer pl-5 pr-2 mr-2">
+      <button>
+        <SVG
+          icon="heart"
+          height="35px"
+          width="35px"
+          class="fill-unfilled-favs"
+        />
+      </button>
+    </div>
+    <button class="mr-1">
+      <SVG icon="sign-in" height="35px" width="35px" class="fill-sign-in" />
+    </button>
+    <Search />
+  </div>
+</nav>

@@ -1,0 +1,42 @@
+---
+import Image from "../helpers/images.astro";
+import { SVG } from "splendid-ui/svelte";
+import type Link from "../../../interfaces/link.ts";
+
+const {
+  text,
+  href,
+  image,
+  icon,
+  isFilled = true,
+  classes,
+  ...rest
+} = Astro.props as Link;
+---
+
+<a href={href} class:list={["link", classes, { filled: isFilled }]} {...rest}>
+  {
+    icon && icon.side === "left" && (
+      <SVG icon={icon.name} height={icon.height} />
+    )
+  }
+  {
+    image && (
+      <Image
+        src={image.src}
+        orignalHeight={image.originalHeight}
+        originalWidth={image.originalWidth}
+        imageHeight={image.imageHeight}
+        imageWidth={image.imageWidth}
+        alt={image.alt}
+        classes={image.classes}
+      />
+    )
+  }
+  {text}
+  {
+    icon && icon.side === "right" && (
+      <SVG icon={icon.name} height={icon.height} />
+    )
+  }
+</a>

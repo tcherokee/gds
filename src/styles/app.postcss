@@ -1,0 +1,351 @@
+/* Write your global styles here, in PostCSS syntax */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "Lato";
+    font-weight: 700;
+    src: url("/fonts/Lato/Lato-Bold.ttf") format("truetype");
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Roboto";
+    font-weight: 400;
+    src: url("/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Roboto";
+    font-weight: 400;
+    font-style: italic;
+    src: url("/fonts/Roboto/Roboto-Italic.ttf") format("truetype");
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Roboto";
+    font-weight: 700;
+    src: url("/fonts/Roboto/Roboto-Bold.ttf") format("truetype");
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Roboto-fallback";
+    size-adjust: 100.06%;
+    ascent-override: 93%;
+    src: local("Arial");
+  }
+  @font-face {
+    font-family: "Lato-fallback";
+    size-adjust: 97.38%;
+    ascent-override: 101%;
+    src: local("Arial");
+  }
+}
+
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 1000px;
+  }
+}
+
+@layer components {
+  .glowy-bkg {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0px 0px 12px rgba(63, 230, 252, 0.6);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px;
+    border-radius: 6px;
+  }
+
+  .catpill {
+    background: linear-gradient(
+        180deg,
+        theme("colors.background[900]") 0%,
+        theme("colors.blue[700]") 100%
+      ),
+      linear-gradient(
+        180deg,
+        theme("colors.grey[100]") 0%,
+        theme("colors.blue[100]") 100%
+      );
+    color: theme("colors.white");
+  }
+
+  .blueFilterBtn {
+    background: linear-gradient(180deg, #163183 0%, #070c3f 100%),
+      linear-gradient(180deg, #3fe6fc 0%, #00bcd4 100%),
+      linear-gradient(180deg, #c2c8ff 0%, #365ccf 100%);
+    color: theme("colors.white");
+  }
+
+  .gradient-box {
+    background-clip: padding-box;
+    border: solid 1px transparent;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: -1;
+      margin: -1px;
+      border-radius: inherit;
+      background: linear-gradient(
+        180deg,
+        theme("colors.background[900]") 0%,
+        theme("colors.blue[700]") 100%
+      );
+    }
+  }
+
+  .curve {
+    position: relative;
+    background: linear-gradient(
+      to bottom,
+      theme("colors.background-back-curve") 0%,
+      theme("colors.background-back-curve") 300px,
+      theme("colors.background-top-gradient") 300px,
+      theme("colors.background-bottom-gradient") 100%
+    );
+
+    &::before {
+      position: absolute;
+      top: 300px;
+      content: "";
+      display: block;
+      background: radial-gradient(
+        ellipse at 50% 0%,
+        theme("colors.background-back-curve") 72%,
+        transparent 72%
+      );
+      height: 20%;
+      width: 100%;
+    }
+  }
+}
+
+body {
+  @apply text-body-text bg-body-bg;
+  font-family:
+    Roboto,
+    Roboto-fallback,
+    -apple-system,
+    system-ui,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+.section-wrapper {
+  @apply w-full xl:container pt-5 px-3;
+}
+
+p {
+  @apply text-base mb-5;
+}
+
+.btn {
+  @apply p-1.5 h-auto text-[16px] font-bold text-center;
+  min-height: unset;
+  line-height: 1.5;
+}
+.btn-secondary {
+  @apply text-secondary-text rounded-[6px];
+  background: linear-gradient(
+    180deg,
+    theme("colors.secondary-tint") 0%,
+    theme("colors.secondary") 100%
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+.btn-misc {
+  @apply text-misc-text rounded-[6px];
+  background: linear-gradient(
+    180deg,
+    theme("colors.misc-tint") 0%,
+    theme("colors.misc") 100%
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+.register-btn {
+  @apply text-sm text-white font-bold rounded-[6px] border border-[rgba(255,255,255,0.30)] shadow-[0px_2px_10px_0px_rgba(239,108,0,0.28)];
+  background: var(
+    --gradients-purple,
+    linear-gradient(
+      180deg,
+      theme("colors.purple.300") 0%,
+      theme("colors.purple.500") 100%
+    )
+  );
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply capitalize text-blue-700;
+  font-family: Lato, Lato-fallback, sans-serif;
+}
+
+h1 {
+  @apply text-xl leading-[26px] md:text-3xl lg:text-4xl text-white;
+  text-shadow: 0px 0px 12px rgba(63, 230, 252, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+h2 {
+  @apply text-lg leading-6 md:text-2xl lg:text-3xl;
+}
+
+h3 {
+  @apply text-base leading-[22px] md:text-xl lg:text-2xl;
+}
+
+h4 {
+  @apply text-sm leading-[22px] md:text-xl;
+}
+
+h5 {
+  @apply text-sm md:text-xl md:leading-6;
+}
+
+h6 {
+  @apply text-xs md:text-sm md:leading-[18px];
+}
+
+.page-wrapper {
+  & > div:nth-child(3) {
+    &:after {
+      position: fixed;
+      content: "";
+      display: block;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+  }
+}
+
+.featured-background {
+  @apply rounded-b-3xl;
+  background: linear-gradient(
+    180deg,
+    theme("colors.background-top-gradient") 0%,
+    theme("colors.background-bottom-gradient") 100%
+  );
+  overflow: hidden;
+
+  h1,
+  h2 {
+    color: theme("colors.featured-bkg-headings");
+  }
+
+  .intro-content {
+    color: white !important;
+    background: theme("colors.background-back-curve");
+    background-image: url(data:image/svg+xml;base64,PHN2ZwoJeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgoJeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzIiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjQwIDI0MCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQwIDI0MCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+Cgk8cmVjdCB4PSIxMDYiIHk9IjkwIiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9Ijc0IiB5PSI2MyIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSIyMyIgeT0iNjYiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iNTAiIHk9IjExMCIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSI2MyIgeT0iMTI4IiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9IjQ1IiB5PSIxNDkiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iOTIiIHk9IjE1MSIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSI1OCIgeT0iOCIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSIxNDciIHk9IjMzIiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9IjkxIiB5PSI0MyIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSIxNjkiIHk9IjI5IiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9IjE4MiIgeT0iMTkiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMTYxIiB5PSI1OSIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSIxMzgiIHk9Ijk1IiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9IjE5OSIgeT0iNzEiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIzIiBoZWlnaHQ9IjMiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMjEzIiB5PSIxNTMiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMTI4IiB5PSIxNjMiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMjA1IiB5PSIxNzQiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMTUyIiB5PSIyMDAiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iNTIiIHk9IjIxMSIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjIiIGhlaWdodD0iMiIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB5PSIxOTEiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMTEwIiB5PSIxODQiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgo8L3N2Zz4=);
+  }
+
+  .stars {
+    background: radial-gradient(
+      circle farthest-corner at 10% 0%,
+      rgba(#104974, 1) 0%,
+      rgba(theme("colors.background-back-curve"), 0) 11%
+    );
+  }
+
+  & > div:nth-child(2) {
+    background: theme("colors.background-back-curve");
+  }
+
+  & > div:last-child {
+    @apply curve;
+  }
+}
+
+figure.table {
+  @apply mb-6 bg-white w-full rounded-lg overflow-hidden border border-inner-content-table-tr-border text-[16px] leading-[26px];
+  a {
+    @apply text-quicklinks-btn-color;
+  }
+}
+
+table {
+  @apply w-full border-0 shadow-none bg-white;
+  th {
+    @apply bg-purple-900 text-white text-left relative py-[5px] px-[15px] table-cell;
+  }
+  tr {
+    @apply border-b border-b-inner-content-table-tr-border last:border-b-0;
+  }
+  td {
+    @apply relative py-[10px] px-3 table-cell last:border-l last:border-l-inner-content-table-tr-border only:border-l-0;
+  }
+}
+:global(table) {
+  @apply h-[65px] text-center;
+}
+:global(th) {
+  @apply relative py-[5px] px-[15px] table-cell;
+}
+
+.glass-wrapper {
+  background-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 0px 12px rgba(63, 230, 252, 0.6);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.auth-bg {
+  background:
+    url(data:image/svg+xml;base64,PHN2ZwoJeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgoJeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzIiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjQwIDI0MCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjQwIDI0MCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+Cgk8cmVjdCB4PSIxMDYiIHk9IjkwIiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9Ijc0IiB5PSI2MyIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSIyMyIgeT0iNjYiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iNTAiIHk9IjExMCIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSI2MyIgeT0iMTI4IiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9IjQ1IiB5PSIxNDkiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iOTIiIHk9IjE1MSIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSI1OCIgeT0iOCIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSIxNDciIHk9IjMzIiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9IjkxIiB5PSI0MyIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSIxNjkiIHk9IjI5IiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9IjE4MiIgeT0iMTkiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMTYxIiB5PSI1OSIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjEiIGhlaWdodD0iMSIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB4PSIxMzgiIHk9Ijk1IiBmaWxsPSIjRkZGRkZGIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBvcGFjaXR5PSIwLjMiLz4KCTxyZWN0IHg9IjE5OSIgeT0iNzEiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIzIiBoZWlnaHQ9IjMiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMjEzIiB5PSIxNTMiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMTI4IiB5PSIxNjMiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMjA1IiB5PSIxNzQiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMTUyIiB5PSIyMDAiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iNTIiIHk9IjIxMSIgZmlsbD0iI0ZGRkZGRiIgd2lkdGg9IjIiIGhlaWdodD0iMiIgb3BhY2l0eT0iMC4zIi8+Cgk8cmVjdCB5PSIxOTEiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgoJPHJlY3QgeD0iMTEwIiB5PSIxODQiIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIG9wYWNpdHk9IjAuMyIvPgo8L3N2Zz4=),
+    linear-gradient(
+      180deg,
+      theme("colors.background.700") 0%,
+      theme("colors.background.500") 100%
+    ),
+    #fff 50% / cover no-repeat;
+  @apply -mb-5;
+  .auth-form-container {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: #dce9f3;
+    box-shadow: 0px 0px 12px 0px rgba(63, 230, 252, 0.6);
+  }
+}
+.dashboard-glass-wrapper {
+  @apply rounded-xl;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.36);
+  box-shadow: 0px 0px 12px 0px rgba(63, 230, 252, 0.6);
+  backdrop-filter: blur(6px);
+}
+.dashboard-bg {
+  background: linear-gradient(
+    180deg,
+    theme("colors.background.700") 0%,
+    theme("colors.background.500") 100%
+  );
+}
+
+.custom-spinner {
+  @apply rounded-[50%] border-[2px] border-white w-4 h-4;
+  border-right-color: transparent;
+  animation: 0.75s linear infinite spinner-border;
+}
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}

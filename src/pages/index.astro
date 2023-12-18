@@ -1,0 +1,141 @@
+---
+
+import qs from 'qs'
+import fetchApi from "../../lib/strapi";
+import { sortOptions } from "../../stores/sortFilters.ts"
+import { homepageQs } from "../../qs/homepage.ts"
+import { gamesQs } from "../../qs/games.ts"
+import { blogsQs } from "../../qs/blogs.ts"
+
+
+import MainLayout from '../layouts/MainLayout.astro';
+
+const sortStore = sortOptions.get()
+
+const query = qs.stringify(homepageQs(), {encodeValuesOnly: true})
+
+const homepage = await fetchApi({
+	endpoint: 'homepage',
+    wrappedByKey: 'data',
+    query: `?${query}`
+})
+
+// get the games and blog parameters from the homepage block section
+const blogBlock = homepage.attributes.blocks.find(
+	(block) => block.__component === 'homepage.home-blog-list'
+	)
+	
+const gamesBlock = homepage.attributes.blocks.find(
+	(block) => block.__component === 'homepage.home-game-list'
+)
+
+//Get the providers in an array
+const gameProviders = gamesBlock.providers.map(item => item.slotProvider.data.attributes.slug);
+
+// get the qs query for the blogs and the games
+const gamesQuery = gameProviders.map(provider => qs.stringify(gamesQs(gamesBlock.numberOfGames, sortStore[gamesBlock.sortBy], undefined, provider, undefined), {encodeValuesOnly: true}))
+const blogsQuery = qs.stringify(blogsQs(undefined, blogBlock.numberOfBlogs, "createdAt:desc"), {encodeValuesOnly: true})
+
+console.log(gamesQuery)
+
+const fetchHomepageBlogs = fetchApi({
+    endpoint: 'blogs',
+    wrappedByKey: 'data',
+    query: `?${blogsQuery}`
+});
+
+const fetchHomepageGames = Promise.all(gamesQuery.map(query => {
+    return fetchApi({
+        endpoint: 'games',
+        wrappedByKey: 'data',
+        query: `?${query}`
+    });
+}));
+
+const [homepageBlogs, homepageGames] = await Promise.all([fetchHomepageBlogs, fetchHomepageGames]);
+
+// combining games array
+const combinedGamesArray = homepageGames.flat()
+
+const dynamicComponents = homepage.attributes.blocks.map(block => {
+	switch (block.__component) {
+		case 'shared.introduction-with-image':
+			return {
+				location: 'general',
+				name: 'introWithImage',
+				extension: 'astro'
+			}
+		case 'homepage.home-blog-list':
+			return {
+				location: 'blocks',
+				name: 'blogListBlock',
+				extension: 'astro'
+			}
+		case 'homepage.home-game-list':
+			return {
+				location: 'blocks',
+				name: 'gameListBlock',
+				extension: 'astro'
+			}
+		case 'shared.single-content':
+			return {
+				location: 'blocks',
+				name: 'contentBlock',
+				extension: 'astro'
+			}
+		case 'homepage.home-casino-list':
+			return {
+				location: 'blocks',
+				name: 'casinoListBlock',
+				extension: 'astro'
+			}
+				
+	}
+})
+
+const loadComponents = componentsArray => {
+    return Promise.all(componentsArray.map(async entry => {
+        // Check if entry is not null or undefined
+        if (entry != null && entry.extension === 'astro') {
+            return (await import(`../components/${entry.location}/${entry.name}.astro`)).default;
+        } else if (entry != null && entry.extension === 'svelte') {
+            return (await import(`../components/${entry.location}/${entry}.svelte`)).default;
+        }
+        // Return null for null or undefined entries
+        return null;
+    })).then(components => {
+        // Filter out null values
+        return components.filter(component => component !== null);
+    });
+}
+
+const Components = await loadComponents(dynamicComponents)
+
+---
+
+<MainLayout title="Welcome to Astro.">
+	<div class="featured-background">
+		{
+			Components.map((Component, i) => (
+				i < 2 && <Component data={
+						homepage?.attributes?.blocks[i]?.__component === 'homepage.home-game-list' 
+						? combinedGamesArray 
+						: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
+						? homepageBlogs : homepage.attributes.blocks[i]
+					} timeDate={homepage.attributes.updatedAt}/>
+		))
+		}
+	</div>
+	<div class="xl:container content-auto px-2 pt-5">
+		{
+			Components.map((Component, i) => (
+				i > 1 && <Component data={
+						homepage?.attributes?.blocks[i]?.__component === 'homepage.home-game-list' 
+						? combinedGamesArray 
+						: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
+						? homepageBlogs : homepage.attributes.blocks[i]
+					} timeDate={homepage.attributes.updatedAt}/>
+		))
+		}
+	</div>
+</MainLayout>

@@ -1,0 +1,38 @@
+{
+  "name": "gds-astro",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "format": "prettier --write --plugin=prettier-plugin-astro .",
+    "prettier:check": "prettier --check --plugin=prettier-plugin-astro ."
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.3.2",
+    "@astrojs/svelte": "^5.0.1",
+    "@astrojs/tailwind": "^5.0.3",
+    "@tailwindcss/forms": "^0.5.7",
+    "astro": "^4.0.5",
+    "astro-icon": "^0.8.2",
+    "dayjs": "^1.11.10",
+    "dotenv": "^16.3.1",
+    "instantsearch.js": "^4.7.0",
+    "meilisearch": "^0.36.0",
+    "nanostores": "^0.9.5",
+    "prettier-plugin-astro": "^0.12.2",
+    "qs": "^6.11.2",
+    "splendid-ui": "^0.10.5",
+    "svelte": "^4.2.8",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "postcss-import": "^15.1.0",
+    "postcss-nesting": "^12.0.1",
+    "svelte-icon": "^2.0.0"
+  }
+}
