@@ -1,63 +1,59 @@
-export default interface Menu {
-  id: number;
-  attributes: Attributes;
-}
+import type { ImageData } from "./common/types";
 
-interface Attributes {
+export type Menu = {
+  data: NavigationItem[];
+  meta: ApiResponseMeta;
+};
+
+export type MenuItemChild = {
+  id: number;
+  attributes: {
+    title: string;
+    url: string;
+    order: number;
+    images: {
+      data: ImageData | null;
+    };
+    children: {
+      data: MenuItemChild[];
+    };
+  };
+};
+
+export type MenuItem = {
+  id: number;
+  attributes: {
+    title: string;
+    url: string;
+    order: number;
+    images: {
+      data: ImageData | null;
+    };
+    children: {
+      data: MenuItemChild[];
+    };
+  };
+};
+
+type NavigationItemAttributes = {
   title: string;
-  items: Items;
-}
+  items: {
+    data: MenuItem[];
+  };
+};
 
-interface Items {
-  data: ItemData[];
-}
-
-interface ItemData {
+type NavigationItem = {
   id: number;
-  attributes: ItemAttributes;
-}
+  attributes: NavigationItemAttributes;
+};
 
-interface ItemAttributes {
-  title: string;
-  url: string;
-  order: number;
-  images: Images;
-  children: Children;
-}
-
-interface Images {
-  data: ImageData | null;
-}
-
-interface ImageData {
-  id: number;
-  attributes: ImageAttributes;
-}
-
-interface ImageAttributes {
-  url: string;
-}
-
-interface Children {
-  data: ChildData[];
-}
-
-interface ChildData {
-  id: number;
-  attributes: ChildAttributes;
-}
-
-interface ChildAttributes {
-  title: string;
-  url: string;
-  order: number;
-  images: Images;
-  children: Children;
-}
-
-interface Meta {
+type ApiResponseMeta = {
   page: number;
   pageSize: number;
   pageCount: number;
   total: number;
-}
+};
+
+export type ProcessedMenus = {
+  [key: string]: MenuItem[];
+};

@@ -1,22 +1,22 @@
-export default interface Translation {
-  data: Data;
+export type Translation = {
+  data: DataItem;
   meta: Record<string, unknown>;
-}
+};
 
-interface TranslationItem {
+type TranslationItem = {
   id: number;
   key: string;
   value: string;
-}
+};
 
-interface Attributes {
+type Attributes = {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
   translation: TranslationItem[];
-}
+};
 
-interface Data {
+type DataItem = {
   id: number;
   attributes: Attributes;
-}
+};

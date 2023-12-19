@@ -1,14 +1,23 @@
-export default interface Layout {
-  data: Data;
-  meta: Meta;
-}
+import type { BreadcrumbData } from "./common/types";
+import type { Provider, ImageData, Casino } from "./common/types";
 
-interface Data {
+export type Layout = {
+  data: {
+    data: LayoutData;
+  };
+  meta: any;
+};
+
+type FooterImage = {
   id: number;
-  attributes: Attributes;
-}
+  imageName: string;
+  imageLink?: string;
+  image: {
+    data: ImageData;
+  };
+};
 
-interface Attributes {
+type LayoutAttributes = {
   legalText: string;
   footerContent: string;
   gameInfoText: string;
@@ -17,104 +26,35 @@ interface Attributes {
   cookiesUrl: string;
   cookiesLinkText: string;
   footerImages: FooterImage[];
-  Logo: Logo;
-  homeBreadcrumbs: Breadcrumb[];
-  gamesBreadcrumbs: Breadcrumb[];
-  casinoBreadcrumbs: Breadcrumb[];
-  blogBreadcrumbs: Breadcrumb[];
-  slotCasinosBreadcrumbs: Breadcrumb[];
-  providersBreadcrumbs: Breadcrumb[];
-  categoriesBreadcrumbs: Breadcrumb[];
-  casinoProvidersBreadcrumbs: Breadcrumb[];
-  filterProviders: FilterProviders;
-  most_loved_casinos: MostLovedCasinos;
-  no_deposit_casinos: NoDepositCasinos;
-  free_spin_casinos: FreeSpinCasinos;
-  backgroundImage: BackgroundImage;
-}
-
-interface FooterImage {
-  id: number;
-  imageName: string;
-  imageLink: string | null;
-  image: ImageData;
-}
-
-interface ImageData {
-  data: ImageAttributes;
-}
-
-interface ImageAttributes {
-  id: number;
-  attributes: {
-    url: string;
-    width: number;
-    height: number;
+  Logo: {
+    data: ImageData;
   };
-}
+  homeBreadcrumbs: BreadcrumbData[];
+  gamesBreadcrumbs: BreadcrumbData[];
+  casinoBreadcrumbs: BreadcrumbData[];
+  blogBreadcrumbs: BreadcrumbData[];
+  slotCasinosBreadcrumbs: BreadcrumbData[];
+  providersBreadcrumbs: BreadcrumbData[];
+  categoriesBreadcrumbs: BreadcrumbData[];
+  casinoProvidersBreadcrumbs: BreadcrumbData[];
+  filterProviders: {
+    data: Provider[];
+  };
+  most_loved_casinos: {
+    data: Casino[];
+  };
+  no_deposit_casinos: {
+    data: Casino[];
+  };
+  free_spin_casinos: {
+    data: Casino[];
+  };
+  backgroundImage: {
+    data: ImageData;
+  };
+};
 
-interface Logo {
-  data: ImageAttributes;
-}
-
-interface Breadcrumb {
+type LayoutData = {
   id: number;
-  breadCrumbText: string;
-  breadCrumbUrl: string | null;
-}
-
-interface FilterProviders {
-  data: Provider[];
-}
-
-interface Provider {
-  id: number;
-  attributes: ProviderAttributes;
-}
-
-interface ProviderAttributes {
-  slug: string;
-  images: ImageData;
-}
-
-interface MostLovedCasinos {
-  data: any[]; // Define the structure if needed
-}
-
-interface NoDepositCasinos {
-  data: any[]; // Define the structure if needed
-}
-
-interface FreeSpinCasinos {
-  data: FreeSpinCasino[];
-}
-
-interface FreeSpinCasino {
-  id: number;
-  attributes: FreeSpinCasinoAttributes;
-}
-
-interface FreeSpinCasinoAttributes {
-  slug: string;
-  title: string;
-  logoIcon: ImageData;
-  freeSpinsSection: FreeSpinsSection;
-}
-
-interface FreeSpinsSection {
-  id: number;
-  bonusAmount: number;
-  availability: string;
-  speed: string;
-  termsConditions: string;
-  cashBack: null | string; // Adjust the type as needed
-  freeSpin: null | string; // Adjust the type as needed
-}
-
-interface BackgroundImage {
-  data: ImageAttributes;
-}
-
-interface Meta {
-  // Define the structure of Meta if needed
-}
+  attributes: LayoutAttributes;
+};

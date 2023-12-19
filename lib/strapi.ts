@@ -1,24 +1,11 @@
-interface Props {
-  endpoint: string;
-  query: Record<string, string>;
-  wrappedByKey?: string;
-  wrappedByList?: boolean;
-}
+import type { ApiResponse, FetchApiParams } from "../interfaces/common/types";
 
-/**
- * Fetches data from the Strapi API
- * @param endpoint - The endpoint to fetch from
- * @param query - The query parameters to add to the url
- * @param wrappedByKey - The key to unwrap the response from
- * @param wrappedByList - If the response is a list, unwrap it
- * @returns
- */
-export default async function fetchApi<T>({
+export default async function fetchApi<T = any>({
   endpoint,
   query,
   wrappedByKey,
   wrappedByList,
-}: Props): Promise<T> {
+}: FetchApiParams): Promise<ApiResponse<T>> {
   if (endpoint.startsWith("/")) {
     endpoint = endpoint.slice(1);
   }
@@ -31,7 +18,7 @@ export default async function fetchApi<T>({
     },
   };
 
-const url = new URL(`${import.meta.env.API_URL}/api/${endpoint}${query}`);
+  const url = new URL(`${import.meta.env.API_URL}/api/${endpoint}${query}`);
 
   const res = await fetch(url.toString(), opts);
   let data = await res.json();
@@ -44,5 +31,5 @@ const url = new URL(`${import.meta.env.API_URL}/api/${endpoint}${query}`);
     data = data[0];
   }
 
-  return data as T;
+  return data;
 }

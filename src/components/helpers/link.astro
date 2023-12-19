@@ -1,7 +1,7 @@
 ---
 import Image from "../helpers/images.astro";
 import { SVG } from "splendid-ui/svelte";
-import type Link from "../../../interfaces/link.ts";
+import type { ComponentLink } from "../../../interfaces/common/types.ts"
 
 const {
   text,
@@ -11,7 +11,7 @@ const {
   isFilled = true,
   classes,
   ...rest
-} = Astro.props as Link;
+} = Astro.props as ComponentLink;
 ---
 
 <a href={href} class:list={["link", classes, { filled: isFilled }]} {...rest}>

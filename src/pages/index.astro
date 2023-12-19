@@ -1,7 +1,14 @@
 ---
 
 import qs from 'qs'
+
+import type { Homepage } from "../../interfaces/homepage.ts"
+import type { Block, DynamicComponents } from "../../interfaces/common/types.ts"
+import type { Game } from "../../interfaces/games.ts"
+import type { Blog } from "../../interfaces/blog.ts"
+
 import fetchApi from "../../lib/strapi";
+
 import { sortOptions } from "../../stores/sortFilters.ts"
 import { homepageQs } from "../../qs/homepage.ts"
 import { gamesQs } from "../../qs/games.ts"
@@ -14,7 +21,7 @@ const sortStore = sortOptions.get()
 
 const query = qs.stringify(homepageQs(), {encodeValuesOnly: true})
 
-const homepage = await fetchApi({
+const homepage: Homepage = await fetchApi({
 	endpoint: 'homepage',
     wrappedByKey: 'data',
     query: `?${query}`
@@ -22,11 +29,11 @@ const homepage = await fetchApi({
 
 // get the games and blog parameters from the homepage block section
 const blogBlock = homepage.attributes.blocks.find(
-	(block) => block.__component === 'homepage.home-blog-list'
+	(block: Block) => block.__component === 'homepage.home-blog-list'
 	)
 	
 const gamesBlock = homepage.attributes.blocks.find(
-	(block) => block.__component === 'homepage.home-game-list'
+	(block: Block) => block.__component === 'homepage.home-game-list'
 )
 
 //Get the providers in an array
@@ -36,15 +43,13 @@ const gameProviders = gamesBlock.providers.map(item => item.slotProvider.data.at
 const gamesQuery = gameProviders.map(provider => qs.stringify(gamesQs(gamesBlock.numberOfGames, sortStore[gamesBlock.sortBy], undefined, provider, undefined), {encodeValuesOnly: true}))
 const blogsQuery = qs.stringify(blogsQs(undefined, blogBlock.numberOfBlogs, "createdAt:desc"), {encodeValuesOnly: true})
 
-console.log(gamesQuery)
-
-const fetchHomepageBlogs = fetchApi({
+const fetchHomepageBlogs: Promise<Blog[]> = fetchApi({
     endpoint: 'blogs',
     wrappedByKey: 'data',
     query: `?${blogsQuery}`
 });
 
-const fetchHomepageGames = Promise.all(gamesQuery.map(query => {
+const fetchHomepageGames: Promise<Game[][]> = Promise.all(gamesQuery.map(query => {
     return fetchApi({
         endpoint: 'games',
         wrappedByKey: 'data',
@@ -54,10 +59,12 @@ const fetchHomepageGames = Promise.all(gamesQuery.map(query => {
 
 const [homepageBlogs, homepageGames] = await Promise.all([fetchHomepageBlogs, fetchHomepageGames]);
 
-// combining games array
-const combinedGamesArray = homepageGames.flat()
+console.log(JSON.stringify(homepageBlogs))
 
-const dynamicComponents = homepage.attributes.blocks.map(block => {
+// combining games array
+const combinedGamesArray: Game[] = homepageGames.flat()
+
+const dynamicComponents: DynamicComponent[] = homepage.attributes.blocks.map((block: Block): DynamicComponent | undefined => {
 	switch (block.__component) {
 		case 'shared.introduction-with-image':
 			return {
@@ -89,25 +96,29 @@ const dynamicComponents = homepage.attributes.blocks.map(block => {
 				name: 'casinoListBlock',
 				extension: 'astro'
 			}
+		default:
+			return undefined
 				
 	}
-})
+}).filter((component): component is DynamicComponent => component !== undefined);
 
-const loadComponents = componentsArray => {
-    return Promise.all(componentsArray.map(async entry => {
-        // Check if entry is not null or undefined
-        if (entry != null && entry.extension === 'astro') {
-            return (await import(`../components/${entry.location}/${entry.name}.astro`)).default;
-        } else if (entry != null && entry.extension === 'svelte') {
-            return (await import(`../components/${entry.location}/${entry}.svelte`)).default;
+const loadComponents = async (componentsArray: DynamicComponent[]): Promise<any[]> => {
+    const components = await Promise.all(componentsArray.map(async entry => {
+        if (entry.extension === 'astro') {
+            // Handle Astro components
+            // Depending on how Astro handles dynamic imports, this might need to be adjusted.
+            const component = await import(`../components/${entry.location}/${entry.name}.astro`);
+            return component.default || component;
+        } else if (entry.extension === 'svelte') {
+            // Handle Svelte components
+            const component = await import(`../components/${entry.location}/${entry.name}.svelte`);
+            return component.default || component;
         }
-        // Return null for null or undefined entries
         return null;
-    })).then(components => {
-        // Filter out null values
-        return components.filter(component => component !== null);
-    });
-}
+    }));
+
+    return components.filter(component => component !== null);
+};
 
 const Components = await loadComponents(dynamicComponents)
 

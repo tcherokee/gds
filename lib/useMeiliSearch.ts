@@ -84,7 +84,7 @@ function setupMeilisearch(noResults, indexName, containerId, resultsId) {
 						</a>
 					`;
         }, // Assuming 'itemTemplate' is a function that returns the template literal
-        empty(results, { html }) {
+        empty({ html }) {
           // Guard against noResults being undefined or not a function
           return html`${noResults ? noResults : "No results found."}`;
         },

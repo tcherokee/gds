@@ -5,6 +5,8 @@ import BlogCard from "../blogs/blogCard.astro"
 
 const { data, blogLink, blogText } = Astro.props
 
+console.log('data', data)
+
 const truncateAndCleanContent = (blogData) => {
     return blogData.map(item => {
         if (item.attributes && item.attributes.content1) {

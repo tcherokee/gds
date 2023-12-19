@@ -1,174 +1,55 @@
 ---
 import qs from "qs";
+import { layoutQs, menuQs, translationsQs } from "../../qs/layout.ts"
+
 import fetchApi from "../../lib/strapi";
 
 import "../styles/app.postcss";
 
-import type Layout from "../../interfaces/layout";
-import type Menu from "../../interfaces/menu.ts";
-import type Translation from "../../interfaces/translation.ts";
+import type { Layout } from "../../interfaces/layout";
+import type { Menu, processedMenus} from "../../interfaces/menu.ts";
+import type { Translation } from "../../interfaces/translation.ts"
 
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
 import Translations from "../components/helpers/translations.svelte";
 
-const layoutQuery = qs.stringify(
-  {
-    fields: [
-      "legalText",
-      "footerContent",
-      "gameInfoText",
-      "cookiesHeaderText",
-      "cookiesDescription",
-      "cookiesUrl",
-      "cookiesLinkText",
-    ],
-    populate: {
-      footerImages: {
-        fields: ["imageName", "imageLink"],
-        populate: {
-          image: {
-            fields: ["url", "width", "height"],
-          },
-        },
-      },
-      Logo: {
-        fields: ["url", "width", "height"],
-      },
-      homeBreadcrumbs: {
-        fields: ["breadCrumbText", "breadCrumbUrl"],
-      },
-      gamesBreadcrumbs: {
-        fields: ["breadCrumbText", "breadCrumbUrl"],
-      },
-      casinoBreadcrumbs: {
-        fields: ["breadCrumbText", "breadCrumbUrl"],
-      },
-      blogBreadcrumbs: {
-        fields: ["breadCrumbText", "breadCrumbUrl"],
-      },
-      slotCasinosBreadcrumbs: {
-        fields: ["breadCrumbText", "breadCrumbUrl"],
-      },
-      providersBreadcrumbs: {
-        fields: ["breadCrumbText", "breadCrumbUrl"],
-      },
-      categoriesBreadcrumbs: {
-        fields: ["breadCrumbText", "breadCrumbUrl"],
-      },
-      casinoProvidersBreadcrumbs: {
-        fields: ["breadCrumbText", "breadCrumbUrl"],
-      },
-      filterProviders: {
-        fields: ["slug"],
-        populate: {
-          images: {
-            fields: ["url"],
-          },
-        },
-      },
-      most_loved_casinos: {
-        fields: ["slug", "title"],
-        populate: {
-          logoIcon: {
-            fields: ["url"],
-          },
-          bonusSection: true,
-        },
-      },
-      no_deposit_casinos: {
-        fields: ["slug", "title"],
-        populate: {
-          logoIcon: {
-            fields: ["url"],
-          },
-          noDepositSection: true,
-        },
-      },
-      free_spin_casinos: {
-        fields: ["slug", "title"],
-        populate: {
-          logoIcon: {
-            fields: ["url"],
-          },
-          freeSpinsSection: true,
-        },
-      },
-      backgroundImage: {
-        fields: ["url"],
-      },
-    },
-  },
-  {
-    encodeValuesOnly: true,
-  },
-);
-
-const menusQuery = qs.stringify(
-  {
-    fields: ["title"],
-    populate: {
-      items: {
-        fields: ["title", "url", "order"],
-        populate: {
-          images: {
-            fields: ["url"],
-          },
-          children: {
-            fields: ["title"],
-          },
-        },
-      },
-    },
-    pagination: {
-      page: 1,
-      pageSize: 20,
-    },
-  },
-  {
-    encodeValuesOnly: true, // This helps to encode values like spaces and special characters without encoding the entire URL
-  },
-);
-
-const translationQuery = qs.stringify(
-  {
-    populate: {
-      translation: "*",
-    },
-  },
-  {
-    encodeValuesOnly: true,
-  },
-);
-
 const queries = {
-  layout: layoutQuery,
-  menus: menusQuery,
-  translation: translationQuery,
+  layout: qs.stringify(layoutQs(), {encodeValuesOnly: true}),
+  menus: qs.stringify(menuQs(), {encodeValuesOnly: true}),
+  translation: qs.stringify(translationsQs(), {encodeValuesOnly: true})
 };
 
-const endpoints = ["layout", "menus", "translation"];
+// Set the types in an array for use in the promise all
+type EndpointTypes = {
+  layout: Layout;
+  menus: Menu;
+  translation: Translation;
+};
 
+type Endpoint = keyof EndpointTypes;
+
+// Set the endpoint slugs in an array for use in the promise all
+const endpoints: Endpoint[] = ["layout", "menus", "translation"];
+
+// Promise All Fetch to fetch all the api requests in parrallel
 const responses = await Promise.all(
   endpoints.map((endpoint) =>
-    fetchApi({
-      endpoint: endpoint,
+    fetchApi<EndpointTypes[typeof endpoint]>({
+      endpoint,
       wrappedByKey: "data",
-      query:
-        endpoint === "menus"
-          ? `?nested&${queries[endpoint]}`
-          : `?${queries[endpoint]}`,
+      query: endpoint === "menus" ? `?nested&${queries[endpoint]}` : `?${queries[endpoint]}`,
     }),
   ),
 );
 
 const layout = responses[0] as Layout;
-const menus = responses[1] as Menu;
+const menu = responses[1] as Menu;
 const translation = responses[2] as Translation;
 
 // Process menu data
-const processedMenus = menus.reduce((acc, menu) => {
+const processedMenus: ProcessedMenus = menu.reduce((acc: ProcessedMenus, menu: Menu) => {
   const title = menu.attributes.title;
   const items = menu.attributes.items.data;
   if (

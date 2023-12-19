@@ -2,13 +2,15 @@
     import { SVG } from 'splendid-ui/svelte'
     import MediaQuery from "../helpers/mediaQuery.svelte"
 
+    import type { MenuItem } from "../../../interfaces/menu.ts"
+
     let mobileChecked = false
 
     const uncheckInput = () => {
         mobileChecked = false
     }
 
-    export let mainNavigation
+    export let mainNavigation: MenuItem[]
 </script>
 
 <MediaQuery query="(max-width: 991px)" let:matches>

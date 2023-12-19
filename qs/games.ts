@@ -1,39 +1,13 @@
-type FilterType = {
-  [key: string]: string;
-}; // Replace 'any' with a more specific type if possible
+import type { GamesQueryOptions, GamesQueryFilters } from "../interfaces/games";
 
 export const gamesQs = (
-  limit: number = 10,
-  sort: string = "title",
-  page: string = "1",
-  providers: string = "",
-  categories: string = ""
-): {
-  fields: string[];
-  populate: {
-    images: {
-      fields: string[];
-    };
-    provider: {
-      fields: string[];
-      populate: {
-        images: {
-          fields: string[];
-        };
-      };
-    };
-    categories: {
-      fields: string[];
-    };
-  };
-  sort: string[];
-  pagination: {
-    page: string;
-    pageSize: number;
-  };
-  filters?: FilterType;
-} => {
-  const filters = {};
+  limit = 10,
+  sort = "title",
+  page = "1",
+  providers = "",
+  categories = ""
+): GamesQueryOptions => {
+  const filters: GamesQueryFilters = {};
   if (providers.length)
     filters.provider = {
       slug: {

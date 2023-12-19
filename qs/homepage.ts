@@ -1,3 +1,5 @@
+export type { HomepageQueryOptions } from '../interfaces/qs/homepage'
+
 export const homepageQs = () => ({
     fields: ["title", "heading", "updatedAt"],
     populate: {
