@@ -1,11 +1,11 @@
-import type { ApiResponse, FetchApiParams } from "../interfaces/common/types";
+import type { FetchApiParams } from "../interfaces/common/types";
 
 const fetchApi = async <T>({
   endpoint,
   query,
   wrappedByKey,
   wrappedByList,
-}: FetchApiParams): Promise<ApiResponse<T>> => {
+}: FetchApiParams): Promise<T> => {
   let modifiedEndpoint = endpoint.startsWith("/")
     ? endpoint.slice(1)
     : endpoint;

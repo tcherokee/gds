@@ -21,7 +21,7 @@ const sortStore = sortOptions.get()
 
 const query = qs.stringify(homepageQs(), {encodeValuesOnly: true})
 
-const homepage: Homepage = await fetchApi<Homepage>({
+const homepage = await fetchApi<Homepage>({
 	endpoint: 'homepage',
     wrappedByKey: 'data',
     query: `?${query}`
