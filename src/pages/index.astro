@@ -27,9 +27,6 @@ const homepage = await fetchApi<Homepage>({
     query: `?${query}`
 })
 
-
-console.log('Homepage', JSON.stringify(homepage))
-
 //Type Guards for the find functions
 const isBlogBlockTypes = (block: Block): block is BlogBlockTypes => {
 	return block.__component === 'homepage.home-blog-list';
@@ -44,8 +41,6 @@ const blogBlock = homepage.attributes.blocks.find(isBlogBlockTypes)
 	
 const gamesBlock = homepage.attributes.blocks.find(isHomeGameListBlock)
 
-console.log(blogBlock)
-
 //Get the providers in an array
 const gameProviders = gamesBlock && gamesBlock.providers.map(item => item.slotProvider.data.attributes.slug);
 
@@ -57,7 +52,7 @@ const fetchHomepageBlogs: Promise<Blog[]> = fetchApi({
     endpoint: 'blogs',
     wrappedByKey: 'data',
     query: `?${blogsQuery}`
-}).then(response => response as unknown as Blog[]);
+});
 
 let fetchHomepageGames: Promise<Game[][]> = Promise.resolve([]);
 
@@ -76,7 +71,7 @@ if (gamesQuery) {
 const [homepageBlogs, homepageGames] = await Promise.all([fetchHomepageBlogs, fetchHomepageGames]);
 
 // combining games array
-const combinedGamesArray: Game[] = (homepageGames as Game[][]).flat()
+const combinedGamesArray: Game[] = homepageGames.flat()
 
 const dynamicComponents: DynamicComponent[] = homepage.attributes.blocks.map((block: Block): DynamicComponent | undefined => {
 	switch (block.__component) {

@@ -22,7 +22,6 @@ let transformed: string;
 // Calculate resized dimensions
 if (originalWidth > 0 && imageHeight > 0) {
   resizedWidth = Math.round((originalWidth / originalHeight) * imageHeight);
-  console.log('images', originalWidth, originalHeight, resizedWidth)
 }
 if (originalHeight > 0 && imageWidth > 0) {
   resizedHeight = Math.round((originalHeight / originalWidth) * imageWidth);

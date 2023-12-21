@@ -88,15 +88,10 @@ const isTranslationDataItem = (data: any): data is TranslationDataItem => {
     );
 }
 
-console.log('responses[]', responses[2])
-
 // Using type guards to safely cast the types
 const layout = isLayoutData(responses[0]) ? responses[0] : console.error("Invalid layout data");
 const menu = isNavigationItemArray(responses[1]) ? responses[1] : console.error("Invalid menu data");
 const translation = isTranslationDataItem(responses[2]) ? responses[2] : console.error("Invalid translation data");
-
-console.log('trans', translation)
-
 
 // Process menu data
 const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: ProcessedMenus, menu: NavigationItem) => {
@@ -144,12 +139,6 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
       footerNavigations={processedMenus.footernavigations}
     />
   </body>
-  <script
-    is:inline
-    src="https://cdn.jsdelivr.net/npm/@meilisearch/instant-meilisearch/dist/instant-meilisearch.umd.min.js"
-  ></script>
-  <script is:inline src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"
-  ></script>
 </html>
 
 <style lang="postcss" is:global>

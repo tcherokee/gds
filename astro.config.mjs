@@ -1,7 +1,9 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-import "dotenv/config";
+import * as dotenv from "dotenv";
 import svelte from "@astrojs/svelte";
+
+dotenv.config();
 
 import node from "@astrojs/node";
 
@@ -10,17 +12,19 @@ export default defineConfig({
   integrations: [tailwind(), svelte()],
   vite: {
     define: {
-      "process.env.VITE_BUILD_TIME": JSON.stringify(new Date().toISOString())
-    }
+      "process.env.VITE_BUILD_TIME": JSON.stringify(new Date().toISOString()),
+    },
   },
   image: {
     domains: ["amazonaws.com"],
-    remotePatterns: [{
-      protocol: "https"
-    }]
+    remotePatterns: [
+      {
+        protocol: "https",
+      },
+    ],
   },
   output: "server",
   adapter: node({
-    mode: "standalone"
-  })
+    mode: "standalone",
+  }),
 });

@@ -1,15 +1,8 @@
 ---
 import { Image } from "astro:assets";
 import { Icon } from 'astro-icon'
-import Search from "../helpers/search.astro";
+import Search from "../helpers/search.svelte";
 import Navigation from "../navigation/navigation.svelte";
-
-//variable for toggling favourites
-// let toggleFavourite = false;
-
-// const handleFaveToggle = () => {
-//   toggleFavourite = !toggleFavourite;
-// };
 
 const { mainNavigation, logo } = Astro.props;
 ---
@@ -43,6 +36,6 @@ const { mainNavigation, logo } = Astro.props;
     <button class="mr-1">
       <Icon name="sign-in" height="35px" width="35px" class="fill-sign-in" />
     </button>
-    <Search />
+    <Search client:load />
   </div>
 </nav>

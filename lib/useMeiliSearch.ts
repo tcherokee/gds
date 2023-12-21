@@ -1,19 +1,25 @@
 import instantsearch from "instantsearch.js";
 import { searchBox, hits, configure } from "instantsearch.js/es/widgets";
 import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
-// import { urlTranslate } from '$utils/data-store.util.js'
 
 // Define common setup for Meilisearch to reduce redundancy
 function setupMeilisearch(noResults, indexName, containerId, resultsId) {
+
+  console.log(
+    import.meta.env.PUBLIC_MEILISEARCH_HOST,
+    import.meta.env.MODE,
+    import.meta.env.PUBLIC_MEILISEARCH_INDEX_NAME
+  );
+
   return instantsearch({
     indexName: indexName,
     searchClient: instantMeiliSearch(
-      import.meta.env.MEILISEARCH_HOST,
-      import.meta.env.MEILISEARCH_SEARCH_KEY,
+      import.meta.env.PUBLIC_MEILISEARCH_HOST,
+      import.meta.env.PUBLIC_MEILISEARCH_SEARCH_KEY,
       {
         placeholderSearch: false,
       },
-    ),
+    ).searchClient,
   }).addWidgets([
     searchBox({
       container: containerId,
@@ -34,7 +40,7 @@ function setupMeilisearch(noResults, indexName, containerId, resultsId) {
         // Error handling if the logo URL is incorrect or missing
         return items.map((item) => {
           const logoUrl = item.logo?.includes(".com")
-            ? `${import.meta.env.ROOT_DOMAIN}/65x60/filters:quality(80)` +
+            ? `${import.meta.env.PUBLIC_ROOT_DOMAIN}/65x60/filters:quality(80)` +
               item.logo.substring(item.logo.indexOf(".com") + 4)
             : "default-logo-url"; // Provide a default logo URL or path
           return {
@@ -84,10 +90,10 @@ function setupMeilisearch(noResults, indexName, containerId, resultsId) {
 						</a>
 					`;
         }, // Assuming 'itemTemplate' is a function that returns the template literal
-        empty({ html }) {
-          // Guard against noResults being undefined or not a function
-          return html`${noResults ? noResults : "No results found."}`;
-        },
+        // empty({ html }) {
+        //   // Guard against noResults being undefined or not a function
+        //   return html`${noResults ? noResults : "No results found."}`;
+        // },
       },
     }),
     configure({ hitsPerPage: 8 }), // Assuming this is common across uses
@@ -98,7 +104,7 @@ function setupMeilisearch(noResults, indexName, containerId, resultsId) {
 export const useMeilisearch = (noResults) => {
   const search = setupMeilisearch(
     noResults,
-    import.meta.env.MEILISEARCH_INDEX_NAME,
+    import.meta.env.PUBLIC_MEILISEARCH_INDEX_NAME,
     "#searchBox",
     "#results",
   );
@@ -109,7 +115,7 @@ export const useMeilisearch = (noResults) => {
 export const useMeilisearchMain = (noResults) => {
   const searchMain = setupMeilisearch(
     noResults,
-    import.meta.env.MEILISEARCH_INDEX_NAME,
+    import.meta.env.PUBLIC_MEILISEARCH_INDEX_NAME,
     "#searchInput",
     "#hits",
   );

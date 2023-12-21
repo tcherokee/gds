@@ -13,11 +13,11 @@ steps:
         '--build-arg',
         'API_TOKEN=${_API_TOKEN}',
         '--build-arg',
-        'MEILISEARCH_HOST=${_MEILISEARCH_HOST}',
+        'PUBLIC_MEILISEARCH_HOST=${_PUBLIC_MEILISEARCH_HOST}',
         '--build-arg',
-        'MEILISEARCH_SEARCH_KEY=${_MEILISEARCH_SEARCH_KEY}',
+        'PUBLIC_MEILISEARCH_SEARCH_KEY=${_PUBLIC_MEILISEARCH_SEARCH_KEY}',
         '--build-arg',
-        'MEILISEARCH_INDEX_NAME=${_MEILISEARCH_INDEX_NAME}',
+        'PUBLIC_MEILISEARCH_INDEX_NAME=${_PUBLIC_MEILISEARCH_INDEX_NAME}',
         '--build-arg',
         'ROOT_DOMAIN=${_ROOT_DOMAIN}',
         '--build-arg',
@@ -63,11 +63,11 @@ steps:
       - '--set-env-vars'
       - 'API_TOKEN=${_API_TOKEN}'
       - '--set-env-vars'
-      - 'MEILISEARCH_HOST=${_MEILISEARCH_HOST}'
+      - 'PUBLIC_MEILISEARCH_HOST=${_PUBLIC_MEILISEARCH_HOST}'
       - '--set-env-vars'
-      - 'MEILISEARCH_SEARCH_KEY=${_MEILISEARCH_SEARCH_KEY}'
+      - 'PUBLIC_MEILISEARCH_SEARCH_KEY=${_PUBLIC_MEILISEARCH_SEARCH_KEY}'
       - '--set-env-vars'
-      - 'MEILISEARCH_INDEX_NAME=${_MEILISEARCH_INDEX_NAME}'
+      - 'PUBLIC_MEILISEARCH_INDEX_NAME=${_PUBLIC_MEILISEARCH_INDEX_NAME}'
       - '--set-env-vars'
       - 'ROOT_DOMAIN=${_ROOT_DOMAIN}'
       - '--set-env-vars'
@@ -89,9 +89,9 @@ substitutions:
   _API_URL: ''
   _SITE_ID: ''
   _API_TOKEN: ''
-  _MEILISEARCH_HOST: ''
-  _MEILISEARCH_SEARCH_KEY: ''
-  _MEILISEARCH_INDEX_NAME: ''
+  _PUBLIC_MEILISEARCH_HOST: ''
+  _PUBLIC_MEILISEARCH_SEARCH_KEY: ''
+  _PUBLIC_MEILISEARCH_INDEX_NAME: ''
   _ROOT_DOMAIN: ''
   _HOSTNAME: ''
   _FULL_URL: ''
