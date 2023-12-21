@@ -3,7 +3,7 @@
 import qs from 'qs'
 
 import type { Homepage } from "../../interfaces/homepage.ts"
-import type { Block, DynamicComponents } from "../../interfaces/common/types.ts"
+import type { Block, BlogBlockTypes, HomeGameListBlock, DynamicComponent } from "../../interfaces/common/types.ts"
 import type { Game } from "../../interfaces/games.ts"
 import type { Blog } from "../../interfaces/blog.ts"
 
@@ -21,48 +21,62 @@ const sortStore = sortOptions.get()
 
 const query = qs.stringify(homepageQs(), {encodeValuesOnly: true})
 
-const homepage: Homepage = await fetchApi({
+const homepage: Homepage = await fetchApi<Homepage>({
 	endpoint: 'homepage',
     wrappedByKey: 'data',
     query: `?${query}`
 })
 
+
+console.log('Homepage', JSON.stringify(homepage))
+
+//Type Guards for the find functions
+const isBlogBlockTypes = (block: Block): block is BlogBlockTypes => {
+	return block.__component === 'homepage.home-blog-list';
+}
+
+const isHomeGameListBlock = (block: Block): block is HomeGameListBlock => {
+	return block.__component === 'homepage.home-game-list';
+}
+
 // get the games and blog parameters from the homepage block section
-const blogBlock = homepage.attributes.blocks.find(
-	(block: Block) => block.__component === 'homepage.home-blog-list'
-	)
+const blogBlock = homepage.attributes.blocks.find(isBlogBlockTypes)
 	
-const gamesBlock = homepage.attributes.blocks.find(
-	(block: Block) => block.__component === 'homepage.home-game-list'
-)
+const gamesBlock = homepage.attributes.blocks.find(isHomeGameListBlock)
+
+console.log(blogBlock)
 
 //Get the providers in an array
-const gameProviders = gamesBlock.providers.map(item => item.slotProvider.data.attributes.slug);
+const gameProviders = gamesBlock && gamesBlock.providers.map(item => item.slotProvider.data.attributes.slug);
 
 // get the qs query for the blogs and the games
-const gamesQuery = gameProviders.map(provider => qs.stringify(gamesQs(gamesBlock.numberOfGames, sortStore[gamesBlock.sortBy], undefined, provider, undefined), {encodeValuesOnly: true}))
-const blogsQuery = qs.stringify(blogsQs(undefined, blogBlock.numberOfBlogs, "createdAt:desc"), {encodeValuesOnly: true})
+const gamesQuery = gameProviders && gameProviders.map(provider => qs.stringify(gamesQs(gamesBlock?.numberOfGames ?? 6, sortStore[gamesBlock?.sortBy ?? 'Newest'], undefined, provider, undefined), {encodeValuesOnly: true}))
+const blogsQuery = qs.stringify(blogsQs(undefined, blogBlock?.numOfBlogs ?? 6, "createdAt:desc"), {encodeValuesOnly: true})
 
 const fetchHomepageBlogs: Promise<Blog[]> = fetchApi({
     endpoint: 'blogs',
     wrappedByKey: 'data',
     query: `?${blogsQuery}`
-});
+}).then(response => response as unknown as Blog[]);
 
-const fetchHomepageGames: Promise<Game[][]> = Promise.all(gamesQuery.map(query => {
-    return fetchApi({
-        endpoint: 'games',
-        wrappedByKey: 'data',
-        query: `?${query}`
-    });
-}));
+let fetchHomepageGames: Promise<Game[][]> = Promise.resolve([]);
+
+if (gamesQuery) {
+    fetchHomepageGames = Promise.all(gamesQuery.map((query: string) => {
+        return fetchApi<Game[]>({
+            endpoint: 'games',
+            wrappedByKey: 'data',
+            query: `?${query}`
+        });
+    }));
+} else {
+    console.error("No Query was submitted")
+}
 
 const [homepageBlogs, homepageGames] = await Promise.all([fetchHomepageBlogs, fetchHomepageGames]);
 
-console.log(JSON.stringify(homepageBlogs))
-
 // combining games array
-const combinedGamesArray: Game[] = homepageGames.flat()
+const combinedGamesArray: Game[] = (homepageGames as Game[][]).flat()
 
 const dynamicComponents: DynamicComponent[] = homepage.attributes.blocks.map((block: Block): DynamicComponent | undefined => {
 	switch (block.__component) {

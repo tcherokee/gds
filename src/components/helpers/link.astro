@@ -1,6 +1,6 @@
 ---
 import Image from "../helpers/images.astro";
-import { SVG } from "splendid-ui/svelte";
+import { Icon } from 'astro-icon'
 import type { ComponentLink } from "../../../interfaces/common/types.ts"
 
 const {
@@ -17,7 +17,7 @@ const {
 <a href={href} class:list={["link", classes, { filled: isFilled }]} {...rest}>
   {
     icon && icon.side === "left" && (
-      <SVG icon={icon.name} height={icon.height} />
+      <Icon name={icon.name} height={icon.height} />
     )
   }
   {
@@ -36,7 +36,7 @@ const {
   {text}
   {
     icon && icon.side === "right" && (
-      <SVG icon={icon.name} height={icon.height} />
+      <Icon name={icon.name} height={icon.height} />
     )
   }
 </a>

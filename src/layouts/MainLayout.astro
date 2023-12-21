@@ -6,9 +6,9 @@ import fetchApi from "../../lib/strapi";
 
 import "../styles/app.postcss";
 
-import type { Layout } from "../../interfaces/layout";
-import type { Menu, processedMenus} from "../../interfaces/menu.ts";
-import type { Translation } from "../../interfaces/translation.ts"
+import type { LayoutData } from "../../interfaces/layout";
+import type { NavigationItem, ProcessedMenus} from "../../interfaces/menu.ts";
+import type { TranslationDataItem, TranslationItem } from "../../interfaces/translation.ts"
 
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
@@ -23,9 +23,9 @@ const queries = {
 
 // Set the types in an array for use in the promise all
 type EndpointTypes = {
-  layout: Layout;
-  menus: Menu;
-  translation: Translation;
+  layout: LayoutData;
+  menus: NavigationItem[];
+  translation: TranslationDataItem;
 };
 
 type Endpoint = keyof EndpointTypes;
@@ -44,12 +44,62 @@ const responses = await Promise.all(
   ),
 );
 
-const layout = responses[0] as Layout;
-const menu = responses[1] as Menu;
-const translation = responses[2] as Translation;
+// Type guard functions to check the types at runtime
+const isLayoutData = (data: any): data is LayoutData => {
+    return data !== null &&
+    typeof data === 'object' &&
+    typeof data.id === 'number' &&
+    data.attributes !== undefined &&
+    typeof data.attributes.legalText === 'string' &&
+    typeof data.attributes.footerContent === 'string';
+}
+
+const isNavigationItemArray = (data: any): data is NavigationItem[] => {
+    const isImageData = (imgData: any): imgData is ImageData => 
+        imgData && typeof imgData.id === 'number' && imgData.attributes && typeof imgData.attributes.url === 'string';
+
+    const isMenuItem = (item: any): item is NavigationItem => 
+        item && typeof item.id === 'number' && item.attributes 
+        && typeof item.attributes.title === 'string' 
+        && (!item.attributes.images || (item.attributes.images.data === null || isImageData(item.attributes.images.data)))
+        && Array.isArray(item.attributes.children.data) 
+        && item.attributes.children.data.every(isMenuItem);
+
+    return Array.isArray(data) && data.every(menuItem => 
+        menuItem && typeof menuItem.id === 'number' && menuItem.attributes 
+        && typeof menuItem.attributes.title === 'string' 
+        && Array.isArray(menuItem.attributes.items.data) 
+        && menuItem.attributes.items.data.every(isMenuItem));
+}
+
+const isTranslationDataItem = (data: any): data is TranslationDataItem => {
+    return data !== null &&
+    typeof data === 'object' &&
+    typeof data.id === 'number' &&
+    data.attributes !== undefined &&
+    typeof data.attributes.createdAt === 'string' &&
+    typeof data.attributes.updatedAt === 'string' &&
+    typeof data.attributes.publishedAt === 'string' &&
+    Array.isArray(data.attributes.translation) &&
+    data.attributes.translation.every((item: TranslationItem) => 
+      typeof item.id === 'number' &&
+      typeof item.key === 'string' &&
+      typeof item.value === 'string'
+    );
+}
+
+console.log('responses[]', responses[2])
+
+// Using type guards to safely cast the types
+const layout = isLayoutData(responses[0]) ? responses[0] : console.error("Invalid layout data");
+const menu = isNavigationItemArray(responses[1]) ? responses[1] : console.error("Invalid menu data");
+const translation = isTranslationDataItem(responses[2]) ? responses[2] : console.error("Invalid translation data");
+
+console.log('trans', translation)
+
 
 // Process menu data
-const processedMenus: ProcessedMenus = menu.reduce((acc: ProcessedMenus, menu: Menu) => {
+const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: ProcessedMenus, menu: NavigationItem) => {
   const title = menu.attributes.title;
   const items = menu.attributes.items.data;
   if (
@@ -78,7 +128,7 @@ const processedMenus: ProcessedMenus = menu.reduce((acc: ProcessedMenus, menu: M
   <body class="preload">
     <Translations translations={translation} />
     <main>
-      <Legal legalText={layout?.attributes?.legalText} />
+      {layout?.attributes?.legalText && <Legal legalText={layout?.attributes?.legalText} />}
       <header class="bg-navbar-bkg">
         <Header
           mainNavigation={processedMenus?.mainnavigation}

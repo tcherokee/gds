@@ -42,7 +42,7 @@ type NavigationItemAttributes = {
   };
 };
 
-type NavigationItem = {
+export type NavigationItem = {
   id: number;
   attributes: NavigationItemAttributes;
 };

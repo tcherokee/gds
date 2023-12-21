@@ -1,10 +1,9 @@
----
+<!-- ---
+
 const { author } = Astro.props;
 import TransformImage from "./images.astro";
 import Link from "./link.astro";
 
-const lcFirstName = author?.data?.attributes?.firstName?.toLowerCase();
-const lcLastName = author?.data?.attributes?.lastName?.toLowerCase();
 ---
 
 <div
@@ -14,7 +13,7 @@ const lcLastName = author?.data?.attributes?.lastName?.toLowerCase();
   <span class="block">Scritto da</span>
 
   <Link
-    href="{urlTranslate[PUBLIC_SITE_ID]['author-page']}/{lcFirstName}.{lcLastName}"
+    href="/{author?.data?.attributes?.firstName?.toLowerCase()}.{author?.data?.attributes?.lastName?.toLowerCase()}"
   >
     <div class="flex gap-2 items-center hover:underline">
       <div class="w-[20px] h-[20px] border border-white rounded-full">
@@ -34,4 +33,4 @@ const lcLastName = author?.data?.attributes?.lastName?.toLowerCase();
       </div>
     </div>
   </Link>
-</div>
+</div> -->

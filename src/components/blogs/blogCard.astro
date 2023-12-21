@@ -1,9 +1,11 @@
 ---
 
 import dayjs from 'dayjs'
-import { SVG } from "splendid-ui/svelte";
+import { Icon } from 'astro-icon'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import 'dayjs/locale/it'
+
+import type { Blog } from "../../../interfaces/blog.ts"
 
 import Image from "../helpers/images.astro"
 import Link from "../helpers/link.astro"
@@ -15,7 +17,7 @@ const { data } = Astro.props
 
 ---
 {
-	data.map(blog => (
+	data.map((blog: Blog) => (
 		<div class="blog-card p-0">
 			<figure>
 				<div class="blog-date">
@@ -25,7 +27,7 @@ const { data } = Astro.props
 				<Image
 					classes="blog-image"
 					src ={blog?.attributes?.images?.data?.attributes?.url}
-					imageAlt={blog?.attributes?.title}
+					alt={blog?.attributes?.title}
 					imageWidth={430}
 					imageHeight={380}
 				/>
@@ -36,7 +38,7 @@ const { data } = Astro.props
 				</h4>
 				<p>{blog?.attributes?.content1}</p>
 				<div class="blog-meta flex items-center">
-					<div class="author-icon"><SVG icon="user-fill" height="20px" /></div>
+					<div class="author-icon"><Icon name="user-fill" height="20px" /></div>
 					<div class="author-title px-1">Scritto da:</div>
 					<div class="author-name">
 						<Link href=`${blog?.attributes?.author?.data?.attributes?.firstName.toLowerCase()}.${blog?.attributes?.author?.data?.attributes?.lastName.toLowerCase()}` text=`${blog?.attributes?.author?.data?.attributes?.firstName} ${blog?.attributes?.author?.data?.attributes?.lastName}` />

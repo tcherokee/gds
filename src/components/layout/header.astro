@@ -1,15 +1,15 @@
 ---
 import { Image } from "astro:assets";
-import { SVG } from "splendid-ui/svelte";
+import { Icon } from 'astro-icon'
 import Search from "../helpers/search.astro";
-import Navigation from "../navigation/Navigation.svelte";
+import Navigation from "../navigation/navigation.svelte";
 
 //variable for toggling favourites
-let toggleFavourite = false;
+// let toggleFavourite = false;
 
-const handleFaveToggle = () => {
-  toggleFavourite = !toggleFavourite;
-};
+// const handleFaveToggle = () => {
+//   toggleFavourite = !toggleFavourite;
+// };
 
 const { mainNavigation, logo } = Astro.props;
 ---
@@ -26,12 +26,14 @@ const { mainNavigation, logo } = Astro.props;
       <Image src={logo} height="50" width="120" alt="logo" />
     </a>
   </div>
-  <Navigation mainNavigation={mainNavigation} client:load />
+  <Navigation mainNavigation={mainNavigation} client:load >
+    <Icon name="angle" class="h-5 w-5 flex-none text-gray-400 fill-navbar-text rotate-180 group-hover:rotate-0" />
+  </Navigation>
   <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
     <div class="favourites flex pointer pl-5 pr-2 mr-2">
       <button>
-        <SVG
-          icon="heart"
+        <Icon
+          name="heart"
           height="35px"
           width="35px"
           class="fill-unfilled-favs"
@@ -39,7 +41,7 @@ const { mainNavigation, logo } = Astro.props;
       </button>
     </div>
     <button class="mr-1">
-      <SVG icon="sign-in" height="35px" width="35px" class="fill-sign-in" />
+      <Icon name="sign-in" height="35px" width="35px" class="fill-sign-in" />
     </button>
     <Search />
   </div>

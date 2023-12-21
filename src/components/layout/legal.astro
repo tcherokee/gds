@@ -1,5 +1,5 @@
 ---
-import { SVG } from "splendid-ui/svelte";
+import { Icon } from 'astro-icon'
 
 interface Props {
   legalText: string;
@@ -13,8 +13,8 @@ const { legalText } = Astro.props;
     class="xl:container flex items-center justify-end text-legal-text h-[35px] py-[5px] text-[10px] p-2"
   >
     {legalText}
-    <SVG height="25px" icon="logo-timone" class="inline-block m-[2px]" />
-    <SVG height="25px" icon="logo-adm" class="inline-block m-[2px]" />
-    <SVG height="25px" icon="plus-18" class="inline-block m-[2px]" />
+    <Icon height="25px" name="logo-timone" class="inline-block m-[2px]" />
+    <Icon height="25px" name="logo-adm" class="inline-block m-[2px]" />
+    <Icon height="25px" name="plus-18" class="inline-block m-[2px]" />
   </div>
 </div>

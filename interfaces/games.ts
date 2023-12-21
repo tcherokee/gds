@@ -1,4 +1,4 @@
-import type { ImageData, Provider, Category } from "./common/types";
+import type { ImageData, ProviderData, Category } from "./common/types";
 
 export type Game = {
   id: number;
@@ -14,9 +14,7 @@ type GameAttributes = {
   images: {
     data: ImageData;
   };
-  provider: {
-    data: Provider;
-  };
+  provider: ProviderData;
   categories: {
     data: Category[];
   };

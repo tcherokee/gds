@@ -1,14 +1,14 @@
 import type { ApiResponse, FetchApiParams } from "../interfaces/common/types";
 
-export default async function fetchApi<T = any>({
+const fetchApi = async <T>({
   endpoint,
   query,
   wrappedByKey,
   wrappedByList,
-}: FetchApiParams): Promise<ApiResponse<T>> {
-  if (endpoint.startsWith("/")) {
-    endpoint = endpoint.slice(1);
-  }
+}: FetchApiParams): Promise<ApiResponse<T>> => {
+  let modifiedEndpoint = endpoint.startsWith("/")
+    ? endpoint.slice(1)
+    : endpoint;
 
   const opts = {
     headers: {
@@ -18,8 +18,9 @@ export default async function fetchApi<T = any>({
     },
   };
 
-  const url = new URL(`${import.meta.env.API_URL}/api/${endpoint}${query}`);
-
+  const url = new URL(
+    `${import.meta.env.API_URL}/api/${modifiedEndpoint}${query}`
+  );
   const res = await fetch(url.toString(), opts);
   let data = await res.json();
 
@@ -32,4 +33,6 @@ export default async function fetchApi<T = any>({
   }
 
   return data;
-}
+};
+
+export default fetchApi;

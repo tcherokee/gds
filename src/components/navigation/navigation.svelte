@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { SVG } from 'splendid-ui/svelte'
     import MediaQuery from "../helpers/mediaQuery.svelte"
 
     import type { MenuItem } from "../../../interfaces/menu.ts"
@@ -118,7 +117,7 @@
                             aria-expanded="false"
                         >
                             {nav?.attributes?.title}
-                            <SVG icon="angle" class="h-5 w-5 flex-none text-gray-400 fill-navbar-text rotate-180 group-hover:rotate-0" />
+                            <slot/>
                         </button>
                     {:else} 
                         <a href={nav?.attributes?.url} class="group flex w-full items-center uppercase rounded-md p-3 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg">

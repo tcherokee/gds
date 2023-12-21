@@ -1,9 +1,9 @@
 export type Translation = {
-  data: DataItem;
+  data: TranslationDataItem;
   meta: Record<string, unknown>;
 };
 
-type TranslationItem = {
+export type TranslationItem = {
   id: number;
   key: string;
   value: string;
@@ -16,7 +16,7 @@ type Attributes = {
   translation: TranslationItem[];
 };
 
-type DataItem = {
+export type TranslationDataItem = {
   id: number;
   attributes: Attributes;
 };

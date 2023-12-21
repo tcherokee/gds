@@ -8,7 +8,7 @@ export type Layout = {
   meta: any;
 };
 
-type FooterImage = {
+export type FooterImage = {
   id: number;
   imageName: string;
   imageLink?: string;
@@ -54,7 +54,7 @@ type LayoutAttributes = {
   };
 };
 
-type LayoutData = {
+export type LayoutData = {
   id: number;
   attributes: LayoutAttributes;
 };

@@ -1,13 +1,16 @@
 ---
 
+import type { Blog } from "../../../interfaces/blog.ts"
 import Link from "../helpers/link.astro"
 import BlogCard from "../blogs/blogCard.astro"
 
 const { data, blogLink, blogText } = Astro.props
 
-console.log('data', data)
+// Ensure that blogLink and blogText are strings
+const blogLinkString: string = blogLink;
+const blogTextString: string = blogText;
 
-const truncateAndCleanContent = (blogData) => {
+const truncateAndCleanContent = (blogData: Blog[]): Blog[] => {
     return blogData.map(item => {
         if (item.attributes && item.attributes.content1) {
             // Remove HTML tags
@@ -30,7 +33,7 @@ const truncateAndCleanContent = (blogData) => {
     });
 }
 
-const truncatedData = truncateAndCleanContent(data)
+const truncatedData = truncateAndCleanContent(data as Blog[])
 
 ---
 
@@ -39,9 +42,9 @@ const truncatedData = truncateAndCleanContent(data)
 		<div class="grid grid-cols-1 md:grid-cols-3">
 			<BlogCard data={truncatedData} />
 		</div>
-		<!-- <div class="grid gap-2 justify-center mt-3">
-			<Link href={link.url} class="btn btn-secondary blog-btn" text={link.label} />
-		</div> -->
+		<div class="grid gap-2 justify-center mt-3">
+			<Link href={blogLinkString} class="btn btn-secondary blog-btn" text={blogTextString} />
+		</div>
 	</div>
 </div>
 

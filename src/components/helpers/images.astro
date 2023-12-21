@@ -17,11 +17,12 @@ let fitin: boolean = false;
 let resizedWidth: number | undefined;
 let resizedHeight: number | undefined;
 let transformed: string;
-let lowres: string;
+// let lowres: string;
 
 // Calculate resized dimensions
 if (originalWidth > 0 && imageHeight > 0) {
   resizedWidth = Math.round((originalWidth / originalHeight) * imageHeight);
+  console.log('images', originalWidth, originalHeight, resizedWidth)
 }
 if (originalHeight > 0 && imageWidth > 0) {
   resizedHeight = Math.round((originalHeight / originalWidth) * imageWidth);
@@ -38,10 +39,10 @@ if (src) {
   const filters: string = `${imageWidth}x${imageHeight}/filters${watermark}${quality}`;
 
   transformed = `${pathPrefix}/${filters}${basePath}`;
-  lowres = `${pathPrefix}/${filters}:quality(1)${basePath}`;
+  // lowres = `${pathPrefix}/${filters}:quality(1)${basePath}`;
 } else {
   transformed = "";
-  lowres = "";
+  // lowres = "";
 }
 ---
 
