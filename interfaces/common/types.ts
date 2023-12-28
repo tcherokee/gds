@@ -48,10 +48,8 @@ export type BlockBase = IDAttribute & {
 
 export type ProviderAttribute = {
   title: string;
-  slug: string;
-  images: {
-    data: ImageInfo;
-  };
+  slug?: string;
+  images: ImageInfo;
 };
 
 export type ProviderData = {
@@ -94,16 +92,16 @@ export type CasinoAttributes = {
   ratingAvg: number;
   ratingCount: number;
   publishedAt: string;
-  Badges: null; // Assuming this is correct based on your JSON data.
-  images: {
-    data: ImageInfo;
-  };
+  Badges?: string | null;
+  images: ImageInfo;
   providers: {
     data: ProviderData[];
   };
   bonusSection: BonusSection;
   casinoBonus: CasinoBonus;
   termsAndConditions: TermsAndConditions;
+  noDepositSection?: BonusSection;
+  freeSpinsSection?: BonusSection;
 };
 
 export type CasinoData = {
@@ -242,7 +240,8 @@ export type Casino = {
 
 // Components
 export type ComponentLink = {
-  text: string;
+  text?: string;
+  html?: HTMLElement;
   href: string;
   image?: {
     src: string;

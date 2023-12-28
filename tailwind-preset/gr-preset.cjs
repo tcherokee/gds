@@ -45,10 +45,14 @@ const COLORS = {
     900: "#1B0B23",
   },
   accent: {
+    1: "#ffd976",
+    50: "#ffbb38",
     100: "#FF92BD",
     300: "#D33372",
     500: "#FFE49E",
     700: "#FEB800",
+    800: "#de7d45",
+    900: "#9b4e22",
   },
 };
 module.exports = {
@@ -98,10 +102,14 @@ module.exports = {
         900: COLORS.background[900],
       },
       accent: {
+        1: COLORS.accent[1],
+        50: COLORS.accent[50],
         100: COLORS.accent[100],
         300: COLORS.accent[300],
         500: COLORS.accent[500],
         700: COLORS.accent[700],
+        800: COLORS.accent[800],
+        900: COLORS.accent[900],
       },
       "body-bg": COLORS.bodybg,
       "body-text": COLORS.bodyText,
@@ -205,10 +213,17 @@ module.exports = {
       "blog-content-header-anchor": COLORS.primary,
 
       // Casino Table
+      "gold-tag-t-gradient": COLORS.accent[1],
+      "gold-tag-b-gradient": COLORS.accent[50],
+      "silver-tag-t-gradient": COLORS.grey[100],
+      "silver-tag-b-gradient": COLORS.grey[300],
+      "bronze-tag-t-gradient": COLORS.accent[800],
+      "bronze-tag-b-gradient": COLORS.accent[900],
       "casino-table-header-bkg": COLORS.purple[900],
       "casino-table-header-text": COLORS.white,
       "casino-table-text": COLORS.blue[900],
       "casino-table-row-bkg": COLORS.white,
+      "no-deposit-gradient": COLORS.blue[100],
 
       // Providers
       "providers-img-border": "",

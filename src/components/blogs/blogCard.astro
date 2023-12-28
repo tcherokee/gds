@@ -38,7 +38,7 @@ const { data } = Astro.props
 				</h4>
 				<p>{blog?.attributes?.content1}</p>
 				<div class="blog-meta flex items-center">
-					<div class="author-icon"><Icon name="user-fill" height="20px" /></div>
+					<div class="author-icon"><Icon name="user-fill" height="16px" class="fill-body-text" /></div>
 					<div class="author-title px-1">Scritto da:</div>
 					<div class="author-name">
 						<Link href=`${blog?.attributes?.author?.data?.attributes?.firstName.toLowerCase()}.${blog?.attributes?.author?.data?.attributes?.lastName.toLowerCase()}` text=`${blog?.attributes?.author?.data?.attributes?.firstName} ${blog?.attributes?.author?.data?.attributes?.lastName}` />

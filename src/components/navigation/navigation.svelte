@@ -45,7 +45,7 @@
                                                     on:click={uncheckInput}
                                                 >
                                                     <span class="sr-only">Close panel</span>
-                                                    <SVG icon="xmark" class="h-6 w-6 fill-white" />
+                                                    <slot name="menu-xmark"/>
                                                 </button>
                                             </div>
                                         </div>
@@ -63,13 +63,14 @@
                                                                 aria-expanded="false"
                                                             >
                                                                 <span class="flex-1">{nav?.attributes?.title}</span>
-                                                                <svg
+                                                                <slot name="menu-dropdown"/>
+                                                                <!-- <svg
                                                                     class="text-navbar-text ml-3 h-5 w-5 flex-shrink-0 transform transition-colors duration-150 ease-in-out group-hover:text-gray-400 group-hover/subnav:text-gray-400 group-hover/subnav:rotate-90"
                                                                     viewBox="0 0 20 20"
                                                                     aria-hidden="true"
                                                                 >
                                                                     <path d="M6 6L14 10L6 14V6Z" fill="currentColor" />
-                                                                </svg>
+                                                                </svg> -->
                                                             </button>
                                                             <div
                                                                 class="!mt-0 bg-nav-hover-bkg hidden rounded-b group-hover/subnav:block"
@@ -117,7 +118,7 @@
                             aria-expanded="false"
                         >
                             {nav?.attributes?.title}
-                            <slot/>
+                            <slot name="menu-dropdown"/>
                         </button>
                     {:else} 
                         <a href={nav?.attributes?.url} class="group flex w-full items-center uppercase rounded-md p-3 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg">

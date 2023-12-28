@@ -1,4 +1,4 @@
-import type { Seo, Block } from "./common/types";
+import type { Seo, Block, Blo } from "./common/types";
 
 export type Homepage = {
   id: number;

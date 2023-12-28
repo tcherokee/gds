@@ -20,7 +20,8 @@ const { mainNavigation, logo } = Astro.props;
     </a>
   </div>
   <Navigation mainNavigation={mainNavigation} client:load >
-    <Icon name="angle" class="h-5 w-5 flex-none text-gray-400 fill-navbar-text rotate-180 group-hover:rotate-0" />
+    <Icon slot="menu-dropdown" name="angle" class="h-5 w-5 flex-none text-gray-400 fill-navbar-text rotate-180 group-hover:rotate-0" />
+    <Icon slot="menu-xmark" name="xmark" class="h-6 w-6 fill-white" />
   </Navigation>
   <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
     <div class="favourites flex pointer pl-5 pr-2 mr-2">

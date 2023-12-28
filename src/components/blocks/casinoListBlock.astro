@@ -1,7 +1,8 @@
-<!-- ---
+---
 
+import CasinoTable from "../casino/casinoTable.astro"
 const { data } = Astro.props
 
-console.log(data)
+---
 
---- -->
+<CasinoTable casinos={data.casinos.data} />

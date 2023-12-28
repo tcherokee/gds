@@ -10,6 +10,7 @@ const {
   icon,
   isFilled = true,
   classes,
+  html,
   ...rest
 } = Astro.props as ComponentLink;
 ---
@@ -34,6 +35,7 @@ const {
     )
   }
   {text}
+  <Fragment set:html={html} />
   {
     icon && icon.side === "right" && (
       <Icon name={icon.name} height={icon.height} />

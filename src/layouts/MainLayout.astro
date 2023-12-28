@@ -1,5 +1,6 @@
 ---
 import qs from "qs";
+import { Tooltips } from 'astro-tooltips'
 import { layoutQs, menuQs, translationsQs } from "../../qs/layout.ts"
 
 import fetchApi from "../../lib/strapi";
@@ -119,6 +120,7 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>title</title>
+    <Tooltips />
   </head>
   <body class="preload">
     <Translations translations={translation} />
