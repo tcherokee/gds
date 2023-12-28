@@ -1,5 +1,6 @@
 <script lang="ts">
     import MediaQuery from "../helpers/mediaQuery.svelte"
+    import Search from "../helpers/search.svelte"
 
     import type { MenuItem } from "../../../interfaces/menu.ts"
 
@@ -8,6 +9,8 @@
     const uncheckInput = () => {
         mobileChecked = false
     }
+
+    let user: boolean = false
 
     export let mainNavigation: MenuItem[]
 </script>
@@ -20,6 +23,14 @@
                 <span />
             </label>
         </div>
+
+        <a href="/authentication/login" class="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t">
+            {#if user}
+                <slot name="user-signed-in" />
+            {:else}
+                <slot name="user-signed-out" />
+            {/if}
+        </a>
 
         <div
             class="invisible relative z-40 delay-500 open:delay-[0ms] open:visible"
@@ -103,6 +114,15 @@
                     </div>
                 </div>
         </div>
+
+        <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
+            <div class="favourites flex pointer pl-5 pr-2 mr-2">
+                <button>
+                    <slot name="menu-favs" />
+                </button>
+            </div>
+            <Search  />
+        </div>
     {/if}
 </MediaQuery>
 
@@ -145,6 +165,22 @@
                     {/if}
                 </div>
             {/each}
+        </div>
+
+        <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
+            <div class="favourites flex pointer pl-5 pr-2 mr-2">
+                <button>
+                    <slot name="menu-favs" />
+                </button>
+            </div>
+            <a href="/authentication/login" class="pt-2 mt-1 px-2 pb-3 rounded-t">
+                {#if user}
+                    <slot name="user-signed-in" />
+                {:else}
+                    <slot name="user-signed-out" />
+                {/if}
+            </a>
+            <Search  />
         </div>
     {/if}
 </MediaQuery>

@@ -2,10 +2,9 @@ import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import * as dotenv from "dotenv";
 import svelte from "@astrojs/svelte";
+import node from "@astrojs/node";
 
 dotenv.config();
-
-import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({

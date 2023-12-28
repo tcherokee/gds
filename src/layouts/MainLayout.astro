@@ -122,7 +122,7 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
     <title>title</title>
     <Tooltips />
   </head>
-  <body class="preload">
+  <body>
     <Translations translations={translation} />
     <main>
       {layout?.attributes?.legalText && <Legal legalText={layout?.attributes?.legalText} />}
@@ -142,11 +142,3 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
     />
   </body>
 </html>
-
-<style lang="postcss" is:global>
-	.preload {
-		animation: none !important;
-		animation-duration: 0s !important;
-		transition: none !important;
-	}
-</style>

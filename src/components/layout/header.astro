@@ -3,8 +3,10 @@ import { Image } from "astro:assets";
 import { Icon } from 'astro-icon'
 import Search from "../helpers/search.svelte";
 import Navigation from "../navigation/navigation.svelte";
+import User from "../navigation/user.svelte";
 
 const { mainNavigation, logo } = Astro.props;
+
 ---
 
 <nav
@@ -22,21 +24,9 @@ const { mainNavigation, logo } = Astro.props;
   <Navigation mainNavigation={mainNavigation} client:load >
     <Icon slot="menu-dropdown" name="angle" class="h-5 w-5 flex-none text-gray-400 fill-navbar-text rotate-180 group-hover:rotate-0" />
     <Icon slot="menu-xmark" name="xmark" class="h-6 w-6 fill-white" />
+    <Icon slot="menu-user" name="user-signed-out" height="32px" width="32px" class="fill-sign-in ml-16" />
+    <Icon slot="menu-favs" name="heart" height="35px" width="35px" class="fill-unfilled-favs" />
+    <Icon slot="user-signed-in" name="user-signed-in" height="32px" width="32px" class="fill-sign-in" />
+    <Icon slot="user-signed-out" name="user-signed-out" height="32px" width="32px" class="fill-sign-in" />
   </Navigation>
-  <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
-    <div class="favourites flex pointer pl-5 pr-2 mr-2">
-      <button>
-        <Icon
-          name="heart"
-          height="35px"
-          width="35px"
-          class="fill-unfilled-favs"
-        />
-      </button>
-    </div>
-    <button class="mr-1">
-      <Icon name="sign-in" height="35px" width="35px" class="fill-sign-in" />
-    </button>
-    <Search client:load />
-  </div>
 </nav>
