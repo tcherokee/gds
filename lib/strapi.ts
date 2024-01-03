@@ -21,6 +21,8 @@ const fetchApi = async <T>({
   const url = new URL(
     `${import.meta.env.API_URL}/api/${modifiedEndpoint}${query}`
   );
+
+  console.log('url', url)
   const res = await fetch(url.toString(), opts);
   let data = await res.json();
 

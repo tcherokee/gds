@@ -1,5 +1,8 @@
 ---
-import { Icon } from 'astro-icon'
+// Import Images
+import Plus18 from '~icons/kensho-icons/plus-18'
+import LogoADM from "~icons/kensho-icons/logo-adm"
+import LogoTimone from "~icons/kensho-icons/logo-timone"
 
 interface Props {
   legalText: string;
@@ -13,8 +16,8 @@ const { legalText } = Astro.props;
     class="xl:container flex items-center justify-end text-legal-text h-[35px] py-[5px] text-[10px] p-2"
   >
     {legalText}
-    <Icon height="25px" name="logo-timone" class="inline-block m-[2px]" />
-    <Icon height="25px" name="logo-adm" class="inline-block m-[2px]" />
-    <Icon height="25px" name="plus-18" class="inline-block m-[2px]" />
+    <LogoTimone height="25px" width="40px" class="inline-block m-[2px]" />
+    <LogoADM height="25px" width="60px" class="inline-block m-[2px]" />
+    <Plus18 height="25px" width="25px" class="inline-block m-[2px]"/>
   </div>
 </div>

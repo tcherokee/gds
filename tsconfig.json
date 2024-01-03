@@ -1,6 +1,6 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "types": ["qs"]
+    "types": ["qs", "unplugin-icons/types/svelte", "unplugin-icons/types/astro"]
   }
 }

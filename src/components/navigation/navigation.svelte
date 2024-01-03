@@ -1,7 +1,15 @@
 <script lang="ts">
     import MediaQuery from "../helpers/mediaQuery.svelte"
     import Search from "../helpers/search.svelte"
+    import Favourite from "../helpers/favourite.svelte"
 
+    // Images
+    import Xmark from "~icons/kensho-icons/xmark"
+    import Angle from "~icons/kensho-icons/angle"
+    import UserSignedIn from "~icons/kensho-icons/user-signed-in"
+    import UserSignedOut from "~icons/kensho-icons/user-signed-out"
+
+    //Types
     import type { MenuItem } from "../../../interfaces/menu.ts"
 
     let mobileChecked = false
@@ -26,9 +34,9 @@
 
         <a href="/authentication/login" class="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t">
             {#if user}
-                <slot name="user-signed-in" />
+                <UserSignedIn height="32px" width="32px" class="fill-sign-in"/>
             {:else}
-                <slot name="user-signed-out" />
+                <UserSignedOut height="32px" width="32px" class="fill-sign-in"/>
             {/if}
         </a>
 
@@ -56,7 +64,7 @@
                                                     on:click={uncheckInput}
                                                 >
                                                     <span class="sr-only">Close panel</span>
-                                                    <slot name="menu-xmark"/>
+                                                    <Xmark height="24px" width="24px" />
                                                 </button>
                                             </div>
                                         </div>
@@ -66,7 +74,7 @@
                                             <nav class="flex-1 space-y-1 bg-navbar-bkg px-2" aria-label="Sidebar">
                                                 {#each mainNavigation as nav}
                                                     {#if nav?.attributes?.children?.data?.length > 0}
-                                                        <div class="space-y-1 group/subnav">
+                                                        <div class="space-y-1 group">
                                                             <button
                                                                 type="button"
                                                                 class="bg-navbar-bkg text-navbar-text hover:bg-nav-hover-bkg w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-t focus:bg-nav-hover-bkg focus:outline-none"
@@ -74,17 +82,10 @@
                                                                 aria-expanded="false"
                                                             >
                                                                 <span class="flex-1">{nav?.attributes?.title}</span>
-                                                                <slot name="menu-dropdown"/>
-                                                                <!-- <svg
-                                                                    class="text-navbar-text ml-3 h-5 w-5 flex-shrink-0 transform transition-colors duration-150 ease-in-out group-hover:text-gray-400 group-hover/subnav:text-gray-400 group-hover/subnav:rotate-90"
-                                                                    viewBox="0 0 20 20"
-                                                                    aria-hidden="true"
-                                                                >
-                                                                    <path d="M6 6L14 10L6 14V6Z" fill="currentColor" />
-                                                                </svg> -->
+                                                                <Angle class="h-5 w-5 flex-none text-gray-400 fill-navbar-text rotate-180 group-hover:rotate-0"/>
                                                             </button>
                                                             <div
-                                                                class="!mt-0 bg-nav-hover-bkg hidden rounded-b group-hover/subnav:block"
+                                                                class="!mt-0 bg-nav-hover-bkg hidden rounded-b group-hover:block"
                                                                 id="sub-menu-{nav?.id}"
                                                             >
                                                                 {#each nav?.attributes?.children?.data as child}
@@ -116,11 +117,7 @@
         </div>
 
         <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
-            <div class="favourites flex pointer pl-5 pr-2 mr-2">
-                <button>
-                    <slot name="menu-favs" />
-                </button>
-            </div>
+            <Favourite />
             <Search  />
         </div>
     {/if}
@@ -138,7 +135,7 @@
                             aria-expanded="false"
                         >
                             {nav?.attributes?.title}
-                            <slot name="menu-dropdown"/>
+                            <Angle class="h-5 w-5 flex-none text-gray-400 fill-navbar-text rotate-180 group-hover:rotate-0"/>
                         </button>
                     {:else} 
                         <a href={nav?.attributes?.url} class="group flex w-full items-center uppercase rounded-md p-3 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg">
@@ -168,16 +165,12 @@
         </div>
 
         <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
-            <div class="favourites flex pointer pl-5 pr-2 mr-2">
-                <button>
-                    <slot name="menu-favs" />
-                </button>
-            </div>
+            <Favourite />
             <a href="/authentication/login" class="pt-2 mt-1 px-2 pb-3 rounded-t">
                 {#if user}
-                    <slot name="user-signed-in" />
+                    <UserSignedIn height="32px" width="32px" class="fill-sign-in"/>
                 {:else}
-                    <slot name="user-signed-out" />
+                    <UserSignedOut height="32px" width="32px" class="fill-sign-in"/>
                 {/if}
             </a>
             <Search  />

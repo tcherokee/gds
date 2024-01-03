@@ -1,11 +1,12 @@
 ---
 
 import dayjs from 'dayjs'
-import { Icon } from 'astro-icon'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import 'dayjs/locale/it'
 
 import type { Blog } from "../../../interfaces/blog.ts"
+
+import UserFill from "~icons/kensho-icons/user-fill"
 
 import Image from "../helpers/images.astro"
 import Link from "../helpers/link.astro"
@@ -38,7 +39,9 @@ const { data } = Astro.props
 				</h4>
 				<p>{blog?.attributes?.content1}</p>
 				<div class="blog-meta flex items-center">
-					<div class="author-icon"><Icon name="user-fill" height="16px" class="fill-body-text" /></div>
+					<div class="author-icon">
+						<UserFill height="16px" width="14px" class="fill-body-text" />
+					</div>
 					<div class="author-title px-1">Scritto da:</div>
 					<div class="author-name">
 						<Link href=`${blog?.attributes?.author?.data?.attributes?.firstName.toLowerCase()}.${blog?.attributes?.author?.data?.attributes?.lastName.toLowerCase()}` text=`${blog?.attributes?.author?.data?.attributes?.firstName} ${blog?.attributes?.author?.data?.attributes?.lastName}` />

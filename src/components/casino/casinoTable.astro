@@ -1,7 +1,6 @@
 ---
 
 import dayjs from 'dayjs'
-import Icon from 'astro-icon'
 import type { CasinoData } from "../../../interfaces/common/types"
 import type { TranslationData } from "../../../interfaces/common/types.ts"
 import { getTranslations } from "../../../stores/addTranslations.ts"
@@ -9,6 +8,11 @@ import { getTranslations } from "../../../stores/addTranslations.ts"
 // Components
 import Link from "../helpers/link.astro"
 import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
+
+//Images
+import ArrowRight from "~icons/kensho-icons/arrow-right"
+import CircleInfo from "~icons/kensho-icons/circle-info"
+import Angle from "~icons/kensho-icons/angle"
 
 const translationStore: TranslationData = getTranslations.get()
 
@@ -36,8 +40,6 @@ const welcomeBonus = (casino: CasinoData) => {
 }
 
 const noDepositBonus = (casino: CasinoData) => {
-
-    console.log('casino', casino)
     const { noDepositSection, freeSpinsSection } = casino?.attributes || {};
 
     const bonuses = [
@@ -108,7 +110,7 @@ const noDepositBonus = (casino: CasinoData) => {
                                                 href="/casino/recensione/{casino?.attributes?.slug}"
                                                 html={`<span class="hidden sm:inline-flex sm:pr-1">${casino?.attributes?.title}</span><span class="underline">${translationStore.review}</span>`}
                                             />
-                                            <Icon name="arrow-right" class="w-[14px]" />
+                                            <ArrowRight class="w-[14px]" />
                                         </div>
                                     </div>
                                 </td>
@@ -126,12 +128,12 @@ const noDepositBonus = (casino: CasinoData) => {
                                             rel="sponsored"
                                             html={welcomeBonus(casino)}
                                         />
-                                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
                                         <div class="wrap-collabsible w-full md:hidden mt-2">
                                             <input id={`welcomeBonus${i}`} class="toggle hidden peer" type="checkbox" />
                                             <label for={`welcomeBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
                                                 {translationStore.wageringRequirement}
-                                                <Icon name="angle" class="fill-grey-500 group-open:rotate-180" height="20px" />
+                                                <Angle class="fill-grey-500 group-open:rotate-180" height="20px" width="18px"/>
                                             </label>
                                             <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
                                                 <div class="content-inner text-grey-500 mt-4">
@@ -156,12 +158,12 @@ const noDepositBonus = (casino: CasinoData) => {
                                             rel="sponsored"
                                             html={noDepositBonus(casino)?.bonus}
                                         />
-                                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
                                         <div class="wrap-collabsible w-full md:hidden mt-2">
                                             <input id={`noDepositBonus${i}`} class="toggle hidden peer" type="checkbox" />
                                             <label for={`noDepositBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open" tabindex="0">
                                                 {translationStore.wageringRequirement}
-                                                <Icon name="angle" class="fill-grey-500 group-[.open]:rotate-180" height="20px" />
+                                                <Angle class="fill-grey-500 group-[.open]:rotate-180" height="20px" width="18px"/>
                                             </label>
                                             <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
                                                 <div class="content-inner text-grey-500 mt-4">
@@ -185,12 +187,12 @@ const noDepositBonus = (casino: CasinoData) => {
                                                     text={casino?.attributes?.casinoBonus?.bonusCode ? casino?.attributes?.casinoBonus?.bonusCode : translationStore.visitSite}
                                                 />
 										    }
-                                            <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.termsAndConditions?.copy} data-tooltip-placement="left">{translationStore.termsConditions} <Icon name="circle-info" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                            <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.termsAndConditions?.copy} data-tooltip-placement="left">{translationStore.termsConditions} <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
                                             <div class="wrap-collabsible w-full md:hidden mt-2">
                                                 <input id={`bonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                 <label for={`bonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
                                                     {translationStore.wageringRequirement}
-                                                    <Icon name="angle" class="fill-grey-500 group-open:rotate-180" height="20px" />
+                                                    <Angle class="fill-grey-500 group-open:rotate-180" height="20px" width="18px"/>
                                                 </label>
                                                 <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
                                                     <div class="content-inner text-grey-500 mt-4">

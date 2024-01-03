@@ -3,9 +3,12 @@
 import dayjs from 'dayjs'
 import type { TranslationData } from "../../../interfaces/common/types.ts"
 import { getTranslations } from "../../../stores/addTranslations.ts"
-import { Icon } from 'astro-icon'
 import Image from "../helpers/images.astro"
 import Link from "../helpers/link.astro"
+
+//Images
+import Heart from "~icons/kensho-icons/heart"
+import StarIcon from "~icons/kensho-icons/star-icon"
 
 const { game } = Astro.props
 
@@ -61,7 +64,7 @@ const translationStore: TranslationData = getTranslations.get()
 					<Link href="/{game?.attributes?.slug}" text={game?.attributes?.title} />
 				</h4>
 				<button class="w-4 h-[14px]">
-					<Icon name='heart' class="fill-white"/>
+					<Heart class="fill-white"/>
 				</button>
 			</div>
 			<div
@@ -74,7 +77,7 @@ const translationStore: TranslationData = getTranslations.get()
 					{game?.attributes?.provider?.data?.attributes?.title ?? game?.attributes?.provider?.title}&nbsp;•&nbsp;
 				</a>
 				<div class="w-[10px] h-[10px]">
-					<Icon name='star' />
+					<StarIcon />
 				</div>
 				<div class="text-[10px] leading-[14px] text-[#CED4DA]">&nbsp;{game?.attributes?.ratingAvg}/5</div>
 			</div>

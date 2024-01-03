@@ -20,3 +20,7 @@ export type TranslationDataItem = {
   id: number;
   attributes: Attributes;
 };
+
+export type Translations = {
+  [key: string]: string | undefined;
+};

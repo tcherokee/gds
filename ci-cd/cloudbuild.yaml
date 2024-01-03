@@ -7,7 +7,7 @@ steps:
         '--build-arg',
         'output_dist_path=${_OUTPUT_DIST_PATH}',
         '--build-arg',
-        'API_URL=${_API_URL}',
+        'PUBLIC_API_URL=${_PUBLIC_API_URL}',
         '--build-arg',
         'SITE_ID=${_SITE_ID}',
         '--build-arg',
@@ -57,7 +57,7 @@ steps:
       - '--add-cloudsql-instances'
       - '$_SQL_INSTANCE'
       - '--set-env-vars'
-      - 'API_URL=${_API_URL}'
+      - 'PUBLIC_API_URL=${_PUBLIC_API_URL}'
       - '--set-env-vars'
       - 'SITE_ID=${_SITE_ID}'
       - '--set-env-vars'
@@ -86,7 +86,7 @@ substitutions:
   _AUTH_OPTION: '--allow-unauthenticated'
   _VPC_CONNECTOR_NAME: ''
   _VPC_ACCESS_EGRESS: 'private-ranges-only'
-  _API_URL: ''
+  _PUBLIC_API_URL: ''
   _SITE_ID: ''
   _API_TOKEN: ''
   _PUBLIC_MEILISEARCH_HOST: ''

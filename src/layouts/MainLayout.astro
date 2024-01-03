@@ -14,7 +14,10 @@ import type { TranslationDataItem, TranslationItem } from "../../interfaces/tran
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
-import Translations from "../components/helpers/translations.svelte";
+
+import { getTranslations, addTranslations } from "../../stores/addTranslations";
+
+// import Translations from "../components/helpers/translations.svelte";
 
 const queries = {
   layout: qs.stringify(layoutQs(), {encodeValuesOnly: true}),
@@ -109,6 +112,9 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
 
   return acc;
 }, {});
+
+// Set Translation Store
+translation && addTranslations(translation)
 ---
 
 <!doctype html>
@@ -123,7 +129,7 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
     <Tooltips />
   </head>
   <body>
-    <Translations translations={translation} />
+    <!-- <Translations translations={translation} /> -->
     <main>
       {layout?.attributes?.legalText && <Legal legalText={layout?.attributes?.legalText} />}
       <header class="bg-navbar-bkg">

@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "postcss-import": "^15.1.0",
-    "postcss-nesting": "^12.0.1"
+    "postcss-nesting": "^12.0.1",
+    "unplugin-icons": "^0.18.1"
   }
 }

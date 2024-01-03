@@ -1,6 +1,5 @@
 ---
 import Image from "../helpers/images.astro";
-import { Icon } from 'astro-icon'
 import type { ComponentLink } from "../../../interfaces/common/types.ts"
 
 const {
@@ -17,11 +16,6 @@ const {
 
 <a href={href} class:list={["link", classes, { filled: isFilled }]} {...rest}>
   {
-    icon && icon.side === "left" && (
-      <Icon name={icon.name} height={icon.height} />
-    )
-  }
-  {
     image && (
       <Image
         src={image.src}
@@ -36,9 +30,4 @@ const {
   }
   {text}
   <Fragment set:html={html} />
-  {
-    icon && icon.side === "right" && (
-      <Icon name={icon.name} height={icon.height} />
-    )
-  }
 </a>
