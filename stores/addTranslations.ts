@@ -2,12 +2,10 @@ import qs from "qs";
 import { onMount, task, map } from "nanostores";
 import fetchApi from '../lib/strapi'
 import { translationsQs } from "../qs/layout";
-import type {
-  Translations,
-  TranslationDataItem,
-} from "../interfaces/translation";
+import type { TranslationDataItem } from "../interfaces/translation";
+import type { TranslationData } from "../interfaces/common/types";
 
-export const getTranslations = map<Translations>({
+export const getTranslations = map<TranslationData>({
     test: 'test',
 });
 

@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { get } from 'svelte/store';
+
+	import type { GameAttributes } from "../../../interfaces/games"
     import { getTranslations } from '../../../stores/addTranslations';
 	import  { favourite } from "../../../stores/favouriteStore"
 	import TransformImage from "../helpers/images.svelte"
@@ -12,7 +13,7 @@
 
     const closeFavs = () => favsChecked = false
 
-	const removeFromFavs = (game) => {
+	const removeFromFavs = (game: GameAttributes) => {
 		 // If the game has been favourited, filter out the favourites excluding the favourite game
 		const filterOutFav = $favourite.filter(fav => fav.title !== game?.title)
 

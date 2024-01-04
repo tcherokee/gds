@@ -1,7 +1,7 @@
 ---
 import qs from "qs";
 import { Tooltips } from 'astro-tooltips'
-import { layoutQs, menuQs, translationsQs } from "../../qs/layout.ts"
+import { layoutQs, menuQs } from "../../qs/layout.ts"
 
 import fetchApi from "../../lib/strapi";
 
@@ -9,33 +9,26 @@ import "../styles/app.postcss";
 
 import type { LayoutData } from "../../interfaces/layout";
 import type { NavigationItem, ProcessedMenus} from "../../interfaces/menu.ts";
-import type { TranslationDataItem, TranslationItem } from "../../interfaces/translation.ts"
 
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
 
-// import { getTranslations, addTranslations } from "../../stores/addTranslations";
-
-// import Translations from "../components/helpers/translations.svelte";
-
 const queries = {
   layout: qs.stringify(layoutQs(), {encodeValuesOnly: true}),
-  menus: qs.stringify(menuQs(), {encodeValuesOnly: true}),
-  translation: qs.stringify(translationsQs(), {encodeValuesOnly: true})
+  menus: qs.stringify(menuQs(), {encodeValuesOnly: true})
 };
 
 // Set the types in an array for use in the promise all
 type EndpointTypes = {
   layout: LayoutData;
   menus: NavigationItem[];
-  translation: TranslationDataItem;
 };
 
 type Endpoint = keyof EndpointTypes;
 
 // Set the endpoint slugs in an array for use in the promise all
-const endpoints: Endpoint[] = ["layout", "menus", "translation"];
+const endpoints: Endpoint[] = ["layout", "menus"];
 
 // Promise All Fetch to fetch all the api requests in parrallel
 const responses = await Promise.all(
@@ -76,26 +69,9 @@ const isNavigationItemArray = (data: any): data is NavigationItem[] => {
         && menuItem.attributes.items.data.every(isMenuItem));
 }
 
-const isTranslationDataItem = (data: any): data is TranslationDataItem => {
-    return data !== null &&
-    typeof data === 'object' &&
-    typeof data.id === 'number' &&
-    data.attributes !== undefined &&
-    typeof data.attributes.createdAt === 'string' &&
-    typeof data.attributes.updatedAt === 'string' &&
-    typeof data.attributes.publishedAt === 'string' &&
-    Array.isArray(data.attributes.translation) &&
-    data.attributes.translation.every((item: TranslationItem) => 
-      typeof item.id === 'number' &&
-      typeof item.key === 'string' &&
-      typeof item.value === 'string'
-    );
-}
-
 // Using type guards to safely cast the types
 const layout = isLayoutData(responses[0]) ? responses[0] : console.error("Invalid layout data");
 const menu = isNavigationItemArray(responses[1]) ? responses[1] : console.error("Invalid menu data");
-const translation = isTranslationDataItem(responses[2]) ? responses[2] : console.error("Invalid translation data");
 
 // Process menu data
 const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: ProcessedMenus, menu: NavigationItem) => {
@@ -113,8 +89,6 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
   return acc;
 }, {});
 
-// Set Translation Store
-// translation && addTranslations(translation)
 ---
 
 <!doctype html>
@@ -129,7 +103,6 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
     <Tooltips />
   </head>
   <body>
-    <!-- <Translations translations={translation} /> -->
     <main>
       {layout?.attributes?.legalText && <Legal legalText={layout?.attributes?.legalText} />}
       <header class="bg-navbar-bkg">

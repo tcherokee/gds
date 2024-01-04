@@ -7,7 +7,7 @@ export type Game = {
 
 export type GameFavourites = GameAttributes[];
 
-type GameAttributes = {
+export type GameAttributes = {
   createdAt: string;
   title: string;
   slug: string;
