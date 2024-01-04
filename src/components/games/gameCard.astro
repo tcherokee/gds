@@ -5,6 +5,7 @@ import type { TranslationData } from "../../../interfaces/common/types.ts"
 import { getTranslations } from "../../../stores/addTranslations.ts"
 import Image from "../helpers/images.astro"
 import Link from "../helpers/link.astro"
+import AddToFav from "../helpers/addToFavs.svelte"
 
 //Images
 import Heart from "~icons/kensho-icons/heart"
@@ -65,9 +66,7 @@ const translationStore: TranslationData = getTranslations.get()
 				<h4 class="text-white text-sm font-bold !m-0">
 					<Link href="/{game?.attributes?.slug}" text={game?.attributes?.title} />
 				</h4>
-				<button class="w-4 h-[14px]">
-					<Heart class="fill-white"/>
-				</button>
+				<AddToFav game={game} classes="w-4 h-[14px]" client:visible />
 			</div>
 			<div
 				class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100"

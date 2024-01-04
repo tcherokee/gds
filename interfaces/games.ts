@@ -5,9 +5,7 @@ export type Game = {
   attributes: GameAttributes;
 };
 
-export type GameFavourites = {
-  [key: string]: GameAttributes;
-};
+export type GameFavourites = GameAttributes[];
 
 type GameAttributes = {
   createdAt: string;
