@@ -15,7 +15,7 @@ import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
 
-import { getTranslations, addTranslations } from "../../stores/addTranslations";
+// import { getTranslations, addTranslations } from "../../stores/addTranslations";
 
 // import Translations from "../components/helpers/translations.svelte";
 
@@ -114,7 +114,7 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
 }, {});
 
 // Set Translation Store
-translation && addTranslations(translation)
+// translation && addTranslations(translation)
 ---
 
 <!doctype html>

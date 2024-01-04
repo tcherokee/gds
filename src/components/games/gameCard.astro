@@ -12,6 +12,8 @@ import StarIcon from "~icons/kensho-icons/star-icon"
 
 const { game } = Astro.props
 
+console.log('game', JSON.stringify(game))
+
 const translationStore: TranslationData = getTranslations.get()
 
 ---
@@ -32,11 +34,11 @@ const translationStore: TranslationData = getTranslations.get()
 		class="game-meta pointer-events-none group py-0 rounded-lg flex flex-col justify-between h-full relative sm:pointer-events-auto z-10 sm:hover:bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]"
 	>
 		<div
-			class="{game?.attributes?.ratingAvg > 4.5
+			class={`${game?.attributes?.ratingAvg > 4.5
 				? 'hot-slot'
 				: dayjs().diff(game?.attributes?.publishedAt, 'day') <= 14
 				? 'new-slot'
-				: ''} text-[10px] leading-[16px] m-2 text-white font-bold w-fit px-[6px] pt-[1px] uppercase rounded-[40px] -tracking-[0.2px]"
+				: ''} text-[10px] leading-[16px] m-2 text-white font-bold w-fit px-[6px] pt-[1px] uppercase rounded-[40px] -tracking-[0.2px]`}
 		>
 			{game?.attributes?.ratingAvg > 4.5
 				? 'hot slot'

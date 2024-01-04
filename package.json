@@ -17,6 +17,7 @@
     "@astrojs/svelte": "^5.0.1",
     "@astrojs/tailwind": "^5.0.3",
     "@meilisearch/instant-meilisearch": "^1.0.0",
+    "@nanostores/persistent": "^0.9.1",
     "@tailwindcss/forms": "^0.5.7",
     "@types/qs": "^6.9.10",
     "astro": "^4.0.5",

@@ -1,18 +1,14 @@
 <script lang="ts">
     import { get } from 'svelte/store';
-    import { getTranslations } from "../../../stores/addTranslations.ts"
+    import { getTranslations } from '../../../stores/addTranslations';
 
     // Import Images
     import Heart from "~icons/kensho-icons/heart"
     import Xmark from "~icons/kensho-icons/xmark"
 
-    const translationStore = get(getTranslations)
-
     let favsChecked: boolean = false
 
     const closeFavs = () => favsChecked = false
-
-    console.log('translations', translationStore, $getTranslations, get(getTranslations))
 </script>
 
 <div class="favourites flex pointer pl-5 pr-2 mr-2">
@@ -42,7 +38,7 @@
 						<div class="px-4 sm:px-6">
 							<div class="flex items-start justify-between">
 								<h2 class="text-lg font-medium text-gray-900" id="slide-over-title">
-									{$getTranslations?.favorite}
+									{$getTranslations.favorite}
 								</h2>
 								<div class="ml-3 flex h-7 items-center">
 									<button
