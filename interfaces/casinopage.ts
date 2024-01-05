@@ -5,6 +5,8 @@ import type {
   CasinoBonus,
   ImageInfo,
   BonusSection,
+  TermsAndConditions,
+  CasinoGeneralInfo,
 } from "./common/types";
 
 export type Casinopage = {
@@ -18,7 +20,9 @@ type Attributes = {
   updatedAt: string;
   blocks: Block[];
   seo: Seo;
-  author: Author;
+  author: {
+    data: Author;
+  };
   casinoBonus: CasinoBonus;
   images: ImageInfo;
   ratingAvg: number;
@@ -26,4 +30,12 @@ type Attributes = {
   bonusSection: BonusSection;
   noDepositSection: BonusSection;
   freeSpinsSection: BonusSection;
+  termsAndConditions: TermsAndConditions;
+  casinoFeatures: any[];
+  casinoGeneralInfo: CasinoGeneralInfo;
+  testimonial: {
+    approvedBy: {
+      data: Author;
+    };
+  };
 };

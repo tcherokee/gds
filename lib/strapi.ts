@@ -14,15 +14,15 @@ const fetchApi = async <T>({
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.API_TOKEN}`,
+      Authorization: `Bearer ${import.meta.env.PUBLIC_API_TOKEN}`,
     },
   };
 
   const url = new URL(
-    `${import.meta.env.API_URL}/api/${modifiedEndpoint}${query}`
+    `${import.meta.env.PUBLIC_API_URL}/api/${modifiedEndpoint}${query}`
   );
 
-  console.log('url', url)
+  console.log("url", url);
   const res = await fetch(url.toString(), opts);
   let data = await res.json();
 
