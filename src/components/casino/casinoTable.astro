@@ -107,7 +107,7 @@ const noDepositBonus = (casino: CasinoData) => {
                                         <div class="flex items-center">
                                             <Link
                                                 classes="casino-name text-[14px] text-grey-500 mr-[11px]"
-                                                href="/casino/recensione/{casino?.attributes?.slug}"
+                                                href={"/casino/recensione/"+casino?.attributes?.slug}
                                                 html={`<span class="hidden sm:inline-flex sm:pr-1">${casino?.attributes?.title}</span><span class="underline">${translationStore.review}</span>`}
                                             />
                                             <ArrowRight class="w-[14px]" />

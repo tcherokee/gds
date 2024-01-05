@@ -115,6 +115,8 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
 
 // Set Translation Store
 translation && addTranslations(translation)
+
+const { pageTitle } = Astro.props
 ---
 
 <!doctype html>
@@ -125,7 +127,7 @@ translation && addTranslations(translation)
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>title</title>
+    <title>{pageTitle}</title>
     <Tooltips />
   </head>
   <body>
