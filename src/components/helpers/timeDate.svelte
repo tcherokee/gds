@@ -9,8 +9,6 @@
 	export let timeDate: string
 	
 	const formattedDate = dayjs(timeDate).format('D MMM YYYY')
-
-	console.log('$getTranslationssssssssssssssss', $getTranslations);
 	
 </script>
 

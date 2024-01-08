@@ -1,21 +1,6 @@
----
-import Image from '../helpers/images.astro';
-
-interface Props {
-    data: {
-        carouselTitle: string;
-        image: {
-            data: {
-                attributes: {
-                    url: string;
-                    alternativeText: string;
-                }
-            }[]
-        };
-    }
-}
-
-const {data}: Props = Astro.props;
+<script lang="ts">
+	export let data: any
+	import TransformImage from '../helpers/images.svelte'
 
 	let slideImages = new Array()
 	let imageArray = data?.image?.data
@@ -23,60 +8,76 @@ const {data}: Props = Astro.props;
 	let currentSlideIndex: any = 0
 	let imagePerSlide = 3
 
-    for (let i = 0; i < imageArrayCount; i += imagePerSlide) {
+	for (let i = 0; i < imageArrayCount; i += imagePerSlide) {
 		const chunk = data?.image?.data.slice(i, i + imagePerSlide)
 		slideImages.push(chunk)
 	}
 
----
+	let slideNavigation = (direction: string, isMobile: boolean) => {
+		let carouselImages = isMobile ? imageArray : slideImages
 
-{imageArray &&
-	data?.carouselTitle != null && <h2 class="mb-4">{data?.carouselTitle}</h2>
-	
+		if (direction === 'next') {
+			carouselImages.length > currentSlideIndex + 1
+				? (currentSlideIndex += 1)
+				: (currentSlideIndex = 0)
+		} else {
+			currentSlideIndex > 0
+				? (currentSlideIndex -= 1)
+				: (currentSlideIndex = carouselImages.length - 1)
+		}
+	}
+</script>
+
+{#if imageArray}
+	{#if data?.carouselTitle != null}
+		<h2 class="mb-4">{data?.carouselTitle}</h2>
+	{/if}
 	<div class="bg-white p-1 rounded-lg my-5">
 		<div class="carousel w-full relative overflow-x-hidden">
-			{slideImages.map((slideImg, index) => 
-				<div id={'item' + (index + 1)} class={'carousel-item w-full ' + (currentSlideIndex === index ? 'silideIn' : 'hidden')}>
+			{#each slideImages as slideImg, index}
+				<div
+					id={'item' + (index + 1)}
+					class={'carousel-item w-full ' + (currentSlideIndex === index ? 'silideIn' : 'hidden')}
+				>
 					<div class="grid gap-2 grid-cols-3">
-						{slideImg.map((img:any) => 
+						{#each slideImg as img}
 							<div class="relative h-full w-full">
-								<Image
-									src={img?.attributes?.url}
+								<TransformImage
+									imageUrl={img?.attributes?.url}
 									imageWidth={400}
 									imageHeight={400}
 									imageClass="img-fluid w-full rounded-lg"
 									imageAlt={img?.attributes?.alternativeText}
 								/>
-								{img?.attributes?.alternativeText != null &&
+								{#if img?.attributes?.alternativeText != null}
 									<div class="image-info line-clamp-1 hidden md:block">
 										{img?.attributes?.alternativeText}
 									</div>
-								}
+								{/if}
 							</div>
-						)}
+						{/each}
 					</div>
 				</div>
-            )}
+			{/each}
 			<div class="absolute flex justify-between transform -translate-y-1/2 top-1/2 w-full">
-				<div class="p-3 flex items-center opacity-70 cursor-pointer bg-black text-white" id="prev">
+				<div
+					class="p-3 flex items-center opacity-70 cursor-pointer bg-black text-white"
+					on:click={() => slideNavigation('previous', false)}
+				>
 					❮
 				</div>
-				<div class="p-3 flex items-center opacity-70 cursor-pointer bg-black text-white" id="next">
+				<div
+					class="p-3 flex items-center opacity-70 cursor-pointer bg-black text-white"
+					on:click={() => slideNavigation('next', false)}
+				>
 					❯
 				</div>
 			</div>
 		</div>
 	</div>
+{/if}
 
-}
-<script lang="ts">
-	 document.querySelector(".next").addEventListener("click", () => {
-            document.getElementById("casino-terms").classList.toggle("expanded");
-            document.querySelector("#terms-toggle-icon").setAttribute("astro-icon","down-arrow")
-            console.log(openTerms);
-        });
-</script>
-<style>
+<style lang="postcss">
 	.image-info {
 		@apply absolute bottom-0 w-full text-white p-2 rounded-b-lg bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(0,0,0,0.7)_37.79%)];
 		text-shadow: 0px 0px 12px rgb(63, 230, 252);

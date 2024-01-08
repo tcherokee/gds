@@ -15,10 +15,10 @@ const translationStore: TranslationData = getTranslations.get()
 const { data } = Astro.props
 ---
 
-<Collapse id="data" label={data.question} labelIcon={`<span class="mr-3">${translationStore.questionIcon}:</span>`} containerClass="mb-5" labelClass="text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3" collapseClass="bg-white rounded-b-md" checked={true} >
+<Collapse id="data" label={data.question} labelIcon={`<span class="mr-3">D:</span>`} containerClass="mb-5" labelClass="text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3" collapseClass="bg-white rounded-b-md" checked={true} >
     <div class="flex">
         <span class="mr-4 text-xl">
-            {translationStore.answerIcon}:
+            R:
         </span> 
         <span>
             <Fragment set:html={data.answer} />

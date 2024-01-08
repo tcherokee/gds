@@ -1,0 +1,125 @@
+---
+import Images from "../helpers/images.astro";
+
+const {pros, prosImage = null, cons, consImage = null, heading} = Astro.props;
+
+---
+
+<div class="bg-white rounded-lg my-10 proscons-wrapper">
+	<div class="proscons-container">
+		{ heading && <div class="card-header">{heading}</div> }
+		<div class="card-body p-[6px]">
+			<div class="proscons flex flex-col gap-x-[6px] md:flex-row">
+				<div class="w-full md-w-1/2">
+					{prosImage &&
+						<div>
+							<Images
+								src={prosImage?.data?.attributes?.url}
+								alt={heading}
+								originalWidth={prosImage?.data?.attributes?.width}
+								originalHeight={prosImage?.data?.attributes?.height}
+								imageWidth={0}
+								imageHeight={330}
+								classes="w-full"
+							/>
+						</div>
+					}
+					<ul class="pros md:border-b-0">
+						{pros.map((pro:any) =>
+							<li>{pro.list}</li>
+						)}
+					</ul>
+				</div>
+				<div class="w-full md-w-1/2">
+					{consImage &&
+						<div>
+							<Images
+								src={consImage?.data?.attributes?.url}
+								alt={heading}
+								originalWidth={consImage?.data?.attributes?.width}
+								originalHeight={consImage?.data?.attributes?.height}
+								imageWidth={0}
+								imageHeight={330}
+								classes="w-full"
+							/>
+						</div>
+					}
+					<ul class="cons md:border-l">
+						{cons.map((con: any) =>
+							<li>{con.list}</li>
+						)}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style lang="scss">
+	.proscons-wrapper {
+		padding: 0px !important;
+	}
+
+	.proscons-container {
+		width: auto;
+		// margin: 15px 0;
+
+		.card-header {
+			text-transform: capitalize;
+			font-weight: bold;
+			color: #01579b;
+			@apply bg-black text-white p-3 font-lato rounded-t-lg;
+		}
+
+		.card-body {
+			.proscons {
+				ul {
+					position: relative;
+					list-style-type: none;
+					margin: 0;
+					padding: 20px;
+
+					li {
+						display: flex;
+						align-items: center;
+						padding: 10px 0px;
+						margin-left: 20px;
+
+						&::before {
+							content: '';
+							width: 20px;
+							height: 20px;
+							background-repeat: no-repeat;
+							position: absolute;
+							left: 10px;
+						}
+					}
+
+					&.pros {
+						border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);
+
+						li {
+							&::before {
+								background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%23198754'%3E%3Cpath d='M0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256zM371.8 211.8C382.7 200.9 382.7 183.1 371.8 172.2C360.9 161.3 343.1 161.3 332.2 172.2L224 280.4L179.8 236.2C168.9 225.3 151.1 225.3 140.2 236.2C129.3 247.1 129.3 264.9 140.2 275.8L204.2 339.8C215.1 350.7 232.9 350.7 243.8 339.8L371.8 211.8z'/%3E%3C/svg%3E");
+							}
+						}
+					}
+					&.cons {
+						border-left: none;
+						// padding-top: var(--bs-card-spacer-y);
+
+						li {
+							&::before {
+								background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%23dc3545'%3E%3Cpath d='M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256s256-114.6 256-256S397.4 0 256 0zM362.3 344.5c8.562 10.11 7.297 25.27-2.828 33.83C355 382.1 349.5 384 344 384c-6.812 0-13.59-2.891-18.34-8.5L256 293.2L186.3 375.5C181.6 381.1 174.8 384 167.1 384C162.5 384 157 382.1 152.5 378.3c-10.12-8.562-11.39-23.72-2.828-33.83L224.6 256L149.7 167.5C141.1 157.4 142.4 142.2 152.5 133.7C162.6 125.1 177.8 126.4 186.3 136.5L256 218.8l69.67-82.34c8.547-10.12 23.72-11.41 33.83-2.828c10.12 8.562 11.39 23.72 2.828 33.83L287.4 256L362.3 344.5z'/%3E%3C/svg%3E");
+							}
+						}
+					}
+
+					@media (min-width: theme('screens.md')) {
+						// border-left: var(--bs-card-border-width) solid var(--bs-card-border-color);
+					}
+				}
+			}
+		}
+	}
+</style>
