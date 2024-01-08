@@ -88,6 +88,7 @@ console.log(path, page?.attributes?.blocks)
                             data={page.attributes.blocks[i]}
                             {...(page?.attributes?.blocks[i]?.__component === 'shared.quicklinks' && {block:page.attributes.blocks} )}
                             {...(i === faqIndex && {firstFaq: true} )}
+                            {...(page?.attributes?.blocks[i]?.__component === 'casinos.casino-list' && {isCustom: true} )}
                         />
                     ))
                 }

@@ -1,8 +1,16 @@
 ---
 
 import CasinoTable from "../casino/casinoTable.astro"
-const { data } = Astro.props
+const { data, isCustom = false } = Astro.props
+
+const createCustomCasinos = (casinos) => {
+    return casinos.map(item => item.casino.data)
+}
+
+const customCasinos = isCustom && createCustomCasinos(data?.casinoLists)
+
+console.log('customCasinos', customCasinos, isCustom)
 
 ---
 
-<CasinoTable casinos={data.casinos.data} />
+<CasinoTable casinos={isCustom ? data?.casinosList : data.casinos.data} />
