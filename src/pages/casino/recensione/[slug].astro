@@ -10,11 +10,15 @@ import HeaderAuthor from '../../../components/helpers/headerAuthor.astro';
 import Image from '../../../components/helpers/images.astro';
 import Link from '../../../components/helpers/link.astro';
 import ReadOnlyRatings from '../../../components/helpers/readOnlyRatings.astro';
-   import { get } from 'svelte/store';
+import { get } from 'svelte/store';
 import { getTranslations } from '../../../../stores/addTranslations';
 import Icon from 'astro-icon';
 import Images from '../../../components/helpers/images.astro';
 import ProviderIcons from '../../../components/helpers/providerIcons.astro';
+import QuickLinks from '../../../components/helpers/quicklinks.astro';
+import { loadComponents, mapBlocksToDynamicComponents } from '../../../../lib/loadBlockComponents';
+import type { Block } from "../../../../interfaces/common/types.ts"
+import HowTo from '../../../components/general/howTo.astro';
 
 const { slug } = Astro.params; //get the casino slug from the page url
 const query = qs.stringify(casinopageQs(slug), {encodeValuesOnly: true})
@@ -37,6 +41,28 @@ let openTopToggle = true;
 let openSideToggle = true;
 
 let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures
+
+// Function to determins how to structure the blocks in the custom pages. Based on the structure of the blocks the number of items in the blue section could change.
+const getLoopCounter = (blocks: Block[]): number => {
+    if (!blocks || blocks.length < 2) return 2; // Default value if blocks array is not as expected
+
+    const secondBlockComponent = blocks[1]?.['__component'];
+    const thirdBlockComponent = blocks[2]?.['__component'];
+
+    if (secondBlockComponent === 'games.new-and-loved-slots' && 
+        (thirdBlockComponent === 'casinos.casino-list' || thirdBlockComponent === 'games.games-carousel')) {
+        return 3;
+    }
+
+    if (secondBlockComponent?.includes('shared') && secondBlockComponent !== 'shared.provider-list') {
+        return 1;
+    }
+
+    return 2;
+};
+
+const Components = await loadComponents(mapBlocksToDynamicComponents(casinoPage[0]?.attributes.blocks))
+const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
 ---
 <MainLayout pageTitle={casinoPage[0]?.attributes?.seo?.metaTitle}>
     <div class="casino-page">
@@ -394,6 +420,61 @@ let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures
                 </div>
             </div>
         </div>
+
+		<div class="section-wrapper">
+			<div class="fixed block md:hidden right-0 bottom-3 h-10 w-full z-[999]">
+				<div class="flex justify-between p-2 bg-white">
+					<div class="border border-grey-300 rounded-r-lg mr-2">
+						<Images
+							src={casinoPage[0]?.attributes?.images?.data?.attributes
+								?.url}
+							alt={casinoPage[0]?.attributes?.title}
+							imageWidth={80}
+							imageHeight={0}
+						/>
+					</div>
+					<Link
+						class="btn btn-misc block w-full uppercase"
+						rel="sponsored"
+						type="external"
+						href={casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}
+						text={translationStore.accessWebsite}
+					>
+				</div>
+			</div>
+
+			<div class="grid md:grid-cols-4 gap-8">
+				<div class="col-span-1 md:col-span-3">
+					<!-- <QuickLinks {qlinks} listNodes={headings} /> -->
+
+					{casinoPage[0]?.attributes?.blocks &&
+						Components.map((Component, i) => (
+							i < loopCounter && <Component data={casinoPage[0]?.attributes.blocks[i]}/>
+						))
+					}
+					
+					<div class="row qc">
+						<div class="" set:html={casinoPage[0]?.attributes?.introduction}></div>
+					</div>
+
+					{casinoPage[0]?.attributes?.howTo &&
+						// <h2>
+						// 	{casinoPage[0]?.attributes?.howTo.title}
+						// </h2>
+						casinoPage[0]?.attributes?.howTo?.howToGroup.map((howTo, i) => {
+							<HowTo
+								count={i + 1}
+								howToImage={howTo?.image?.data?.attributes?.url}
+								howToWidth={howTo?.image?.data?.attributes?.width}
+								howToHeight={howTo?.image?.data?.attributes?.height}
+								howToCopy={howTo.copy}
+								howToHeading={howTo.heading}
+							/>
+						})
+					}
+				</div>
+			</div>
+		</div>
     </div>
     <script lang="ts">
         let openTerms = true;
