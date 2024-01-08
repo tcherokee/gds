@@ -14,6 +14,7 @@ import ReadOnlyRatings from '../../../components/helpers/readOnlyRatings.astro';
 import { getTranslations } from '../../../../stores/addTranslations';
 import Icon from 'astro-icon';
 import Images from '../../../components/helpers/images.astro';
+import ProviderIcons from '../../../components/helpers/providerIcons.astro';
 
 const { slug } = Astro.params; //get the casino slug from the page url
 const query = qs.stringify(casinopageQs(slug), {encodeValuesOnly: true})
@@ -378,12 +379,12 @@ let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures
 									</div>
 									<div class="flex">
 										<div class="provider-img-container">
-											<!-- { casinoPage[0]?.attributes?.providers?.data &&
+											{ casinoPage[0]?.attributes?.providers?.data &&
 												<ProviderIcons
 													providers={casinoPage[0]?.attributes?.providers
 														?.data}
 												/>
-												} -->
+												}
 										</div>
 									</div>
 								</div>
