@@ -1,0 +1,78 @@
+---
+import Images from "../helpers/images.astro";
+
+const {
+    count = 1, 
+    howToImage, 
+    howToCopy,
+    howToHeading,
+    howToWidth,
+    howToHeight,
+    howToAlt
+ } = Astro.props
+---
+
+<div class="grid md:grid-cols-4 bg-white p-2 rounded-lg mb-5">
+	<div class="flex max-[767px]:justify-center max-[1164px]:items-start">
+		<Images
+			src={howToImage}
+			originalWidth={howToWidth}
+			originalHeight={howToHeight}
+			imageWidth={0}
+			imageHeight={260}
+			classes="howtoImage1 img-fluid rounded-lg "
+			alt={howToAlt || 'How to Image'}
+		/>
+	</div>
+	<div class="py-2 md:px-5 md:col-span-3 self-center">
+		<div>
+			<div class="flex flex-col">
+				<div class="text-xl font-bold flex items-center font-lato my-4 md:my-0 md:mb-8">
+					<span class="block mr-5 text-2xl">{count}</span>
+					<h3 class="block mt-0">{howToHeading}</h3>
+				</div>
+				<div class="text-base text-xs" set:html={howToCopy}></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style lang="scss">
+	.how-to-container {
+		position: relative;
+		padding-left: 20px;
+		margin: 10px 0;
+
+		figure {
+			position: absolute;
+			height: 50px;
+			width: 50px;
+			top: 20px;
+			left: 0px;
+			z-index: 2;
+		}
+
+		.card {
+			z-index: 1;
+			// width: 315px;
+			overflow: hidden;
+
+			img {
+				border-radius: 50%;
+				width: 100% !important;
+			}
+
+			:global(.howtoImage1) {
+				width: 100%;
+			}
+
+			@media (min-width: theme('screens.md')) {
+				width: 100%;
+			}
+		}
+	}
+
+	h3 {
+		margin-bottom: 0px !important;
+	}
+</style>

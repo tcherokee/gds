@@ -53,4 +53,9 @@ type Attributes = {
   providers: {
     data: string;
   };
+  introduction: string;
+  howTo: {
+    title: string;
+    howToGroup: any[];
+  };
 };
