@@ -3,7 +3,7 @@
 import type { TranslationData } from "../../../interfaces/common/types.ts"
 import { getTranslations } from "../../../stores/addTranslations.ts"
 
-const { avgRating, showVotes } = Astro.props
+const { avgRating, ratingCount, showVotes } = Astro.props
 
 const translationStore: TranslationData = getTranslations.get()
 ---
@@ -39,7 +39,7 @@ const translationStore: TranslationData = getTranslations.get()
 			</svg>
 		</div>
         <span class="flex items-center justify-center text-center rating-text text-[14px] mt-2">
-            <span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {translationStore.from} 5 {translationStore.votes}
+            <span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {translationStore.from} {ratingCount} {translationStore.votes}
         </span>
 	</div>
 </div>

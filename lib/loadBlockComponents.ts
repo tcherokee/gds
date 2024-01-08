@@ -1,0 +1,90 @@
+import type { Block, DynamicComponent } from "../interfaces/common/types";
+
+export const mapBlocksToDynamicComponents = (
+  blocks: Block[]
+): DynamicComponent[] => {
+  return blocks
+    .map((block: Block): DynamicComponent | undefined => {
+      switch (block.__component) {
+        case "shared.introduction-with-image":
+          return {
+            location: "general",
+            name: "introWithImage",
+            extension: "astro",
+          };
+        case "homepage.home-blog-list":
+          return {
+            location: "blocks",
+            name: "blogListBlock",
+            extension: "astro",
+          };
+        case "homepage.home-game-list":
+          return {
+            location: "blocks",
+            name: "gameListBlock",
+            extension: "astro",
+          };
+        case "shared.single-content":
+          return {
+            location: "blocks",
+            name: "contentBlock",
+            extension: "astro",
+          };
+        case "homepage.home-casino-list":
+          return {
+            location: "blocks",
+            name: "casinoListBlock",
+            extension: "astro",
+          };
+        case "casinos.casinos-comparison":
+          return {
+            location: "casino",
+            name: "casinoComparison",
+            extension: "astro",
+          };
+        case "shared.quicklinks":
+          return {
+            location: "helpers",
+            name: "quicklinks",
+            extension: "astro",
+          };
+        case "shared.faqs":
+          return {
+            location: "blocks",
+            name: "faqListBlock",
+            extension: "astro",
+          };
+        default:
+          return undefined;
+      }
+    })
+    .filter(
+      (component): component is DynamicComponent => component !== undefined
+    );
+};
+
+export const loadComponents = async (
+  componentsArray: DynamicComponent[]
+): Promise<any[]> => {
+  const components = await Promise.all(
+    componentsArray.map(async (entry) => {
+      if (entry.extension === "astro") {
+        // Handle Astro components
+        // Depending on how Astro handles dynamic imports, this might need to be adjusted.
+        const component = await import(
+          `../src/components/${entry.location}/${entry.name}.astro`
+        );
+        return component.default || component;
+      } else if (entry.extension === "svelte") {
+        // Handle Svelte components
+        const component = await import(
+          `../src/components/${entry.location}/${entry.name}.svelte`
+        );
+        return component.default || component;
+      }
+      return null;
+    })
+  );
+
+  return components.filter((component) => component !== null);
+};

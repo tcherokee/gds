@@ -1,19 +1,19 @@
 ---
 
+// First or Third Party Plugins
+import Icon from "astro-icon"
 import dayjs from 'dayjs'
+
+// Import Types
 import type { TranslationData } from "../../../interfaces/common/types.ts"
+
+// Helpers
 import { getTranslations } from "../../../stores/addTranslations.ts"
 import Image from "../helpers/images.astro"
 import Link from "../helpers/link.astro"
 import AddToFav from "../helpers/addToFavs.svelte"
 
-//Images
-import Heart from "~icons/kensho-icons/heart"
-import StarIcon from "~icons/kensho-icons/star-icon"
-
 const { game } = Astro.props
-
-console.log('game', JSON.stringify(game))
 
 const translationStore: TranslationData = getTranslations.get()
 
@@ -78,7 +78,7 @@ const translationStore: TranslationData = getTranslations.get()
 					{game?.attributes?.provider?.data?.attributes?.title ?? game?.attributes?.provider?.title}&nbsp;•&nbsp;
 				</a>
 				<div class="w-[10px] h-[10px]">
-					<StarIcon />
+					<Icon name="star-icon" />
 				</div>
 				<div class="text-[10px] leading-[14px] text-[#CED4DA]">&nbsp;{game?.attributes?.ratingAvg}/5</div>
 			</div>

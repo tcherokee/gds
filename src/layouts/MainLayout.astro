@@ -1,25 +1,34 @@
 ---
+//1st and 3rd Party Tools
 import qs from "qs";
 import { Tooltips } from 'astro-tooltips'
+
+// QS Query Strings
 import { layoutQs, menuQs } from "../../qs/layout.ts"
 
+// Helpers
 import fetchApi from "../../lib/strapi";
 
+//Styles
 import "../styles/app.postcss";
 
+//Types and TypeGuards
 import type { LayoutData } from "../../interfaces/layout";
 import type { NavigationItem, ProcessedMenus} from "../../interfaces/menu.ts";
+import { isMainLayoutData, isNavigationItemArray } from "../../interfaces/common/typeguards"
 
+//Components
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
 
+// Setting up the queries in array for use in the promise all map
 const queries = {
   layout: qs.stringify(layoutQs(), {encodeValuesOnly: true}),
   menus: qs.stringify(menuQs(), {encodeValuesOnly: true})
 };
 
-// Set the types in an array for use in the promise all
+// Set the types in an array for use in the promise all map
 type EndpointTypes = {
   layout: LayoutData;
   menus: NavigationItem[];
@@ -41,36 +50,8 @@ const responses = await Promise.all(
   ),
 );
 
-// Type guard functions to check the types at runtime
-const isLayoutData = (data: any): data is LayoutData => {
-    return data !== null &&
-    typeof data === 'object' &&
-    typeof data.id === 'number' &&
-    data.attributes !== undefined &&
-    typeof data.attributes.legalText === 'string' &&
-    typeof data.attributes.footerContent === 'string';
-}
-
-const isNavigationItemArray = (data: any): data is NavigationItem[] => {
-    const isImageData = (imgData: any): imgData is ImageData => 
-        imgData && typeof imgData.id === 'number' && imgData.attributes && typeof imgData.attributes.url === 'string';
-
-    const isMenuItem = (item: any): item is NavigationItem => 
-        item && typeof item.id === 'number' && item.attributes 
-        && typeof item.attributes.title === 'string' 
-        && (!item.attributes.images || (item.attributes.images.data === null || isImageData(item.attributes.images.data)))
-        && Array.isArray(item.attributes.children.data) 
-        && item.attributes.children.data.every(isMenuItem);
-
-    return Array.isArray(data) && data.every(menuItem => 
-        menuItem && typeof menuItem.id === 'number' && menuItem.attributes 
-        && typeof menuItem.attributes.title === 'string' 
-        && Array.isArray(menuItem.attributes.items.data) 
-        && menuItem.attributes.items.data.every(isMenuItem));
-}
-
 // Using type guards to safely cast the types
-const layout = isLayoutData(responses[0]) ? responses[0] : console.error("Invalid layout data");
+const layout = isMainLayoutData(responses[0]) ? responses[0] : console.error("Invalid layout data");
 const menu = isNavigationItemArray(responses[1]) ? responses[1] : console.error("Invalid menu data");
 
 // Process menu data

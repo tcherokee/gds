@@ -32,7 +32,7 @@
     "qs": "^6.11.2",
     "splendid-ui": "^0.10.5",
     "svelte": "^4.2.8",
-    "tailwindcss": "^3.3.6",
+    "tailwindcss": "^3.4.0",
     "typescript": "^5.3.3"
   },
   "devDependencies": {

@@ -1,0 +1,134 @@
+---
+
+import dayjs from 'dayjs'
+import Icon from 'astro-icon'
+
+// Types
+import type { TranslationData, CasinoComparison } from "../../../interfaces/common/types.ts"
+
+// Stores
+import { getTranslations } from "../../../stores/addTranslations.ts"
+import { badgesOptions } from '../../../stores/miscStores'
+
+// Helpers
+import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
+
+// Components
+import Link from "../helpers/link.astro"
+import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
+import Images from '../helpers/images.astro'
+import Collapse from '../helpers/collapse.astro'
+
+const translationStore: TranslationData = getTranslations.get()
+
+const badgeClasses = badgesOptions.get()
+
+const { data } = Astro.props
+
+---
+
+<div class="rounded-[6px]">
+	<div class="text-center px-3 py-[11px] bg-casino-table-header-bkg rounded-tr-[6px] rounded-tl-[6px] md:text-start">
+		<span class="text-[20px] leading-[24px] font-bold text-white">{translationStore.casinoTableHeading}</span>
+	</div>
+	<div class="p-3 rounded-br-[6px] rounded-bl-[6px] bg-grey-100 gap-y-3 md:flex md-gap-y-0 md:gap-x-3">
+        {
+            data.casinos.map((casino: CasinoComparison, i: number) => (
+                <div class="flex flex-col basis-1 md:basis-1/3">
+                    <div class="">
+                        {
+                            casino?.casino?.data?.attributes?.Badges 
+                            ? <span class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore.exclusive}</span>
+                            : casino?.casino?.data?.attributes?.publishedAt && dayjs().diff(casino?.casino?.data?.attributes?.publishedAt, 'day') <= 14 
+                            ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore.newCasino}</span>
+                            :<></>
+                        }
+                        <div class="h-full px-3 py-2 bg-white rounded-tl-lg relative">
+                            
+                            {i <= 2 && <span class={`w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b ${badgeClasses[i]}`}>#{i + 1}</span>}
+                            
+                            <Link
+                                href={casino?.casino?.data?.attributes?.casinoBonus?.bonusUrl}
+                                classes={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgeClasses[i]}`}
+                                type="external"
+                                rel="sponsored"
+                            >
+                                <Images 
+                                    classes={'w-full rounded min-h-[89.6px]'}
+                                    src={casino?.casino?.data?.attributes?.images?.data?.attributes.url}
+                                    alt={casino?.casino?.data?.attributes?.title}
+                                    imageWidth={230}
+                                    imageHeight={90}
+                                    imageWatermark="(giochigatsby,legal_combined_sm_50856b6eb8.svg,-2,-5,10)"
+                                />
+                            </Link>
+                            
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center bg-white justify-center pb-3">
+                        <div class="ratings">
+                            <ReadOnlyRating avgRating={casino?.casino?.data?.attributes?.ratingAvg} ratingCount={casino?.casino?.data?.attributes?.ratingCount} showVotes={true} />
+                        </div>
+                        <div class="flex items-center">
+                            <Link
+                                classes="flex text-[14px] space-x-4 text-grey-500 mr-[11px]"
+                                href="/casino/recensione/{casino?.casino?.data?.attributes?.slug}"
+                            >
+                                <span class="underline">{translationStore.review}</span>
+                                <Icon name="arrow-right" class="w-[14px] fill-grey-500" />
+                            </Link>
+                        </div>
+                    </div>
+                    <div class="flex flex-col border-t border-grey-300 bg-white items-center justify-center h-full px-3 py-6">
+                        <div class="text-[#7C838D] text-center text-sm leading-[18px] font-bold">
+                            {translationStore.casinoTableHeadingBonus}
+                        </div>
+                        <Link href={casino?.casino?.data?.attributes?.casinoBonus?.bonusUrl} classes="flex underline text-center font-bold my-4" type="external" rel="sponsored">
+                            {welcomeBonus(casino?.casino?.data)}
+                        </Link>
+                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casino?.casino?.data?.attributes?.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                        <Collapse id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                            <div class="content-inner text-grey-500 mt-4">
+                                <Fragment set:html={casino?.casino?.data?.attributes?.bonusSection?.termsConditions} />
+                            </div>
+                        </Collapse>
+                    </div>
+                    <div class="flex flex-col border-t border-grey-300 bg-gradient-to-r from-no-deposit-gradient/20 via-white/30 via-[percentage:30%_70%] to-no-deposit-gradient/20 items-center justify-center h-full px-3 py-6">
+                        <div class="text-[#7C838D] text-center text-sm leading-[18px] font-bold">
+                            {translationStore.withoutDeposit}
+                        </div>
+                        <Link href={casino?.casino?.data?.attributes?.casinoBonus?.bonusUrl} classes="flex underline text-center font-bold my-4" type="external" rel="sponsored">
+                            <Fragment set:html={noDepositBonus(casino?.casino?.data)?.bonus} />
+                        </Link>
+                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino?.casino?.data)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                        <Collapse id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                            <div class="content-inner text-grey-500 mt-4">
+                                <Fragment set:html={noDepositBonus(casino?.casino?.data)?.terms} />
+                            </div>
+                        </Collapse>
+                    </div>
+                    <div class="flex flex-col border-t border-grey-300 bg-white items-center justify-center h-full px-3 py-6">
+                        <div class="h-full w-full flex flex-col justify-end items-center sm:justify-center">
+                            {casino?.casino?.data?.attributes?.casinoBonus?.bonusCode && <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{translationStore.bonusCode}</div>}
+                            {casino?.casino?.data?.attributes?.casinoBonus?.bonusUrl &&
+                                <Link
+                                    href={casino?.casino?.data?.attributes?.casinoBonus?.bonusUrl}
+                                    classes="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
+                                    type="external"
+                                    rel="sponsored"
+                                    text={casino?.casino?.data?.attributes?.casinoBonus?.bonusCode ? casino?.casino?.data?.attributes?.casinoBonus?.bonusCode : translationStore.visitSite}
+                                />
+                            }
+                            <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casino?.casino?.data?.attributes?.termsAndConditions?.copy} data-tooltip-placement="left">{translationStore.termsConditions} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                            <Collapse id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                                <div class="content-inner text-grey-500 mt-4">
+                                    <Fragment set:html={casino?.casino?.data?.attributes?.termsAndConditions?.copy} />
+                                </div>
+                            </Collapse>
+                        </div> 
+                    </div>
+                </div>
+            ))
+        }
+    </div>
+</div>

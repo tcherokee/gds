@@ -3,11 +3,12 @@
 import qs from 'qs'
 
 import type { Homepage } from "../../interfaces/homepage.ts"
-import type { Block, BlogBlockTypes, HomeGameListBlock, DynamicComponent } from "../../interfaces/common/types.ts"
+import type { Block, BlogBlockTypes, HomeGameListBlock } from "../../interfaces/common/types.ts"
 import type { Game } from "../../interfaces/games.ts"
 import type { Blog } from "../../interfaces/blog.ts"
 
 import fetchApi from "../../lib/strapi";
+import { loadComponents, mapBlocksToDynamicComponents } from '../../lib/loadBlockComponents'
 
 import { sortOptions } from "../../stores/sortFilters.ts"
 import { homepageQs } from "../../qs/homepage.ts"
@@ -73,63 +74,9 @@ const [homepageBlogs, homepageGames] = await Promise.all([fetchHomepageBlogs, fe
 // combining games array
 const combinedGamesArray: Game[] = homepageGames.flat()
 
-const dynamicComponents: DynamicComponent[] = homepage.attributes.blocks.map((block: Block): DynamicComponent | undefined => {
-	switch (block.__component) {
-		case 'shared.introduction-with-image':
-			return {
-				location: 'general',
-				name: 'introWithImage',
-				extension: 'astro'
-			}
-		case 'homepage.home-blog-list':
-			return {
-				location: 'blocks',
-				name: 'blogListBlock',
-				extension: 'astro'
-			}
-		case 'homepage.home-game-list':
-			return {
-				location: 'blocks',
-				name: 'gameListBlock',
-				extension: 'astro'
-			}
-		case 'shared.single-content':
-			return {
-				location: 'blocks',
-				name: 'contentBlock',
-				extension: 'astro'
-			}
-		case 'homepage.home-casino-list':
-			return {
-				location: 'blocks',
-				name: 'casinoListBlock',
-				extension: 'astro'
-			}
-		default:
-			return undefined
-				
-	}
-}).filter((component): component is DynamicComponent => component !== undefined);
 
-const loadComponents = async (componentsArray: DynamicComponent[]): Promise<any[]> => {
-    const components = await Promise.all(componentsArray.map(async entry => {
-        if (entry.extension === 'astro') {
-            // Handle Astro components
-            // Depending on how Astro handles dynamic imports, this might need to be adjusted.
-            const component = await import(`../components/${entry.location}/${entry.name}.astro`);
-            return component.default || component;
-        } else if (entry.extension === 'svelte') {
-            // Handle Svelte components
-            const component = await import(`../components/${entry.location}/${entry.name}.svelte`);
-            return component.default || component;
-        }
-        return null;
-    }));
 
-    return components.filter(component => component !== null);
-};
-
-const Components = await loadComponents(dynamicComponents)
+const Components = await loadComponents(mapBlocksToDynamicComponents(homepage.attributes.blocks))
 
 ---
 
