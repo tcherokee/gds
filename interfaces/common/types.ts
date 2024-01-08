@@ -88,6 +88,14 @@ export type TermsAndConditions = {
   gambleResponsibly: string;
 };
 
+export type CasinoGeneralInfo = {
+  regulationLicense: string;
+  telephone: string;
+  email: string;
+  societa: string;
+  website: string;
+};
+
 export type CasinoAttributes = {
   title: string;
   slug: string;
@@ -142,6 +150,7 @@ export type Author = {
   attributes: {
     firstName: string;
     lastName: string;
+    jobTitle: string;
     photo: {
       data: ImageData;
     };
