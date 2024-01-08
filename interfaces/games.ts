@@ -5,7 +5,9 @@ export type Game = {
   attributes: GameAttributes;
 };
 
-type GameAttributes = {
+export type GameFavourites = GameAttributes[];
+
+export type GameAttributes = {
   createdAt: string;
   title: string;
   slug: string;

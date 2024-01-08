@@ -25,15 +25,17 @@ export type UpdateAttribute = {
   updatedAt: string;
 };
 
-export type ImageAttribute = {
+export type ImageData = {
   id: number;
   attributes: {
     url: string;
+    width?: number;
+    height?: number;
   };
 };
 
 export type ImageInfo = {
-  data: ImageAttribute;
+  data: ImageData;
 };
 
 export type LinkAttribute = {
@@ -180,15 +182,6 @@ export type Link = {
   url: string;
 };
 
-export type ImageData = {
-  id: number;
-  attributes: {
-    url: string;
-    width?: number;
-    height?: number;
-  };
-};
-
 export type IntroductionWithImageBlock = BlockBase & {
   introduction: string;
   heading: string;
@@ -203,9 +196,7 @@ export type HomeGameListBlock = BlockBase & {
 };
 
 export type SingleContentBlock = BlockBase & {
-  introduction: string;
-  heading: string;
-  image: ImageInfo;
+  content: string
 };
 
 export type HomeCasinoListBlock = BlockBase & {
@@ -220,12 +211,36 @@ export type BlogBlockTypes = BlockBase & {
   link: LinkAttribute;
 };
 
+export type CasinoComparison = {
+  id: number;
+  casino: {
+    data: CasinoData
+  }
+}
+
+export type CasinoComparisonBlock = BlockBase & {
+  casinos: CasinoComparison[];
+};
+
+export type FaqBlockTypes = BlockBase & {
+  question: string;
+  answer: string
+}
+
+export type HowToBlockTypes = BlockBase & {
+  title: string;
+  description: string
+}
+
 export type Block =
   | IntroductionWithImageBlock
+  | CasinoComparisonBlock
   | HomeGameListBlock
   | SingleContentBlock
   | HomeCasinoListBlock
-  | BlogBlockTypes;
+  | BlogBlockTypes
+  | FaqBlockTypes
+  | HowToBlockTypes;
 
 export type Casino = {
   id: number;
@@ -244,6 +259,7 @@ export type Casino = {
       cashBack?: any;
       freeSpin?: any;
     };
+    [key: string]: any;
   };
 };
 
@@ -278,6 +294,11 @@ export type DynamicComponent = {
   extension: "astro" | "svelte";
 };
 
+export type quicklinksObj = {
+  text: string;
+  id: string;
+}
+
 export type SortStore = {
   [key: string]: string; // This allows any string to be used as a key
   Newest: string;
@@ -294,3 +315,5 @@ export type FilterStore = {
   "No Deposit": string;
   Playthrough: string;
 };
+
+export type BadgesStore = string[]

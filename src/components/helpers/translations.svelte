@@ -8,8 +8,6 @@
         return obj;
     }, {});
 
-    console.log(translations)
-
     getTranslations.set({...translation})
 
 </script>

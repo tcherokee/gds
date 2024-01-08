@@ -11,7 +11,7 @@ steps:
         '--build-arg',
         'SITE_ID=${_SITE_ID}',
         '--build-arg',
-        'API_TOKEN=${_API_TOKEN}',
+        'PUBLIC_API_TOKEN=${_PUBLIC_API_TOKEN}',
         '--build-arg',
         'PUBLIC_MEILISEARCH_HOST=${_PUBLIC_MEILISEARCH_HOST}',
         '--build-arg',
@@ -61,7 +61,7 @@ steps:
       - '--set-env-vars'
       - 'SITE_ID=${_SITE_ID}'
       - '--set-env-vars'
-      - 'API_TOKEN=${_API_TOKEN}'
+      - 'PUBLIC_API_TOKEN=${_PUBLIC_API_TOKEN}'
       - '--set-env-vars'
       - 'PUBLIC_MEILISEARCH_HOST=${_PUBLIC_MEILISEARCH_HOST}'
       - '--set-env-vars'
@@ -88,7 +88,7 @@ substitutions:
   _VPC_ACCESS_EGRESS: 'private-ranges-only'
   _PUBLIC_API_URL: ''
   _SITE_ID: ''
-  _API_TOKEN: ''
+  _PUBLIC_API_TOKEN: ''
   _PUBLIC_MEILISEARCH_HOST: ''
   _PUBLIC_MEILISEARCH_SEARCH_KEY: ''
   _PUBLIC_MEILISEARCH_INDEX_NAME: ''

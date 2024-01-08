@@ -1,33 +1,17 @@
 ---
-import Image from "../helpers/images.astro";
 import type { ComponentLink } from "../../../interfaces/common/types.ts"
 
 const {
   text,
   href,
-  image,
   icon,
   isFilled = true,
   classes,
-  html,
   ...rest
 } = Astro.props as ComponentLink;
 ---
 
 <a href={href} class:list={["link", classes, { filled: isFilled }]} {...rest}>
-  {
-    image && (
-      <Image
-        src={image.src}
-        orignalHeight={image.originalHeight}
-        originalWidth={image.originalWidth}
-        imageHeight={image.imageHeight}
-        imageWidth={image.imageWidth}
-        alt={image.alt}
-        classes={image.classes}
-      />
-    )
-  }
   {text}
-  <Fragment set:html={html} />
+  <slot />
 </a>

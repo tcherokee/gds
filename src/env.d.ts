@@ -11,5 +11,5 @@ interface ImportMetaEnv {
   readonly FULL_URL: string;
   readonly LANG: string;
   readonly PUBLIC_ROOT_DOMAIN: string;
-
+  readonly PUBLIC_IMAGE_URL: string;
 }

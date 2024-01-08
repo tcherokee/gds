@@ -1,14 +1,17 @@
 ---
 
+// First or Third Party Plugins
+import Icon from "astro-icon"
 import dayjs from 'dayjs'
+
+// Import Types
 import type { TranslationData } from "../../../interfaces/common/types.ts"
+
+// Helpers
 import { getTranslations } from "../../../stores/addTranslations.ts"
 import Image from "../helpers/images.astro"
 import Link from "../helpers/link.astro"
-
-//Images
-import Heart from "~icons/kensho-icons/heart"
-import StarIcon from "~icons/kensho-icons/star-icon"
+import AddToFav from "../helpers/addToFavs.svelte"
 
 const { game } = Astro.props
 
@@ -32,11 +35,11 @@ const translationStore: TranslationData = getTranslations.get()
 		class="game-meta pointer-events-none group py-0 rounded-lg flex flex-col justify-between h-full relative sm:pointer-events-auto z-10 sm:hover:bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]"
 	>
 		<div
-			class="{game?.attributes?.ratingAvg > 4.5
+			class={`${game?.attributes?.ratingAvg > 4.5
 				? 'hot-slot'
 				: dayjs().diff(game?.attributes?.publishedAt, 'day') <= 14
 				? 'new-slot'
-				: ''} text-[10px] leading-[16px] m-2 text-white font-bold w-fit px-[6px] pt-[1px] uppercase rounded-[40px] -tracking-[0.2px]"
+				: ''} text-[10px] leading-[16px] m-2 text-white font-bold w-fit px-[6px] pt-[1px] uppercase rounded-[40px] -tracking-[0.2px]`}
 		>
 			{game?.attributes?.ratingAvg > 4.5
 				? 'hot slot'
@@ -63,9 +66,7 @@ const translationStore: TranslationData = getTranslations.get()
 				<h4 class="text-white text-sm font-bold !m-0">
 					<Link href="/{game?.attributes?.slug}" text={game?.attributes?.title} />
 				</h4>
-				<button class="w-4 h-[14px]">
-					<Heart class="fill-white"/>
-				</button>
+				<AddToFav game={game} classes="w-4 h-[14px]" client:visible />
 			</div>
 			<div
 				class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100"
@@ -77,7 +78,7 @@ const translationStore: TranslationData = getTranslations.get()
 					{game?.attributes?.provider?.data?.attributes?.title ?? game?.attributes?.provider?.title}&nbsp;•&nbsp;
 				</a>
 				<div class="w-[10px] h-[10px]">
-					<StarIcon />
+					<Icon name="star-icon" />
 				</div>
 				<div class="text-[10px] leading-[14px] text-[#CED4DA]">&nbsp;{game?.attributes?.ratingAvg}/5</div>
 			</div>

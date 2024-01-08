@@ -4,13 +4,7 @@ import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
 
 // Define common setup for Meilisearch to reduce redundancy
 function setupMeilisearch(noResults, indexName, containerId, resultsId) {
-
-  console.log(
-    import.meta.env.PUBLIC_MEILISEARCH_HOST,
-    import.meta.env.MODE,
-    import.meta.env.PUBLIC_MEILISEARCH_INDEX_NAME
-  );
-
+  
   return instantsearch({
     indexName: indexName,
     searchClient: instantMeiliSearch(
