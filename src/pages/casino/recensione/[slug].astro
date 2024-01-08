@@ -10,13 +10,8 @@ import HeaderAuthor from '../../../components/helpers/headerAuthor.astro';
 import Image from '../../../components/helpers/images.astro';
 import Link from '../../../components/helpers/link.astro';
 import ReadOnlyRatings from '../../../components/helpers/readOnlyRatings.astro';
+   import { get } from 'svelte/store';
 import { getTranslations } from '../../../../stores/addTranslations';
-import type { TranslationData } from '../../../../interfaces/common/types';
-
-//Images
-// import PoundsImg from "~icons/kensho-icons/pounds-img"
-// import MoneyBag from "~icons/kensho-icons/money-bag-black"
-// import GiftBag from "~icons/kensho-icons/gift-bag-black"
 import Icon from 'astro-icon';
 import Images from '../../../components/helpers/images.astro';
 
@@ -29,10 +24,13 @@ const casinoPage = await fetchApi<Casinopage[]>({
     query: `?${query}`
 })
 
-const translationStore: any = getTranslations.get()
+const translationStore:any = get(getTranslations)
 
 const termsAndConditions = `${casinoPage[0]?.attributes?.termsAndConditions?.copy}`
 const termsAndConditionsCleaned = termsAndConditions.replace(/(<([^>]+)>)/gi, '')
+
+const testimonial = `${casinoPage[0]?.attributes?.testimonial?.testimonial}`
+const testimonialCleaned = testimonial.replace(/(<([^>]+)>)/gi, '')
 
 let openTopToggle = true;
 let openSideToggle = true;
@@ -71,7 +69,7 @@ let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures
                             />
                         </div>
                         <div class="mt-2 flex items-center justify-center">
-                            <ReadOnlyRatings avgRating={casinoPage[0]?.attributes?.ratingAvg} showVotes={true} />
+                            <ReadOnlyRatings avgRating={casinoPage[0]?.attributes?.ratingAvg} showVotes={true} ratingClasses="flex-col" />
                         </div>
                         <div class="flex flex-col my-10">
                             <div class="flex items-center mb-3">
@@ -147,40 +145,39 @@ let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures
                         <div class="bg-white p-3 casino-summary-wrapper rounded">
                             <div class="grid md:grid-cols-2 gap-3 mb-5">
                                 <div class="casino-table-div p-2 features-div bg-white rounded-lg">
-                                    <div class="casino-table-div p-2 features-div bg-white rounded-lg">
-                                        <table class="sc-9ded7dbe-10 jWaRDy characteristics w-full">
-                                            <thead>
-                                                <tr>
-                                                    <th colspan="2" class="p-0 text-white">
-                                                        <div class="summary-table-heading tb-summary-heading">
-                                                            <span class="block mr-4 bg-white rounded-full p-1">
-                                                                <Icon name="globe" width="25px" class="inline-block m-[2px]" />
-                                                            </span>
-                                                            <div class="font-bold">{translationStore.features}</div>
-                                                        </div>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {casinoFeatures && 
-                                                    casinoFeatures.map((cf,index) => {
-                                                        {index === casinoFeatures.length - 1 ? 
-                                                             <tr>
-                                                                <td class="p-2"><Icon name="check-circle" height="25px" fill="rgb(54, 123, 72)" /></td>
-                                                                <td>{cf.feature}</td>
-                                                            </tr> :
-                                                            <tr class="border-b border-black">
-                                                                <td class="p-2"><Icon name="check-circle" height="25px" fill="rgb(54, 123, 72)" /></td>
-                                                                <td>{cf.feature}</td>
-                                                            </tr>
-                                                        }
-                                                    })
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
+									<table class="sc-9ded7dbe-10 jWaRDy characteristics w-full">
+										<thead>
+											<tr>
+												<th colspan="2" class="p-0 text-white">
+													<div class="summary-table-heading tb-summary-heading">
+														<span class="block mr-4 bg-white rounded-full p-1">
+															<Icon name="globe" width="25px" class="inline-block m-[2px]" />
+														</span>
+														<div class="font-bold">{translationStore.features}</div>
+													</div>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											{casinoFeatures && 
+												casinoFeatures.map((cf,index) => 
+													{index === casinoFeatures.length - 1 ? 
+														// <tr>
+														// 	<td class="p-2"><Icon name="check-circle" height="25px"/></td>
+														// 	<td>{cf.feature}</td>
+														// </tr> :
+														// <tr class="border-b border-black">
+														// 	<td class="p-2"><Icon name="check-circle" height="25px" /></td>
+														// 	<td>{cf.feature}</td>
+														// </tr>
+														cf.feature : cf.feature
+													}
+												)
+											}
+										</tbody>
+									</table>
                                 </div>
-                                <div class="casino-table-div p-2 general-div bg-white rounded-lg">
+								<div class="casino-table-div p-2 general-div bg-white rounded-lg">
                                     <table class="sc-9ded7dbe-10 jWaRDy w-full">
                                         <thead>
                                             <tr>
@@ -328,9 +325,69 @@ let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures
                                             </div>
                                             <div class="hidden md:block"><Icon name="adm-icons" width="250px" /></div>
                                         </div>
+										<div class="mt-3 mb-10 flex justify-start">
+											<ReadOnlyRatings 
+											avgRating={casinoPage[0]?.attributes?.authorRatings} 
+											showVotes={true} 
+											ratingClass={"flex-row justify-center items-center"} />
+										</div>
+
+										<blockquote class="testimonial">
+											<i>"{testimonialCleaned}"</i>
+										</blockquote>
                                     </div>
                                 </div>
                             </div>
+							<div class="grid md:grid-cols-2 mt-5">
+								<div class="border-b md:border-r md:border-b-0 mb-5 pb-5 border-gray-500">
+									<div class="flex py-3 items-center mb-3">
+										<span class="block mr-3"><Icon name="card-icon" height="25px"/></span>
+										<h5 class="text-xl font-bold text-white !mt-0">{translationStore.payment}</h5>
+									</div>
+									<div class="flex flex-wrap">
+										{ casinoPage[0]?.attributes?.paymentOptions?.wireTransfer &&
+											<span class="payment-icon"><Icon name="payments/wire" width="45px" height="28px" /></span>}
+										
+										{ casinoPage[0]?.attributes?.paymentOptions?.skrill &&
+											<span class="payment-icon"><Icon name="payments/skrill" width="45px" height="28px" /></span>}
+										
+										{ casinoPage[0]?.attributes?.paymentOptions?.postepay &&
+											<span class="payment-icon"><Icon name="payments/postepay" width="45px" height="28px" /></span>}
+										
+										{ casinoPage[0]?.attributes?.paymentOptions?.paysafe &&
+											<span class="payment-icon"><Icon name="payments/paysafe" width="45px" height="28px" /></span>}
+										
+										{ casinoPage[0]?.attributes?.paymentOptions?.paypal &&
+											<span class="payment-icon"><Icon name="payments/paypal" width="45px" height="28px" /></span>}
+										
+										{ casinoPage[0]?.attributes?.paymentOptions?.neteller &&
+											<span class="payment-icon"><Icon name="payments/neteller" width="45px" height="28px" /></span>}
+										
+										{ casinoPage[0]?.attributes?.paymentOptions?.uKash &&
+											<span class="payment-icon"><Icon name="payments/ukash" width="45px" height="28px" /></span>}
+										
+										{ 
+										casinoPage[0]?.attributes?.paymentOptions?.creditCard && 
+											<span class="payment-icon"><Icon name="payments/debit" width="45px" height="28px" /></span>}
+									</div>
+								</div>
+								<div class="md:ml-4">
+									<div class="flex py-3 text-white items-center mb-3">
+										<span class="block mr-3"><Icon name="software-card" height="25px" fill="#01579B" /></span>
+										<h5 class="text-xl font-bold text-white !mt-0">{translationStore.software}</h5>
+									</div>
+									<div class="flex">
+										<div class="provider-img-container">
+											<!-- { casinoPage[0]?.attributes?.providers?.data &&
+												<ProviderIcons
+													providers={casinoPage[0]?.attributes?.providers
+														?.data}
+												/>
+												} -->
+										</div>
+									</div>
+								</div>
+							</div>
                         </div>
                     </div>
                 </div>

@@ -27,6 +27,7 @@ type Attributes = {
   images: ImageInfo;
   ratingAvg: number;
   ratingCount: number;
+  authorRatings: number;
   bonusSection: BonusSection;
   noDepositSection: BonusSection;
   freeSpinsSection: BonusSection;
@@ -37,5 +38,19 @@ type Attributes = {
     approvedBy: {
       data: Author;
     };
+    testimonial: string;
+  };
+  paymentOptions: {
+    wireTransfer: boolean;
+    skrill: boolean;
+    postepay: boolean;
+    paysafe: boolean;
+    paypal: boolean;
+    neteller: boolean;
+    uKash: boolean;
+    creditCard: boolean;
+  };
+  providers: {
+    data: string;
   };
 };

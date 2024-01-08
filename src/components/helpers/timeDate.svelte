@@ -9,6 +9,9 @@
 	export let timeDate: string
 	
 	const formattedDate = dayjs(timeDate).format('D MMM YYYY')
+
+	console.log('$getTranslationssssssssssssssss', $getTranslations);
+	
 </script>
 
 <div class="sub-header text-[0.6875em] italic capitalize">
