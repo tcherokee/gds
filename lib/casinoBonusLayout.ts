@@ -1,5 +1,5 @@
 import type { CasinoData, TranslationData } from "../interfaces/common/types";
-import { getTranslations } from "../stores/addTranslations"
+import { getTranslations } from "../stores/addTranslations";
 
 const translationStore: TranslationData = getTranslations.get();
 

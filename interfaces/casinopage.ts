@@ -7,6 +7,7 @@ import type {
   BonusSection,
   TermsAndConditions,
   CasinoGeneralInfo,
+  CasinoComparison,
 } from "./common/types";
 
 export type Casinopage = {
@@ -27,6 +28,7 @@ type Attributes = {
   images: ImageInfo;
   ratingAvg: number;
   ratingCount: number;
+  authorRatings: number;
   bonusSection: BonusSection;
   noDepositSection: BonusSection;
   freeSpinsSection: BonusSection;
@@ -37,5 +39,63 @@ type Attributes = {
     approvedBy: {
       data: Author;
     };
+    testimonial: string;
   };
+  paymentOptions: {
+    wireTransfer: boolean;
+    skrill: boolean;
+    postepay: boolean;
+    paysafe: boolean;
+    paypal: boolean;
+    neteller: boolean;
+    uKash: boolean;
+    creditCard: boolean;
+  };
+  providers: {
+    data: string;
+  };
+  introduction: string;
+  howTo: {
+    title: string;
+    howToGroup: any[];
+  };
+  content1: string;
+  content2: string;
+  content3: string;
+  content4: string;
+  proscons: {
+    heading: string;
+    pros: {
+      list: string;
+    }[];
+    proImage: {
+      data: {
+        attributes: {
+          url: string;
+          width: number;
+          height: number;
+        };
+      };
+    };
+    cons: {
+      list: string;
+    }[];
+    conImage: {
+      data: {
+        attributes: {
+          url: string;
+          width: number;
+          height: number;
+        };
+      };
+    };
+  };
+  casinoComparison: {
+    data: CasinoComparison;
+  };
+  faqs: {
+    answer: string;
+    id: number;
+    question: string;
+  }[];
 };

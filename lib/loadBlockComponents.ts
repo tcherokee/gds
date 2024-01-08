@@ -62,6 +62,12 @@ export const mapBlocksToDynamicComponents = (
             name: "faqListBlock",
             extension: "astro",
           };
+        case "shared.image-carousel":
+          return {
+            location: "general",
+            name: "imageCarousel",
+            extension: "astro",
+          };
         default:
           return undefined;
       }

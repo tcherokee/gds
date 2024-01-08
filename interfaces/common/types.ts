@@ -196,7 +196,7 @@ export type HomeGameListBlock = BlockBase & {
 };
 
 export type SingleContentBlock = BlockBase & {
-  content: string
+  content: string;
 };
 
 export type HomeCasinoListBlock = BlockBase & {
@@ -213,10 +213,8 @@ export type BlogBlockTypes = BlockBase & {
 
 export type CasinoComparison = {
   id: number;
-  casino: {
-    data: CasinoData
-  }
-}
+  casino: CasinoData;
+};
 
 export type CasinoComparisonBlock = BlockBase & {
   casinos: CasinoComparison[];
@@ -224,13 +222,13 @@ export type CasinoComparisonBlock = BlockBase & {
 
 export type FaqBlockTypes = BlockBase & {
   question: string;
-  answer: string
-}
+  answer: string;
+};
 
 export type HowToBlockTypes = BlockBase & {
   title: string;
-  description: string
-}
+  description: string;
+};
 
 export type Block =
   | IntroductionWithImageBlock
@@ -297,7 +295,7 @@ export type DynamicComponent = {
 export type quicklinksObj = {
   text: string;
   id: string;
-}
+};
 
 export type SortStore = {
   [key: string]: string; // This allows any string to be used as a key
@@ -316,4 +314,4 @@ export type FilterStore = {
   Playthrough: string;
 };
 
-export type BadgesStore = string[]
+export type BadgesStore = string[];
