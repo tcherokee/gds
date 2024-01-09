@@ -10,10 +10,12 @@ const {id, label, containerClass, labelIcon, inputClass, labelClass, collapseCla
                 { labelIcon && <Fragment set:html={labelIcon} />}
                 <span>{label}</span>
             </div>
-            <Icon name="minus" width="25px" class="fill-white hidden peer-checked:group-[]:flex" />
-            <Icon name="plus" width="25px" class="fill-white flex peer-checked:group-[]:hidden" />
+            <slot name="icon">
+                <Icon name="minus" width="25px" class="fill-white hidden peer-checked:group-[]:flex" />
+                <Icon name="plus" width="25px" class="fill-white flex peer-checked:group-[]:hidden" />
+            </slot>
         </label>
         <div class:list={["p-0 max-h-0 overflow-hidden transition-all peer-checked:max-h-max peer-checked:p-3", collapseClass]}>
-            <slot/>
+            <slot name="content" />
         </div>
 </div>

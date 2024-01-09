@@ -88,8 +88,8 @@ const { data } = Astro.props
                             {welcomeBonus(casinoData)}
                         </Link>
                         <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                        <Collapse id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
-                            <div class="content-inner text-grey-500 mt-4">
+                        <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                            <div slot="content" class="content-inner text-grey-500 mt-4">
                                 <Fragment set:html={casinoData?.attributes.bonusSection?.termsConditions} />
                             </div>
                         </Collapse>
@@ -102,7 +102,7 @@ const { data } = Astro.props
                             <Fragment set:html={noDepositBonus(casinoData)?.bonus} />
                         </Link>
                         <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casinoData)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                        <Collapse id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                        <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
                             <div class="content-inner text-grey-500 mt-4">
                                 <Fragment set:html={noDepositBonus(casinoData)?.terms} />
                             </div>
@@ -121,7 +121,7 @@ const { data } = Astro.props
                                 />
                             }
                             <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.termsAndConditions?.copy} data-tooltip-placement="left">{translationStore.termsConditions} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                            <Collapse id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                            <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
                                 <div class="content-inner text-grey-500 mt-4">
                                     <Fragment set:html={casinoData?.attributes.termsAndConditions?.copy} />
                                 </div>
