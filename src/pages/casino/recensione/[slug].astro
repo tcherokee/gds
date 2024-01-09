@@ -15,14 +15,12 @@ import { getTranslations } from '../../../../stores/addTranslations';
 import Icon from 'astro-icon';
 import Images from '../../../components/helpers/images.astro';
 import ProviderIcons from '../../../components/helpers/providerIcons.astro';
-import QuickLinks from '../../../components/helpers/quicklinks.astro';
 import { loadComponents, mapBlocksToDynamicComponents } from '../../../../lib/loadBlockComponents';
-import type { Block } from "../../../../interfaces/common/types.ts"
 import HowTo from '../../../components/general/howTo.astro';
 import ProsCons from '../../../components/general/proCons.astro'
 import ContentBlock from '../../../components/blocks/contentBlock.astro';
 import CasinoComparison from '../../../components/casino/casinoComparison.astro';
-import Faqslist from '../../../components/blocks/faqListBlock.astro';
+import Faqs from "../../../components/general/faqs.astro";
 
 const { slug } = Astro.params; //get the casino slug from the page url
 const query = qs.stringify(casinopageQs(slug), {encodeValuesOnly: true})
@@ -41,35 +39,11 @@ const termsAndConditionsCleaned = termsAndConditions.replace(/(<([^>]+)>)/gi, ''
 const testimonial = `${casinoPage[0]?.attributes?.testimonial?.testimonial}`
 const testimonialCleaned = testimonial.replace(/(<([^>]+)>)/gi, '')
 
-let openTopToggle = true;
-let openSideToggle = true;
-
 let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures;
 
-
-// Function to determins how to structure the blocks in the custom pages. Based on the structure of the blocks the number of items in the blue section could change.
-const getLoopCounter = (blocks: Block[]): number => {
-    if (!blocks || blocks.length < 2) return 2; // Default value if blocks array is not as expected
-
-    const secondBlockComponent = blocks[1]?.['__component'];
-    const thirdBlockComponent = blocks[2]?.['__component'];
-
-    if (secondBlockComponent === 'games.new-and-loved-slots' && 
-        (thirdBlockComponent === 'casinos.casino-list' || thirdBlockComponent === 'games.games-carousel')) {
-        return 3;
-    }
-
-    if (secondBlockComponent?.includes('shared') && secondBlockComponent !== 'shared.image-carousel') {
-        return 1;
-    }
-
-    return 2;
-};
-
 //list componets on page
-const comps = mapBlocksToDynamicComponents(casinoPage[0]?.attributes.blocks);
-const Components = await loadComponents(mapBlocksToDynamicComponents(casinoPage[0]?.attributes.blocks))
-const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
+const Components = await loadComponents(mapBlocksToDynamicComponents(casinoPage[0]?.attributes.blocks));
+const comp = mapBlocksToDynamicComponents(casinoPage[0]?.attributes.blocks);
 ---
 <MainLayout pageTitle={casinoPage[0]?.attributes?.seo?.metaTitle}>
     <div class="casino-page">
@@ -178,9 +152,11 @@ const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
                                     <Icon name="down-arrow" width="15px" class="inline-block m-[2px]" />} -->
                                 </div>
                             </div>
-                            <div class="text-xs mt-1 terms-text" id="casino-terms">
-                                {termsAndConditionsCleaned}
-                            </div>
+							<div class="casino-terms">
+								<div class="text-xs mt-1 terms-text">
+									{termsAndConditionsCleaned}
+								</div>
+							</div>
                         </div>
                     </div>
 
@@ -204,7 +180,7 @@ const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
 										<tbody>
 											<!-- {casinoFeatures &&  -->
 												{casinoFeatures.map((cf,index) => 
-													{index === casinoFeatures.length - 1 ? 
+													index === casinoFeatures.length - 1 ? 
 														<tr>
 															<td class="p-2"><Icon name="check-circle" height="25px"/></td>
 															<td>{cf.feature}</td>
@@ -213,7 +189,6 @@ const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
 															<td class="p-2"><Icon name="check-circle" height="25px" /></td>
 															<td>{cf.feature}</td>
 														</tr>
-													}
 												)}
 											<!-- } -->
 										</tbody>
@@ -464,7 +439,7 @@ const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
 
 					{casinoPage[0]?.attributes?.blocks &&
 						Components.map((Component, i) => (
-							i < loopCounter && <Component data={casinoPage[0]?.attributes.blocks[i]} />
+							<Component data={casinoPage[0]?.attributes.blocks[i]} />
 						))
 					}
 					
@@ -475,7 +450,7 @@ const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
 					{casinoPage[0]?.attributes?.howTo && <h2>{casinoPage[0]?.attributes?.howTo.title}</h2>}
 
 					{casinoPage[0]?.attributes?.howTo &&
-						casinoPage[0]?.attributes?.howTo?.howToGroup.map((howTo, i) => {
+						casinoPage[0]?.attributes?.howTo?.howToGroup.map((howTo, i) => (
 							<HowTo
 								count={i + 1}
 								howToImage={howTo?.image?.data?.attributes?.url}
@@ -484,7 +459,7 @@ const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
 								howToCopy={howTo.copy}
 								howToHeading={howTo.heading}
 							/>
-						})
+						))
 					}
 
 					{casinoPage[0]?.attributes?.content1 &&
@@ -536,30 +511,136 @@ const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
 					</div>
 				{casinoPage[0]?.attributes?.faqs &&
 					<div class="mt-3 qc">
-						<div class="">
+						<div class="mb-4">
 							<h2 class="faq-title">{translationStore.faq}</h2>
 						</div>
 
 						<div class="mb-5">
 							{casinoPage[0]?.attributes?.faqs.map((faq:any, index:number) => 
-								<Faqslist data={faq} />
+								<Faqs data={faq} />
 							)}
 						</div>
 					</div>
 				}
 				</div>
 
+				<div class="col-span-1 hidden md:block">
+					<div class="bg-white flex flex-col p-3 rounded sticky top-3">
+						<div>
+
+								<Link
+									href={casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}
+									classes="block rounded border border-[transparent]"
+									rel="sponsored"
+								>
+									<Image 
+									src={casinoPage[0]?.attributes?.images?.data?.attributes?.url}
+									classes="w-full rounded"
+									alt={casinoPage[0]?.attributes?.title}
+									imageWidth={330}, 
+									imageHeight={150} 
+									/>
+								</Link>
+							</div>
+							<div class="mt-2 flex items-center justify-center">
+								<ReadOnlyRatings avgRating={casinoPage[0]?.attributes?.ratingAvg} showVotes={true} ratingClasses="flex-col" />
+							</div>
+							<div class="flex flex-col my-10">
+								<div class="flex items-center mb-3">
+									<span class="block"><Icon name="pounds-img" height="25px" width="40px" class="inline-block m-[2px]" /></span>
+									<div class="flex ml-5 font-bold">
+										<Link rel="sponsored" type="external" classes="text-decoration-underline text-blue-300"
+											href={casinoPage[0]?.attributes?.casinoBonus?.bonusUrl} text={casinoPage[0]?.attributes?.casinoBonus?.bonusLabel} />
+									</div>
+								</div>
+								<table class="casino-details-box">
+									<tbody>
+										<tr class="border-b-0">
+											<td>
+												<div class="flex items-center">
+													<span class="block mr-5"><Icon name="money-bag-black" height="25px" width="40px" class="inline-block m-[2px]" /></span>
+													<span class="bonus-heading">{translationStore.reloadBonus}</span>
+												</div>
+											</td>
+											<td>
+												<div class="bonus-value font-bold pl-1">
+													{ casinoPage[0]?.attributes?.bonusSection.bonusAmount ? `${casinoPage[0]?.attributes?.bonusSection.bonusAmount}€`:''}
+													{(casinoPage[0]?.attributes?.bonusSection?.cashBack && casinoPage[0]?.attributes?.bonusSection?.bonusAmount) ? '+ <br />':''}
+													{casinoPage[0]?.attributes?.bonusSection?.cashBack ? `${casinoPage[0]?.attributes?.bonusSection?.cashBack}`:''}
+													{((casinoPage[0]?.attributes?.bonusSection?.cashBack || casinoPage[0]?.attributes?.bonusSection?.bonusAmount) && casinoPage[0]?.attributes?.bonusSection?.freeSpin) && <br />}
+													{casinoPage[0]?.attributes?.bonusSection?.freeSpin && `${casinoPage[0]?.attributes?.bonusSection?.freeSpin}`}
+												</div>
+											</td>
+										</tr>
+										<tr class="border-b-0">
+											<td>
+												<div class="flex items-center">
+													<span class="block mr-5"><Icon name="gift-bag-black" height="25px" width="40px" class="inline-block m-[2px]" /></span>
+													<span class="bonus-heading">{translationStore.withoutDeposit}</span>
+												</div>
+											</td>
+											<td>
+												<div class="bonus-value font-bold pl-1">
+													{
+													casinoPage[0]?.attributes?.noDepositSection?.bonusAmount ? 
+													`${casinoPage[0]?.attributes?.noDepositSection?.bonusAmount || 0}€ ${translationStore.withoutDeposit}`:''
+													}
+													{
+													(casinoPage[0]?.attributes?.noDepositSection && casinoPage[0]?.attributes?.noDepositSection?.bonusAmount && casinoPage[0]?.attributes?.freeSpinsSection && casinoPage[0]?.attributes?.freeSpinsSection?.bonusAmount) ? 
+													<span>+</span><br /> : ''}
+													{
+													casinoPage[0]?.attributes?.freeSpinsSection && casinoPage[0]?.attributes?.freeSpinsSection?.bonusAmount ? `${casinoPage[0]?.attributes?.freeSpinsSection?.bonusAmount || 0} ${translationStore.freeSpins}` : ''}
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div>
+								<Link
+									classes="btn btn-misc block w-full uppercase"
+									rel="sponsored"
+									type="external"
+									text={translationStore.accessWebsite}
+									href={casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}
+								/>
+							</div>
+							<div>
+								<div class="toggle-terms text-center font-bold mt-5 cursor-pointer flex justify-center items-center">
+									<div>{translationStore.termsConditions}</div>
+									<div class="ml-3">
+										<Icon name="up-arrow" width="15px" id="terms-toggle-icon" class="inline-block m-[2px]" />
+										<!-- {openTopToggle ? 
+										<Icon name="up-arrow" width="15px" class="inline-block m-[2px]" /> : 
+										<Icon name="down-arrow" width="15px" class="inline-block m-[2px]" />} -->
+									</div>
+								</div>
+								<div class="casino-terms">
+									<div class="text-xs mt-1 terms-text">
+										{termsAndConditionsCleaned}
+									</div>
+								</div>
+							</div>
+					</div>
+				</div>
 			</div>
 		</div>
     </div>
-    <script lang="ts" define:vars={{casinoPage, loopCounter, comps}}>
+    <script lang="ts" define:vars={{casinoPage, comp}}>
         //handle opening and closing of terms and condition
-        document.querySelector(".toggle-terms").addEventListener("click", () => {
-            document.getElementById("casino-terms").classList.toggle("expanded");
-            document.querySelector("#terms-toggle-icon").setAttribute("astro-icon","down-arrow")
-        });
+        let toggleHandle = document.querySelectorAll(".toggle-terms");
+		for (let i = 0; i < toggleHandle.length; i++) {
+			toggleHandle[i]?.addEventListener("click", () => {
+				let termContainer = document.querySelectorAll(".casino-terms")
+				for (let i = 0; i < termContainer.length; i++) {
+					termContainer[i]?.classList.toggle("expanded");
+				}
+			})
+        }
 
 		console.log(casinoPage[0]);
+		console.log(comp);
+		
 
 		
 		

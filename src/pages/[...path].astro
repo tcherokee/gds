@@ -67,8 +67,6 @@ const faqIndex = page?.attributes?.blocks.findIndex(block => block.__component =
 
 const Components = await loadComponents(mapBlocksToDynamicComponents(page.attributes.blocks))
 
-console.log(path, page?.attributes?.blocks)
-
 ---
 <MainLayout title="Welcome to Astro.">
 	<div class="featured-background">
