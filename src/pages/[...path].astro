@@ -17,6 +17,7 @@ import type { Block } from "../../interfaces/common/types.ts"
 // Layouts & Components
 import MainLayout from '../layouts/MainLayout.astro';
 import CasinoSidebar from '../components/casino/casinoSidebar.astro';
+import AuthorCard from '../components/general/authorCard.astro';
 
 export const getStaticPaths = (async () => {
 
@@ -67,12 +68,17 @@ const faqIndex = page?.attributes?.blocks.findIndex(block => block.__component =
 
 const Components = await loadComponents(mapBlocksToDynamicComponents(page.attributes.blocks))
 
+console.log('data', page.attributes.blocks)
+
 ---
 <MainLayout title="Welcome to Astro.">
 	<div class="featured-background">
 		{
 			Components.map((Component, i) => (
-				i < loopCounter && <Component data={page.attributes.blocks[i]}/>
+				i < loopCounter && <Component 
+                                        data={page.attributes.blocks[i]} 
+                                        {...(page?.attributes?.blocks[i]?.__component === 'casinos.casino-list' ? { isCustom: true, isTop: true } : {})}
+                                    />
 		    ))
 		}
 	</div>
@@ -86,9 +92,12 @@ const Components = await loadComponents(mapBlocksToDynamicComponents(page.attrib
                             data={page.attributes.blocks[i]}
                             {...(page?.attributes?.blocks[i]?.__component === 'shared.quicklinks' && {block:page.attributes.blocks} )}
                             {...(i === faqIndex && {firstFaq: true} )}
+                            {...(page?.attributes?.blocks[i]?.__component === 'casinos.casino-list' ? { isCustom: true } : {})}
                         />
                     ))
                 }
+
+                <AuthorCard />
             </div>
             <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
                 <CasinoSidebar />

@@ -1,8 +1,27 @@
 ---
 
 import CasinoTable from "../casino/casinoTable.astro"
-const { data } = Astro.props
+const { data, isCustom = false, isTop = false } = Astro.props
+
+const createCustomCasinos = (casinos) => {
+    return casinos
+        .map(item => item.casino.data)
+        .filter(casino => casino !== null); // filter out null values
+}
+
+const customCasinos = isCustom && createCustomCasinos(data?.casinosList)
 
 ---
-
-<CasinoTable casinos={data.casinos.data} />
+{
+    !isTop ?
+    <CasinoTable casinos={isCustom ? customCasinos : data.casinos.data} /> :
+    <div>
+        <div class="relative xl:container px-2 pb-5">
+            <div class="mb-5 pt-2.5">
+                <div class="">
+                    <CasinoTable casinos={isCustom ? customCasinos : data.casinos.data} />
+                </div>
+            </div>
+        </div>
+    </div>
+}

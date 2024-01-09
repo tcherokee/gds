@@ -84,24 +84,30 @@ const Components = await loadComponents(mapBlocksToDynamicComponents(homepage.at
 	<div class="featured-background">
 		{
 			Components.map((Component, i) => (
-				i < 2 && <Component data={
-						homepage?.attributes?.blocks[i]?.__component === 'homepage.home-game-list' 
-						? combinedGamesArray 
-						: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
-						? homepageBlogs : homepage.attributes.blocks[i]
-					} timeDate={homepage.attributes.updatedAt}/>
+				i < 2 && <Component 
+							data={
+								homepage?.attributes?.blocks[i]?.__component === 'homepage.home-game-list' 
+								? combinedGamesArray 
+								: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
+								? homepageBlogs : homepage.attributes.blocks[i]
+							}
+							{...(homepage?.attributes?.blocks[i]?.__component === 'homepage.home-casino-list' ? { isTop: true } : {})}
+							timeDate={homepage.attributes.updatedAt}
+						/>
 		))
 		}
 	</div>
 	<div class="xl:container content-auto px-2 pt-5">
 		{
 			Components.map((Component, i) => (
-				i > 1 && <Component data={
-						homepage?.attributes?.blocks[i]?.__component === 'homepage.home-game-list' 
-						? combinedGamesArray 
-						: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
-						? homepageBlogs : homepage.attributes.blocks[i]
-					} timeDate={homepage.attributes.updatedAt}/>
+				i > 1 && <Component 
+							data={
+								homepage?.attributes?.blocks[i]?.__component === 'homepage.home-game-list' 
+								? combinedGamesArray 
+								: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
+								? homepageBlogs : homepage.attributes.blocks[i]
+							}
+							timeDate={homepage.attributes.updatedAt}/>
 		))
 		}
 	</div>

@@ -15,6 +15,8 @@ import { getTranslations } from '../../../../stores/addTranslations';
 import Icon from 'astro-icon';
 import Images from '../../../components/helpers/images.astro';
 import ProviderIcons from '../../../components/helpers/providerIcons.astro';
+import Collapse from "../../../components/helpers/collapse.astro"
+import QuickLinks from '../../../components/helpers/quicklinks.astro';
 import { loadComponents, mapBlocksToDynamicComponents } from '../../../../lib/loadBlockComponents';
 import HowTo from '../../../components/general/howTo.astro';
 import ProsCons from '../../../components/general/proCons.astro'
@@ -142,22 +144,10 @@ const comp = mapBlocksToDynamicComponents(casinoPage[0]?.attributes.blocks);
                                 href={casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}
                             />
                         </div>
-                        <div>
-                            <div class="toggle-terms text-center font-bold mt-5 cursor-pointer flex justify-center items-center">
-                                <div>{translationStore.termsConditions}</div>
-                                <div class="ml-3">
-                                    <Icon name="up-arrow" width="15px" id="terms-toggle-icon" class="inline-block m-[2px]" />
-                                    <!-- {openTopToggle ? 
-                                    <Icon name="up-arrow" width="15px" class="inline-block m-[2px]" /> : 
-                                    <Icon name="down-arrow" width="15px" class="inline-block m-[2px]" />} -->
-                                </div>
-                            </div>
-							<div class="casino-terms">
-								<div class="text-xs mt-1 terms-text">
-									{termsAndConditionsCleaned}
-								</div>
-							</div>
-                        </div>
+						<Collapse id="termsConditions" label={translationStore.termsConditions} containerClass="text-xs mt-1 terms-text" labelClass="ml-3" checked={true}>
+							<Icon slot="icon" name="up-arrow" width="15px" id="terms-toggle-icon" class="inline-block m-[2px] peer-checked:group-[]:rotate-180" />
+							<span slot="content">{termsAndConditionsCleaned}</span>
+						</Collapse>
                     </div>
 
                     <div class="md:col-span-3">
