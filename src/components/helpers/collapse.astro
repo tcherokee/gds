@@ -5,7 +5,7 @@ const {id, label, containerClass, labelIcon, inputClass, labelClass, collapseCla
 
 <div class={containerClass}>
         <input id={id} class:list={["toggle hidden peer", inputClass]} type="checkbox" {checked} />
-        <label for={id} class:list={["group flex justify-between rounded-md cursor-pointer peer-checked:rounded-b-none peer-checked:open", labelClass]} tabindex="0">
+        <label for={id} class:list={["group flex justify-between rounded-md cursor-pointer peer-checked:rounded-b-none", labelClass]} tabindex="0">
             <div>
                 { labelIcon && <Fragment set:html={labelIcon} />}
                 <span>{label}</span>

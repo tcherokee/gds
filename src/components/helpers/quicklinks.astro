@@ -15,7 +15,6 @@ const { data, block } = Astro.props
 
 const translationStore: TranslationData = getTranslations.get()
 
-console.log('component', block)
 //Function to Extract H2 Headings from Content Blocks
 const extractH2Text = (components: Block[]): quicklinksObj[] => {
     // Regex to target H2 Headings

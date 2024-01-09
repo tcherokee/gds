@@ -475,7 +475,7 @@ const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
 					{casinoPage[0]?.attributes?.howTo && <h2>{casinoPage[0]?.attributes?.howTo.title}</h2>}
 
 					{casinoPage[0]?.attributes?.howTo &&
-						casinoPage[0]?.attributes?.howTo?.howToGroup.map((howTo, i) => {
+						casinoPage[0]?.attributes?.howTo?.howToGroup.map((howTo, i) => (
 							<HowTo
 								count={i + 1}
 								howToImage={howTo?.image?.data?.attributes?.url}
@@ -484,7 +484,7 @@ const loopCounter = getLoopCounter(casinoPage[0]?.attributes?.blocks);
 								howToCopy={howTo.copy}
 								howToHeading={howTo.heading}
 							/>
-						})
+						))
 					}
 
 					{casinoPage[0]?.attributes?.content1 &&
