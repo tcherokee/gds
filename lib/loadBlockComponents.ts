@@ -49,7 +49,7 @@ export const mapBlocksToDynamicComponents = (
               name: "casinoListBlock",
               extension: "astro",
             };
-          } 
+          }
         case "shared.quicklinks":
           return {
             location: "helpers",
@@ -66,7 +66,7 @@ export const mapBlocksToDynamicComponents = (
           return {
             location: "general",
             name: "imageCarousel",
-            extension: "astro",
+            extension: "svelte",
           };
         default:
           return undefined;
