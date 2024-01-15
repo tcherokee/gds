@@ -2,7 +2,7 @@
 
 // Types and TypeGuards
 import type { Block, TranslationData, quicklinksObj } from "../../../interfaces/common/types.ts"
-import { isSingleContentBlock, isFaqBlockType, isHowToBlockType } from "../../../interfaces/common/typeguards"
+import { isSingleContentBlock, isFaqBlockType, isHowToBlockType, isCasinoListType, isProsAndConsType, isImageWithParagraphType, isIntroductionWithImageBlock } from "../../../interfaces/common/typeguards"
 
 // Helpers
 import { getTranslations } from "../../../stores/addTranslations.ts"
@@ -43,13 +43,28 @@ const extractH2Text = (components: Block[]): quicklinksObj[] => {
                 text: translationStore.faq,
                 id: sanitizeAndHyphenate(translationStore.faq),
             }];
+        } else if (isProsAndConsType(component)) {
+            return [{
+                text: component.heading,
+                id: sanitizeAndHyphenate(component.heading)
+            }]
+        } else if (isImageWithParagraphType(component)) {
+            return [{
+                text: component.title,
+                id: sanitizeAndHyphenate(component.title)
+            }]
+        } else if (isIntroductionWithImageBlock(component)) {
+            return [{
+                text: component.heading,
+                id: sanitizeAndHyphenate(component.heading)
+            }]
         } else {
             return [];
         }
     });
 };
 
-const quickLinks = extractH2Text(block)
+const quickLinks = block && extractH2Text(block)
 ---
 
 {

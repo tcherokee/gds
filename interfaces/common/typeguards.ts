@@ -75,6 +75,18 @@ export const isHowToBlockType = (block: Block): block is HowToBlockTypes => {
   return block.__component === "shared.how-to-group"
 }
 
+export const isCasinoListType = (block: Block): block is HowToBlockTypes => {
+  return block.__component === "casinos.casino-list";
+};
+
+export const isImageWithParagraphType = (block: Block): block is HowToBlockTypes => {
+  return block.__component === "shared.image-with-paragraph";
+};
+
+export const isProsAndConsType = (block: Block): block is HowToBlockTypes => {
+  return block.__component === "shared.pros-and-cons";
+};
+
 // General TypeGuard Functions
 const isImageInfo = (obj: any): obj is ImageInfo =>
     obj != null &&

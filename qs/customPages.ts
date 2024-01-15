@@ -193,6 +193,10 @@ export const customPageQs = () => {
         },
       },
     },
+    pagination: {
+      page: 1,
+      pageSize: 10000,
+    },
   };
 };
 

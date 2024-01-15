@@ -48,6 +48,8 @@ let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures;
 const __blocks = mapBlocksToDynamicComponents(casinoPage[0]?.attributes.blocks);
 const Components = await loadComponents(__blocks);
 
+
+console.log('_blocks', Components)
 ---
 <MainLayout pageTitle={casinoPage[0]?.attributes?.seo?.metaTitle}>
     <div class="casino-page">
