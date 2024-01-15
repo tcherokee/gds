@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import Icon from 'astro-icon'
 
 // Types
-import type { TranslationData, CasinoComparison } from "../../../interfaces/common/types.ts"
+import type { TranslationData, CasinoComparison, CasinoComparisonBlock } from "../../../interfaces/common/types.ts"
 
 // Stores
 import { getTranslations } from "../../../stores/addTranslations.ts"
@@ -27,7 +27,7 @@ const badgeClasses = badgesOptions.get()
 const { data, isCustom = false } = Astro.props
 
 // Snippet of Code to handle the differences betwen Custom Casino Comparison and Casino Pages Casino Comparison
-const casinos = isCustom === true ? data.casinos.map(item => item.casino.data) : data
+const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) => item.casino.data) : data
 
 ---
 

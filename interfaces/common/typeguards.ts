@@ -1,4 +1,4 @@
-import type { ImageData, ImageInfo, IntroductionWithImageBlock, SingleContentBlock, FaqBlockTypes, HowToBlockTypes, Seo, Block} from "./types.ts"
+import type { ImageData, ImageInfo, IntroductionWithImageBlock, SingleContentBlock, FaqBlockTypes, HowToBlockTypes, ProsAndConsTypes, ImageWithParagraphTypes, Seo, Block} from "./types.ts"
 import type { LayoutData } from "../layout";
 import type { NavigationItem } from "../menu.ts";
 import type { CustomPageItem } from "../custom-pages"
@@ -75,15 +75,11 @@ export const isHowToBlockType = (block: Block): block is HowToBlockTypes => {
   return block.__component === "shared.how-to-group"
 }
 
-export const isCasinoListType = (block: Block): block is HowToBlockTypes => {
-  return block.__component === "casinos.casino-list";
-};
-
-export const isImageWithParagraphType = (block: Block): block is HowToBlockTypes => {
+export const isImageWithParagraphType = (block: Block): block is ImageWithParagraphTypes => {
   return block.__component === "shared.image-with-paragraph";
 };
 
-export const isProsAndConsType = (block: Block): block is HowToBlockTypes => {
+export const isProsAndConsType = (block: Block): block is ProsAndConsTypes => {
   return block.__component === "shared.pros-and-cons";
 };
 
