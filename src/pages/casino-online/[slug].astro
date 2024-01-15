@@ -1,0 +1,44 @@
+---
+
+import qs from 'qs'
+import MainLayout from '../../layouts/MainLayout.astro';
+import { casinoproviderQs } from "../../../qs/casino-provider"
+import fetchApi from '../../../lib/strapi';
+import type { Casinoprovider } from "../../../interfaces/casino-provider.ts"
+import TimeDate from '../../components/helpers/timeDate.svelte';
+import { get } from 'svelte/store';
+import { getTranslations } from '../../../stores/addTranslations';
+import Images from '../../components/helpers/images.astro';
+import Icon from 'astro-icon';
+import Faqs from "../../components/general/faqs.astro";
+
+const { slug } = Astro.params; //get the casino slug from the page url
+const query = qs.stringify(casinoproviderQs(slug), {encodeValuesOnly: true})
+
+const casinoPage = await fetchApi<Casinoprovider[]>({
+	endpoint: 'casino-providers',
+    wrappedByKey: 'data',
+    query: `?${query}`
+})
+
+const translationStore:any = get(getTranslations);
+
+const block = {
+    showCasinoFilters: false
+}
+
+// let breadcrumbs = [
+//     ...data?.layout?.casinoBreadcrumbs,
+//     {
+//         breadCrumbText: data?.casinoPage?.data?.casino?.data[0]?.attributes?.title,
+//         breadCrumbUrl: null
+//     }
+// ]
+
+
+---
+
+
+<MainLayout pageTitle={casinoPage[0]?.attributes?.seo?.metaTitle}>
+
+</MainLayout>
