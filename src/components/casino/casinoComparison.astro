@@ -4,11 +4,10 @@ import dayjs from 'dayjs'
 import Icon from 'astro-icon'
 
 // Types
-import type { TranslationData, CasinoComparison, CasinoComparisonBlock } from "../../../interfaces/common/types.ts"
+import type { TranslationData, CasinoComparison } from "../../../interfaces/common/types.ts"
 
 // Stores
 import { getTranslations } from "../../../stores/addTranslations.ts"
-import { badgesOptions } from '../../../stores/miscStores'
 
 // Helpers
 import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
@@ -18,11 +17,15 @@ import Link from "../helpers/link.astro"
 import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
 import Images from '../helpers/images.astro'
 import Collapse from '../helpers/collapse.astro'
-import CasinoSidebar from './casinoSidebar.astro'
 
 const translationStore: TranslationData = getTranslations.get()
 
-const badgeClasses = badgesOptions.get()
+// Tailwind Gradient Object for Dynamic Classes
+const badgesOptions = ([
+    "bg-gradient-to-b from-gold-tag-t-gradient to-gold-tag-b-gradient",
+    "bg-gradient-to-b from-silver-tag-t-gradient to-silver-tag-b-gradient text-body-text",
+    "bg-gradient-to-b from-bronze-tag-t-gradient to-bronze-tag-b-gradient",
+])
 
 const { data, isCustom = false } = Astro.props
 
@@ -50,11 +53,11 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         }
                         <div class="h-full px-3 py-2 bg-white rounded-tl-lg relative">
                             
-                            {i <= 2 && <span class={`w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b ${badgeClasses[i]}`}>#{i + 1}</span>}
+                            {i <= 2 && <span class={`w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b ${badgesOptions[i]}`}>#{i + 1}</span>}
                             
                             <Link
                                 href={casinoData?.attributes?.casinoBonus?.bonusUrl}
-                                classes={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgeClasses[i]}`}
+                                classes={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgesOptions[i]}`}
                                 type="external"
                                 rel="sponsored"
                             >
