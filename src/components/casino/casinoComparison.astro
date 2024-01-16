@@ -8,7 +8,6 @@ import type { TranslationData, CasinoComparison } from "../../../interfaces/comm
 
 // Stores
 import { getTranslations } from "../../../stores/addTranslations.ts"
-import { badgesOptions } from '../../../stores/miscStores'
 
 // Helpers
 import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
@@ -21,9 +20,17 @@ import Collapse from '../helpers/collapse.astro'
 
 const translationStore: TranslationData = getTranslations.get()
 
-const badgeClasses = badgesOptions.get()
+// Tailwind Gradient Object for Dynamic Classes
+const badgesOptions = ([
+    "bg-gradient-to-b from-gold-tag-t-gradient to-gold-tag-b-gradient",
+    "bg-gradient-to-b from-silver-tag-t-gradient to-silver-tag-b-gradient text-body-text",
+    "bg-gradient-to-b from-bronze-tag-t-gradient to-bronze-tag-b-gradient",
+])
 
-const { data } = Astro.props
+const { data, isCustom = false } = Astro.props
+
+// Snippet of Code to handle the differences betwen Custom Casino Comparison and Casino Pages Casino Comparison
+const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) => item.casino.data) : data
 
 ---
 
@@ -33,7 +40,7 @@ const { data } = Astro.props
 	</div>
 	<div class="p-3 rounded-br-[6px] rounded-bl-[6px] bg-grey-100 gap-y-3 md:flex md-gap-y-0 md:gap-x-3">
         {
-            data.map((casinoData: any, i: number) => (
+            casinos.map((casinoData: any, i: number) => (
 
                 <div class="flex flex-col basis-1 md:basis-1/3">
                     <div class="">
@@ -46,11 +53,11 @@ const { data } = Astro.props
                         }
                         <div class="h-full px-3 py-2 bg-white rounded-tl-lg relative">
                             
-                            {i <= 2 && <span class={`w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b ${badgeClasses[i]}`}>#{i + 1}</span>}
+                            {i <= 2 && <span class={`w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b ${badgesOptions[i]}`}>#{i + 1}</span>}
                             
                             <Link
                                 href={casinoData?.attributes?.casinoBonus?.bonusUrl}
-                                classes={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgeClasses[i]}`}
+                                classes={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgesOptions[i]}`}
                                 type="external"
                                 rel="sponsored"
                             >

@@ -5,7 +5,6 @@ import Icon from 'astro-icon'
 import type { CasinoData } from "../../../interfaces/common/types"
 import type { TranslationData } from "../../../interfaces/common/types.ts"
 import { getTranslations } from "../../../stores/addTranslations.ts"
-import { badgesOptions } from '../../../stores/miscStores'
 import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
 
 // Components
@@ -13,8 +12,14 @@ import Link from "../helpers/link.astro"
 import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
 import Images from '../helpers/images.astro'
 
+// Tailwind Gradient Object for Dynamic Classes
+const badgesOptions = ([
+    "bg-gradient-to-b from-gold-tag-t-gradient to-gold-tag-b-gradient",
+    "bg-gradient-to-b from-silver-tag-t-gradient to-silver-tag-b-gradient text-body-text",
+    "bg-gradient-to-b from-bronze-tag-t-gradient to-bronze-tag-b-gradient",
+])
+
 const translationStore: TranslationData = getTranslations.get()
-const badgeClasses = badgesOptions.get()
 
 const { casinos } = Astro.props
 
@@ -49,11 +54,11 @@ const { casinos } = Astro.props
                                     }
                                     <div class="h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative">
                                         
-                                    {i <= 2 && <span class:list={["w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b", badgeClasses[i]]}>#{i + 1}</span>}
+                                    {i <= 2 && <span class:list={["w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b", badgesOptions[i]]}>#{i + 1}</span>}
                                         
                                         <Link
                                             href={casino?.attributes?.casinoBonus?.bonusUrl}
-                                            classes={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgeClasses[i]}`}
+                                            classes={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgesOptions[i]}`}
                                             type="external"
                                             rel="sponsored"
                                         >
@@ -116,27 +121,31 @@ const { casinos } = Astro.props
                                         >
                                             {translationStore.withoutDeposit}
                                         </div>
-                                        <Link
-                                            href={casino?.attributes?.casinoBonus?.bonusUrl}
-                                            classes="flex underline text-center"
-                                            type="external"
-                                            rel="sponsored"
-                                        >
-                                             <Fragment set:html={noDepositBonus(casino)?.bonus} />
-                                        </Link>
-                                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                                        <div class="wrap-collabsible w-full md:hidden mt-2">
-                                            <input id={`noDepositBonus${i}`} class="toggle hidden peer" type="checkbox" />
-                                            <label for={`noDepositBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open" tabindex="0">
-                                                {translationStore.wageringRequirement}
-                                                <Icon name="angle" class="fill-grey-500 group-[.open]:rotate-180" height="20px" width="18px"/>
-                                            </label>
-                                            <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
-                                                <div class="content-inner text-grey-500 mt-4">
-                                                    <Fragment set:html={noDepositBonus(casino)?.terms} />
+                                        {
+                                            noDepositBonus(casino)?.bonus ?
+                                            <Link
+                                                href={casino?.attributes?.casinoBonus?.bonusUrl}
+                                                classes="flex underline text-center"
+                                                type="external"
+                                                rel="sponsored"
+                                            >
+                                                <Fragment set:html={noDepositBonus(casino)?.bonus} />
+                                            </Link>
+                                            <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                            <div class="wrap-collabsible w-full md:hidden mt-2">
+                                                <input id={`noDepositBonus${i}`} class="toggle hidden peer" type="checkbox" />
+                                                <label for={`noDepositBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open" tabindex="0">
+                                                    {translationStore.wageringRequirement}
+                                                    <Icon name="angle" class="fill-grey-500 group-[.open]:rotate-180" height="20px" width="18px"/>
+                                                </label>
+                                                <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
+                                                    <div class="content-inner text-grey-500 mt-4">
+                                                        <Fragment set:html={noDepositBonus(casino)?.terms} />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            </div> :
+                                            <span> - </span>
+                                        }
                                     </div>
                                 </td>
 

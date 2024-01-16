@@ -49,6 +49,12 @@ export const mapBlocksToDynamicComponents = (
               name: "casinoListBlock",
               extension: "astro",
             };
+          } else {
+            return {
+              location: "casino",
+              name: "casinoTable",
+              extension: "svelte",
+            };
           }
         case "shared.quicklinks":
           return {

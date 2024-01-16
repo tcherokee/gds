@@ -31,6 +31,7 @@ export type ImageData = {
     url: string;
     width?: number;
     height?: number;
+    alt?: string;
   };
 };
 
@@ -213,7 +214,9 @@ export type BlogBlockTypes = BlockBase & {
 
 export type CasinoComparison = {
   id: number;
-  casino: CasinoData;
+  casino: {
+    data: CasinoData;
+  }
 };
 
 export type CasinoComparisonBlock = BlockBase & {
@@ -230,6 +233,29 @@ export type HowToBlockTypes = BlockBase & {
   description: string;
 };
 
+export type ProsCons = {
+  id: number;
+  list: string;
+}
+
+export type imageWithParagraph = {
+  id: number;
+  heading: string;
+  copy: string;
+  image: ImageInfo;
+};
+
+export type ProsAndConsTypes = BlockBase & {
+  heading: string;
+  pros: ProsCons[];
+  cons: ProsCons[];
+}
+
+export type ImageWithParagraphTypes = BlockBase & {
+  title: string;
+  imageWithParagraph: imageWithParagraph[];
+}
+
 export type Block =
   | IntroductionWithImageBlock
   | CasinoComparisonBlock
@@ -238,7 +264,9 @@ export type Block =
   | HomeCasinoListBlock
   | BlogBlockTypes
   | FaqBlockTypes
-  | HowToBlockTypes;
+  | HowToBlockTypes
+  | ImageWithParagraphTypes
+  | ProsAndConsTypes;
 
 export type Casino = {
   id: number;

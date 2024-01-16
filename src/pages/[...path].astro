@@ -14,6 +14,9 @@ import type { GetStaticPaths } from "astro";
 import type { CustomPageItem } from "../../interfaces/custom-pages"
 import type { Block } from "../../interfaces/common/types.ts"
 
+// Import Svelte Components
+import CasinoTable from '../components/casino/casinoTable.svelte';
+
 // Layouts & Components
 import MainLayout from '../layouts/MainLayout.astro';
 import CasinoSidebar from '../components/casino/casinoSidebar.astro';
@@ -66,20 +69,33 @@ const loopCounter = getLoopCounter(page?.attributes?.blocks);
 // Get the index of the first occurrence of the FAQ
 const faqIndex = page?.attributes?.blocks.findIndex(block => block.__component === 'shared.faqs')
 
-const Components = await loadComponents(mapBlocksToDynamicComponents(page.attributes.blocks))
+// First mapping components so I can check them against the svelte extentsion
+const mappedComponents = mapBlocksToDynamicComponents(page.attributes.blocks)
 
-console.log('data', page.attributes.blocks)
+const capitalize = mappedComponents.map(item => item.name.charAt(0).toUpperCase() + item.name.slice(1))
 
+//Dynamically importing the components
+const Components = await loadComponents(mappedComponents)
 ---
 <MainLayout title="Welcome to Astro.">
 	<div class="featured-background">
 		{
-			Components.map((Component, i) => (
-				i < loopCounter && <Component 
-                                        data={page.attributes.blocks[i]} 
-                                        {...(page?.attributes?.blocks[i]?.__component === 'casinos.casino-list' ? { isCustom: true, isTop: true } : {})}
-                                    />
-		    ))
+			Components.map((Component, i) => {
+                if (i < loopCounter) {
+                    if (mappedComponents[i].extension === 'astro') {
+                        return <Component 
+                            data={page.attributes.blocks[i]} 
+                            {...(page?.attributes?.blocks[i]?.__component === 'casinos.casino-list' ? { isCustom: true, isTop: true } : {})}
+                        />
+                    } else {
+                        switch (mappedComponents[i].name) {
+                            case 'casinoTable': {
+                                return <CasinoTable data={page.attributes.blocks[i]} client:load />
+                            }
+                        }
+                    }
+                }
+            })
 		}
 	</div>
 
@@ -90,14 +106,14 @@ console.log('data', page.attributes.blocks)
                     Components.map((Component, i) => (
                         i >= loopCounter && <Component 
                             data={page.attributes.blocks[i]}
-                            {...(page?.attributes?.blocks[i]?.__component === 'shared.quicklinks' && {block:page.attributes.blocks} )}
-                            {...(i === faqIndex && {firstFaq: true} )}
-                            {...(page?.attributes?.blocks[i]?.__component === 'casinos.casino-list' ? { isCustom: true } : {})}
+                            {...(page?.attributes?.blocks[i]?.__component === 'shared.quicklinks' ? {block:page.attributes.blocks} : {} )}
+                            {...(i === faqIndex ? {firstFaq: true} : {} )}
+                            {...(page?.attributes?.blocks[i]?.__component === 'casinos.casino-list' || page?.attributes?.blocks[i]?.__component === 'casinos.casinos-comparison' ? { isCustom: true } : {})}
                         />
                     ))
                 }
 
-                <AuthorCard />
+                <AuthorCard data={page.attributes.author}/>
             </div>
             <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
                 <CasinoSidebar />

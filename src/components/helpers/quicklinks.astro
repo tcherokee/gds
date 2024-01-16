@@ -2,7 +2,7 @@
 
 // Types and TypeGuards
 import type { Block, TranslationData, quicklinksObj } from "../../../interfaces/common/types.ts"
-import { isSingleContentBlock, isFaqBlockType, isHowToBlockType } from "../../../interfaces/common/typeguards"
+import { isSingleContentBlock, isFaqBlockType, isHowToBlockType, isProsAndConsType, isImageWithParagraphType, isIntroductionWithImageBlock } from "../../../interfaces/common/typeguards"
 
 // Helpers
 import { getTranslations } from "../../../stores/addTranslations.ts"
@@ -43,13 +43,28 @@ const extractH2Text = (components: Block[]): quicklinksObj[] => {
                 text: translationStore.faq,
                 id: sanitizeAndHyphenate(translationStore.faq),
             }];
+        } else if (isProsAndConsType(component)) {
+            return [{
+                text: component.heading,
+                id: sanitizeAndHyphenate(component.heading)
+            }]
+        } else if (isImageWithParagraphType(component)) {
+            return [{
+                text: component.title,
+                id: sanitizeAndHyphenate(component.title)
+            }]
+        } else if (isIntroductionWithImageBlock(component)) {
+            return [{
+                text: component.heading,
+                id: sanitizeAndHyphenate(component.heading)
+            }]
         } else {
             return [];
         }
     });
 };
 
-const quickLinks = extractH2Text(block)
+const quickLinks = block && extractH2Text(block)
 ---
 
 {
@@ -58,7 +73,7 @@ const quickLinks = extractH2Text(block)
         <div slot="content" class="flex">
             <ul class="grid capitalize m-0 p-0 pr-4 md:grid-cols-2 w-full gap-2">
                 {
-                    quickLinks.map(link => (
+                    quickLinks.map((link: quicklinksObj) => (
                         <li class="py-0.5 px-0 m-0">
                             <a class="underline underline-offset-4" href={`#${link.id}`}>{link.text}</a>
                         </li>
