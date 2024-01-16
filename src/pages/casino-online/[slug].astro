@@ -4,22 +4,23 @@ import qs from 'qs'
 import MainLayout from '../../layouts/MainLayout.astro';
 import { casinoproviderQs } from "../../../qs/casino-provider"
 import fetchApi from '../../../lib/strapi';
-import type { Casinoprovider } from "../../../interfaces/casino-provider.ts"
-import TimeDate from '../../components/helpers/timeDate.svelte';
+import type { Casinoprovider } from "../../../interfaces/casino-provider"
 import { get } from 'svelte/store';
 import { getTranslations } from '../../../stores/addTranslations';
-import Images from '../../components/helpers/images.astro';
-import Icon from 'astro-icon';
-import Faqs from "../../components/general/faqs.astro";
+import IntroBlock from "../../components/blocks/introwithimageblock.astro";
 
-const { slug } = Astro.params; //get the casino slug from the page url
+const { slug } = Astro.params; //get the slug from the page url
+
+// Import the QS Query string for custom slugs and prepare it for the API fetch
 const query = qs.stringify(casinoproviderQs(slug), {encodeValuesOnly: true})
 
-const casinoPage = await fetchApi<Casinoprovider[]>({
+ // Request to the Fetch Function to get page data from API
+const casinoProvider = await fetchApi<Casinoprovider[]>({
 	endpoint: 'casino-providers',
     wrappedByKey: 'data',
     query: `?${query}`
 })
+
 
 const translationStore:any = get(getTranslations);
 
@@ -27,6 +28,7 @@ const block = {
     showCasinoFilters: false
 }
 
+// breadcrum setup
 // let breadcrumbs = [
 //     ...data?.layout?.casinoBreadcrumbs,
 //     {
@@ -39,6 +41,16 @@ const block = {
 ---
 
 
-<MainLayout pageTitle={casinoPage[0]?.attributes?.seo?.metaTitle}>
+<MainLayout pageTitle={casinoProvider[0]?.attributes?.seo?.metaTitle}>
+    <div class="featured-background">
 
+        <IntroBlock 
+            block={casinoProvider[0]?.attributes?.IntroductionWithImage}
+            timeDate={casinoProvider[0]?.attributes?.updatedAt}
+            authorData={casinoProvider[0]?.attributes?.author} />
+    </div>
+
+        <script lang="ts" define:vars={{casinoProvider}}>
+		console.log(casinoProvider);
+    </script>
 </MainLayout>

@@ -2,11 +2,13 @@
 
 import { get } from 'svelte/store';
 import { getTranslations } from '../../../stores/addTranslations';
+import TimeDate from '../helpers/timeDate.svelte';
+import HeaderAuthor from '../helpers/headerAuthor.astro';
+import Images from "../helpers/images.astro";
 
     const {
         block, 
         timeDate, 
-        bkgImage, 
         noDate = false, 
         hasSiblings = true, 
         authorData, 
@@ -19,15 +21,64 @@ import { getTranslations } from '../../../stores/addTranslations';
 
     const translationStore:any = get(getTranslations);
 
-
-    const transformedBkg =
-		`https://images.${import.meta.env.HOSTNAME}` + bkgImage?.substring(bkgImage.indexOf('.com') + 4) || null
-	const transformHero =
+   const transformHero =
 		(block?.image?.data?.attributes?.url &&
-			`https://images.${import.meta.env.HOSTNAME}}/515x200/filters:quality(100)` +
+			`https://images.${import.meta.env.HOSTNAME}/515x200/filters:quality(100)` +
 				block?.image?.data?.attributes?.url?.substring(
 					block?.image?.data?.attributes?.url.indexOf('.com') + 4
 				)) ||
 		null
-
 ---
+
+<div class="intro-content">
+	<div
+		class="relative grid grid-cols-12 gap-1 pb-5 pt-0 px-2 lg:pt-10 xl:container {!hasSiblings &&
+			'md:pb-[120px]'}"
+	>
+		<div
+			class="stars relative order-2 col-span-12 lg:order-1 lg:col-span-7 lg:only-of-type:col-span-12 lg:z-20"
+		>
+			<div class={"mx-auto lg:mx-0"+!transformHero && 'pt-10 lg:pt-0'}>
+				<h1 id="features-heading" class="font-medium m-0">{block?.heading}</h1>
+				<div class="flex gap-2 items-center">
+					{(!noDate && !isHomepage) &&
+						<TimeDate {timeDate} />
+					}
+					<HeaderAuthor author={authorData} />
+				</div>
+				<div class="mt-4 mb-5 lg:mb-0">
+					<span
+						class="clamped line-clamp-2 open:line-clamp-none lg:line-clamp-none">
+                        <Fragment set:html={block?.introduction}><Fragment/>
+                        </span>
+					<!-- <button
+						class="absolute font-bold tracking-tight text-xs underline underline-offset-4 right-0 bottom-0 block lg:hidden"
+						on:click={toggleReadMore}>{translations.readMore}</button
+					> -->
+				</div>
+			</div>
+		</div>
+		{block?.image?.data?.attributes?.url &&
+			<div
+				class="relative flex items-center justify-center lg:justify-end mix-blend-lighten order-1 col-span-12 lg:order-2 lg:col-span-5 lg:aspect-[720/269] lg:absolute lg:z-10 lg:right-0 lg:top-0 lg:bottom-0"
+			>
+				<Images
+					src={block?.image?.data?.attributes?.url}
+					alt={block?.image?.data?.attributes?.alternativeText ?? block?.heading}
+					imageWidth={515}
+					imageHeight={200}
+					imageQuality={100}
+				/>
+			</div>
+		}
+	</div>
+</div>
+
+<style lang="postcss">
+	.clamped {
+		:global(p) {
+			/* margin: 0; */
+			padding: 0;
+		}
+	}
+</style>
