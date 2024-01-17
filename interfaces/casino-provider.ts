@@ -21,37 +21,39 @@ type Attributes = {
   content2: string;
   content3: string;
   updatedAt: string;
+  IntroductionWithImage: {
+    heading: string;
+    id: number;
+    image: ImageInfo;
+    Introduction: string;
+  };
+  casinoLists: {
+    data: {
+      slug: string;
+      playthrough: string;
+      ratingAvg: number;
+      ratingCount: number;
+      authorRatings: number;
+      publishedAt: string;
+    };
+  };
   seo: Seo;
   author: {
     data: Author;
-  };
-  casinoBonus: CasinoBonus;
-  images: ImageInfo;
-  ratingAvg: number;
-  ratingCount: number;
-  authorRatings: number;
-  bonusSection: BonusSection;
-  noDepositSection: BonusSection;
-  freeSpinsSection: BonusSection;
-  termsAndConditions: TermsAndConditions;
-  casinoFeatures: any[];
-  casinoGeneralInfo: CasinoGeneralInfo;
-  testimonial: {
-    approvedBy: {
-      data: Author;
-    };
-    testimonial: string;
-  };
-  providers: {
-    data: string;
-  };
-
-  casinoComparison: {
-    data: CasinoComparison;
   };
   faqs: {
     answer: string;
     id: number;
     question: string;
   }[];
+  casinoComparison: {
+    data: {
+      slug: string;
+      playthrough: string;
+      ratingAvg: number;
+      ratingCount: number;
+      authorRatings: number;
+      publishedAt: string;
+    }[];
+  };
 };
