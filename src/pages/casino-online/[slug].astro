@@ -7,7 +7,7 @@ import fetchApi from '../../../lib/strapi';
 import type { Casinoprovider } from "../../../interfaces/casino-provider"
 import { get } from 'svelte/store';
 import { getTranslations } from '../../../stores/addTranslations';
-import IntroBlock from "../../components/blocks/introWithImageBlock.astro";
+import IntroBlock from "../../components/general/introWithImage.astro";
 import CasinoTableBlock from "../../components/blocks/casinoTableBlock.astro"
 import ContentBlock from '../../components/blocks/contentBlock.astro';
 import CasinoComparison from '../../components/casino/casinoComparison.astro';
@@ -50,7 +50,7 @@ const block = {
     <div class="featured-background">
 
         <IntroBlock 
-            block={casinoProvider[0]?.attributes?.IntroductionWithImage}
+            data={casinoProvider[0]?.attributes?.IntroductionWithImage}
             timeDate={casinoProvider[0]?.attributes?.updatedAt}
             authorData={casinoProvider[0]?.attributes?.author} />
 
