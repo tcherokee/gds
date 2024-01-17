@@ -2,17 +2,27 @@
     // Import First Party and Third Party Plugins
     import dayjs from 'dayjs'
     import { get } from 'svelte/store'
+    import qs from 'qs'
 
     // Import Types
     import type { CasinoListBlock } from "../../../interfaces/casinos"
 
+    // Import QS Function
+    import { casinosQs } from "../../../qs/casinos"
+
     // Import Stores
     import { getTranslations } from "../../../stores/addTranslations"
+    import { casinos, casinoQsStore } from "../../../stores/casinos"
+
+    // Import Components
+    import DesktopCasinoFilter from '../filters/desktopCasinoFilter.svelte'
+    import MobileCasinoFilter from '../filters/mobileCasinoFilter.svelte'
 
     // Import Helpers
     import Image from '../helpers/images.svelte'
     import ReadOnlyRatings from '../helpers/readOnlyRatings.svelte'
     import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
+    import MediaQuery from "../helpers/mediaQuery.svelte"
 
     // Images
     import ArrowRight from "~icons/kensho-icons/arrow-right"
@@ -21,20 +31,38 @@
 
     export let data
 
+    // convert Qs function to QS String
+    const query = "".concat('?', qs.stringify(casinosQs(), {encodeValuesOnly: true}))
+
+    // Set casinoQsStore to QS Query String
+    casinoQsStore.set(query)
+
+    // Call Casinos Stores which should now have updated based on the Query String above
+    // $: ({loading, data = data['data']} = $casinos)
+
+    
     // Tailwind Gradient Object for Dynamic Classes
     const badgesOptions = ([
         "bg-gradient-to-b from-gold-tag-t-gradient to-gold-tag-b-gradient",
         "bg-gradient-to-b from-silver-tag-t-gradient to-silver-tag-b-gradient text-body-text",
         "bg-gradient-to-b from-bronze-tag-t-gradient to-bronze-tag-b-gradient",
     ])
-
+    
     // Flatten Casinos
     const customCasinos = data.casinosList.map((casino: CasinoListBlock) => casino.casino.data)
-
-    console.log(welcomeBonus(customCasinos[0]))
+    
+    // $: console.log('test', $casinos.data.data, customCasinos)
 
 </script>
 
+
+<MediaQuery query="(max-width: 991px)" let:matches>
+    {#if matches}
+        <MobileCasinoFilter />
+    {:else}
+        <DesktopCasinoFilter />
+    {/if}
+</MediaQuery>
 <div>
     <div class="relative xl:container px-2 pb-5">
         <div class="mb-5 pt-2.5">
