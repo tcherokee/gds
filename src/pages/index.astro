@@ -74,13 +74,22 @@ const [homepageBlogs, homepageGames] = await Promise.all([fetchHomepageBlogs, fe
 // combining games array
 const combinedGamesArray: Game[] = homepageGames.flat()
 
-
-
 const Components = await loadComponents(mapBlocksToDynamicComponents(homepage.attributes.blocks))
+
+const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
+const PUBLIC_FULL_URL = import.meta.env.FULL_URL
+
+let canonical: string =  PUBLIC_SITE_ID === 'gds' ? `${PUBLIC_FULL_URL}/` : PUBLIC_FULL_URL;
+
+let seo = {
+    pageTitle: homepage.attributes?.seo?.metaTitle,
+    metaDescription: homepage.attributes?.seo?.metaDescription,
+    url: canonical
+}
 
 ---
 
-<MainLayout pageTitle="Welcome to Astro.">
+<MainLayout seoData={seo}>
 	<div class="featured-background">
 		{
 			Components.map((Component, i) => (

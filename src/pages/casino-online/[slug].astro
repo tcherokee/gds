@@ -2,6 +2,7 @@
 
 import qs from 'qs'
 import MainLayout from '../../layouts/MainLayout.astro';
+import { urlTranslate } from '../../../utils/data-store.util'
 import { casinoproviderQs } from "../../../qs/casino-provider"
 import fetchApi from '../../../lib/strapi';
 import type { Casinoprovider } from "../../../interfaces/casino-provider"
@@ -27,17 +28,19 @@ const casinoProvider = await fetchApi<Casinoprovider[]>({
     query: `?${query}`
 })
 
-
 const translationStore:any = get(getTranslations);
 
 const block = {
     showCasinoFilters: false
 }
+//generate page url
+let siteID = import.meta.env.SITE_ID
+let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']}/${Astro.params.slug}`;
 
-let canonical: string = ``;
-
+//set page breadcrumb
 let breadcumb = { breadCrumbText: casinoProvider[0]?.attributes?.title, breadCrumbUrl: null };
 
+//set page seo data
 let seo = {
     pageTitle: casinoProvider[0]?.attributes?.seo?.metaTitle,
     metaDescription: casinoProvider[0]?.attributes?.seo?.metaDescription,
@@ -45,9 +48,6 @@ let seo = {
 }
 
 ---
-<script define:vars={{breadcumb}}>
-    console.log(breadcumb);
-</script>
 
 <MainLayout seoData={seo}>
 
