@@ -13,6 +13,7 @@ import ContentBlock from '../../components/blocks/contentBlock.astro';
 import CasinoComparison from '../../components/casino/casinoComparison.astro';
 import Faqs from "../../components/general/faqs.astro";
 import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
+import Breadcrumb from '../../components/layout/breadcrumbs.astro'
 
 const { slug } = Astro.params; //get the slug from the page url
 
@@ -42,11 +43,17 @@ const block = {
 //     }
 // ]
 
+let breadcumb = { breadCrumbText: casinoProvider[0]?.attributes?.title, breadCrumbUrl: null };
 
 ---
-
+<script define:vars={{breadcumb}}>
+    console.log(breadcumb);
+</script>
 
 <MainLayout pageTitle={casinoProvider[0]?.attributes?.seo?.metaTitle}>
+
+    <Breadcrumb breadcrumb={breadcumb} />
+
     <div class="featured-background">
 
         <IntroBlock 
@@ -104,7 +111,4 @@ const block = {
         }
     </div>
 
-    <script lang="ts" define:vars={{casinoProvider}}>
-		console.log('casinoLists',casinoProvider[0]?.attributes?.casinoLists?.data);
-    </script>
 </MainLayout>
