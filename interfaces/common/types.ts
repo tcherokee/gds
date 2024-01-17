@@ -216,7 +216,7 @@ export type CasinoComparison = {
   id: number;
   casino: {
     data: CasinoData;
-  }
+  };
 };
 
 export type CasinoComparisonBlock = BlockBase & {
@@ -236,7 +236,7 @@ export type HowToBlockTypes = BlockBase & {
 export type ProsCons = {
   id: number;
   list: string;
-}
+};
 
 export type imageWithParagraph = {
   id: number;
@@ -249,12 +249,12 @@ export type ProsAndConsTypes = BlockBase & {
   heading: string;
   pros: ProsCons[];
   cons: ProsCons[];
-}
+};
 
 export type ImageWithParagraphTypes = BlockBase & {
   title: string;
   imageWithParagraph: imageWithParagraph[];
-}
+};
 
 export type Block =
   | IntroductionWithImageBlock
@@ -343,3 +343,12 @@ export type FilterStore = {
 };
 
 export type BadgesStore = string[];
+
+export interface CasinoBlock {
+  id: number;
+  __component: string;
+  link: Link;
+  casinos: {
+    data: [Casino];
+  };
+}

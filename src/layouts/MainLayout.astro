@@ -102,4 +102,8 @@ const { pageTitle } = Astro.props
       footerNavigations={processedMenus.footernavigations}
     />
   </body>
+
+  <script define:vars={{layout}}>
+    console.log('layout', layout);
+  </script>
 </html>
