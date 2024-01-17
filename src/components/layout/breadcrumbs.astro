@@ -1,0 +1,66 @@
+---
+import qs from 'qs'
+
+// Helpers
+import fetchApi from '../../../lib/strapi';
+
+// QS Query String
+import type { LayoutData } from '../../../interfaces/layout';
+import { layoutQs } from '../../../qs/layout';
+
+const {breadcrumb} = Astro.props
+
+
+// Import the QS Query string for custom slugs and prepare it for the API fetch
+const query = qs.stringify(layoutQs(), {encodeValuesOnly: true})
+
+// Request to the Fetch Function to get the custom page slugs from the API
+const layout = await fetchApi<LayoutData>({
+    endpoint: 'layout',
+    wrappedByKey: 'data',
+    query: `?${query}`
+})
+
+const {attributes: {casinoProvidersBreadcrumbs}} = layout
+
+let breadcrumbs = [
+	...casinoProvidersBreadcrumbs,
+	breadcrumb
+]
+
+---
+<script define:vars={{layout, breadcrumbs, breadcrumb}}>
+    console.log('layout', layout);
+    console.log('breadcrumb', breadcrumb);
+    console.log('breadcrumbs', breadcrumbs);
+</script>
+
+<div class="custom-breadcrumbs bg-breadcrumb-bkg">
+	<div class="xl:container py-2 px-2">
+		<div class="text-xs leading-[12px] text-breadcrumb-text uppercase">
+
+            { breadcrumbs && 
+                	breadcrumbs.map((breadcrumb:any, i:number) => (
+                       breadcrumb.breadCrumbUrl !== null ? 
+                       <a href={breadcrumb.breadCrumbUrl}>{breadcrumb.breadCrumbText}</a> 
+                       <span class="my-0 mr-[5px] ml-[2px] text-breadcrumb-separator">
+                            {breadcrumbs.length > i + 1 ? '/' : ''}
+                        </span>
+                       : 
+                       <span>{breadcrumb.breadCrumbText}</span>
+
+                        
+                    ))
+            }
+		</div>
+	</div>
+</div>
+
+<style lang="scss">
+	.custom-breadcrumbs {
+		:global(a) {
+			@apply underline;
+			color: theme('colors.breadcrumb-text');
+		}
+	}
+</style>
