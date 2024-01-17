@@ -34,23 +34,22 @@ const block = {
     showCasinoFilters: false
 }
 
-// breadcrum setup
-// let breadcrumbs = [
-//     ...data?.layout?.casinoBreadcrumbs,
-//     {
-//         breadCrumbText: data?.casinoPage?.data?.casino?.data[0]?.attributes?.title,
-//         breadCrumbUrl: null
-//     }
-// ]
+let canonical: string = ``;
 
 let breadcumb = { breadCrumbText: casinoProvider[0]?.attributes?.title, breadCrumbUrl: null };
+
+let seo = {
+    pageTitle: casinoProvider[0]?.attributes?.seo?.metaTitle,
+    metaDescription: casinoProvider[0]?.attributes?.seo?.metaDescription,
+    url: canonical
+}
 
 ---
 <script define:vars={{breadcumb}}>
     console.log(breadcumb);
 </script>
 
-<MainLayout pageTitle={casinoProvider[0]?.attributes?.seo?.metaTitle}>
+<MainLayout seoData={seo}>
 
     <Breadcrumb breadcrumb={breadcumb} />
 

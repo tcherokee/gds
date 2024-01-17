@@ -70,18 +70,20 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
   return acc;
 }, {});
 
-const { pageTitle } = Astro.props
+const { seoData } = Astro.props
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
+    <meta name="description" content={seoData.metaDescription} />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={seoData.url} />
+    {seoData?.author && <meta name="author" content={seoData?.author} />}
+    <link rel="icon" type="image/svg+xml" href={`https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.env.SITE_ID}.png`} />
     <meta name="generator" content={Astro.generator} />
-    <title>{pageTitle}</title>
+    <title>{seoData.pageTitle}</title>
     <Tooltips />
   </head>
   <body>
