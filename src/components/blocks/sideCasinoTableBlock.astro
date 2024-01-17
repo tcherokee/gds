@@ -1,0 +1,28 @@
+---
+	import { get } from 'svelte/store';
+    import { getTranslations } from '../../../stores/addTranslations';
+	import SideCasinoTable from '../casino/sideCasinoTable.astro'
+
+	//get translation context
+    const translationStore:any = get(getTranslations);
+
+    const {mostLoveCasinos, freeSpinCasinos, noDepositCasinos} =  Astro.props
+
+
+---
+
+<div class="sticky top-1 z-30 [&>.side-casino-table]:mb-4 last:[&>.side-casino-table]:mb-0">
+	{mostLoveCasinos.length &&
+		<SideCasinoTable casinos={mostLoveCasinos} title={translationStore.bestWelcomeBonus} type={'BEST'} />
+	}
+	{noDepositCasinos.length &&
+		<SideCasinoTable
+			casinos={noDepositCasinos}
+			title={translationStore.bestNoDepositBonus}
+			type={'NO_DEPOSIT'}
+		/>
+	}
+	{ freeSpinCasinos.length &&
+		<SideCasinoTable casinos={freeSpinCasinos} title={translationStore.bestFreeSpins} type={'FREE'} />
+	}
+</div>

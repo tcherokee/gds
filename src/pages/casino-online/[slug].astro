@@ -7,7 +7,12 @@ import fetchApi from '../../../lib/strapi';
 import type { Casinoprovider } from "../../../interfaces/casino-provider"
 import { get } from 'svelte/store';
 import { getTranslations } from '../../../stores/addTranslations';
-import IntroBlock from "../../components/blocks/introwithimageblock.astro";
+import IntroBlock from "../../components/blocks/introWithImageBlock.astro";
+import CasinoTableBlock from "../../components/blocks/casinoTableBlock.astro"
+import ContentBlock from '../../components/blocks/contentBlock.astro';
+import CasinoComparison from '../../components/casino/casinoComparison.astro';
+import Faqs from "../../components/general/faqs.astro";
+import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
 
 const { slug } = Astro.params; //get the slug from the page url
 
@@ -48,9 +53,58 @@ const block = {
             block={casinoProvider[0]?.attributes?.IntroductionWithImage}
             timeDate={casinoProvider[0]?.attributes?.updatedAt}
             authorData={casinoProvider[0]?.attributes?.author} />
+
+        <div class="mb-[40px]">
+            {casinoProvider[0]?.attributes?.casinoLists.data &&
+                <CasinoTableBlock
+                    customCasinos={casinoProvider[0]?.attributes?.casinoLists?.data}
+                    customPage={true}
+                    {block}
+                />
+            }
+        </div>
     </div>
 
-        <script lang="ts" define:vars={{casinoProvider}}>
-		console.log(casinoProvider);
+    <div class="xl:container px-2 pb-5 pt-4">
+        {(casinoProvider[0]?.attributes?.content1 || casinoProvider[0]?.attributes?.content2 || casinoProvider[0]?.attributes?.content3 || casinoProvider[0]?.attributes?.faqs?.length > 0) &&
+            <div class="flex flex-col md:flex-row gap-x-8">
+                <div class="order-last md:order-first">
+                    <div class="content">
+                        {casinoProvider[0]?.attributes?.content1 &&
+                            <ContentBlock pageContent={casinoProvider[0]?.attributes?.content1} />
+                        }
+                        {casinoProvider[0]?.attributes?.content2 &&
+                            <ContentBlock pageContent={casinoProvider[0]?.attributes?.content2} />
+                        }
+                        {casinoProvider[0]?.attributes?.content3 &&
+                            <ContentBlock pageContent={casinoProvider[0]?.attributes?.content3} />
+                        }
+                    </div>
+
+                    {casinoProvider[0]?.attributes?.casinoComparison?.data.length > 0 &&
+                        <CasinoComparison
+                            block={{}}
+                            data={casinoProvider[0]?.attributes?.casinoComparison?.data.slice(0, 3)}
+                        />
+                    }
+                    {casinoProvider[0]?.attributes?.faqs?.length > 0 &&
+                        <div class="content">
+                            <h2 class="mb-4">{translationStore.faq}</h2>
+
+                            {casinoProvider[0]?.attributes?.faqs.map(faq => 
+                                <Faqs data={faq} />
+                            )}
+                        </div>
+                    }
+                </div>
+                <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
+                    <CasinoSideBar />
+                </div>
+            </div>
+        }
+    </div>
+
+    <script lang="ts" define:vars={{casinoProvider}}>
+		console.log('casinoLists',casinoProvider[0]?.attributes?.casinoLists?.data);
     </script>
 </MainLayout>

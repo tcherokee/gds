@@ -27,9 +27,33 @@ type Attributes = {
     image: ImageInfo;
     Introduction: string;
   };
-  casinoLists: string;
+  casinoLists: {
+    data: {
+      slug: string;
+      playthrough: string;
+      ratingAvg: number;
+      ratingCount: number;
+      authorRatings: number;
+      publishedAt: string;
+    };
+  };
   seo: Seo;
   author: {
     data: Author;
+  };
+  faqs: {
+    answer: string;
+    id: number;
+    question: string;
+  }[];
+  casinoComparison: {
+    data: {
+      slug: string;
+      playthrough: string;
+      ratingAvg: number;
+      ratingCount: number;
+      authorRatings: number;
+      publishedAt: string;
+    }[];
   };
 };
