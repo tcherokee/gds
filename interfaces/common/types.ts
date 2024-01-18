@@ -352,3 +352,31 @@ export interface CasinoBlock {
     data: [Casino];
   };
 }
+
+export interface ProsConsBlock {
+  heading: string;
+  pros: {
+    list: string;
+  }[];
+  proImage: {
+    data: {
+      attributes: {
+        url: string;
+        width: number;
+        height: number;
+      };
+    };
+  };
+  cons: {
+    list: string;
+  }[];
+  conImage: {
+    data: {
+      attributes: {
+        url: string;
+        width: number;
+        height: number;
+      };
+    };
+  };
+}
