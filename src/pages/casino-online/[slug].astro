@@ -3,11 +3,11 @@
 import qs from 'qs'
 import MainLayout from '../../layouts/MainLayout.astro';
 import { urlTranslate } from '../../../utils/data-store.util'
-import { casinoproviderQs } from "../../../qs/casino-provider"
 import fetchApi from '../../../lib/strapi';
-import type { Casinoprovider } from "../../../interfaces/casino-provider"
 import { get } from 'svelte/store';
 import { getTranslations } from '../../../stores/addTranslations';
+import { casinoproviderQs } from "../../../qs/casino-provider"
+import type { Casinoprovider } from "../../../interfaces/casino-provider"
 import IntroBlock from "../../components/general/introWithImage.astro";
 import CasinoTableBlock from "../../components/blocks/casinoTableBlock.astro"
 import ContentBlock from '../../components/blocks/contentBlock.astro';

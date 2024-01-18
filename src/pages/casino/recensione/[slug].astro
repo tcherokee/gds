@@ -4,8 +4,8 @@ import qs from 'qs'
 import MainLayout from '../../../layouts/MainLayout.astro';
 import { urlTranslate } from '../../../../utils/data-store.util'
 import fetchApi from '../../../../lib/strapi';
-import { casinopageQs } from "../../../../qs/casinopage.ts"
-import type { Casinopage } from "../../../../interfaces/casinopage.ts"
+import { casinopageQs } from "../../../../qs/casinopage"
+import type { Casinopage } from "../../../../interfaces/casinopage"
 import TimeDate from '../../../components/helpers/timeDate.svelte';
 import HeaderAuthor from '../../../components/helpers/headerAuthor.astro';
 import Image from '../../../components/helpers/images.astro';
@@ -526,7 +526,7 @@ let breadcumb = { breadCrumbText: casinoPage[0]?.attributes?.title, breadCrumbUr
 						</div>
 
 						<div class="mb-5">
-							{casinoPage[0]?.attributes?.faqs.map((faq:any, index:number) => 
+							{casinoPage[0]?.attributes?.faqs.map((faq:any) => 
 								<Faqs data={faq} />
 							)}
 						</div>
