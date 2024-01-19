@@ -12,69 +12,53 @@ import { getTranslations } from "../../../stores/addTranslations.ts"
 import Image from "../helpers/images.astro"
 import Link from "../helpers/link.astro"
 import AddToFav from "../helpers/addToFavs.svelte"
+import { urlTranslate } from "../../../utils/data-store.util"
 
 const { game } = Astro.props
 
 const translationStore: TranslationData = getTranslations.get()
 
+let siteID = import.meta.env.SITE_ID
+let gameURL = urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']+"/"+game?.attributes?.slug;
+let provideURL = urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']+"/"+game?.attributes?.provider?.data?.attributes?.slug ?? game?.attributes?.provider?.slug;
 ---
 
-<aside
-	class="relative cursor-pointer rounded-lg aspect-[235/244] w-full transition-shadow duration-[0.3s] sm:cursor-auto"
->
+<aside class="relative cursor-pointer rounded-lg aspect-[235/244] w-full transition-shadow duration-[0.3s] sm:cursor-auto">
 	<div class="absolute pointer-events-none h-full left-0 top-0 w-full">
 		<Image
 			src={game?.attributes?.images?.data?.attributes?.url ?? game?.attributes?.images?.url}
 			alt="{game?.attributes?.title} logo"
 			imageWidth={235}
 			imageHeight={244}
-			classes="rounded-lg w-full h-full"
-		/>
+			classes="rounded-lg w-full h-full" />
 	</div>
-	<div
-		class="game-meta pointer-events-none group py-0 rounded-lg flex flex-col justify-between h-full relative sm:pointer-events-auto z-10 sm:hover:bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]"
-	>
-		<div
-			class={`${game?.attributes?.ratingAvg > 4.5
+	<div class="game-meta pointer-events-none group py-0 rounded-lg flex flex-col justify-between h-full relative sm:pointer-events-auto z-10 sm:hover:bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]">
+		<div class={`${game?.attributes?.ratingAvg > 4.5
 				? 'hot-slot'
 				: dayjs().diff(game?.attributes?.publishedAt, 'day') <= 14
 				? 'new-slot'
-				: ''} text-[10px] leading-[16px] m-2 text-white font-bold w-fit px-[6px] pt-[1px] uppercase rounded-[40px] -tracking-[0.2px]`}
-		>
+				: ''} text-[10px] leading-[16px] m-2 text-white font-bold w-fit px-[6px] pt-[1px] uppercase rounded-[40px] -tracking-[0.2px]`}>
 			{game?.attributes?.ratingAvg > 4.5
 				? 'hot slot'
 				: dayjs().diff(game?.attributes?.publishedAt, 'day') <= 14
 				? 'new slot'
 				: ''}
 		</div>
-		<div
-			class="transition-all duration-[0.3s] scale-75 flex flex-col items-center opacity-0 absolute top-[50%] left-[50%] -translate-y-1/2 -translate-x-1/2 sm:group-hover:scale-100 sm:group-hover:opacity-100"
-		>
-			<button
-				class="btn btn-secondary uppercase text-white w-[130px] mb-3">{translationStore.playFunBtn}</button
-			>
-			<Link
-				href="/{game?.attributes?.provider?.data?.attributes?.slug ?? game?.attributes?.provider?.slug}"
-				classes="btn btn-misc uppercase text-white w-[130px]" text={translationStore.playRealBtn} />
+		<div class="transition-all duration-[0.3s] scale-75 flex flex-col items-center opacity-0 absolute top-[50%] left-[50%] -translate-y-1/2 -translate-x-1/2 sm:group-hover:scale-100 sm:group-hover:opacity-100">
+			<a href={gameURL} class="btn btn-secondary uppercase text-white w-[130px] mb-3">{translationStore.playFunBtn}</a>
+			<a href={provideURL} class="btn btn-misc uppercase text-white w-[130px]">{translationStore.playRealBtn}</a>
 		</div>
-		<div
-			class="game-title-container p-2 rounded-b-lg bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]"
-		>
+		<div class="game-title-container p-2 rounded-b-lg bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]">
 			<div
-				class="flex justify-between items-center mb-[2px] transition-transform duration-[0.3s] translate-y-[20px] sm:group-hover:translate-y-0"
-			>
+				class="flex justify-between items-center mb-[2px] transition-transform duration-[0.3s] translate-y-[20px] sm:group-hover:translate-y-0">
 				<h4 class="text-white text-sm font-bold !m-0">
 					<Link href="/{game?.attributes?.slug}" text={game?.attributes?.title} />
 				</h4>
 				<AddToFav game={game} classes="w-4 h-[14px]" client:visible />
 			</div>
-			<div
-				class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100"
-			>
-				<a
-					href="/{game?.attributes?.slug}"
-					class="text-[#CED4DA] text-xs"
-				>
+			<div class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100">
+				<a href="/{game?.attributes?.slug}"
+					class="text-[#CED4DA] text-xs">
 					{game?.attributes?.provider?.data?.attributes?.title ?? game?.attributes?.provider?.title}&nbsp;•&nbsp;
 				</a>
 				<div class="w-[10px] h-[10px]">

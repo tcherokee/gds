@@ -9,19 +9,18 @@ import { get } from 'svelte/store';
 import { getTranslations } from '../../../stores/addTranslations';
 import { gamepageQs } from "../../../qs/game-page"
 import type { Gamepage } from "../../../interfaces/game-page"
-import { CleanGamesForGamePage, CleanSingleGameForGamePage } from '../../../utils/utilities.util'
+import { CleanGamesForGamePage } from '../../../utils/utilities.util'
 import Breadcrumb from '../../components/layout/breadcrumbs.astro'
-import Images from '../../components/helpers/images.astro';
-import ReadOnlyRatings from '../../components/helpers/readOnlyRatings.astro';
 import GameListBlock from '../../components/blocks/gameListBlock.astro';
 import CasinoTable from '../../components/casino/casinoTable.astro';
 import HowTo from '../../components/general/howTo.astro';
 import ContentBlock from '../../components/blocks/contentBlock.astro';
 import ProsCons from '../../components/general/proCons.astro'
 import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
-import { loadComponents, mapBlocksToDynamicComponents } from '../../../lib/loadBlockComponents';
 import ImageCarousel from '../../components/general/imageCarousel.svelte';
 import Faqs from '../../components/general/faqs.astro';
+import GamePlayer from '../../components/games/game-player.svelte'
+// import QuickLinks from '../../components/helpers/quicklinks.astro'
 
 const { slug } = Astro.params; //get the game slug from the page url
 const query = qs.stringify(gamepageQs(slug), {encodeValuesOnly: true})
@@ -86,170 +85,7 @@ const __blocks = gamePage[0]?.attributes?.blocks
 
      <div class="iframe-bkg pb-3">
         <div class="section-wrapper relative">
-            <div class="game-section">
-                <div class={gamePlayerClass}>
-                    <div class="float-close-btn">
-						<div class="buttons">
-							<button type="button" class="btn btn-link">
-								<Icon name="chevron-down" width="25px" height="17px" />
-							</button>
-							<button type="button" class="btn btn-link reload">
-								<Icon name="reload" width="25px" height="17px" />
-							</button>
-							<button
-								type="button"
-								class="btn btn-link heart">
-								<Icon name="favourites" width="25px" height="17px" fill="bg-danger" />
-							</button>
-							<button
-								type="button"
-								class="btn btn-link report-issue"
-								data-bs-toggle="modal"
-								data-bs-target="#expandReportGame"
-							>
-								<Icon name="exclamation" width="25px" height="17px" />
-							</button>
-							<button type="button" class="btn btn-link">
-								<Icon name="xmark" width="25px" height="17px" />
-							</button>
-						</div>
-					</div>
-                    {!startGame ?
-                        <div class="start-game-overlay">
-                            {gamePage[0]?.attributes?.isGameDisabled ?
-                                <Icon name="no-game" width="30%" /> 
-                                <h3 class="mt-5 text-white">{gamePage[0].attributes?.gameDisableText}</h3>
-                                :
-                                <div class="flex items-center mb-3">
-                                    <h3 class="game-title mr-3 !my-0">{gamePage[0]?.attributes?.title}</h3>
-                                    <div class="game-provider text-white text-xs">
-										da <a
-											href={urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']+"/"+gamePage[0]
-												?.attributes?.provider?.data?.attributes?.slug}
-											class="uppercase"
-										>
-											{gamePage[0]?.attributes?.provider?.data?.attributes?.title}
-										</a>
-									</div>
-                                </div>
-                                <Images
-									src={gamePage[0]?.attributes?.images?.data?.attributes?.url}
-									imageWidth={190}
-									imageHeight={197}
-									classes="providerImage"
-									alt={gamePage[0]?.attributes?.title}
-								/>
-								<div class="btn btn-secondary free-play uppercase my-5">
-									Gioco Gratis
-								</div>
-								<div class="age-warning">
-									Premendo "Gioco Gratis", confermi di avere almeno 18 anni.
-								</div>
-                            }
-                        </div>
-                        :
-                        <div class="iframe-wrapper h-full w-full">
-                            <Fragment set:html={gamePage[0]?.attributes?.embedCode?.desktopEmbedCode}></Fragment>
-                        </div>
-                    }
-                </div>
-                <div class="game-footer rounded-b-lg md:p-1.5 flex flex-wrap items center bg-transparent md:bg-white justify-between md:justify-center md:bg-slate-400 w-full">
-                    <div class="provider-meta p-2.5 md:p-0 flex order-1 bg-white grow md:grow-0">
-						<div class="provider-game-title md:w-[105px] mdc:w-auto">
-							<h2 class="leading-tight">
-								{gamePage[0]?.attributes?.title}
-							</h2>
-						</div>
-					</div>
-                    <div class="px-2.5 shrink-0 justify-between basis-full flex items-center order-3 grow-0 md:basis-[300px] md:grow mt-4 md:mt-0 md:order-2">
-                        <div class="bg-grey-100 p-2.5 md:p-0 md:bg-white shrink-0 justify-between basis-full flex items-center order-3 grow-0 md:basis-[300px] md:grow rounded-lg md:rounded-none md:border-0 md:order-2">
-                            <div class="ml-0 md:ml-4">
-                                <ReadOnlyRatings avgRating={gamePage[0]?.attributes?.ratingAvg} showVotes={true} ratingClasses="flex-col" />
-                            </div>
-                            <div class="buttons md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center md:m-auto">
-                                <a
-									href={urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']+"/"+gamePage[0]
-										?.attributes?.provider?.data?.attributes?.slug}
-									class="btn btn-misc btn-real-money w-32 md:w-[200px] mr-3 uppercase"
-									>{translationStore.playRealBtn}</a>
-                                    <button
-									type="button"
-									class="btn btn-link info"
-									title="Consulta la lista dei casino online che offrono questo gioco e delle loro offerte di benvenuto Giochi di Slots ricorda che il gioco è vietato ai minori di età">
-									<Icon name="info-no-circle" width="25px" height="15px" />
-									<div id="game-info-tooltip" role="tooltip" class="hidden px-5 text-black -ml-[180px] md:-ml-[0px] opacity-100 bg-grey-100 text-sm z-20 -mt-[11rem] w-[220px] absolute transition duration-150 ease-in-out shadow-lg p-2 rounded">
-										gameInfoText
-									</div>
-								</button>
-                            </div>
-                        </div>
-                    </div>
-                    {!gamePage[0]?.attributes?.isGameDisabled && 
-                        <div class="player-controls order-2 md:order-3 pr-2.5 md:pr-0 flex items-center bg-white grow md:grow-0 justify-end">
-                            <div class="buttons flex gap-x-1">
-                                <button
-									type="button"
-									class="btn relative btn-link fullscreen-btn text-primary transition duration-50 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
-									data-te-toggle="tooltip"
-									title={translationStore.fullscreen}>
-									<Icon name="fullscreen" width="25px" height="17px" />
-									<div
-										id="fullscreen-tooltip"
-										role="tooltip"
-										class="hidden px-5 text-black opacity-100 bg-grey-100 text-sm z-20 -mt-20 w-[150px] absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
-									>
-										{translationStore.fullscreen}
-									</div>
-								</button>
-                                <button
-									type="button"
-									class="relative btn btn-link reload text-primary transition duration-50 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
-									data-te-toggle="tooltip"
-									title={translationStore.reloadGame}>
-									<Icon name="reload" width="25px" height="17px" />
-									<div
-										id="reload-tooltip"
-										role="tooltip"
-										class="hidden px-5 text-black opacity-100 bg-grey-100 text-sm z-20 -mt-20 w-[150px] absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
-									>
-										{translationStore.reloadGame}
-									</div>
-								</button>
-                                <button
-									type="button"
-									class="btn btn-link heart relative"
-									data-te-toggle="tooltip"
-									title={translationStore.favouriteAGame}
-								>
-									<Icon name="favourite" width="25px" height="17px" fill="bg-danger" />
-									<div
-										id="favourite-tooltip"
-										role="tooltip"
-										class="hidden px-5 text-black opacity-100 bg-grey-100 text-sm z-20 -mt-20 -ml-[180px] w-fit absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
-									>
-										{translationStore.favouriteAGame}
-									</div>
-								</button>
-                                <button
-									type="button"
-									class="btn btn-link report-issue m-0 relative"
-									data-te-toggle="tooltip"
-									title={translationStore.reportAGame}>
-									<Icon name="exclamation" width="25px" height="17px" />
-									<div
-										id="report-tooltip"
-										role="tooltip"
-										class="hidden px-5 text-black opacity-100 bg-grey-100 text-sm z-20 -mt-20 -ml-[180px] w-fit absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
-									>
-										{translationStore.reportAGame}
-									</div>
-								</button>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-
+            <GamePlayer data={gamePage[0]} client:load />
             <div class="mt-6 md:mt-8">
                 <h2 class="text-white !m-0">{translationStore.gamePageRelatedGamesH2}</h2>
                 <div class="mt-4 glass-wrapper">
@@ -281,7 +117,7 @@ const __blocks = gamePage[0]?.attributes?.blocks
         <div class="flex flex-col md:flex-row gap-x-8">
             <div class="order-last md:order-first mt-5 md:mt-0">
                 <div class="quicklinks mb-5">
-                    <!-- <QuickLinks {qlinks} listNodes={Headings} /> -->
+                    <!-- <QuickLinks data={} listNodes={Headings} /> -->
                 </div>
                 <div class="intro-content">
                     <h1 class="text-blue-700 !mt-0">{gamePage[0]?.attributes?.heading}</h1>
