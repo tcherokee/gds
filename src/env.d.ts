@@ -12,4 +12,5 @@ interface ImportMetaEnv {
   readonly LANG: string;
   readonly PUBLIC_ROOT_DOMAIN: string;
   readonly PUBLIC_IMAGE_URL: string;
+  readonly PUBLIC_RECAPTCHA_SITE_KEY: string;
 }

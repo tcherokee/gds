@@ -1,0 +1,14 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import Dashboard from "../../components/dashboard/dashboard.svelte";
+
+let seo = {
+  pageTitle: "",
+  metaDescription: "",
+  url: "",
+};
+---
+
+<MainLayout seoData={seo}>
+  <Dashboard />
+</MainLayout>
