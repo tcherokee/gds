@@ -11,14 +11,17 @@ import { sanitizeAndHyphenate } from '../../../lib/sanitizeAndHyphenate'
 //Components
 import Collapse from './collapse.astro'
 
-const { data, block } = Astro.props
+const { data, block, isGamePage = false } = Astro.props
+
+console.log('ql', data, block)
 
 const translationStore: TranslationData = getTranslations.get()
 
+// Regex to target H2 Headings
+const h2Regex = /<h2>(.*?)<\/h2>/g;
+
 //Function to Extract H2 Headings from Content Blocks
-const extractH2Text = (components: Block[]): quicklinksObj[] => {
-    // Regex to target H2 Headings
-    const h2Regex = /<h2>(.*?)<\/h2>/g;
+const extractH2TextBlock = (components: Block[]): quicklinksObj[] => {
     
     // Boolean toggle to determine when one FAQ has been processed.
     let faqProcessed: Boolean = false
@@ -64,11 +67,90 @@ const extractH2Text = (components: Block[]): quicklinksObj[] => {
     });
 };
 
-const quickLinks = block && extractH2Text(block)
+const extractH2Text = (element) => {
+
+    const quickLinkKeys = [
+        "heading",
+        "introduction",
+        "content1",
+        "content2",
+        "content3",
+        "content4",
+        "howTo",
+        'proscons',
+        "faqs",
+        "gameInfoTable",
+    ]
+    
+    const qlArray = []
+    
+    for (const key in element) {
+        if (quickLinkKeys.includes(key) && element[key]) {
+            switch (key) {
+                case 'howTo':
+                    qlArray.push({
+                        text: element[key].title,
+                        id: sanitizeAndHyphenate(element[key].title)
+                    })
+                    break
+                case 'content1':
+                case 'content2':
+                case 'content3':
+                case 'content4':
+                case 'introduction':
+                    const matches = [...element[key].matchAll(h2Regex)];
+                    qlArray.push(...matches.map(match => ({
+                        text: match[1],
+                        id: sanitizeAndHyphenate(match[1]),
+                    })));
+                    break;
+                case 'proscons':
+                    qlArray.push({
+                        text: element[key].heading,
+                        id: sanitizeAndHyphenate(element[key].heading)
+                    })
+                    break;
+                case 'heading':
+                    if (isGamePage) {
+                        qlArray.push({
+                            text: element[key].heading,
+                            id: sanitizeAndHyphenate(element[key].heading)
+                        })
+                    }
+                    break
+                case 'gameInfoTable':
+                    qlArray.push({
+                        text: translationStore.gameInfoTableH2,
+                        id: sanitizeAndHyphenate(translationStore.gameInfoTableH2)
+                    })
+                    break
+                case 'faqs':
+                    if (element[key].length > 0) {
+                        qlArray.push({
+                            text: translationStore.faq,
+                            id: sanitizeAndHyphenate(translationStore.faq)
+                        })
+                    }
+                    break
+                default:
+                    break;
+            }
+        }
+    }
+
+    console.log(qlArray)
+    return qlArray
+
+}
+
+console.log('data', extractH2Text(data.attributes))
+
+const quickLinks = block ? extractH2TextBlock(block) : extractH2Text(data.attributes)
+
+console.log('quickLinks', quickLinks)
+
 ---
 
-{
-    data?.showQuickLinks ?
     <Collapse id="quickLinks" label={translationStore.quickLinks} containerClass="mb-5" labelClass="text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3" collapseClass="bg-white rounded-b-md">
         <div slot="content" class="flex">
             <ul class="grid capitalize m-0 p-0 pr-4 md:grid-cols-2 w-full gap-2">
@@ -82,5 +164,3 @@ const quickLinks = block && extractH2Text(block)
             </ul>
         </div>
     </Collapse>
-    : <></>
-}
