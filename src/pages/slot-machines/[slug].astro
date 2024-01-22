@@ -1,0 +1,563 @@
+---
+
+import qs from 'qs'
+import Icon from 'astro-icon'
+import MainLayout from '../../layouts/MainLayout.astro';
+import { urlTranslate, GameInfoHeader } from '../../../utils/data-store.util'
+import fetchApi from '../../../lib/strapi';
+import { get } from 'svelte/store';
+import { getTranslations } from '../../../stores/addTranslations';
+import { gamepageQs } from "../../../qs/game-page"
+import type { Gamepage } from "../../../interfaces/game-page"
+import { CleanGamesForGamePage } from '../../../utils/utilities.util'
+import Breadcrumb from '../../components/layout/breadcrumbs.astro'
+import GameListBlock from '../../components/blocks/gameListBlock.astro';
+import CasinoTable from '../../components/casino/casinoTable.astro';
+import HowTo from '../../components/general/howTo.astro';
+import ContentBlock from '../../components/blocks/contentBlock.astro';
+import ProsCons from '../../components/general/proCons.astro'
+import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
+import ImageCarousel from '../../components/general/imageCarousel.svelte';
+import Faqs from '../../components/general/faqs.astro';
+import GamePlayer from '../../components/games/game-player.svelte'
+// import QuickLinks from '../../components/helpers/quicklinks.astro'
+
+const { slug } = Astro.params; //get the game slug from the page url
+const query = qs.stringify(gamepageQs(slug), {encodeValuesOnly: true})
+
+let schema: any = null
+let fullscreen: boolean = false
+let startGame: boolean = false
+let userRating: number
+let isRatingDisabled: boolean = false
+let iframeWrapper: any
+let reportFormSubmitting: boolean = false
+let reportGameEl: any
+let reportGameModal: any
+let Modal: any
+let Headings: any
+let ReportAnIssueOpen: boolean = false
+let gamePlayerClass = 'game-player'
+
+let hoverEl: any
+
+const translationStore:any = get(getTranslations);
+
+const gamePage = await fetchApi<Gamepage[]>({
+	endpoint: 'games',
+    wrappedByKey: 'data',
+    query: `?${query}`
+})
+
+const gamesData = [...gamePage[0]?.attributes?.provider?.data?.attributes?.games?.data];
+const limitGames = gamesData.splice(0, 6);
+
+//Cleaup Games Array
+const gamesArray = CleanGamesForGamePage(limitGames)
+
+//generate page url
+let siteID = import.meta.env.SITE_ID
+let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${Astro.params.slug}`;
+
+//set page breadcrumb
+let breadcumb = { breadCrumbText: gamePage[0]?.attributes?.title, breadCrumbUrl: null };
+
+//set page seo data
+let seo = {
+    pageTitle: gamePage[0]?.attributes?.seo?.metaTitle,
+    metaDescription: gamePage[0]?.attributes?.seo?.metaDescription,
+    url: canonical
+}
+
+//list componets on page
+const __blocks = gamePage[0]?.attributes?.blocks
+
+---
+
+<script define:vars={{gamePage, limitGames, gamesData}}>
+    console.log('limitGames', limitGames);
+    console.log('gamesData', gamesData);
+    console.log('gamePage', gamePage)
+</script>
+
+<MainLayout seoData={seo}>
+     <Breadcrumb breadcrumb={breadcumb} />
+
+     <div class="iframe-bkg pb-3">
+        <div class="section-wrapper relative">
+            <GamePlayer data={gamePage[0]} client:load />
+            <div class="mt-6 md:mt-8">
+                <h2 class="text-white !m-0">{translationStore.gamePageRelatedGamesH2}</h2>
+                <div class="mt-4 glass-wrapper">
+					<GameListBlock data={limitGames} />
+				</div>
+                <!-- {gamesData?.length > $GamesStore?.length &&
+					<div class="flex justify-center mt-10">
+						<button
+							on:click={loadMoreGames}
+							class="btn btn-secondary uppercase text-white w-[130px] mb-3"
+							>{translations.loadMore}</button
+						>
+					</div>
+				} -->
+            </div>
+        </div>
+     </div>
+
+     <div class="w-full xl:container px-2">
+        <div class="mb-10">
+			<h2 class="mt-8 mb-4 md:mt-16">{translationStore.gamePageRelatedCasinoH2}</h2>
+			<CasinoTable
+				casinos={gamePage[0].attributes?.provider?.data?.attributes?.relatedCasinos
+					?.data}
+				customPage={true}
+			/>
+		</div>
+
+        <div class="flex flex-col md:flex-row gap-x-8">
+            <div class="order-last md:order-first mt-5 md:mt-0">
+                <div class="quicklinks mb-5">
+                    <!-- <QuickLinks data={} listNodes={Headings} /> -->
+                </div>
+                <div class="intro-content">
+                    <h1 class="text-blue-700 !mt-0">{gamePage[0]?.attributes?.heading}</h1>
+                    <Fragment set:html={gamePage[0]?.attributes?.introduction}></Fragment>
+                </div>
+
+                {gamePage[0]?.attributes?.howTo &&
+					<div class="howto-content">
+						<h2>{gamePage[0]?.attributes?.howTo.title}</h2>
+						{gamePage[0]?.attributes?.howTo?.howToGroup.map((howTo:any, i:number) => 
+							<HowTo
+								count={i + 1}
+								howToWidth={howTo?.image?.data?.attributes?.width}
+								howToHeight={howTo?.image?.data?.attributes?.height}
+								howToImage={howTo?.image?.data?.attributes?.url}
+								howToCopy={howTo.copy}
+								howToHeading={howTo.heading}
+							/>
+						)}
+					</div>
+				}
+
+                { gamePage[0]?.attributes?.gameInfoTable &&
+					<div class="info-table-content">
+						<h2 class="mb-[15px]">{translationStore.gameInfoTableH2}</h2>
+						<figure class="table">
+							<table class="inner-content-table table table-primary">
+								<thead class="">
+									<tr>
+										{Object.values(GameInfoHeader).map(key =>
+											key === 'rtp' ?
+                                            <th class="uppercase">{key}</th> : 
+                                            <th class="capitalize">{key}</th>
+											
+										)}
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										{Object.keys(GameInfoHeader).map(key =>
+											<td>{gamePage[0]?.attributes?.gameInfoTable[key]}</td>
+										)}
+									</tr>
+								</tbody>
+							</table>
+						</figure>
+					</div>
+				}
+
+                {gamePage[0]?.attributes?.content1 &&
+					<div class="game-content">
+						<div>
+							<ContentBlock pageContent={gamePage[0]?.attributes?.content1} />
+						</div>
+					</div>
+				}
+
+                {gamePage[0]?.attributes?.proscons &&
+					<div class="procon-content">
+						<div>
+							<ProsCons
+								pros={gamePage[0]?.attributes?.proscons?.pros}
+								cons={gamePage[0]?.attributes?.proscons?.cons}
+								heading={gamePage[0]?.attributes?.proscons?.heading}
+								prosImage={gamePage[0]?.attributes?.proscons?.proImage}
+								consImage={gamePage[0]?.attributes?.proscons?.conImage}
+							/>
+						</div>
+					</div>
+				}
+
+                <!-- Start Blocks components -->
+
+                { 
+                    //Image carousel block
+                    __blocks.map((block, i) => (
+                    (block.__component === 'shared.image-carousel') &&
+                        <ImageCarousel data={gamePage[0]?.attributes.blocks[i]} client:visible  /> 
+                    ))
+                }
+
+				 <!-- End page Blocks -->
+
+                 { gamePage[0]?.attributes?.faqs && 
+					<div class="faq-content">
+						{gamePage[0]?.attributes?.faqs?.length && <h2 class="mb-4">{translationStore.faq}</h2> }
+						<div>
+							{gamePage[0]?.attributes?.faqs.map((faq:any) => <Faqs data={faq} /> )}
+						</div>
+					</div>
+				}
+            </div>
+            <div class="basis-[315px] shrink-0 order-first order-last">
+                <CasinoSideBar />
+            </div>
+        </div>
+     </div>
+
+</MainLayout>
+
+<style lang="scss">
+	h1 {
+		// @apply capitalize font-extrabold text-blue-700 text-[32px];
+		// font-family: 'Lato', Helvetica, Arial, sans-serif;
+		text-shadow: none;
+	}
+	// h2 {
+	// 	@apply text-[25px] md:text-[32px] leading-7;
+	// }
+	.game-section {
+		@apply flex flex-col justify-center rounded-t-lg -mx-3 md:mx-0;
+	}
+
+	.iframe-bkg {
+		@apply curve rounded-b-3xl;
+	}
+
+	.player-control-tooltip {
+		@apply hidden text-sm z-20 -mt-20 w-fit absolute transition duration-150 ease-in-out left-0 ml-8 shadow-lg bg-white p-4 rounded;
+	}
+	.game-player-fullscreen {
+		@apply h-full w-full fixed left-0 top-0 flex justify-center bg-black z-[999];
+
+		.float-close-btn {
+			display: flex;
+			flex-direction: column;
+			margin-left: auto;
+			position: absolute;
+			top: 0px;
+			z-index: 999;
+			margin: 20px;
+			right: 0px;
+			border-radius: 10px;
+			height: 40px;
+			overflow: hidden;
+
+			&:hover {
+				height: max-content;
+			}
+
+			.buttons {
+				display: flex;
+				flex-direction: column;
+				padding: 10px;
+
+				.btn {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					border-radius: 50%;
+					width: 30px;
+					height: 30px;
+					padding: 0;
+					background: theme('colors.gameplayer-meta-btn-bkg');
+					border: 1px solid theme('colors.gameplayer-meta-btn-border');
+					// box-shadow: 0 0.125rem 0.25rem rgba($black, 0.075);
+					margin-bottom: 5px;
+
+					&:last-child {
+						margin-right: 0;
+					}
+
+					:global(svg) {
+						// fill: theme('colors.gameplayer-meta-btn-icon');
+					}
+
+					&.heart {
+						:global(svg) {
+							fill: transparent;
+						}
+
+						&.filled {
+							:global(svg) {
+								fill: theme('colors.filled-fav');
+							}
+						}
+					}
+
+					&.report-issue {
+						background: theme('colors.gameplayer-report-issue-bkg');
+						border-color: theme('colors.gameplayer-report-issue-bdr');
+
+						:global(svg) {
+							fill: theme('colors.gameplayer-report-issue-fill');
+						}
+					}
+
+					&.close {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+	.game-player {
+		@apply md:px-3 md:h-[700px] rounded-lg flex flex-col items-center justify-center bg-black aspect-video;
+		display: flex;
+		background: theme('colors.black');
+		border-radius: 4px;
+		overflow: hidden;
+		// height: auto;
+		position: static;
+	}
+
+	.float-close-btn {
+		display: none;
+	}
+	.start-game-overlay {
+		display: flex;
+		// position: absolute;
+		flex-direction: column;
+		background: theme('colors.black');
+		align-items: center;
+		justify-content: center;
+		top: 0px;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
+		padding: 10px;
+
+		:global(img) {
+			display: none;
+			border-radius: 4px;
+			overflow: hidden;
+
+			@media (min-width: theme('screens.sm')) {
+				display: block;
+			}
+		}
+
+		.game-title {
+			color: theme('colors.white');
+			font-size: 14px;
+			text-transform: uppercase;
+		}
+
+		.age-warning {
+			color: theme('colors.white');
+			font-size: 11px;
+			border: 1px solid theme('colors.danger');
+			border-radius: 4px;
+			padding: 5px;
+			text-align: center;
+		}
+	}
+
+	.iframe-wrapper {
+		display: flex;
+		// position: absolute;
+		width: 100%;
+		height: 100%;
+	}
+
+	.provider-game-title {
+		display: flex;
+		align-items: center;
+
+		h2 {
+			color: theme('colors.black');
+			font-size: 16px;
+			margin: 0px !important;
+		}
+
+		:global(img) {
+			border-radius: 4px;
+		}
+	}
+
+	.buttons {
+		display: flex;
+		// margin-left: auto;
+		.btn {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 5px;
+			width: 30px;
+			height: 30px;
+			padding: 0;
+			background: theme('colors.grey[300]');
+			border: 1px solid theme('colors.grey[500]');
+
+			:global(svg) {
+				// fill: theme('colors.gameplayer-meta-btn-icon');
+			}
+
+			&.heart {
+				:global(svg) {
+					fill: transparent;
+				}
+
+				&.filled {
+					:global(svg) {
+						fill: theme('colors.filled-fav');
+					}
+				}
+			}
+
+			&.report-issue {
+				background: theme('colors.gameplayer-report-issue-bkg');
+				border-color: theme('colors.gameplayer-report-issue-bdr');
+
+				:global(svg) {
+					fill: theme('colors.gameplayer-report-issue-fill');
+				}
+			}
+			&.close {
+				display: none;
+			}
+
+			&.info {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: 30px;
+				height: 30px;
+				padding: 0;
+				background: theme('colors.grey[300]');
+				border: 1px solid theme('colors.grey[500]');
+				margin-right: auto;
+			}
+		}
+	}
+
+	.player-controls {
+		h2 {
+			font-size: 16px;
+			// margin: 0 0 0 10px;
+		}
+
+		:global(img) {
+			display: none;
+			border-radius: 4px;
+
+			@media (min-width: theme('screens.sm')) {
+				display: block;
+			}
+		}
+	}
+
+	.game-content {
+		// :global(h2) {
+		// 	@apply text-[25px] md:text-[32px] leading-7;
+		// }
+
+		:global(.thumbnails) {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+
+			:global(.span2) {
+				display: none;
+			}
+		}
+
+		:global(h2 + ul > img) {
+			display: none;
+		}
+	}
+
+	.faq-content {
+		margin-top: 14px;
+	}
+
+	.author-content {
+		margin-top: 30px;
+	}
+
+	.info-table-content {
+		@apply w-full border-0 shadow-none;
+
+		.table-primary {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-areas: 'head body';
+			border-radius: 4px;
+			overflow: hidden;
+			margin: 0;
+
+			@media (min-width: theme('screens.lg')) {
+				display: table;
+			}
+
+			thead {
+				grid-area: head;
+
+				td {
+					background: theme('colors.gamepage-info-table-header-bkg');
+					color: theme('colors.gamepage-info-table-header-text');
+					text-transform: uppercase;
+					text-align: center;
+				}
+
+				th {
+					text-align: center;
+					padding-top: 10px;
+					padding-bottom: 10px;
+				}
+			}
+
+			tbody {
+				grid-area: body;
+
+				td {
+					text-align: center;
+					&:last-child {
+						@apply border-l-0;
+					}
+				}
+			}
+
+			tr {
+				display: flex;
+				flex-direction: column;
+				border: 1px #fff;
+
+				@media (min-width: theme('screens.lg')) {
+					display: table-row;
+				}
+			}
+
+			td {
+				min-height: 42px;
+				border-bottom: 1px solid theme('colors.grey[100]');
+			}
+
+			th {
+				min-height: 42px;
+				border-bottom: 1px solid #fff;
+				border-bottom: 1px solid theme('colors.grey[100]');
+			}
+		}
+	}
+
+	:global(h1),
+	:global(h2),
+	:global(h3),
+	:global(h4),
+	:global(h5),
+	:global(h6) {
+		@apply mt-10 mb-4;
+	}
+</style>

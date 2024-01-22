@@ -8,6 +8,7 @@ import type {
   TermsAndConditions,
   CasinoGeneralInfo,
   CasinoComparison,
+  ProsConsBlock,
 } from "./common/types";
 
 export type Casinopage = {
@@ -63,33 +64,7 @@ type Attributes = {
   content2: string;
   content3: string;
   content4: string;
-  proscons: {
-    heading: string;
-    pros: {
-      list: string;
-    }[];
-    proImage: {
-      data: {
-        attributes: {
-          url: string;
-          width: number;
-          height: number;
-        };
-      };
-    };
-    cons: {
-      list: string;
-    }[];
-    conImage: {
-      data: {
-        attributes: {
-          url: string;
-          width: number;
-          height: number;
-        };
-      };
-    };
-  };
+  proscons: ProsConsBlock;
   casinoComparison: {
     data: CasinoComparison;
   };

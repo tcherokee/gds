@@ -7,7 +7,7 @@
 </script>
 
 <div class="container flex  w-auto p-0 m-0">
-	<div class={"ratings inline-flex relative p-0 m-0"}>
+	<div class={"ratings inline-flex "+ratingClasses+" relative p-0 m-0"}>
 		<div class="stars h-6">
 			<svg viewBox="0 0 1000 200" class="rating inline-flex h-full">
 				<defs>

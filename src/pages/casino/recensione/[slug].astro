@@ -2,9 +2,10 @@
 
 import qs from 'qs'
 import MainLayout from '../../../layouts/MainLayout.astro';
-import { casinopageQs } from "../../../../qs/casinopage.ts"
+import { urlTranslate } from '../../../../utils/data-store.util'
 import fetchApi from '../../../../lib/strapi';
-import type { Casinopage } from "../../../../interfaces/casinopage.ts"
+import { casinopageQs } from "../../../../qs/casinopage"
+import type { Casinopage } from "../../../../interfaces/casinopage"
 import TimeDate from '../../../components/helpers/timeDate.svelte';
 import HeaderAuthor from '../../../components/helpers/headerAuthor.astro';
 import Image from '../../../components/helpers/images.astro';
@@ -24,6 +25,7 @@ import ContentBlock from '../../../components/blocks/contentBlock.astro';
 import CasinoComparison from '../../../components/casino/casinoComparison.astro';
 import Faqs from "../../../components/general/faqs.astro";
 import ImageCarousel from "../../../components/general/imageCarousel.svelte";
+import Breadcrumb from '../../../components/layout/breadcrumbs.astro'
 
 const { slug } = Astro.params; //get the casino slug from the page url
 const query = qs.stringify(casinopageQs(slug), {encodeValuesOnly: true})
@@ -48,10 +50,20 @@ let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures;
 const __blocks = mapBlocksToDynamicComponents(casinoPage[0]?.attributes.blocks);
 const Components = await loadComponents(__blocks);
 
+//generate page url
+let siteID = import.meta.env.SITE_ID
+let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']}/${Astro.params.slug}`;
 
-console.log('_blocks', Components)
+let seo = {
+    pageTitle: casinoPage[0]?.attributes?.seo?.metaTitle,
+    metaDescription: casinoPage[0]?.attributes?.seo?.metaDescription,
+    url: canonical
+}
+
+let breadcumb = { breadCrumbText: casinoPage[0]?.attributes?.title, breadCrumbUrl: null };
 ---
-<MainLayout pageTitle={casinoPage[0]?.attributes?.seo?.metaTitle}>
+<MainLayout seoData={seo}>
+	<Breadcrumb breadcrumb={breadcumb} />
     <div class="casino-page">
         <div class="iframe-bkg curve rounded-b-3xl pb-3">
             <div class="section-wrapper">
@@ -514,7 +526,7 @@ console.log('_blocks', Components)
 						</div>
 
 						<div class="mb-5">
-							{casinoPage[0]?.attributes?.faqs.map((faq:any, index:number) => 
+							{casinoPage[0]?.attributes?.faqs.map((faq:any) => 
 								<Faqs data={faq} />
 							)}
 						</div>
