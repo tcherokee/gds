@@ -1,20 +1,34 @@
 // Import First Party or Third Party Plugins
-import { atom } from "nanostores";
+import { atom, map, onSet } from "nanostores";
+
+// Import Types
+import type { CasinoFilters, CasinoData } from "../interfaces/common/types";
+
+type QSCasinoData = {
+  data: CasinoData[]
+}
 
 // Import Store Fetcher Helper
 import { createFetcherStore } from "./fetcher";
 
-const opts = {
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${import.meta.env.PUBLIC_API_TOKEN}`,
-  },
-};
+export const wageringReqAmount = atom<number[]>([])
+export const bonusAmount = atom<number[]>([]);
 
-export const casinoQsStore = atom('')
+export const casinoVariables = map<CasinoFilters>({
+  limit: 1000,
+  sort: "ratingAvg:desc",
+  providers: "",
+  ids: [],
+  bonusKey: "bonusSection",
+  condition: "",
+  amount: "",
+  wagering: "",
+  speed: "",
+});
 
-export const casinos = createFetcherStore([
+export const casinoQsStore = atom<string | undefined>(undefined)
+
+export const casinos = createFetcherStore<QSCasinoData>([
   `${import.meta.env.PUBLIC_API_URL}/api/casinos`,
   casinoQsStore,
 ]);

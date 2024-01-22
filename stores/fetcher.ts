@@ -9,5 +9,5 @@ const opts = {
 };
 
 export const [createFetcherStore, createMutatorStore] = nanoquery({
-    fetcher: (...keys: (string | number)[]) => fetch(keys.join(""), opts).then((r) => r.json()),
+    fetcher: (...keys: (string | number)[]) => fetch(keys.join(""), opts).then((r) => r.json())
 });

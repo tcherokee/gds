@@ -1,7 +1,7 @@
 ---
 
 // Types
-import type { CasinoListBlock } from "../../../interfaces/casinos"
+import type { CasinoListData } from "../../../interfaces/common/types"
 
 // Components
 import CasinoTable from "../casino/casinoTable.astro"
@@ -9,7 +9,7 @@ import CasinoTable from "../casino/casinoTable.astro"
 
 const { data, isCustom = false, isTop = false } = Astro.props
 
-const createCustomCasinos = (casinos: CasinoListBlock[]) => {
+const createCustomCasinos = (casinos: CasinoListData[]) => {
     return casinos
         .map(item => item.casino.data)
         .filter(casino => casino !== null); // filter out null values

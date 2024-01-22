@@ -5,9 +5,7 @@ import { translationsQs } from "../qs/layout";
 import type { TranslationDataItem } from "../interfaces/translation";
 import type { TranslationData } from "../interfaces/common/types";
 
-export const getTranslations = map<TranslationData>({
-    test: 'test',
-});
+export const getTranslations = map<TranslationData>({});
 
 onMount(getTranslations, () => {
   task(async () => {
@@ -35,19 +33,3 @@ onMount(getTranslations, () => {
     }
   });
 });
-
-// export const addTranslations = (translations: TranslationDataItem) => {
-
-//     console.log('here')
-
-//   const translation = translations.attributes.translation.reduce(
-//     (obj: Translations, item) => {
-//       obj[item.key] = item.value;
-//       return obj;
-//     },
-//     {} as Translations
-//   );
-
-//     getTranslations.set({ ...translation });
-// };
-

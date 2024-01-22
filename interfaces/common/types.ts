@@ -97,6 +97,12 @@ export type CasinoGeneralInfo = {
   website: string;
 };
 
+export type BonusSectionOnly = {
+  bonusSection: BonusSection;
+  noDepositSection?: BonusSection;
+  freeSpinsSection?: BonusSection;
+};
+
 export type CasinoAttributes = {
   title: string;
   slug: string;
@@ -113,6 +119,10 @@ export type CasinoAttributes = {
   termsAndConditions: TermsAndConditions;
   noDepositSection?: BonusSection;
   freeSpinsSection?: BonusSection;
+  casinoGeneralInfo?: {
+    id: number;
+    wageringRequirements: number;
+  };
 };
 
 export type CasinoData = {
@@ -223,6 +233,13 @@ export type CasinoComparisonBlock = BlockBase & {
   casinos: CasinoComparison[];
 };
 
+export type CasinoListData = {
+    id: number;
+    casino: {
+        data: CasinoData[];
+    };
+};
+
 export type FaqBlockTypes = BlockBase & {
   question: string;
   answer: string;
@@ -256,12 +273,22 @@ export type ImageWithParagraphTypes = BlockBase & {
   imageWithParagraph: imageWithParagraph[];
 };
 
+export type CasinoListBlock = BlockBase & {
+  casinoSort: string;
+  casinoFilters: string;
+  showCasinoFilters: boolean;
+  showLoadMore: boolean;
+  numberPerLoadMore: number;
+  casinosList: CasinoListData[];
+};
+
 export type Block =
   | IntroductionWithImageBlock
   | CasinoComparisonBlock
   | HomeGameListBlock
   | SingleContentBlock
   | HomeCasinoListBlock
+  | CasinoListBlock
   | BlogBlockTypes
   | FaqBlockTypes
   | HowToBlockTypes
@@ -326,23 +353,35 @@ export type quicklinksObj = {
 };
 
 export type SortStore = {
-  [key: string]: string; // This allows any string to be used as a key
-  Newest: string;
-  "Most Popular": string;
-  "Top Rated": string;
-  "Top Rated Author": string;
-  "Top Rated Users": string;
-  "Most Viewed": string;
+  [key: string]: string;
 };
 
 export type FilterStore = {
-  [key: string]: string; // This allows any string to be used as a key
-  "Free Spins": string;
-  "No Deposit": string;
-  Playthrough: string;
+  [key: string]: string;
 };
 
 export type BadgesStore = string[];
+
+export type CasinoFilters = {
+  limit: number | undefined;
+  sort: string | undefined;
+  providers: string | undefined;
+  ids: number[];
+  bonusKey: string;
+  condition: string | undefined;
+  amount: string | undefined;
+  wagering: string | undefined;
+  speed: string | undefined;
+};
+
+export type BonusLabelItem = {
+  label: string;
+  value: string;
+}
+
+export type BonusLabels = {
+  [key: string]: BonusLabelItem;
+}
 
 export interface CasinoBlock {
   id: number;
