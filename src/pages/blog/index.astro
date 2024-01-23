@@ -1,0 +1,58 @@
+---
+
+import qs from 'qs'
+import fetchApi from '../../../lib/strapi';
+import MainLayout from '../../layouts/MainLayout.astro';
+import { urlTranslate } from '../../../utils/data-store.util'
+import { blogmetaQs } from "../../../qs/blog-meta"
+import { blogcardQs } from "../../../qs/blog-cards"
+import type { Blog } from "../../../interfaces/blog"
+import BlogCard from '../../components/blogs/blogCard.astro';
+
+const query = qs.stringify(blogcardQs(12), {encodeValuesOnly: true})
+const metaQuery = qs.stringify(blogmetaQs(), {encodeValuesOnly: true})
+
+const blogCards = await fetchApi<Blog[]>({
+	endpoint: 'blogs',
+    wrappedByKey: 'data',
+    query: `?${query}`
+})
+
+const layoutData = await fetchApi<any>({
+	endpoint: 'layout',
+    wrappedByKey: 'data',
+    query: `?${metaQuery}`
+})
+
+let siteID = import.meta.env.SITE_ID
+let siteURL = import.meta.env.FULL_URL
+let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-index']}`
+
+//set page seo data
+let seo = {
+    pageTitle: layoutData?.attributes?.blogMeta?.blogTitle,
+    metaDescription: layoutData?.attributes?.blogMeta?.blogDescription,
+    url: canonical
+}
+
+---
+
+<MainLayout seoData={seo}>
+    <div class="blog-bg">
+        <div class="xl:container px-2 pb-5 pt-4">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <BlogCard data={blogCards} />
+            </div>
+        
+            <!-- <Pagination currPage={currentPage} pageCount={countPage} path="{urlTranslate[PUBLIC_SITE_ID]['blog-pages']}" /> -->
+        </div>
+    </div>
+</MainLayout>
+
+<style lang="postcss">
+	.blog-bg {
+		@apply curve;
+		margin-bottom: -20px;
+	}
+</style>

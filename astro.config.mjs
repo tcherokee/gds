@@ -19,6 +19,10 @@ export default defineConfig({
           "kensho-icons": FileSystemIconLoader("./src/icons", (svg) =>
             svg.replace(/^<svg /, '<svg fill="currentColor" ')
           ),
+          "kensho-dashboard-icons": FileSystemIconLoader(
+            "./src/icons/dashboard",
+            (svg) => svg.replace(/^<svg /, '<svg fill="currentColor" ')
+          ),
         },
       }),
       Icons({

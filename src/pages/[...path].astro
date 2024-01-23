@@ -76,6 +76,7 @@ const capitalize = mappedComponents.map(item => item.name.charAt(0).toUpperCase(
 
 //Dynamically importing the components
 const Components = await loadComponents(mappedComponents)
+
 ---
 <MainLayout title="Welcome to Astro.">
 	<div class="featured-background">
@@ -90,7 +91,7 @@ const Components = await loadComponents(mappedComponents)
                     } else {
                         switch (mappedComponents[i].name) {
                             case 'casinoTable': {
-                                return <CasinoTable data={page.attributes.blocks[i]} client:load />
+                                return <CasinoTable initialCasinos={page.attributes.blocks[i]} client:load />
                             }
                         }
                     }

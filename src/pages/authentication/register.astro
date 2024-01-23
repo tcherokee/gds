@@ -1,0 +1,19 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { get } from "svelte/store";
+import { getTranslations } from "../../../stores/addTranslations";
+import RegisterForm from "../../components/auth/register-form.svelte";
+
+const translationStore: any = get(getTranslations);
+
+// TODO
+let seo = {
+  pageTitle: "Registration",
+  metaDescription: "Registration Description",
+  url: "",
+};
+---
+
+<MainLayout seoData={seo}>
+  <RegisterForm client:only="svelte" />
+</MainLayout>

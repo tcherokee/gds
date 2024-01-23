@@ -120,11 +120,7 @@
             <Favourite />
             <Search  />
         </div>
-    {/if}
-</MediaQuery>
-
-<MediaQuery query="(min-width: 992px)" let:matches>
-    {#if matches}
+    {:else}
         <div class="flex items-center lg:gap-x-2">
             {#each mainNavigation as nav}
                 <div class="relative group">
