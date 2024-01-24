@@ -3,22 +3,16 @@
 	// import { userFavouriteGames } from '$lib/stores/favourite/favourites.store'
     // Icons
     
-    // import UserPlaceholderSvg from "~icons/kensho-dashboard-icons/user-placeholder"
-    // import UserSvg from "~icons/kensho-dashboard-icons/user"
-    // import ChatsSvg from "~icons/kensho-dashboard-icons/chats"
-    // import HourGlassSvg from "~icons/kensho-dashboard-icons/hour-glass"
-    // import HeartSvg from "~icons/kensho-dashboard-icons/heart"
-    // import StarSvg from "~icons/kensho-dashboard-icons/star"
-    // import TrophySvg from "~icons/kensho-dashboard-icons/trophy"
+    import UserPlaceholderSvg from "~icons/kensho-dashboard-icons/user-placeholder"
+    import UserSvg from "~icons/kensho-dashboard-icons/user"
+    import ChatsSvg from "~icons/kensho-dashboard-icons/chats"
+    import HourGlassSvg from "~icons/kensho-dashboard-icons/hour-glass"
+    import HeartSvg from "~icons/kensho-dashboard-icons/heart"
+    import StarSvg from "~icons/kensho-dashboard-icons/star"
+    import TrophySvg from "~icons/kensho-dashboard-icons/trophy"
 
-	// import UserPlaceholderSvg from '$assets/dashboard/user-placeholder.svg'
-	// import UserSvg from '$assets/dashboard/user.svg'
-	// import ChatsSvg from '$assets/dashboard/chats.svg'
-	// import HourGlassSvg from '$assets/dashboard/hour-glass.svg'
-	// import HeartSvg from '$assets/dashboard/heart.svg'
-	// import StarSvg from '$assets/dashboard/star.svg'
-	// import TrophySvg from '$assets/dashboard/trophy.svg'
-	import GameListItem from './game-list-item.svelte'
+	import GameListItem from './gameListItem.svelte'
+	import { user } from "../../../stores/authStore";
 	// import { user } from '$lib/stores/auth'
 	// export let data: LayoutData
 	let favouriteGames = []
@@ -31,22 +25,24 @@
 	// 		favouriteGames = [...$userFavouriteGames].slice(0, 3)
 	// 	}
 	// }
+	$: console.log('USER:', $user);
 </script>
 
-<!-- <div class="">
+<div class="">
 	<div class="dashboard-glass-wrapper">
 		<div
 			class="h-[200px] rounded-t-xl z-20 {!$user?.cover_image?.url ? 'cover-image-wrapper' : ''}"
 		>
-			{#if $user?.cover_image?.url}
+		{JSON.stringify($user)};
+			<!-- {#if $user?.cover_image?.url}
 				<img
 					class="w-full h-full object-cover rounded-t-xl"
 					src={$user?.cover_image?.url}
 					alt={data?.userProfile.firstName + ' cover image'}
 				/>
-			{/if}
+			{/if} -->
 		</div>
-		<div class="">
+		<!-- <div class="">
 			<div class="flex items-center pt-2 pb-5 px-3 z-30 -translate-y-[72px]">
 				<div class="items-end gap-x-6 w-full md:flex">
 					<div
@@ -243,13 +239,13 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>
-</div> -->
+</div>
 
 <style lang="postcss">
 	.cover-image-wrapper {
-		background: url('../../assets/dashboard/user-cover-image.svg') center no-repeat;
+		background: url('../../icons/dashboard/user-cover-image.svg') center no-repeat;
 		background-size: cover;
 	}
 </style>
