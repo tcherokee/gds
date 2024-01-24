@@ -9,7 +9,7 @@
   let isResetLinkSent = false;
   let loader = false;
   
-  export let translations
+  export let translations: {[key: string]: string}
   const forgotPasswordHandler = async () => {
     loader = true;
     const response = await fetch(`/api/auth/forgot-password`, {

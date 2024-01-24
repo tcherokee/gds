@@ -2,7 +2,7 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import { get } from "svelte/store";
 import { getTranslations } from "../../../stores/addTranslations";
-import LoginForm from "../../components/auth/login-form.svelte";
+import LoginForm from "../../components/auth/loginForm.svelte";
 
 const translationStore: any = get(getTranslations);
 
@@ -30,7 +30,7 @@ let seo = {
         </p>
       </div>
 
-      <LoginForm client:load />
+      <LoginForm translations={translationStore} client:only="svelte" />
       <p class="text-center text-base text-blue-500 !mb-0">
         {translationStore.noAccount}
         <a
