@@ -52,6 +52,56 @@
 	let toggleWagering: boolean = false
 	let toggleImmediate: boolean = false
 	let toggleSort: boolean = false
+	$: toggleOrder = $casinoVariables.sort ? $casinoVariables.sort?.split(":")[1] : 'desc'
+
+	const handleToggle = () => {
+		// Map the current states to an object
+		let toggleStates = {
+			toggleBonusType,
+			toggleConditions,
+			toggleAmount,
+			toggleWagering,
+			toggleImmediate,
+			toggleSort
+		};
+
+		// Set all to true
+		for (const toggleKey in toggleStates) {
+			toggleStates[toggleKey] = true;
+		}
+
+		// Set the specified key to false
+		if (toggleStates.hasOwnProperty(key)) {
+			toggleStates[key] = false;
+		}
+
+		// Update the original variables
+		({ toggleBonusType, toggleConditions, toggleAmount, toggleWagering, toggleImmediate, toggleSort } = toggleStates);
+	}
+
+	const getSortLabelByValue = (value:string) => {
+		const [sortPrefix] = value.split(":");
+		const sortLabel = Object.entries($sort).find(([_, { value }]) => value.split(":")[0] === sortPrefix);
+		return sortLabel ? sortLabel[1].label : null;
+	}
+
+	const changeSortOrder = (value: string) => {
+		let [key,] = $casinoVariables.sort ? $casinoVariables.sort?.split(":") : ''
+
+		
+		if (key.length > 0) {
+			const newSortValue = key + ":" + value
+			console.log('here', key, value, newSortValue)
+
+			casinoVariables.setKey('sort', newSortValue)
+        
+			// Set QS Query String to Get Updated Casinos
+			const query = qs.stringify(casinosQs($casinoVariables), {encodeValuesOnly: true})
+			
+			// Set Qs Store to Query Value
+			casinoQsStore.set(`?${query}`)
+		}
+	}
 
     const handleFilterChange = (key: string, value: string | number) => {
 
@@ -63,12 +113,6 @@
 		
 		// Set Qs Store to Query Value
         casinoQsStore.set(`?${query}`)
-		
-		// Reset Toggle Bonus Type
-        toggleBonusType = false
-		toggleConditions = false
-		toggleAmount = false
-		toggleWagering = false
 
 		// If key is equal to speed, then toggle toggleImmediate.
 		if (key === "speed") {
@@ -98,7 +142,7 @@
 
 <div class="relative mx-auto text-center z-20">
 		<section aria-labelledby="filter-heading" class="glowy-bkg shadow-none p-2.5">
-			<h2 id="filter-heading" class="sr-only">Casino filters</h2>
+			<h2 id="filter-heading" class="sr-only">{translationStore.filter}</h2>
 
 			<div class="flex items-center gap-2 justify-between">
 				<div class="hidden basis-1/2 md:basis-5/6 md:flex md:items-baseline md:space-x-4">
@@ -107,12 +151,12 @@
 					<div id="desktop-menu-0" class="inline-block text-left">
 						<div class="w-48">
 							<div
-								class="relative group p-2 flex w-full items-center justify-between text-sm font-medium border-grey-100 border"
+								class="relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border {$casinoVariables.bonusKey ? 'bg-filter-alternate-toggle' : ''}"
 								aria-expanded="false"
 								role="button"
 								tabindex="-1"
                                 {...(toggleBonusType ? { open:'' } : {})}
-                                on:click={() => toggleBonusType = !toggleBonusType}
+                                on:click={() => handleToggle('toggleBonusType')}
 							>
 								<span class="uppercase text-xs pointer-events-none">
                                     {$casinoVariables.bonusKey ? getLabelByValue($bonusLabels, $casinoVariables.bonusKey) : translationStore.welcomeBonus }
@@ -152,7 +196,7 @@
 					<div id="desktop-menu-0" class="inline-block text-left">
 						<div class="w-48">
 							<div
-								class="relative group p-2 flex w-full items-center justify-between text-sm font-medium border-grey-100 border"
+								class="relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border {$casinoVariables.condition ? 'bg-filter-alternate-toggle' : ''}"
 								aria-expanded="false"
 								role="button"
 								tabindex="-1"
@@ -197,7 +241,7 @@
 						<div id="desktop-menu-0" class="relativ w-full inline-block text-left">
 							<div>
 								<div
-									class="relative group p-2 flex w-full items-center justify-between text-sm font-medium border-grey-100 border"
+									class="relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none {$casinoVariables.amount ? 'bg-filter-alternate-toggle' : ''}"
 									aria-expanded="false"
 									role="button"
 									tabindex="-1"
@@ -218,13 +262,13 @@
 							</div>
 
 							<div
-								class="glowy-bkg bg-[#101c34] absolute invisible max-h-[350px] overflow-y-auto transform opacity-0 scale-95 left-0 z-40 w-full origin-top-left rounded-b-md border-background-900 border border-t-0 shadow-2xl open:transform open:opacity-100 open:scale-100 open:visible"
+								class="bg-white absolute invisible p-3 max-h-[350px] overflow-y-auto transform opacity-0 scale-95 left-0 z-40 w-full origin-top-left rounded-b-md border-background-900 border border-t-0 shadow-2xl open:transform open:opacity-100 open:scale-100 open:visible"
 								{...(toggleAmount ? { open:'' } : {})}
 							>
 								<div class="flex flex-col gap-y-2 py-1" role="none">
 									{#each $bonusAmount as bonus}
 										<button
-											class="uppercase p-2 text-sm font-medium text-left rounded-md border-grey-100 border bg-white/[.7] data-active:blueFilterBtn data-active:border-misc/[.6]"
+											class="uppercase p-2 text-sm font-medium text-left rounded-md border-grey-100 border bg-filter-alternate-toggle data-active:blueFilterBtn data-active:border-misc/[.6]"
 											role="menuitem"
 											tabindex="-1"
 											id="mobile-menu-item-0"
@@ -244,7 +288,7 @@
 						<div id="desktop-menu-0" class="relativ w-full inline-block text-left">
 							<div>
 								<div
-									class="relative group p-2 flex w-full items-center justify-between text-sm font-medium border-grey-100 border"
+									class="relative group p-2 flex rounded-[4px] h-11 w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none {$casinoVariables.wagering ? 'bg-filter-alternate-toggle' : ''}"
 									aria-expanded="false"
 									role="button"
 									tabindex="-1"
@@ -265,7 +309,7 @@
 							</div>
 
 							<div
-								class="glowy-bkg bg-[#101c34] absolute invisible max-h-[350px] overflow-y-auto transform opacity-0 scale-95 left-0 z-40 w-full origin-top-left rounded-b-md border-background-900 border border-t-0 shadow-2xl open:transform open:opacity-100 open:scale-100 open:visible"
+								class="bg-white p-3 absolute invisible max-h-[350px] overflow-y-auto transform opacity-0 scale-95 left-0 z-40 w-full origin-top-left rounded-b-md border-background-900 border border-t-0 shadow-2xl open:transform open:opacity-100 open:scale-100 open:visible"
 								{...(toggleWagering ? { open:'' } : {})}
 							>
 								<div class="flex flex-col gap-y-2 py-1" role="none">
@@ -286,6 +330,7 @@
 					</div>
 					<!-- Wagering end -->
 
+					<!-- Immediate Toggle -->
 					<div class="relative flex items-start">
 						<div class="min-w-0 flex-1 text-sm leading-6">
 							<label
@@ -307,20 +352,33 @@
 							/>
 						</div>
 					</div>
+					<!-- Immediate Toggle End -->
 				</div>
 
 				<div class="relative basis-1/2 md:basis-1/6 inline-block text-black text-left">
 					<span class="isolate w-full inline-flex rounded-md shadow-sm">
-						<button
-							type="button"
-							class="relative peer w-full h-11 rounded-l-[4px] border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-xs open:rounded-b-none"
+						<div
+							class="relative peer w-full h-11 rounded-l-[4px] bg-filter-alternate-toggle border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-xs open:rounded-b-none"
+							aria-expanded="false"
+							role="button"
+							tabindex="-1"
+							{...(toggleSort ? { open:'' } : {})}
+							on:click={() => toggleSort = !toggleSort}
 						>
-						</button>
+							<span class="uppercase text-xs pointer-events-none">
+								{$casinoVariables.sort ? getSortLabelByValue($casinoVariables.sort) : translationStore.welcomeBonus }
+							</span>
+						</div>
 						<button
 							type="button"
 							class="relative h-11 -ml-px w-full rounded-r-[4px] border-background-900 border basis-1/5 flex items-center rounded-r-md bg-filter-alternate-toggle p-2.5 peer-open:rounded-b-none"
+							on:click={() => changeSortOrder(toggleOrder === 'desc' ? 'asc' : 'desc')}
 						>
-							<SortDesc width="20px" height="18px" class="fill-filter-alternate-icon"/>
+						{#if toggleOrder === 'desc'}
+							<SortDesc width="20px" height="18px" class="fill-filter-alternate-icon" /> 
+						{:else}
+							<SortAsc width="20px" height="18px" class="fill-filter-alternate-icon" />
+						{/if}
 						</button>
 					</span>
 
@@ -330,6 +388,7 @@
 						aria-orientation="vertical"
 						aria-labelledby="mobile-menu-button"
 						tabindex="-1"
+						{...(toggleSort ? { open:'' } : {})}
 					>
 						<div class="py-1 flex flex-col" role="none">
 							{#each sortKeys as key}
@@ -338,9 +397,9 @@
 									role="menuitem"
 									tabindex="-1"
 									id="sort-keys"
-									on:click={() => handleFilterChange('bonusKey', $sort[key]?.value)}
+									on:click={() => handleFilterChange('sort', $sort[key]?.value)}
 								>
-									{$sort[key]?.label}
+									{($sort[key]?.label)}
 								</button>
 							{/each}
 						</div>

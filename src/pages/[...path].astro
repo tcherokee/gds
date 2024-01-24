@@ -5,6 +5,7 @@ import qs from 'qs'
 // Helpers
 import fetchApi from "../../lib/strapi";
 import { loadComponents, mapBlocksToDynamicComponents } from '../../lib/loadBlockComponents'
+import { urlTranslate } from '../../utils/data-store.util'
 
 // Query Strings
 import { customPageQs } from "../../qs/customPages"
@@ -66,6 +67,8 @@ const getLoopCounter = (blocks: Block[]): number => {
 
 const loopCounter = getLoopCounter(page?.attributes?.blocks);
 
+console.log('page', page.attributes)
+
 // Get the index of the first occurrence of the FAQ
 const faqIndex = page?.attributes?.blocks.findIndex(block => block.__component === 'shared.faqs')
 
@@ -74,11 +77,19 @@ const mappedComponents = mapBlocksToDynamicComponents(page.attributes.blocks)
 
 const capitalize = mappedComponents.map(item => item.name.charAt(0).toUpperCase() + item.name.slice(1))
 
-//Dynamically importing the components
+// Dynamically importing the components
 const Components = await loadComponents(mappedComponents)
 
+// SEO Object
+
+const seo = {
+    pageTitle: page?.attributes?.seo?.metaTitle,
+    metaDescription: page?.attributes?.seo?.metaDescription,
+    url: `${import.meta.env.FULL_URL}/${path}`
+}
+
 ---
-<MainLayout title="Welcome to Astro.">
+<MainLayout seoData={seo}>
 	<div class="featured-background">
 		{
 			Components.map((Component, i) => {

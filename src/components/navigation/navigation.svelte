@@ -45,75 +45,75 @@
             aria-labelledby="slide-over-title"
             role="dialog"
             aria-modal="true"
-            open={mobileChecked ? '' : null}
+            {...(mobileChecked ? { open:'' } : {})}
         >
-                <div class="fixed inset-0" />
+            <div class="fixed inset-0" />
 
-                <div class="fixed inset-0 overflow-hidden">
-                    <div class="absolute inset-0 overflow-hidden">
-                        <div class="pointer-events-none fixed inset-y-0 left-0 flex max-w-xs pr-10">
-                            <div class="pointer-events-auto w-screen max-w-md transform transition ease-in-out duration-500 sm:duration-700 -translate-x-full open:translate-x-0" open={mobileChecked ? '' : null}>
-                                <div class="flex h-full flex-col overflow-y-scroll bg-navbar-bkg py-6 shadow-xl">
-                                    <div class="px-4 sm:px-6">
-                                        <div class="flex items-start justify-between">
-                                            <h2 class="text-lg font-medium text-navbar-text" id="slide-over-title">Menu</h2>
-                                            <div class="ml-3 flex h-7 items-center">
-                                                <button
-                                                    type="button"
-                                                    class="rounded-md bg-navbar-bkg text-navbar-text hover:text-gray-500 focus:outline-none"
-                                                    on:click={uncheckInput}
-                                                >
-                                                    <span class="sr-only">Close panel</span>
-                                                    <Xmark height="24px" width="24px" />
-                                                </button>
-                                            </div>
+            <div class="fixed inset-0 overflow-hidden">
+                <div class="absolute inset-0 overflow-hidden">
+                    <div class="pointer-events-none fixed inset-y-0 left-0 flex max-w-xs pr-10">
+                        <div class="pointer-events-auto w-screen max-w-md transform transition ease-in-out duration-500 sm:duration-700 -translate-x-full open:translate-x-0" open={mobileChecked ? '' : null}>
+                            <div class="flex h-full flex-col overflow-y-scroll bg-navbar-bkg py-6 shadow-xl">
+                                <div class="px-4 sm:px-6">
+                                    <div class="flex items-start justify-between">
+                                        <h2 class="text-lg font-medium text-navbar-text" id="slide-over-title">Menu</h2>
+                                        <div class="ml-3 flex h-7 items-center">
+                                            <button
+                                                type="button"
+                                                class="rounded-md bg-navbar-bkg text-navbar-text hover:text-gray-500 focus:outline-none"
+                                                on:click={uncheckInput}
+                                            >
+                                                <span class="sr-only">Close panel</span>
+                                                <Xmark height="24px" width="24px" />
+                                            </button>
                                         </div>
                                     </div>
-                                    <div class="relative flex-1 px-4 sm:px-6">
-                                        <div class="mt-5 flex flex-grow flex-col">
-                                            <nav class="flex-1 space-y-1 bg-navbar-bkg px-2" aria-label="Sidebar">
-                                                {#each mainNavigation as nav}
-                                                    {#if nav?.attributes?.children?.data?.length > 0}
-                                                        <div class="space-y-1 group">
-                                                            <button
-                                                                type="button"
-                                                                class="bg-navbar-bkg text-navbar-text hover:bg-nav-hover-bkg w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-t focus:bg-nav-hover-bkg focus:outline-none"
-                                                                aria-controls="sub-menu-{nav?.id}"
-                                                                aria-expanded="false"
-                                                            >
-                                                                <span class="flex-1">{nav?.attributes?.title}</span>
-                                                                <Angle class="h-5 w-5 flex-none text-gray-400 fill-navbar-text rotate-180 group-hover:rotate-0"/>
-                                                            </button>
-                                                            <div
-                                                                class="!mt-0 bg-nav-hover-bkg hidden rounded-b group-hover:block"
-                                                                id="sub-menu-{nav?.id}"
-                                                            >
-                                                                {#each nav?.attributes?.children?.data as child}
-                                                                    <a
-                                                                        href={child?.attributes?.url}
-                                                                        class="flex w-full items-center rounded-md py-2 pl-8 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
-                                                                    >
-                                                                        {child?.attributes?.title}
-                                                                    </a>
-                                                                {/each}
-                                                            </div>
+                                </div>
+                                <div class="relative flex-1 px-4 sm:px-6">
+                                    <div class="mt-5 flex flex-grow flex-col">
+                                        <nav class="flex-1 space-y-1 bg-navbar-bkg px-2" aria-label="Sidebar">
+                                            {#each mainNavigation as nav}
+                                                {#if nav?.attributes?.children?.data?.length > 0}
+                                                    <div class="space-y-1 group">
+                                                        <button
+                                                            type="button"
+                                                            class="bg-navbar-bkg text-navbar-text hover:bg-nav-hover-bkg w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-t focus:bg-nav-hover-bkg focus:outline-none"
+                                                            aria-controls="sub-menu-{nav?.id}"
+                                                            aria-expanded="false"
+                                                        >
+                                                            <span class="flex-1">{nav?.attributes?.title}</span>
+                                                            <Angle class="h-5 w-5 flex-none text-gray-400 fill-navbar-text rotate-180 group-hover:rotate-0"/>
+                                                        </button>
+                                                        <div
+                                                            class="!mt-0 bg-nav-hover-bkg hidden rounded-b group-hover:block"
+                                                            id="sub-menu-{nav?.id}"
+                                                        >
+                                                            {#each nav?.attributes?.children?.data as child}
+                                                                <a
+                                                                    href={child?.attributes?.url}
+                                                                    class="flex w-full items-center rounded-md py-2 pl-8 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
+                                                                >
+                                                                    {child?.attributes?.title}
+                                                                </a>
+                                                            {/each}
                                                         </div>
-                                                    {:else}
-                                                        <a
-                                                            href={nav?.attributes?.url}
-                                                            class="flex w-full items-center rounded-md py-2 pl-2 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
-                                                            >{nav?.attributes?.title}
-                                                        </a>
-                                                    {/if}
-                                                {/each}
-                                            </nav>
-                                        </div>
+                                                    </div>
+                                                {:else}
+                                                    <a
+                                                        href={nav?.attributes?.url}
+                                                        class="flex w-full items-center rounded-md py-2 pl-2 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
+                                                        >{nav?.attributes?.title}
+                                                    </a>
+                                                {/if}
+                                            {/each}
+                                        </nav>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
 
         <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">

@@ -2,7 +2,11 @@
 import { atom, map, onSet } from "nanostores";
 
 // Import Types
-import type { CasinoFilters, CasinoData } from "../interfaces/common/types";
+import type {
+  CasinoFilters,
+  CasinoData,
+  CasinoListBlock,
+} from "../interfaces/common/types";
 
 type QSCasinoData = {
   data: CasinoData[]
@@ -10,6 +14,8 @@ type QSCasinoData = {
 
 // Import Store Fetcher Helper
 import { createFetcherStore } from "./fetcher";
+
+export const initialCasinos = atom<CasinoListBlock | undefined>(undefined)
 
 export const wageringReqAmount = atom<number[]>([])
 export const bonusAmount = atom<number[]>([]);
