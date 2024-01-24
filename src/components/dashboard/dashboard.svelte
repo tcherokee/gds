@@ -25,7 +25,15 @@
 	// 		favouriteGames = [...$userFavouriteGames].slice(0, 3)
 	// 	}
 	// }
-	$: console.log('USER:', $user);
+
+	const getUser = async () => {
+		const response = await fetch('/api/dashboard/user', {method: 'GET'});
+		console.log('RESPONSE', response);
+		// const data = await response.json();
+		// console.log(data)
+	}
+	getUser();
+
 </script>
 
 <div class="">
@@ -34,13 +42,13 @@
 			class="h-[200px] rounded-t-xl z-20 {!$user?.cover_image?.url ? 'cover-image-wrapper' : ''}"
 		>
 		{JSON.stringify($user)};
-			<!-- {#if $user?.cover_image?.url}
+			{#if $user?.cover_image?.url}
 				<img
 					class="w-full h-full object-cover rounded-t-xl"
 					src={$user?.cover_image?.url}
 					alt={data?.userProfile.firstName + ' cover image'}
 				/>
-			{/if} -->
+			{/if}
 		</div>
 		<!-- <div class="">
 			<div class="flex items-center pt-2 pb-5 px-3 z-30 -translate-y-[72px]">
