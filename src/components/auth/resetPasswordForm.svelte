@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-    import { getTranslations } from "../../../stores/addTranslations";
 	// import { goto } from '$app/navigation'
 	// import { page } from '$app/stores'
 	// import { base } from '$app/paths'
@@ -10,6 +9,8 @@
 	let password = ''
 	let passwordConfirmation = ''
 	let loader = false
+
+	export let translations: {[key: string]: string}
 
 	const resetPasswordHandler = async () => {
 		if (password !== passwordConfirmation) {
@@ -48,7 +49,7 @@
 	<div class="auth-form-container p-10 rounded-xl w-full max-w-[440px] space-y-6">
 		<div class="space-y-3">
 			<h2 class="text-blue-700 text-[32px] font-bold leading-[38px]">Reset Password</h2>
-			<p class="text-base text-blue-500">{$getTranslations.resetPasswordSubtitle}</p>
+			<p class="text-base text-blue-500">{translations.resetPasswordSubtitle}</p>
 		</div>
 		<form class="space-y-4">
 			<div>

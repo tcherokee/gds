@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { getTranslations } from "../../../stores/addTranslations";
 
   let firstName: string = "";
   let lastName: string = "";
@@ -11,6 +10,8 @@
   let isRegistrationSuccessfull = false;
   let registrationLoader = false;
   let recaptchaToken = "";
+
+  export let translations: {[key: string]: string}
 
   const validateRegistrationForm = () => {
     if (!firstName || !lastName || !email || !username || !password) {
@@ -49,7 +50,7 @@
   };
 
   const handleCaptchaError = () => {
-    error = $getTranslations.recaptchaError;
+    error = translations.recaptchaError;
     recaptchaToken = "";
   };
   const resetCaptcha = () => {
@@ -80,7 +81,7 @@
         if (grecaptcha) {
           resolve(grecaptcha);
         } else {
-          reject($getTranslations.loadRecaptchaError);
+          reject(translations.loadRecaptchaError);
         }
       };
     });
@@ -103,10 +104,10 @@
     {#if !isRegistrationSuccessfull}
       <div class="space-y-3">
         <h2 class="text-blue-700 text-[32px] font-bold leading-[38px]">
-          {$getTranslations.signUp}
+          {translations.signUp}
         </h2>
         <p class="text-base text-blue-500">
-          {$getTranslations.registrationPageSubtitle}
+          {translations.registrationPageSubtitle}
         </p>
       </div>
       <form class="space-y-5" action="#" method="POST">
@@ -114,7 +115,7 @@
           <label
             for="firstName"
             class="block text-blue-500 text-sm font-medium mb-[6px]"
-            >{$getTranslations.firstName}</label
+            >{translations.firstName}</label
           >
           <div class="mt-2">
             <input
@@ -123,7 +124,7 @@
               name="firstName"
               type="text"
               bind:value={firstName}
-              placeholder={$getTranslations.enterFirstName}
+              placeholder={translations.enterFirstName}
               required
             />
           </div>
@@ -133,7 +134,7 @@
           <label
             for="lastName"
             class="block text-blue-500 text-sm font-medium mb-[6px]"
-            >{$getTranslations.lastName}</label
+            >{translations.lastName}</label
           >
           <div class="mt-2">
             <input
@@ -142,7 +143,7 @@
               name="lastName"
               type="text"
               bind:value={lastName}
-              placeholder={$getTranslations.enterLastName}
+              placeholder={translations.enterLastName}
               required
             />
           </div>
@@ -151,7 +152,7 @@
           <label
             for="email-address"
             class="block text-blue-500 text-sm font-medium mb-[6px]"
-            >{$getTranslations.email}</label
+            >{translations.email}</label
           >
           <input
             id="email-address"
@@ -160,14 +161,14 @@
             type="email"
             autocomplete="email"
             bind:value={email}
-            placeholder={$getTranslations.enterEmail}
+            placeholder={translations.enterEmail}
             required
           />
         </div>
 
         <div>
           <label for="username" class="block text-sm font-medium leading-6"
-            >{$getTranslations.username}</label
+            >{translations.username}</label
           >
           <div class="mt-2">
             <input
@@ -176,7 +177,7 @@
               name="username"
               type="text"
               bind:value={username}
-              placeholder={$getTranslations.enterUsername}
+              placeholder={translations.enterUsername}
               required
             />
           </div>
@@ -184,7 +185,7 @@
 
         <div class="mt-4">
           <label for="password" class="block text-sm font-medium leading-6"
-            >{$getTranslations.password}</label
+            >{translations.password}</label
           >
           <div class="mt-2">
             <input
@@ -217,7 +218,7 @@
             bind:checked={newsletter}
           />
           <label for="remember-me" class="ml-3 block text-sm text-blue-500"
-            >{$getTranslations.subscribeNewsletter}</label
+            >{translations.subscribeNewsletter}</label
           >
         </div>
 
@@ -232,8 +233,8 @@
             {/if}
             <span
               >{registrationLoader
-                ? $getTranslations.pleaseWait
-                : $getTranslations.signUp}</span
+                ? translations.pleaseWait
+                : translations.signUp}</span
             >
           </button>
         </div>
@@ -241,33 +242,33 @@
 
       <div class="text-center">
         <p class="text-sm text-blue-500 !mb-2">
-          {$getTranslations.checkSpamMessage}
+          {translations.checkSpamMessage}
         </p>
         <p class="text-center text-base text-blue-500 !mb-0">
-          {$getTranslations.haveAccount}
+          {translations.haveAccount}
           <a
             href={"/authentication/login"}
             class="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
           >
-            {$getTranslations.logIn}
+            {translations.logIn}
         </a>
         </p>
       </div>
     {:else}
       <div class="flex flex-col items-center space-y-2">
         <h2 class="text-blue-700 text-[32px] font-bold leading-[38px]">
-          {$getTranslations.registrationSuccessful}
+          {translations.registrationSuccessful}
         </h2>
         <p class="text-base text-blue-500">
-          {$getTranslations.confirmationEmailDesc}
+          {translations.confirmationEmailDesc}
           <span class="text-misc font-bold">{email}</span>.
         </p>
-        <p class="text-sm text-blue-500">{$getTranslations.checkSpamMessage}.</p>
+        <p class="text-sm text-blue-500">{translations.checkSpamMessage}.</p>
         <a
           href={"/authentication/login"}
           class="block text-base text-center min-h-[44px] rounded-md btn-secondary px-3 py-2.5 text-sm font-semibold"
         >
-          {$getTranslations.backToSignIn}
+          {translations.backToSignIn}
       </a>
       </div>
     {/if}

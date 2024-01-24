@@ -1,32 +1,21 @@
 <script lang="ts">
-  import { get } from "svelte/store";
-  import { getTranslations } from "../../../stores/addTranslations";
   // import { user } from '$lib/stores/auth'
   // import { page } from '$app/stores'
   // import { base } from '$app/paths'
   import { onMount } from "svelte";
-//   import { allTasks } from "nanostores";
+  import { user } from "../../../stores/authStore";
 
-//   // Set Nano Store to active state to start data loading
-//   getTranslations.listen(() => { })
-
-//   // Wait for nanostore to finish loading
-//   await allTasks()
-
-// // Get the now loaded translations and add them to the translation store variable
-// const translationStore: TranslationData = get(getTranslations);
+  export let translations: { [key: string]: string };
   let email: string = "";
   let password: string = "";
   let logInLoader = false;
   // Recaptcha
   let error = "";
   let recaptchaToken = "";
-  const translationStore:any = get(getTranslations);
-  console.log('TStore', translationStore)
 
   const validateLoginForm = () => {
     if (!email || !password) {
-      alert(translationStore.emailPassReq);
+      alert(translations.emailPassReq);
     } else {
       window.grecaptcha.execute();
     }
@@ -50,18 +39,27 @@
     if (res.jwt) {
       const { firstName, lastName, username, email, bio, cover_image, photo } =
         res.user;
-      window.localStorage.setItem(
-        "_user",
-        JSON.stringify({
-          firstName,
-          lastName,
-          username,
-          email,
-          bio,
-          cover_image,
-          photo,
-        })
-      );
+      user.set({
+        firstName,
+        lastName,
+        username,
+        email,
+        bio,
+        cover_image,
+        photo,
+      });
+      // window.localStorage.setItem(
+      //   "_user",
+      //   JSON.stringify({
+      //     firstName,
+      //     lastName,
+      //     username,
+      //     email,
+      //     bio,
+      //     cover_image,
+      //     photo,
+      //   })
+      // );
       location.reload();
       // user.set({ firstName, lastName, username, email, bio, cover_image, photo })
     } else {
@@ -71,7 +69,7 @@
   };
 
   const handleCaptchaError = () => {
-    error = translationStore.recaptchaError;
+    error = translations.recaptchaError;
     recaptchaToken = "";
   };
   const resetCaptcha = () => {
@@ -102,7 +100,7 @@
         if (grecaptcha) {
           resolve(grecaptcha);
         } else {
-          reject(translationStore.loadRecaptchaError);
+          reject(translations.loadRecaptchaError);
         }
       };
     });
@@ -121,7 +119,7 @@
     <label
       for="email-address"
       class="block text-blue-500 text-sm font-medium mb-[6px]"
-      >{translationStore.test}</label
+      >{translations.email}</label
     >
     <input
       id="email-address"
@@ -131,14 +129,14 @@
       autocomplete="email"
       bind:value={email}
       required
-      placeholder={translationStore.enterEmail}
+      placeholder={translations.enterEmail}
     />
   </div>
   <div>
     <label
       for="password"
       class="block text-blue-500 text-sm font-medium mb-[6px]"
-      >{translationStore.password}</label
+      >{translations.password}</label
     >
     <input
       id="password"
@@ -170,7 +168,7 @@
         class="h-4 w-4 rounded border-grey-300 text-primary focus:ring-primary/90"
       />
       <label for="remember-me" class="ml-3 block text-sm text-blue-500"
-        >{translationStore.remember30}</label
+        >{translations.remember30}</label
       >
     </div>
 
@@ -179,7 +177,7 @@
         href={"/authentication/forgot-password"}
         class="block text-base text-misc font-bold transition duration-150 ease-in-out hover:text-misc/90"
       >
-        {translationStore.forgotPassword}
+        {translations.forgotPassword}
       </a>
     </div>
   </div>
@@ -193,11 +191,7 @@
       {#if logInLoader}
         <span class="custom-spinner mr-2" aria-hidden="true" />
       {/if}
-      <span
-        >{logInLoader
-          ? translationStore.signingIn
-          : translationStore.logIn}</span
-      >
+      <span>{logInLoader ? translations.signingIn : translations.logIn}</span>
     </button>
   </div>
 </form>
