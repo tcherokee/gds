@@ -12,14 +12,12 @@
     import { bonusLabels } from '../../../stores/filters'
 
     // Import Components
-    import DesktopCasinoFilter from '../filters/desktopCasinoFilter.svelte'
-    import MobileCasinoFilter from '../filters/mobileCasinoFilter.svelte'
+    import CasinoFilter from '../filters/casinoFilter.svelte'
 
     // Import Helpers
     import Image from '../helpers/images.svelte'
     import ReadOnlyRatings from '../helpers/readOnlyRatings.svelte'
     import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
-    import MediaQuery from "../helpers/mediaQuery.svelte"
 
     // Images
     import ArrowRight from "~icons/kensho-icons/arrow-right"
@@ -99,13 +97,7 @@
         <div class="mb-5 pt-2.5">
             <div>
                 <div class="text-black relative mb-10 z-20">
-                    <MediaQuery query="(max-width: 991px)" let:matches>
-                        {#if matches}
-                            <MobileCasinoFilter />
-                        {:else}
-                            <DesktopCasinoFilter />
-                        {/if}
-                    </MediaQuery>
+                    <CasinoFilter />
                 </div>
             </div>
             <div>

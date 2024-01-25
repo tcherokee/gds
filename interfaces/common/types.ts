@@ -419,3 +419,12 @@ export interface ProsConsBlock {
     };
   };
 }
+
+export type Toggles {
+    toggleBonusType: boolean;
+    toggleConditions: boolean;
+    toggleAmount: boolean;
+    toggleWagering: boolean;
+    toggleImmediate: boolean;
+    toggleSort: boolean;
+}
