@@ -70,6 +70,8 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: P
   return acc;
 }, {});
 
+const favicon = `https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.env.SITE_ID}.png`;
+
 const { seoData } = Astro.props
 ---
 
@@ -81,7 +83,7 @@ const { seoData } = Astro.props
     <meta name="viewport" content="width=device-width" />
     <link rel="canonical" href={seoData.url} />
     {seoData?.author && <meta name="author" content={seoData?.author} />}
-    <link rel="icon" type="image/svg+xml" href={`https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.env.SITE_ID}.png`} />
+    <link rel="icon" type="image/svg+xml" href={favicon} />
     <meta name="generator" content={Astro.generator} />
     <title>{seoData.pageTitle}</title>
     <Tooltips />
@@ -104,8 +106,4 @@ const { seoData } = Astro.props
       footerNavigations={processedMenus.footernavigations}
     />
   </body>
-
-  <script define:vars={{layout}}>
-    console.log('Mainlayout', layout);
-  </script>
 </html>
