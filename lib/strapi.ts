@@ -5,6 +5,7 @@ const fetchApi = async <T>({
   query,
   wrappedByKey,
   wrappedByList,
+  isPaginated = false,
 }: FetchApiParams): Promise<T> => {
   let modifiedEndpoint = endpoint.startsWith("/")
     ? endpoint.slice(1)
@@ -25,15 +26,19 @@ const fetchApi = async <T>({
   const res = await fetch(url.toString(), opts);
   let data = await res.json();
 
-  if (wrappedByKey) {
-    data = data[wrappedByKey];
-  }
+  if (isPaginated) {
+    return data;
+  } else {
+    if (wrappedByKey) {
+      data = data[wrappedByKey];
+    }
 
-  if (wrappedByList) {
-    data = data[0];
-  }
+    if (wrappedByList) {
+      data = data[0];
+    }
 
-  return data;
+    return data;
+  }
 };
 
 export default fetchApi;

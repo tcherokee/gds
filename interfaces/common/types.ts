@@ -13,6 +13,7 @@ export type FetchApiParams = {
   query?: string;
   wrappedByKey?: string;
   wrappedByList?: boolean;
+  isPaginated?: boolean;
 };
 
 // QS Fields

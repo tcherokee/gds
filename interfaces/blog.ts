@@ -1,5 +1,15 @@
 import type { ImageData, Seo, Author } from "./common/types";
 
+export type BlogList = {
+  data: Blog[];
+  meta: {
+    pagination: {
+      page: number;
+      pageCount: number;
+    };
+  };
+};
+
 export type Blog = {
   id: number;
   attributes: BlogAttributes;
