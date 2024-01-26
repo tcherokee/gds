@@ -1,0 +1,97 @@
+---
+
+import { get } from 'svelte/store';
+import { getTranslations } from '../../../stores/addTranslations';
+
+const translationStore:any = get(getTranslations);
+
+const {currPage = 1, pageCount, path} = Astro.props
+
+let arrPages = []
+
+const buildArr = (c:any, n:any) => {
+    if (n <= 7) {
+        return [...Array(n)].map((_, i) => i + 1)
+    } else {
+        if (c < 3 || c > n - 3) {
+            return [1, 2, 3, '...', n - 2, n - 1, n]
+        } else {
+            return [1, 2, '...', c - 1, c, c + 1, '...', n]
+        }
+    }
+}
+
+arrPages = buildArr(currPage, pageCount)
+
+---
+
+<script define:vars={{currPage, pageCount, path}}>
+console.log('currPage', currPage);
+console.log('pageCount', pageCount);
+console.log('path', path);
+</script>
+
+{ pageCount > 1 &&
+	<nav aria-label="page navigation" class="pagination-wrapper mt-3">
+		<ul class="flex pagination justify-center">
+			{currPage !== 1 &&
+				<li class="page-item hidden sm:flex">
+					<a class="page-link" href={`${path}${currPage === 2 ? '' : '/p' + (currPage - 1)}`}>
+                        {translationStore.paginationFirst}
+                    </a>
+				</li>
+			}
+			{ arrPages.map(i =>
+                <li class={`page-item ${currPage === i || i === '...' && 'disabled'} ${i !== '...' &&
+						'default'}`}>
+					<a class="page-link" href={i === '...' ? '#' : `${path}${i === 1 ? '' : '/p' + i}`}>{i}</a>
+				</li>
+			)}
+			{currPage !== pageCount &&
+				<li class="page-item hidden sm:flex">
+					<a class="page-link" href={`${path}/p${currPage + 1}`}>{translationStore.paginationLast}</a>
+				</li>
+			}
+		</ul>
+	</nav>
+}
+
+<style lang="postcss">
+	.pagination-wrapper {
+		width: 100%;
+		.pagination {
+			.page-item {
+				&:first-child {
+					:global(.page-link) {
+						@apply rounded-tl-[6px] rounded-bl-[6px];
+					}
+				}
+				&:last-child {
+					:global(.page-link) {
+						@apply rounded-tr-[6px] rounded-br-[6px];
+					}
+				}
+				&.disabled {
+					:global(.page-link) {
+						@apply text-pagination-disabled-color pointer-events-none;
+					}
+				}
+				&.disabled.default {
+					:global(.page-link) {
+						@apply bg-pagination-disabled-bg;
+					}
+				}
+				:global(.page-link) {
+					@apply relative uppercase block px-3 py-[6px] text-link-color bg-pagination-bg-color border border-pagination-border-color hover:text-link-hover-color hover:bg-pagination-hover-bg;
+					transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+						border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+				}
+				&:not(:first-child) {
+					:global(.page-link) {
+						@apply -ml-[1px];
+					}
+				}
+			}
+		}
+	}
+</style>
