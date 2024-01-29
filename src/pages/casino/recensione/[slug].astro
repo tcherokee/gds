@@ -15,7 +15,7 @@ import { get } from 'svelte/store';
 import { getTranslations } from '../../../../stores/addTranslations';
 import Icon from 'astro-icon';
 import Images from '../../../components/helpers/images.astro';
-import ProviderIcons from '../../../components/helpers/providerIcons.astro';
+import ProviderIcons from '../../../components/helpers/providerIcons.svelte';
 import Collapse from "../../../components/helpers/collapse.astro"
 import QuickLinks from '../../../components/helpers/quicklinks.astro';
 import { loadComponents, mapBlocksToDynamicComponents } from '../../../../lib/loadBlockComponents';
@@ -402,10 +402,7 @@ let breadcumb = { breadCrumbText: casinoPage[0]?.attributes?.title, breadCrumbUr
 									<div class="flex">
 										<div class="provider-img-container">
 											{ casinoPage[0]?.attributes?.providers?.data &&
-												<ProviderIcons
-													providers={casinoPage[0]?.attributes?.providers
-														?.data}
-												/>
+												<ProviderIcons providers={casinoPage[0]?.attributes?.providers?.data} client:load />
 												}
 										</div>
 									</div>
@@ -441,7 +438,7 @@ let breadcumb = { breadCrumbText: casinoPage[0]?.attributes?.title, breadCrumbUr
 
 			<div class="grid md:grid-cols-4 gap-8">
 				<div class="col-span-1 md:col-span-3">
-					<!-- <QuickLinks {qlinks} listNodes={headings} /> -->
+					<QuickLinks data={casinoPage[0]} />
 
 					{ casinoPage[0]?.attributes?.blocks &&
 						Components.map((Component, i) => (
@@ -624,11 +621,6 @@ let breadcumb = { breadCrumbText: casinoPage[0]?.attributes?.title, breadCrumbUr
 			</div>
 		</div>
     </div>
-    <script lang="ts" define:vars={{casinoPage, Components, __blocks}}>
-		console.log(casinoPage[0]);
-		console.log('__blocks',__blocks);
-		console.log('Components', Components)
-    </script>
 </MainLayout>
 
 
