@@ -1,0 +1,119 @@
+---
+import qs from 'qs'
+import fetchApi from '../../../lib/strapi';
+import MainLayout from '../../layouts/MainLayout.astro';
+import { urlTranslate } from '../../../utils/data-store.util'
+import { get } from 'svelte/store';
+import { getTranslations } from '../../../stores/addTranslations';
+import { gamesQs, slotProvidersQs } from "../../../qs/ssm-games"
+import Breadcrumb from '../../components/layout/breadcrumbs.astro'
+import IntroBlock from '../../components/general/introWithImage.astro';
+import GameListBlock from '../../components/blocks/gameListBlock.astro';
+import Pagination from '../../components/helpers/pagination.astro';
+import ContentBlock from '../../components/blocks/contentBlock.astro';
+import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
+import CasinoComparison from '../../components/casino/casinoComparison.astro';
+import Faqs from "../../components/general/faqs.astro";
+
+const { slug } = Astro.params;
+
+const gameQuery = qs.stringify(gamesQs(slug,"views:desc",1), {encodeValuesOnly: true})
+const slotProvidersQuery = qs.stringify(slotProvidersQs(slug), {encodeValuesOnly: true})
+
+const games = await fetchApi<any>({
+	endpoint: 'games',
+    wrappedByKey: 'data',
+    query: `?${gameQuery}`
+})
+
+const slotProviders = await fetchApi<any>({
+	endpoint: 'slot-providers',
+    isPaginated: true,
+    query: `?${slotProvidersQuery}`
+})
+
+const translationStore:any = get(getTranslations);
+
+let siteID = import.meta.env.SITE_ID
+let siteURL = import.meta.env.FULL_URL
+let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']}/${slug}`
+
+const seo = {
+    pageTitle: slotProviders?.data[0]?.attributes?.seo?.metaTitle,
+    metaDescription: slotProviders?.data[0]?.attributes?.seo?.metaDescription,
+    url: canonical
+}
+
+const breadcumb = { breadCrumbText: slotProviders?.data[0]?.attributes?.title, breadCrumbUrl: null };
+---
+<MainLayout seoData={seo}>
+    <script define:vars={{slotProviders, games}}>
+        console.log('games', games);
+        console.log('slotProviders', slotProviders);
+    </script>
+    <Breadcrumb breadcrumb={breadcumb} />
+    <div class="featured-background pb-5">
+        <IntroBlock
+            block={slotProviders?.data[0]?.attributes?.IntroductionWithImage}
+            timeDate={slotProviders?.data[0]?.attributes?.dateCreated}
+            authorData={slotProviders?.data[0]?.attributes?.author}
+        />
+
+        <div class="d-flex flex-wrap">
+        
+            <!-- <GameListBlock data={games}  /> -->
+
+            <Pagination
+                currPage={games?.meta?.pagination?.page}
+                pageCount={games?.meta?.pagination?.pageCount}
+                path=`${urlTranslate[siteID]['provider-pages']}/${slug}`
+            />
+        </div>
+    </div>
+    <div class="relative xl:container px-2 mt-5">
+        <div class="flex flex-col md:flex-row gap-x-8">
+            <div class="order-last md:order-first mt-5 md:mt-0">
+                {slotProviders?.data[0]?.attributes?.content1 &&
+					<div class="content-1">
+						<ContentBlock
+							pageContent={slotProviders?.data[0]?.attributes?.content1}
+						/>
+					</div>
+				}
+
+				{slotProviders?.data[0]?.attributes?.content2 &&
+					<div class="content-2">
+						<ContentBlock
+							pageContent={slotProviders?.data[0]?.attributes?.content2}
+						/>
+					</div>
+				}
+
+                {slotProviders?.data[0]?.attributes?.relatedCasinos?.data.length > 0 &&
+					<CasinoComparison data={slotProviders?.data[0]?.attributes?.relatedCasinos?.data.slice(0, 3)} />
+				}
+
+				{slotProviders?.data[0]?.attributes?.content3 &&
+					<div class="content-3">
+						<ContentBlock
+							pageContent={slotProviders?.data[0]?.attributes?.content3}
+						/>
+					</div>
+				}
+
+                {slotProviders?.data[0]?.attributes?.faqs.length > 0 &&
+					<div class="content mt-4">
+						<h2 class="mb-4">{translationStore.faq}</h2>
+
+						{slotProviders?.data[0]?.attributes?.faqs.map(faq =>
+							<Faqs data={faq} />
+						)}
+					</div>
+				}
+            </div>
+            <div class="basis-[315px] shrink-0 order-first order-last">
+				<CasinoSideBar />
+			</div>
+        </div>
+    </div>
+</MainLayout>

@@ -80,7 +80,7 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         <div class="flex items-center">
                             <Link
                                 classes="flex text-[14px] space-x-4 text-grey-500 mr-[11px]"
-                                href="/casino/recensione/{casino?.casino?.attributes?.slug}"
+                                href={`/casino/recensione/${casinoData?.attributes?.slug}`}
                             >
                                 <span class="underline">{translationStore.review}</span>
                                 <Icon name="arrow-right" class="w-[14px] fill-grey-500" />
