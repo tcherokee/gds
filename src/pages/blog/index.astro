@@ -7,7 +7,7 @@ import { urlTranslate } from '../../../utils/data-store.util'
 import { blogmetaQs } from "../../../qs/blog-meta"
 import { blogcardQs } from "../../../qs/blog-cards"
 import type { BlogList } from "../../../interfaces/blog"
-import BlogCard from '../../components/blogs/blogCard.astro';
+import BlogListBlock from '../../components/blocks/blogListBlock.astro';
 import Pagination from '../../components/helpers/pagination.astro';
 
 const query = qs.stringify(blogcardQs(12), {encodeValuesOnly: true})
@@ -46,9 +46,9 @@ console.log(blogCards);
     <div class="blog-bg">
         <div class="xl:container px-2 pb-5 pt-4">
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <BlogCard data={blogCards.data} />
-            </div>
+            <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-5"> -->
+                <BlogListBlock data={blogCards.data} />
+            <!-- </div> -->
         
             <Pagination 
             currPage={blogCards?.meta?.pagination?.page} 
