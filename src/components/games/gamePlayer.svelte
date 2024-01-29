@@ -44,7 +44,7 @@
 	// Updating games store with games array data
 	// GamesStore.update(() => gamesArray)
 
-    let siteID = import.meta.env.SITE_ID;
+    let siteID = import.meta.env.PUBLIC_SITE_ID;
     let casinoProviderPageURL = urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']+"/"+data?.attributes?.provider?.data?.attributes?.slug;
     let providePageURL = urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']+"/"+data
                                     ?.attributes?.provider?.data?.attributes?.slug
