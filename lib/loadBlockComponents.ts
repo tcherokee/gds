@@ -24,6 +24,18 @@ export const mapBlocksToDynamicComponents = (
             name: "gameListBlock",
             extension: "astro",
           };
+        case "games.new-and-loved-slots":
+          return {
+            location: "games",
+            name: "newPopularWidget",
+            extension: "astro",
+          };
+        case "games.games-carousel":
+          return {
+            location: "blocks",
+            name: "gameListBlock",
+            extension: "svelte",
+          };
         case "shared.single-content":
           return {
             location: "blocks",

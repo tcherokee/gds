@@ -12,7 +12,6 @@ export const casinosQs = ({
   wagering = "",
   speed = ""
 }: CasinoFilters) => {
-  console.log('here', ids)
   return {
     fields: ["title", "slug", "ratingAvg", "ratingCount"],
     populate: {

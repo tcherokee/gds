@@ -24,7 +24,7 @@
 
 <div class="favourites flex cursor-pointer pl-5 pr-2 mr-2">
     <input type="checkbox" id="toggleFavs" class="hidden" bind:checked={favsChecked} />
-    <label for="toggleFavs" class="relative inline-flex  cursor-pointer items-center justify-center">
+    <label for="toggleFavs" class="relative inline-flex items-center justify-center">
         <Heart height="35px" width="35px" class={$favourite.length > 0 ? "fill-filled-favs" : "fill-unfilled-favs"}/>
     </label>
 </div>
@@ -34,7 +34,7 @@
 	aria-labelledby="slide-over-title"
 	role="dialog"
 	aria-modal="true"
-	open={favsChecked ? favsChecked : null}
+	{...(favsChecked ? { open:'' } : {})}
 >
 	<div class="fixed inset-0" />
 
@@ -43,7 +43,7 @@
 			<div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
 				<div
 					class="pointer-events-auto w-screen max-w-md transform transition ease-in-out duration-500 sm:duration-700 translate-x-full open:translate-x-0"
-					open={favsChecked ? favsChecked : null}
+					{...(favsChecked ? { open:'' } : {})}
 				>
 					<div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
 						<div class="px-4 sm:px-6">

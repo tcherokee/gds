@@ -34,7 +34,6 @@
     });
     logInLoader = false;
     const res = await response.json();
-    console.log(res);
     resetCaptcha();
     if (res.jwt) {
       const { firstName, lastName, username, email, bio, cover_image, photo } =
@@ -63,7 +62,7 @@
       location.reload();
       // user.set({ firstName, lastName, username, email, bio, cover_image, photo })
     } else {
-      console.log(res?.error.message);
+      console.error(res?.error.message);
       // toast.error(res?.error.message)
     }
   };

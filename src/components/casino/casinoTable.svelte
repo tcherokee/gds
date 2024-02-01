@@ -12,12 +12,14 @@
     import { bonusLabels } from '../../../stores/filters'
 
     // Import Components
-    import CasinoFilter from '../filters/casinoFilter.svelte'
+    import DesktopCasinoFilter from '../filters/desktopCasinoFilter.svelte'
+    import MobileCasinoFilter from '../filters/mobileCasinoFilter.svelte'
 
     // Import Helpers
     import Image from '../helpers/images.svelte'
     import ReadOnlyRatings from '../helpers/readOnlyRatings.svelte'
     import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
+    import MediaQuery from "../helpers/mediaQuery.svelte"
 
     // Images
     import ArrowRight from "~icons/kensho-icons/arrow-right"
@@ -73,7 +75,7 @@
     const resetCasinoFilters = () => {
         casinoVariables.setKey('limit', 1000)
         casinoVariables.setKey('sort', "ratingAvg:desc")
-        casinoVariables.setKey('providers', "")
+        casinoVariables.setKey('providers', [])
         casinoVariables.setKey('ids', [])
         casinoVariables.setKey('bonusKey', "")
         casinoVariables.setKey('condition', "")
@@ -88,8 +90,6 @@
         casinoQsStore.set(`?${query}`)
     }
 
-    $: console.log(customCasinos, bonusAmounts, wageringReq)
-
 </script>
 
 <div>
@@ -97,7 +97,13 @@
         <div class="mb-5 pt-2.5">
             <div>
                 <div class="text-black relative mb-10 z-20">
-                    <CasinoFilter />
+                    <MediaQuery query="(max-width: 768px)" let:matches>
+                        {#if matches}
+                            <MobileCasinoFilter />
+                        {:else}
+                            <DesktopCasinoFilter />
+                        {/if}
+                    </MediaQuery>
                 </div>
             </div>
             <div>

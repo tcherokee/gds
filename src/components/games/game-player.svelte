@@ -50,8 +50,6 @@
                                     ?.attributes?.provider?.data?.attributes?.slug
 
 	const startGameHandler = async () => {
-        console.log('startGame', startGame);
-        
 		startGame = true
 		mostPlayedGamesHandler()
 	}
@@ -102,8 +100,6 @@
 
 
 	onMount(async () => {})
-
-	console.log(data)
 </script>
 
 <div class="flex flex-col justify-center rounded-t-lg -mx-3 md:mx-0">

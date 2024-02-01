@@ -2,10 +2,10 @@ import type { GamesQueryOptions, GamesQueryFilters } from "../interfaces/games";
 
 export const gamesQs = (
   limit = 10,
-  sort = "title",
+  sort = "ratingAvg:desc",
   page = "1",
-  providers = "",
-  categories = ""
+  providers = [],
+  categories = []
 ): GamesQueryOptions => {
   const filters: GamesQueryFilters = {};
   if (providers.length)

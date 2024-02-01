@@ -13,8 +13,6 @@ import Collapse from './collapse.astro'
 
 const { data, block, isGamePage = false } = Astro.props
 
-console.log('ql', data, block)
-
 const translationStore: TranslationData = getTranslations.get()
 
 // Regex to target H2 Headings
@@ -138,16 +136,11 @@ const extractH2Text = (element) => {
         }
     }
 
-    console.log(qlArray)
     return qlArray
 
 }
 
-console.log('data', extractH2Text(data.attributes))
-
 const quickLinks = block ? extractH2TextBlock(block) : extractH2Text(data.attributes)
-
-console.log('quickLinks', quickLinks)
 
 ---
 

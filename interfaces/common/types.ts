@@ -365,13 +365,21 @@ export type BadgesStore = string[];
 export type CasinoFilters = {
   limit: number | undefined;
   sort: string | undefined;
-  providers: string | undefined;
+  providers: string[] | undefined;
   ids: number[];
   bonusKey: string;
   condition: string | undefined;
   amount: string | undefined;
   wagering: string | undefined;
   speed: string | undefined;
+};
+
+export type GameFilters = {
+  limit: number | undefined;
+  sort: string | undefined;
+  page: number | undefined;
+  providers: string[];
+  categories: string[];
 };
 
 export type BonusLabelItem = {
@@ -383,7 +391,7 @@ export type BonusLabels = {
   [key: string]: BonusLabelItem;
 }
 
-export interface CasinoBlock {
+export type CasinoBlock = {
   id: number;
   __component: string;
   link: Link;
@@ -392,7 +400,7 @@ export interface CasinoBlock {
   };
 }
 
-export interface ProsConsBlock {
+export type ProsConsBlock = {
   heading: string;
   pros: {
     list: string;
@@ -420,11 +428,6 @@ export interface ProsConsBlock {
   };
 }
 
-export type Toggles {
-    toggleBonusType: boolean;
-    toggleConditions: boolean;
-    toggleAmount: boolean;
-    toggleWagering: boolean;
-    toggleImmediate: boolean;
-    toggleSort: boolean;
-}
+export type Toggles = {
+  [key: string]: boolean;
+};

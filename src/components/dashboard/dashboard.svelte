@@ -28,9 +28,7 @@
 
 	const getUser = async () => {
 		const response = await fetch('/api/dashboard/user', {method: 'GET'});
-		console.log('RESPONSE', response);
 		// const data = await response.json();
-		// console.log(data)
 	}
 	getUser();
 

@@ -28,13 +28,13 @@ function setupMeilisearch(noResults, indexName, containerId, resultsId) {
     hits({
       container: resultsId,
       cssClasses: {
-        list: ["mt-3", "grid", "grid-cols-1", "gap-2", "lg:grid-cols-2"],
+        list: ["mt-3", "grid", "grid-cols-1", "gap-2", "md:grid-cols-2"],
       },
       transformItems(items) {
         // Error handling if the logo URL is incorrect or missing
         return items.map((item) => {
           const logoUrl = item.logo?.includes(".com")
-            ? `${import.meta.env.PUBLIC_ROOT_DOMAIN}/65x60/filters:quality(80)` +
+            ? `${import.meta.env.PUBLIC_IMAGE_URL}/65x60/filters:quality(80)` +
               item.logo.substring(item.logo.indexOf(".com") + 4)
             : "default-logo-url"; // Provide a default logo URL or path
           return {
@@ -46,9 +46,9 @@ function setupMeilisearch(noResults, indexName, containerId, resultsId) {
       templates: {
         // Template literals could be extracted to a function to avoid redundancy
         item(hit, { html, components }) {
-          return html`<a class="col-span-1 flex rounded-md shadow-sm" href=https://www.giochidislots.com/it/slot-machine/${
-            hit.slug
-          } data-sveltekit-reload>
+          return html`<a class="col-span-1 flex rounded-md shadow-sm" href=${
+            import.meta.env.PUBLIC_FULL_URL
+          }/slot-machine/${hit.slug} data-sveltekit-reload>
 							<div class="flex justify-items-start overflow-hidden w-16 flex-shrink-0 items-center justify-center rounded-l-md border-grey-300 border-l border-t border-b">
 								<img src=${hit.logo} class=""/>
 							</div>

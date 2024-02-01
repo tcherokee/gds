@@ -50,14 +50,6 @@ export const layoutQs = (): LayoutQueryOptions => ({
     casinoProvidersBreadcrumbs: {
       fields: ["breadCrumbText", "breadCrumbUrl"],
     },
-    filterProviders: {
-      fields: ["slug"],
-      populate: {
-        images: {
-          fields: ["url"],
-        },
-      },
-    },
     most_loved_casinos: {
       fields: ["slug", "title"],
       populate: {
@@ -87,6 +79,20 @@ export const layoutQs = (): LayoutQueryOptions => ({
     },
     backgroundImage: {
       fields: ["url"],
+    },
+  },
+});
+
+export const filterProviders = () => ({
+  fields: ["id"],
+  populate: {
+    filterProviders: {
+      fields: ["slug"],
+      populate: {
+        images: {
+          fields: ["url"],
+        },
+      },
     },
   },
 });

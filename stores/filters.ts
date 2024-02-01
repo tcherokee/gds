@@ -83,3 +83,26 @@ export const sort = computed(getTranslations, (getTranslations) => {
 
   return labels;
 });
+
+export const sortGames = computed(getTranslations, (getTranslations) => {
+  const labels: BonusLabels = {
+    "Top Rated Users": {
+      label: getTranslations.filtersRating,
+      value: "ratingAvg:desc",
+    },
+    "Most Popular": {
+      label: getTranslations.filtersPopular,
+      value: "views:desc",
+    },
+    Alphabetic: {
+      label: getTranslations.filtersAZ,
+      value: "title:asc",
+    },
+    Newest: {
+      label: getTranslations.filtersNew,
+      value: "createdAt:desc",
+    },
+  };
+
+  return labels;
+});

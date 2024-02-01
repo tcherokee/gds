@@ -6,7 +6,6 @@ export const user = persistentAtom<TUser | null>("_user:", null, {
     return JSON.stringify(value);
   },
   decode(value) {
-    console.log("_user:", value);
     return JSON.parse(value);
   },
 });
