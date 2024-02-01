@@ -44,7 +44,7 @@
 	// Updating games store with games array data
 	// GamesStore.update(() => gamesArray)
 
-    let siteID = import.meta.env.SITE_ID;
+    let siteID = import.meta.env.PUBLIC_SITE_ID;
     let casinoProviderPageURL = urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']+"/"+data?.attributes?.provider?.data?.attributes?.slug;
     let providePageURL = urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']+"/"+data
                                     ?.attributes?.provider?.data?.attributes?.slug
@@ -153,9 +153,11 @@
                         imageClass="providerImage"
                         imageAlt={data?.attributes?.title}
                     />
-                    <button type="button" class="btn btn-secondary free-play uppercase my-5" on:click={startGameHandler}>
+                    <div class="btn btn-secondary free-play uppercase my-5" on:click={startGameHandler}>
                         Gioco Gratis
-                    </button>
+					</div>
+
+					 
                     <div class="age-warning">
                         Premendo "Gioco Gratis", confermi di avere almeno 18 anni.
                     </div>
@@ -344,15 +346,10 @@
 					padding: 0;
 					background: theme('colors.gameplayer-meta-btn-bkg');
 					border: 1px solid theme('colors.gameplayer-meta-btn-border');
-					// box-shadow: 0 0.125rem 0.25rem rgba($black, 0.075);
 					margin-bottom: 5px;
 
 					&:last-child {
 						margin-right: 0;
-					}
-
-					:global(svg) {
-						// fill: theme('colors.gameplayer-meta-btn-icon');
 					}
 
 					&.heart {
@@ -389,7 +386,6 @@
 		background: theme('colors.black');
 		border-radius: 4px;
 		overflow: hidden;
-		// height: auto;
 		position: static;
 	}
 
@@ -398,7 +394,6 @@
 	}
 	.start-game-overlay {
 		display: flex;
-		// position: absolute;
 		flex-direction: column;
 		background: theme('colors.black');
 		align-items: center;
@@ -447,10 +442,6 @@
 			padding: 0;
 			background: theme('colors.grey[300]');
 			border: 1px solid theme('colors.grey[500]');
-
-			:global(svg) {
-				// fill: theme('colors.gameplayer-meta-btn-icon');
-			}
 
 			&.heart {
 				:global(svg) {

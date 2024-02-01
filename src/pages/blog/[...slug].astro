@@ -4,7 +4,7 @@ import fetchApi from '../../../lib/strapi';
 import MainLayout from '../../layouts/MainLayout.astro';
 import { urlTranslate } from '../../../utils/data-store.util'
 import {blogpageQs} from "../../../qs/blog-page"
-import type { Blog } from "../../../interfaces/blog"
+import type { Blog, BlogList } from "../../../interfaces/blog"
 import { blogcardQs } from "../../../qs/blog-cards"
 import BlogCard from '../../components/blogs/blogCard.astro';
 import Images from '../../components/helpers/images.astro';
@@ -21,7 +21,7 @@ const blog = await fetchApi<Blog[]>({
 
 // get blog cards for side menu
 const blogCardquery = qs.stringify(blogcardQs(3), {encodeValuesOnly: true})
-const blogCards = await fetchApi<Blog[]>({
+const blogCards = await fetchApi<BlogList>({
 	endpoint: 'blogs',
     wrappedByKey: 'data',
     query: `?${blogCardquery}`
@@ -71,7 +71,7 @@ let seo = {
                     } -->
                 </div>
                 <div class="md:w-2/6 sidebar">
-				<BlogCard data={blogCards} />
+				<BlogCard data={blogCards.data} />
 			</div>
             </div>
         </div>

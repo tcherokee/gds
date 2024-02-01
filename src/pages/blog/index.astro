@@ -6,15 +6,16 @@ import MainLayout from '../../layouts/MainLayout.astro';
 import { urlTranslate } from '../../../utils/data-store.util'
 import { blogmetaQs } from "../../../qs/blog-meta"
 import { blogcardQs } from "../../../qs/blog-cards"
-import type { Blog } from "../../../interfaces/blog"
-import BlogCard from '../../components/blogs/blogCard.astro';
+import type { BlogList } from "../../../interfaces/blog"
+import BlogListBlock from '../../components/blocks/blogListBlock.astro';
+import Pagination from '../../components/helpers/pagination.astro';
 
 const query = qs.stringify(blogcardQs(12), {encodeValuesOnly: true})
 const metaQuery = qs.stringify(blogmetaQs(), {encodeValuesOnly: true})
 
-const blogCards = await fetchApi<Blog[]>({
+const blogCards = await fetchApi<BlogList>({
 	endpoint: 'blogs',
-    wrappedByKey: 'data',
+    isPaginated: true,
     query: `?${query}`
 })
 
@@ -37,15 +38,22 @@ let seo = {
 
 ---
 
+<script define:vars={{blogCards}}>
+console.log(blogCards);
+</script>
+
 <MainLayout seoData={seo}>
     <div class="blog-bg">
         <div class="xl:container px-2 pb-5 pt-4">
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <BlogCard data={blogCards} />
-            </div>
+            <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-5"> -->
+                <BlogListBlock data={blogCards.data} />
+            <!-- </div> -->
         
-            <!-- <Pagination currPage={currentPage} pageCount={countPage} path="{urlTranslate[PUBLIC_SITE_ID]['blog-pages']}" /> -->
+            <Pagination 
+            currPage={blogCards?.meta?.pagination?.page} 
+            pageCount={blogCards?.meta?.pagination?.pageCount} 
+            path={urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']} />
         </div>
     </div>
 </MainLayout>
