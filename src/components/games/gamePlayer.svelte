@@ -5,11 +5,13 @@
 	// Svelte Stuff
 	import { onMount } from 'svelte'
     import { urlTranslate } from '../../../utils/data-store.util'
-     import { getTranslations } from '../../../stores/addTranslations';
+    import { getTranslations } from '../../../stores/addTranslations';
 
 
     import ReadOnlyRatings from '../helpers/readOnlyRatings.svelte';
     import Images from '../helpers/images.svelte';
+	import AddToFav from "../helpers/addToFavs.svelte"
+	import ReportAnIssue from "./reportAnIssue.svelte"
 
 	// Import Images
 	import NoGameImage from "~icons/kensho-icons/no-game"
@@ -25,24 +27,12 @@
 
 	let fullscreen: boolean = false
 	let startGame: boolean = false
-	let userRating: number
-	let isRatingDisabled: boolean = false
 	let iframeWrapper: any
-	let reportFormSubmitting: boolean = false
-	let reportGameEl: any
-	let reportGameModal: any
-	let Modal: any
-	let Headings: any
 	let ReportAnIssueOpen: boolean = false
 	let gamePlayerClass = 'game-player'
 
 	let hoverEl: any
 
-	const gamesData = [...data?.attributes?.provider?.data?.attributes?.games?.data]
-	const limitGames = gamesData.splice(0, 6)
-
-	// Updating games store with games array data
-	// GamesStore.update(() => gamesArray)
 
     let siteID = import.meta.env.PUBLIC_SITE_ID;
     let casinoProviderPageURL = urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']+"/"+data?.attributes?.provider?.data?.attributes?.slug;
@@ -71,8 +61,10 @@
 	}
 
 	const handleReload = () => {
+		console.log('reload game', data);
+		
 		if (startGame && iframeWrapper.innerHTML !== '') {
-			iframeWrapper.innerHTML = data.gamePage[0]?.attributes?.embedCode?.desktopEmbedCode
+			iframeWrapper.innerHTML = data?.attributes?.embedCode?.desktopEmbedCode
 			mostPlayedGamesHandler()
 		}
 	}
@@ -112,9 +104,7 @@
                 <button type="button" class="btn btn-link reload" on:click={handleReload}>
                     <Reload width="25px" height="17px" />
                 </button>
-                <button type="button" class="btn btn-link heart">
-                    <Heart width="25px" height="17px" />
-                </button>
+				<AddToFav game={data} classes="btn btn-link heart bg-[#7C838D] mb-[5px] w-[30px] h-[30px] flex items-center justify-items-center rounded-full" />
                 <button
                     type="button"
                     class="btn btn-link report-issue"
@@ -266,16 +256,13 @@
                             {$getTranslations.reloadGame}
                         </div>
                     </button>
-                    <button
-                        type="button"
-                        class="btn btn-link filled relative"
+                    <div
                         data-te-toggle="tooltip"
                         title={$getTranslations.favouriteAGame}
                         on:mouseover={() => showTooltip('favourite-tooltip')}
                         on:focus={() => showTooltip('favourite-tooltip')}
                         on:mouseout={() => hideTooltip('favourite-tooltip')}>
-
-                        <Heart width="25px" height="17px" />
+						<AddToFav game={data} classes="btn relative btn-link heart bg-[#CED4DA] rounded-[5px] w-[30px] h-[30px] flex items-center justify-items-center border border-[#7C838D" />
                         <div
                             id="favourite-tooltip"
                             role="tooltip"
@@ -283,7 +270,7 @@
                         >
                             {$getTranslations.favouriteAGame}
                         </div>
-                    </button>
+                    </div>
                     <button
                         type="button"
                         class="btn btn-link report-issue m-0 relative"
@@ -308,6 +295,10 @@
         {/if}
     </div>
 </div>
+
+{#if ReportAnIssueOpen}
+	<ReportAnIssue gameSlug={data?.attributes?.slug} on:click={ReportAnIssueModal} />
+{/if}
 
 <style lang="scss">
     
