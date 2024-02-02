@@ -22,6 +22,9 @@ import Faqs from '../../components/general/faqs.astro';
 import GamePlayer from '../../components/games/gamePlayer.svelte'
 import QuickLinks from '../../components/helpers/quicklinks.astro'
 
+import type { LayoutData } from '../../../interfaces/layout';
+import { customPageLayoutAddOnsQs } from "../../../qs/customPages"
+
 const { slug } = Astro.params; //get the game slug from the page url
 const query = qs.stringify(gamepageQs(slug), {encodeValuesOnly: true})
 const gamePage = await fetchApi<Gamepage[]>({
@@ -30,10 +33,19 @@ const gamePage = await fetchApi<Gamepage[]>({
     query: `?${query}`
 })
 
+// Import the QS Query string for custom slugs and prepare it for the API fetch
+const layoutQuery = qs.stringify(customPageLayoutAddOnsQs(), {encodeValuesOnly: true})
+
+// Request to the Fetch Function to get the custom page slugs from the API
+const layout = await fetchApi<LayoutData>({
+    endpoint: 'layout',
+    wrappedByKey: 'data',
+    query: `?${layoutQuery}`
+})
+
 let schema: any = null
 
 const translationStore:any = get(getTranslations);
-
 
 const gamesData = [...gamePage[0]?.attributes?.provider?.data?.attributes?.games?.data];
 const limitGames = gamesData.splice(0, 6);
@@ -65,7 +77,7 @@ const __blocks = gamePage[0]?.attributes?.blocks
 
      <div class="iframe-bkg pb-3">
         <div class="section-wrapper relative">
-            <GamePlayer data={gamePage[0]} client:load />
+            <GamePlayer data={gamePage[0]} {layout} client:load />
             <div class="mt-6 md:mt-8">
                 <h2 class="text-white !m-0">{translationStore.gamePageRelatedGamesH2}</h2>
                 <div class="mt-4 glass-wrapper">

@@ -1,6 +1,7 @@
 <script lang="ts">
 
 	export let data: any;
+	export let layout: any;
 
 	// Svelte Stuff
 	import { onMount } from 'svelte'
@@ -206,7 +207,7 @@
                                     role="tooltip"
                                     class="hidden px-5 text-black -ml-[180px] md:-ml-[0px] opacity-100 bg-grey-100 text-sm z-20 -mt-[11rem] w-[220px] absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
                                 >
-                                    <!-- {data?.layout?.gameInfoText} -->
+                                    {layout?.attributes?.gameInfoText}
                                 </div>
                             </button>
                         </div>
@@ -221,8 +222,6 @@
                     <button
                         type="button"
                         class="btn relative btn-link fullscreen-btn text-primary transition duration-50 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
-                        data-te-toggle="tooltip"
-                        title={$getTranslations.fullscreen}
                         on:click={gameInFullscreenToggle}
                         on:mouseover={() => showTooltip('fullscreen-tooltip')}
                         on:focus={() => showTooltip('fullscreen-tooltip')}
@@ -240,8 +239,6 @@
                     <button
                         type="button"
                         class="relative btn btn-link reload text-primary transition duration-50 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
-                        data-te-toggle="tooltip"
-                        title={$getTranslations.reloadGame}
                         on:click={handleReload}
                         on:mouseover={() => showTooltip('reload-tooltip')}
                         on:focus={() => showTooltip('reload-tooltip')}
@@ -257,8 +254,6 @@
                         </div>
                     </button>
                     <div
-                        data-te-toggle="tooltip"
-                        title={$getTranslations.favouriteAGame}
                         on:mouseover={() => showTooltip('favourite-tooltip')}
                         on:focus={() => showTooltip('favourite-tooltip')}
                         on:mouseout={() => hideTooltip('favourite-tooltip')}>
@@ -274,8 +269,6 @@
                     <button
                         type="button"
                         class="btn btn-link report-issue m-0 relative"
-                        data-te-toggle="tooltip"
-                        title={$getTranslations.reportAGame}
                         on:click={ReportAnIssueModal}
                         on:mouseover={() => showTooltip('report-tooltip')}
                         on:focus={() => showTooltip('report-tooltip')}
