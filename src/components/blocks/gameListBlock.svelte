@@ -12,9 +12,11 @@
     // Components
     import GameCard from "../games/gameCard.svelte"
     import DesktopGameFilter from '../filters/desktopGameFilter.svelte';
+    import MobileGameFilter from '../filters/mobileGameFilter.svelte';
 
     // Helpers
     import { gamesQs } from '../../../qs/games.ts';
+    import MediaQuery from "../helpers/mediaQuery.svelte"
     
     // Types
     import type { Game } from "../../../interfaces/games.ts"
@@ -55,7 +57,13 @@
 
 <div>
 	<div class="flex flex-col align-center relative xl:container px-2 pb-5">
-        <DesktopGameFilter showGameFilterPanel={data.showGameFilterPanel} />
+        <MediaQuery query="(max-width: 768px)" let:matches>
+            {#if matches}
+                <MobileGameFilter showGameFilterPanel={data.showGameFilterPanel} />
+            {:else}
+                <DesktopGameFilter showGameFilterPanel={data.showGameFilterPanel} />
+            {/if}
+        </MediaQuery>
         <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
             {#if $games.data?.data}
                 {#each $games.data?.data as game}

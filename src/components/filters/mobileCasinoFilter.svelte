@@ -50,31 +50,21 @@
 	let mobileFilterBtn: boolean = false
     let mobileVariables = $casinoVariables
     
-    $: selection = 0
+    $: selection = Object.keys(mobileVariables).reduce((acc, key) => {
+        if (key !== 'limit' && key !== 'sort') {
+            // Check if the value is an array
+            if (Array.isArray(mobileVariables[key])) {
+                // Count each item in the array
+                acc += mobileVariables[key].length;
+            } else if (mobileVariables[key] !== "") {
+                // Count non-empty values
+                acc += 1;
+            }
+        }
+        return acc;
+    }, 0)
 
 	$: toggleOrder = $casinoVariables.sort ? $casinoVariables.sort?.split(":")[1] : 'desc'
-
-    // Count number of Items selected
-    const countValues = () => {
-        // Reset Selection
-        selection = 0
-
-        Object.keys(mobileVariables).forEach(key => {
-            // Skip the keys 'limit' and 'sort'
-            if (key !== 'limit' && key !== 'sort') {
-                // Check if the value is an array
-                if (Array.isArray(mobileVariables[key])) {
-                    // Count each item in the array
-                    selection += mobileVariables[key].length;
-                } else if (mobileVariables[key] !== "") {
-                    // Count non-empty values
-                    selection += 1;
-                }
-            }
-        });
-
-        return selection;
-    }
 
 	const handleMobileFilterSubmit = () => {
 
@@ -138,9 +128,6 @@
             speed: ""
         }
     }
-
-    // Run Count to set initial selection total
-    countValues()
 
 </script>
 
