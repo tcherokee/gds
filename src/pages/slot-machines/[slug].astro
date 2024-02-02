@@ -20,34 +20,20 @@ import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
 import ImageCarousel from '../../components/general/imageCarousel.svelte';
 import Faqs from '../../components/general/faqs.astro';
 import GamePlayer from '../../components/games/gamePlayer.svelte'
-// import QuickLinks from '../../components/helpers/quicklinks.astro'
+import QuickLinks from '../../components/helpers/quicklinks.astro'
 
 const { slug } = Astro.params; //get the game slug from the page url
 const query = qs.stringify(gamepageQs(slug), {encodeValuesOnly: true})
-
-let schema: any = null
-let fullscreen: boolean = false
-let startGame: boolean = false
-let userRating: number
-let isRatingDisabled: boolean = false
-let iframeWrapper: any
-let reportFormSubmitting: boolean = false
-let reportGameEl: any
-let reportGameModal: any
-let Modal: any
-let Headings: any
-let ReportAnIssueOpen: boolean = false
-let gamePlayerClass = 'game-player'
-
-let hoverEl: any
-
-const translationStore:any = get(getTranslations);
-
 const gamePage = await fetchApi<Gamepage[]>({
 	endpoint: 'games',
     wrappedByKey: 'data',
     query: `?${query}`
 })
+
+let schema: any = null
+
+const translationStore:any = get(getTranslations);
+
 
 const gamesData = [...gamePage[0]?.attributes?.provider?.data?.attributes?.games?.data];
 const limitGames = gamesData.splice(0, 6);
@@ -111,7 +97,7 @@ const __blocks = gamePage[0]?.attributes?.blocks
         <div class="flex flex-col md:flex-row gap-x-8">
             <div class="order-last md:order-first mt-5 md:mt-0">
                 <div class="quicklinks mb-5">
-                    <!-- <QuickLinks data={gamePage[0]} /> -->
+                    <QuickLinks data={gamePage[0]} />
                 </div>
                 <div class="intro-content">
                     <h1 class="text-blue-700 !mt-0">{gamePage[0]?.attributes?.heading}</h1>
