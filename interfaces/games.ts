@@ -8,6 +8,7 @@ export type Game = {
 export type GameFavourites = GameAttributes[];
 
 export type GameAttributes = {
+  id: number;
   createdAt: string;
   title: string;
   slug: string;
@@ -20,4 +21,34 @@ export type GameAttributes = {
   categories: {
     data: Category[];
   };
+};
+
+export type TDashboardGame = {
+  id: number;
+  publishedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  game: TUserGame;
+};
+
+export type TUserGame = {
+  id: number;
+  title: string;
+  slug: string;
+  ratingAvg: number;
+  publishedAt: string;
+  images: TUserGameImage;
+  provider: TUserGameProvider;
+  categories: {
+    title: string;
+  }[];
+};
+
+export type TUserGameImage = {
+  url: string;
+};
+
+export type TUserGameProvider = {
+  slug: string;
+  title: string;
 };

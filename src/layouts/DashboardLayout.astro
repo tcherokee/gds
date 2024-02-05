@@ -1,0 +1,140 @@
+---
+//1st and 3rd Party Tools
+import qs from "qs";
+import { Tooltips } from "astro-tooltips";
+
+// QS Query Strings
+import { layoutQs, menuQs } from "../../qs/layout.ts";
+
+// Helpers
+import fetchApi from "../../lib/strapi";
+
+//Styles
+import "../styles/app.postcss";
+
+//Types and TypeGuards
+import type { LayoutData } from "../../interfaces/layout";
+import type { NavigationItem, ProcessedMenus } from "../../interfaces/menu.ts";
+import {
+  isMainLayoutData,
+  isNavigationItemArray,
+} from "../../interfaces/common/typeguards";
+import type { TranslationData } from "../../interfaces/common/types";
+
+//Components
+import Legal from "../components/layout/legal.astro";
+import Header from "../components/layout/header.astro";
+import DashboardSideNav from "../components/dashboard/dashboardSideNav.svelte";
+import { getTranslations } from "../../stores/addTranslations";
+
+const translationStore: TranslationData = getTranslations.get();
+
+// Setting up the queries in array for use in the promise all map
+const queries = {
+  layout: qs.stringify(layoutQs(), { encodeValuesOnly: true }),
+  menus: qs.stringify(menuQs(), { encodeValuesOnly: true }),
+};
+
+// Set the types in an array for use in the promise all map
+type EndpointTypes = {
+  layout: LayoutData;
+  menus: NavigationItem[];
+};
+
+type Endpoint = keyof EndpointTypes;
+
+// Set the endpoint slugs in an array for use in the promise all
+const endpoints: Endpoint[] = ["layout", "menus"];
+
+// Promise All Fetch to fetch all the api requests in parrallel
+const responses = await Promise.all(
+  endpoints.map((endpoint) =>
+    fetchApi<EndpointTypes[typeof endpoint]>({
+      endpoint,
+      wrappedByKey: "data",
+      query:
+        endpoint === "menus"
+          ? `?nested&${queries[endpoint]}`
+          : `?${queries[endpoint]}`,
+    })
+  )
+);
+
+// Using type guards to safely cast the types
+const layout = isMainLayoutData(responses[0])
+  ? responses[0]
+  : console.error("Invalid layout data");
+const menu = isNavigationItemArray(responses[1])
+  ? responses[1]
+  : console.error("Invalid menu data");
+
+// Process menu data
+const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
+  (acc: ProcessedMenus, menu: NavigationItem) => {
+    const title = menu.attributes.title;
+    const items = menu.attributes.items.data;
+    if (
+      title === "Sub Navigation" ||
+      title === "Main Navigation" ||
+      title === "Footer Navigation" ||
+      title === "Footer Navigations"
+    ) {
+      acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
+    }
+
+    return acc;
+  },
+  {}
+);
+
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href={`https://www.${import.meta.env.HOSTNAME}/favicon-${
+        import.meta.env.SITE_ID
+      }.png`}
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>User Dashboard</title>
+    <Tooltips />
+  </head>
+  <body>
+    <main>
+      {
+        layout?.attributes?.legalText && (
+          <Legal legalText={layout?.attributes?.legalText} />
+        )
+      }
+      <header class="bg-navbar-bkg">
+        <Header
+          mainNavigation={processedMenus?.mainnavigation}
+          logo={layout?.attributes?.Logo?.data?.attributes?.url}
+        />
+      </header>
+      <div
+        class="dashboard-bg -mb-5 mx-auto flex w-full h-full items-start py-10"
+      >
+        <DashboardSideNav
+          slotMachineURL={processedMenus.subnavigation[0].attributes.url}
+          pageUrl={Astro.url.pathname}
+          translations={translationStore}
+          client:load
+        />
+        <div class="w-full px-4">
+          <slot
+            data-slot-machine-url={processedMenus.subnavigation[0].attributes
+              .url}
+          />
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

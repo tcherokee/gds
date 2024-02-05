@@ -282,5 +282,8 @@ module.exports = {
       "menu-link-text-active": COLORS.white,
       "menu-link-bg-active": COLORS.blue[300],
     },
+    backgroundImage: {
+      "cover-image-wrapper": `url('/src/icons/dashboard/cover-image.jpg')`,
+    },
   },
 };

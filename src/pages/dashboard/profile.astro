@@ -1,13 +1,12 @@
 ---
 import DashboardLayout from "../../layouts/DashboardLayout.astro";
-import Dashboard from "../../components/dashboard/dashboard.svelte";
+import ProfilePage from "../../components/dashboard/profile.svelte";
 import { get } from "svelte/store";
 import { getTranslations } from "../../../stores/addTranslations";
 
 const translationStore: any = get(getTranslations);
-console.log('ASTRO', Astro.props);
 ---
 
 <DashboardLayout>
-  <Dashboard translations={translationStore} client:load/>
+  <ProfilePage translations={translationStore} client:load />
 </DashboardLayout>

@@ -1,6 +1,7 @@
 import qs from 'qs'
 import { atom, map, computed, allTasks, task, onMount } from "nanostores";
 import { createFetcherStore } from "./fetcher";
+import type { Game } from "../interfaces/games";
 
 
 const opts = {
@@ -31,7 +32,7 @@ export const categoriesFilters = createFetcherStore([
   "?fields[0]=id&fields[1]=slug&pagination[page]=1&pagination[pageSize]=1000&sort[0]=listSortOrder%3Aasc&fields[2]=title",
 ]);
 
-export const games = createFetcherStore([
+export const games = createFetcherStore<{ data: Game[] }>([
   `${import.meta.env.PUBLIC_API_URL}/api/games`,
   gamesQsStore,
 ]);
