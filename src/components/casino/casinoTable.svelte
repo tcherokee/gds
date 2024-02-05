@@ -282,19 +282,19 @@
             </div>
         </div>
     </div>
-</div>
 
-<!-- Load More Button -->
-{#if showLoadMore && ($casinos.data?.data ?? customCasinos).length > currentCasinosLength }
-	<div class="d-grid gap-2 d-md-block flex w-full justify-center mb-10">
-        <button
-            class="btn capitalize btn-secondary min-w-[300px] md:min-w-[500px]"
-            on:click={() => currentCasinosLength = currentCasinosLength + numberPerLoadMore}
-        >
-            {$getTranslations.expandList}
-        </button>
-	</div>
-{/if}
+    <!-- Load More Button -->
+    {#if showLoadMore && ($casinos.data?.data ?? customCasinos).length > currentCasinosLength }
+        <div class="d-grid gap-2 d-md-block flex w-full justify-center mb-10">
+            <button
+                class="btn capitalize btn-secondary min-w-[300px] md:min-w-[500px]"
+                on:click={() => currentCasinosLength = currentCasinosLength + numberPerLoadMore}
+            >
+                {$getTranslations.expandList}
+            </button>
+        </div>
+    {/if}
+</div>
 
 <style lang="postcss">
     table {
