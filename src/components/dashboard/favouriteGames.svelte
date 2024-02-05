@@ -38,6 +38,7 @@
     userFavouriteGamesLoader = false;
 
     const response = await res.json();
+    userFavouriteGames.set([...response]);
     const userFavouritedGames: TDashboardGame[] = [...response];
     const localFavouriteGamesStr =
       await window.localStorage?.getItem("_favourites:");

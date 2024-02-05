@@ -53,6 +53,7 @@
       body: JSON.stringify({}),
     });
     location.reload();
+    user.set(null);
   };
 </script>
 
