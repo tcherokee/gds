@@ -6,7 +6,6 @@
 
   let responseMessage: string;
   const contactUsFormHandler = async(e: SubmitEvent) => {
-    console.log(e);
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     const response = await fetch("/api/contact-us", {
@@ -15,7 +14,6 @@
     });
     const data = await response.json();
     responseMessage = data.message;
-    console.log(responseMessage);
   }
 </script>
 

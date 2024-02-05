@@ -110,6 +110,30 @@ export const mapBlocksToDynamicComponents = (
             name: "howToBlock",
             extension: "astro",
           };
+        case "shared.provider-list":
+          return {
+            location: "games",
+            name: "gameProviders",
+            extension: "astro",
+          };
+        case "casinos.casino-live-video":
+          return {
+            location: "casino",
+            name: "casinoVideo",
+            extension: "astro",
+          };
+        case "games.live-stats":
+          return {
+            location: "games",
+            name: "liveStats",
+            extension: "svelte",
+          };
+        case "shared.iframe":
+          return {
+            location: "general",
+            name: "iframe",
+            extension: "astro",
+          };
         default:
           return undefined;
       }

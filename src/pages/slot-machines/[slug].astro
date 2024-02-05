@@ -75,7 +75,7 @@ const __blocks = gamePage[0]?.attributes?.blocks
 <MainLayout seoData={seo}>
      <Breadcrumb breadcrumb={breadcumb} />
 
-     <div class="iframe-bkg pb-3">
+     <div class="curve rounded-b-3xl pb-3">
         <div class="section-wrapper relative">
             <GamePlayer data={gamePage[0]} {layout} client:load />
             <div class="mt-6 md:mt-8">
@@ -216,10 +216,6 @@ const __blocks = gamePage[0]?.attributes?.blocks
 	}
 	.game-section {
 		@apply flex flex-col justify-center rounded-t-lg -mx-3 md:mx-0;
-	}
-
-	.iframe-bkg {
-		@apply curve rounded-b-3xl;
 	}
 
 	.player-control-tooltip {

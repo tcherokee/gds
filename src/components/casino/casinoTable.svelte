@@ -53,7 +53,7 @@
 
     // Get Casino Amounts
     $: bonusAmounts = ($casinos.data?.data ?? customCasinos)
-                            .map(casino => casino.attributes[$casinoVariables.bonusKey as keyof BonusSectionOnly]?.bonusAmount) // Extract bonus amount
+                            .map(casino => casino?.attributes[$casinoVariables.bonusKey as keyof BonusSectionOnly]?.bonusAmount) // Extract bonus amount
                             .filter((amount): amount is number => amount !== null && amount !== undefined && amount !== 0) // Remove null, undefined, and 0
                             .filter((amount, index, self) => self.indexOf(amount) === index) // Remove duplicates
                             .sort((a, b) => a - b) //Sort from smallest to largest
@@ -63,7 +63,7 @@
 
     // Get Casino Wagering
     $: wageringReq = ($casinos.data?.data ?? customCasinos)
-                            .map(casino => casino.attributes.casinoGeneralInfo?.wageringRequirements)
+                            .map(casino => casino?.attributes.casinoGeneralInfo?.wageringRequirements)
                             .filter((amount): amount is number => amount !== null && amount !== undefined && amount !== 0)
                             .filter((amount, index, self) => self.indexOf(amount) === index) // Remove duplicates
                             .sort((a, b) => a - b) //Sort from smallest to largest

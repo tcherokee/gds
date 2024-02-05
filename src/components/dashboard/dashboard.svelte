@@ -33,7 +33,6 @@
     }
     weeklyPickGames = [...$weeklyPickedGames].slice(0, 3);
     mostPlayedGames = [...$userMostPlayedGames].slice(0, 3);
-    console.log();
   }
 
   export let translations: TranslationData;

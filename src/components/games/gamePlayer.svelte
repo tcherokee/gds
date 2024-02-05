@@ -62,7 +62,6 @@
 	}
 
 	const handleReload = () => {
-		console.log('reload game', data);
 		
 		if (startGame && iframeWrapper.innerHTML !== '') {
 			iframeWrapper.innerHTML = data?.attributes?.embedCode?.desktopEmbedCode

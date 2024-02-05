@@ -43,8 +43,6 @@
 				deviceID
 			}
 		};
-
-		console.log(issuePayload);
 		
 		const response = await fetch(
 		`/api/reportAnIssue`,

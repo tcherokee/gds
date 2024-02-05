@@ -28,7 +28,6 @@
     const res = await fetch(`/api/dashboard/user`);
     if (res.ok) {
       userProfile = await res.json();
-      console.log("UP", userProfile);
       userFirstName = userProfile.firstName;
       userLastName = userProfile.lastName;
       userBio = userProfile.bio;
@@ -39,7 +38,6 @@
   });
 
   const handleAvatarFileSelect = (e: any) => {
-    console.log(e);
     const { acceptedFiles } = e.detail;
     avatarFile = acceptedFiles[0];
     readUrl(avatarFile, "PROFILE");
@@ -53,7 +51,6 @@
 
   const updateProfileHandler = async () => {
     updateProfileLoader = true;
-    // console.log(data);
 
     if (avatarFile) {
       if ($user?.photo) {
@@ -78,7 +75,6 @@
       });
       const responseData = await response.json();
       if (Array.isArray(responseData)) {
-        console.log(responseData?.[0]);
         user.set({
           ...($user as TUser),
           photo: {
@@ -112,7 +108,6 @@
       });
       const responseData = await response.json();
       if (Array.isArray(responseData)) {
-        console.log(responseData?.[0]);
         user.set({
           ...($user as TUser),
           cover_image: {
@@ -168,7 +163,6 @@
 
       reader.onload = (e) => {
         const result = (e.target as FileReader).result;
-        console.log(type);
         if (type === "PROFILE") {
           avatar = result as string;
         } else {

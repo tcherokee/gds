@@ -57,6 +57,10 @@ export type ProviderAttribute = {
   images: ImageInfo;
 };
 
+export type TProviderAttributesOnly = IDAttribute & {
+  attributes: ProviderAttribute
+};
+
 export type ProviderData = {
   data: IDAttribute & {
     attributes: ProviderAttribute;
