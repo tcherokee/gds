@@ -89,13 +89,13 @@ steps:
       - '--set-env-vars'
       - 'LANG=${_LANG}'
       - '--set-env-vars'
-      - 'PUBLIC_SITE_ID'
+      - 'PUBLIC_SITE_ID=${_PUBLIC_SITE_ID}'
       - '--set-env-vars'
-      - 'PUBLIC_IMAGE_URL'
+      - 'PUBLIC_IMAGE_URL=${_PUBLIC_IMAGE_URL}'
       - '--set-env-vars'
-      - 'PUBLIC_ROOT_DOMAIN'
+      - 'PUBLIC_ROOT_DOMAIN=${_PUBLIC_ROOT_DOMAIN}'
       - '--set-env-vars'
-      - 'PUBLIC_FULL_URL'
+      - 'PUBLIC_FULL_URL=${_PUBLIC_FULL_URL}'
 
 substitutions:
   _OUTPUT_DIST_PATH: '/'
