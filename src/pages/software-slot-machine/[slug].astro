@@ -14,6 +14,7 @@ import ContentBlock from '../../components/blocks/contentBlock.astro';
 import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
 import CasinoComparison from '../../components/casino/casinoComparison.astro';
 import Faqs from "../../components/general/faqs.astro";
+import type { FaqBlockTypes } from '../../../interfaces/common/types';
 
 const { slug } = Astro.params;
 
@@ -63,7 +64,7 @@ const breadcumb = { breadCrumbText: slotProviders?.data[0]?.attributes?.title, b
             <Pagination
                 currPage={games?.meta?.pagination?.page}
                 pageCount={games?.meta?.pagination?.pageCount}
-                path=`${urlTranslate[siteID]['provider-pages']}/${slug}`
+                path=`${urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']}/${slug}`
             />
         </div>
     </div>
@@ -102,7 +103,7 @@ const breadcumb = { breadCrumbText: slotProviders?.data[0]?.attributes?.title, b
 					<div class="content mt-4">
 						<h2 class="mb-4">{translationStore.faq}</h2>
 
-						{slotProviders?.data[0]?.attributes?.faqs.map(faq =>
+						{slotProviders?.data[0]?.attributes?.faqs.map((faq:FaqBlockTypes) =>
 							<Faqs data={faq} />
 						)}
 					</div>
