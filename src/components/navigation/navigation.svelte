@@ -21,6 +21,10 @@
   };
 
   export let mainNavigation: MenuItem[];
+
+  $: {
+    console.log('USER', $user);
+  }
 </script>
 
 <MediaQuery query="(max-width: 991px)" let:matches>
@@ -37,7 +41,7 @@
 
     <a href="/authentication/login" class="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t">
       {#if $user}
-        <!-- <UserSignedIn height="32px" width="32px" class="fill-sign-in" /> -->
+        <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
       {:else}
         <UserSignedOut height="32px" width="32px" class="fill-sign-in" />
       {/if}
@@ -190,7 +194,7 @@
     <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
       <Favourite />
       <a href="/authentication/login" class="pt-2 mt-1 px-2 pb-3 rounded-t">
-        {#if $user}
+        {#if $user?.id}
           <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
         {:else}
           <UserSignedOut height="32px" width="32px" class="fill-sign-in" />
