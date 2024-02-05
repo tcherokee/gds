@@ -1,6 +1,10 @@
 <script lang="ts">
   import type { TDashboardGame } from "../../../interfaces/games";
-  import { getUserFavouriteGames, userFavouriteGames } from "../../../stores/authStore";
+  import {
+    getUserFavouriteGames,
+    slotMachineUrl,
+    userFavouriteGames,
+  } from "../../../stores/authStore";
   import Loader from "../helpers/loader.svelte";
   import GameCard from "../games/gameCard.svelte";
   import { onMount } from "svelte";
@@ -16,7 +20,7 @@
     const response = await fetch(`/api/dashboard/user-games-add`, {
       method: "POST",
       body: JSON.stringify({
-        games: [...gamesNotOnUserAccount.map(game => game.id)],
+        games: [...gamesNotOnUserAccount.map((game) => game.id)],
       }),
     });
 
@@ -39,7 +43,7 @@
     const localFavouriteGames = localFavouriteGamesStr
       ? JSON.parse(localFavouriteGamesStr)
       : [];
-    
+
     for (const localFavouriteGame of localFavouriteGames) {
       const isLocalFavouriteGameInUsersAccount = userFavouritedGames.find(
         ({ game }) => game.id === localFavouriteGame.id
@@ -95,12 +99,12 @@
           <div class="text-base text-center text-white font-bold">
             {translations.emptyFavoriteGames}
           </div>
-          <!-- <a
-          href={data?.menus?.subnavigation?.[0]?.attributes?.url}
-          class="text-center min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
-        >
-          {translations.seeAllGames}
-        </a> -->
+          <a
+            href={$slotMachineUrl}
+            class="text-center min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
+          >
+            {translations.seeAllGames}
+          </a>
         </div>
       {/if}
     </div>

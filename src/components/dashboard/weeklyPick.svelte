@@ -33,7 +33,6 @@
         <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
           {#each weeklyGames as game, index}
             <GameCard game={game.game} {translations} />
-            <!-- <GameCard game={game.game} userFavouriteId={game.id} markAsFavourite={true} /> -->
           {/each}
         </div>
       {:else}

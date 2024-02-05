@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { userMostPlayedGames } from "../../../stores/authStore";
+  import { slotMachineUrl, userMostPlayedGames } from "../../../stores/authStore";
   import GameCard from "../games/gameCard.svelte";
   import Loader from "../helpers/loader.svelte";
   import type { TDashboardGame } from "../../../interfaces/games";
@@ -41,12 +41,12 @@
           <div class="text-base text-center text-white font-bold">
             {translations.emptyMostPlayedGames}
           </div>
-          <!-- <a
-          href={data?.menus?.subnavigation?.[0]?.attributes?.url}
-          class="text-center min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
-        >
-          {translations.seeAllGames}
-        </a> -->
+          <a
+            href={$slotMachineUrl}
+            class="text-center min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
+          >
+            {translations.seeAllGames}
+          </a>
         </div>
       {/if}
     </div>

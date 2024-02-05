@@ -17,6 +17,7 @@
     userFavouriteGames,
     weeklyPickedGames,
     userMostPlayedGames,
+    slotMachineUrl,
   } from "../../../stores/authStore";
   import type { TDashboardGame } from "../../../interfaces/games";
   // import { user } from '$lib/stores/auth'
@@ -26,6 +27,7 @@
   let weeklyPickGames: TDashboardGame[] = [];
   let mostPlayedGames: TDashboardGame[] = [];
   $: {
+    console.log("SM_URL", $slotMachineUrl);
     if ($userFavouriteGames.length) {
       favouriteGames = [...$userFavouriteGames].slice(0, 3);
     }
@@ -35,7 +37,6 @@
   }
 
   export let translations: { [key: string]: string };
-  export let slotMachineUrl: string;
 
   const fetchData = async (endpoint: string) => {
     const res = await fetch(`${endpoint}`);
@@ -154,12 +155,12 @@
                 <div class="text-sm text-center text-blue-700 font-medium">
                   {translations.emptyMostPlayedGames}
                 </div>
-                <!-- <a
-                  href={data?.menus?.subnavigation?.[0]?.attributes?.url}
+                <a
+                  href={$slotMachineUrl}
                   class="text-center w-fit min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
                 >
                   {translations.seeAllGames}
-                </a> -->
+                </a>
               </div>
             {/if}
 
@@ -205,12 +206,12 @@
                 <div class="text-sm text-center text-blue-700 font-medium">
                   {translations.emptyFavoriteGames}
                 </div>
-                <!-- <a
-									href={data?.menus?.subnavigation?.[0]?.attributes?.url}
-									class="text-center w-fit min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
-								>
-									{translations.seeAllGames}
-                            </a> -->
+                <a
+                  href={$slotMachineUrl}
+                  class="text-center w-fit min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
+                >
+                  {translations.seeAllGames}
+                </a>
               </div>
             {/if}
             {#if $userFavouriteGames.length > 3}

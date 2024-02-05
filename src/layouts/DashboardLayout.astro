@@ -19,13 +19,14 @@ import {
   isMainLayoutData,
   isNavigationItemArray,
 } from "../../interfaces/common/typeguards";
+import type { TranslationData } from "../../interfaces/common/types";
 
 //Components
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import DashboardSideNav from "../components/dashboard/dashboardSideNav.svelte";
 import { getTranslations } from "../../stores/addTranslations";
-import type { TranslationData } from "../../interfaces/common/types";
+import { slotMachineUrl } from "../../stores/authStore";
 
 const translationStore: TranslationData = getTranslations.get();
 
@@ -86,7 +87,7 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
   },
   {}
 );
-console.log("SLOT_MACHINE_URL", processedMenus.subnavigation[0].attributes.url);
+
 ---
 
 <!doctype html>
@@ -123,6 +124,7 @@ console.log("SLOT_MACHINE_URL", processedMenus.subnavigation[0].attributes.url);
         class="dashboard-bg -mb-5 mx-auto flex w-full h-full items-start py-10"
       >
         <DashboardSideNav
+          slotMachineURL={processedMenus.subnavigation[0].attributes.url}
           pageUrl={Astro.url.pathname}
           translations={translationStore}
           client:load

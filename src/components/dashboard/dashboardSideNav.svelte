@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { user, readMessages, messages } from "../../../stores/authStore";
+  import { user, readMessages, messages, slotMachineUrl } from "../../../stores/authStore";
   //   Icons
   import UserPlaceholderSvg from "~icons/kensho-dashboard-icons/user-placeholder";
   import SignoutSvg from "~icons/kensho-dashboard-icons/signout";
@@ -8,6 +8,7 @@
   let activeRoute = "home";
   export let translations: { [key: string]: string };
   export let pageUrl: string;
+  export let slotMachineURL: string;
 
   const fetchData = async (endpoint: string) => {
 		const res = await fetch(`${endpoint}`)
@@ -19,7 +20,7 @@
 	}
 
   onMount(async () => {
-
+    slotMachineUrl.set(slotMachineURL);
     const authEndpoints = [
 		'/api/dashboard/user',
 		'/api/dashboard/messages',
