@@ -28,7 +28,6 @@
   let weeklyPickGames: TDashboardGame[] = [];
   let mostPlayedGames: TDashboardGame[] = [];
   $: {
-    console.log("SM_URL", $slotMachineUrl);
     if ($userFavouriteGames.length) {
       favouriteGames = [...$userFavouriteGames].slice(0, 3);
     }
