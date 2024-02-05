@@ -3,7 +3,7 @@
     import { favourite } from "../../../stores/favouriteStore";
     import Heart from "~icons/kensho-icons/heart"
 
-    export let game
+    export let game: any
     export let classes: string
 
     $: isFavourited = $favourite.some(fav => fav.title === game?.attributes.title)
