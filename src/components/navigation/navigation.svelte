@@ -21,10 +21,7 @@
   };
 
   export let mainNavigation: MenuItem[];
-
-  $: {
-    console.log('USER', $user);
-  }
+  
 </script>
 
 <MediaQuery query="(max-width: 991px)" let:matches>
