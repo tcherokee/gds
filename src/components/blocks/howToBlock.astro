@@ -1,0 +1,23 @@
+---
+
+import HowTo from "../general/howTo.astro"
+
+const { data } = Astro.props
+
+---
+
+<div class="howto-container">
+	<h2>{data?.title}</h2>
+	{data?.howToGroup.map((howTo, i) => (
+            <HowTo
+                howToAlt={howTo?.image?.data?.attributes?.alternativeText}
+                howToImage={howTo?.image?.data?.attributes?.url}
+                howToCopy={howTo?.copy}
+                howToHeading={howTo?.heading}
+                howToWidth={howTo?.image?.data?.attributes?.width}
+                howToHeight={howTo?.image?.data?.attributes?.height}
+                count={i + 1}
+            />
+        )
+	)}
+</div>

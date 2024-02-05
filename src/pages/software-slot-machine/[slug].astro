@@ -47,10 +47,7 @@ const seo = {
 const breadcumb = { breadCrumbText: slotProviders?.data[0]?.attributes?.title, breadCrumbUrl: null };
 ---
 <MainLayout seoData={seo}>
-    <script define:vars={{slotProviders, games}}>
-        console.log('games', games);
-        console.log('slotProviders', slotProviders);
-    </script>
+    
     <Breadcrumb breadcrumb={breadcumb} />
     <div class="featured-background pb-5">
         <IntroBlock

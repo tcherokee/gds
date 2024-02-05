@@ -383,6 +383,11 @@ export type GameFilters = {
   categories: string[];
 };
 
+export type GameFiltersQuery = {
+    provider?: string[],
+    categories?: string[]
+}
+
 export type BonusLabelItem = {
   label: string;
   value: string;

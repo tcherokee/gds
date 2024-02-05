@@ -1,26 +1,12 @@
-import type { GamesQueryOptions, GamesQueryFilters } from "../interfaces/games";
+import type { GameFilters } from "../interfaces/common/types";
 
-export const gamesQs = (
+export const gamesQs = ({
   limit = 10,
   sort = "ratingAvg:desc",
-  page = "1",
+  page = 1,
   providers = [],
   categories = []
-): GamesQueryOptions => {
-  const filters: GamesQueryFilters = {};
-  if (providers.length)
-    filters.provider = {
-      slug: {
-        $in: providers,
-      },
-    };
-  if (categories.length)
-    filters.categories = {
-      slug: {
-        $in: categories,
-      },
-    };
-
+}: GameFilters) => {
   return {
     fields: ["title", "slug", "ratingAvg", "publishedAt"],
     populate: {
@@ -44,8 +30,21 @@ export const gamesQs = (
       page,
       pageSize: limit,
     },
-    ...(Object.keys(filters).length && {
-      filters,
-    }),
+    filters: {
+      ...(providers && {
+        provider: {
+          slug: {
+            $in: providers,
+          },
+        },
+      }),
+      ...(categories && {
+        categories: {
+          slug: {
+            $in: categories,
+          },
+        },
+      }),
+    }
   };
 };

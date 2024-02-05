@@ -17,7 +17,7 @@ import { gamesQs } from "../../qs/games.ts"
 //types and typeguards
 import type { GetStaticPaths } from "astro";
 import type { CustomPageItem } from "../../interfaces/custom-pages"
-import type { Block } from "../../interfaces/common/types.ts"
+import type { Block, CasinoListBlock } from "../../interfaces/common/types.ts"
 import type { Game } from "../../interfaces/games.ts"
 
 // Import Svelte Components
@@ -107,7 +107,7 @@ const seo = {
                     } else {
                         switch (mappedComponents[i].name) {
                             case 'casinoTable': {
-                                return <CasinoTable initialCasinos={page.attributes.blocks[i]} client:load />
+                                return <CasinoTable initialCasinos={(page.attributes.blocks[i] as CasinoListBlock)} client:load />
                             }
                             case 'gameListBlock': {
                                 return <GameListBlock data={page.attributes.blocks[i]} client:load />

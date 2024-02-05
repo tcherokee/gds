@@ -50,7 +50,7 @@
         gameVariables.setKey('providers', [provider])
 
         // Create QS String from the updated variables
-        const query = qs.stringify(gamesQs($gameVariables.limit, $gameVariables.sort, undefined, $gameVariables.providers, $gameVariables.categories), {encodeValuesOnly: true})
+        const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
 
         // Update the gamesWsStore which will inturn update the games.
         gamesQsStore.set(`?${query}`)
@@ -71,11 +71,10 @@
 		if (key.length > 0) {
             const newSortValue = key + ":" + value
             
-            console.log('here', newSortValue)
 			gameVariables.setKey('sort', newSortValue)
         
 			// Set QS Query String to Get Updated games
-			const query = qs.stringify(gamesQs($gameVariables.limit, $gameVariables.sort, undefined, $gameVariables.providers, $gameVariables.categories), {encodeValuesOnly: true})
+			const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
 			
 			// Set Qs Store to Query Value
 			gamesQsStore.set(`?${query}`)
@@ -113,7 +112,7 @@
 		validKeys.includes(key as keyof GameFilters) && gameVariables.setKey(key as keyof GameFilters, value)
         
 		// Set QS Query String to Get Updated Casinos
-        const query = qs.stringify(gamesQs($gameVariables.limit, $gameVariables.sort, undefined, $gameVariables.providers, $gameVariables.categories), {encodeValuesOnly: true})
+        const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
 		
 		// Set Qs Store to Query Value
         gamesQsStore.set(`?${query}`)
@@ -132,7 +131,7 @@
 		validKeys.includes(key as keyof GameFilters) && gameVariables.setKey(key as keyof GameFilters, value)
 
         // Set QS Query String to Get Updated Casinos
-        const query = qs.stringify(gamesQs($gameVariables.limit, $gameVariables.sort, undefined, $gameVariables.providers, $gameVariables.categories), {encodeValuesOnly: true})
+        const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
 
 		// Set Qs Store to Query Value
         gamesQsStore.set(`?${query}`)
@@ -140,7 +139,6 @@
 
     // Clear Search Input
     const clearSearch = () => {
-        console.log('here')
         searchInputValue = ''
     }
 
@@ -148,8 +146,7 @@
 		searchClient.helper.setQuery(searchInputValue)
 		searchClient.helper.search()
 	}
-
-    $: console.log('prov', $gameVariables)
+    
 </script>
 
 {#if showGameFilterPanel}

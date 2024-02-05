@@ -25,12 +25,6 @@ arrPages = buildArr(currPage, pageCount)
 
 ---
 
-<script define:vars={{currPage, pageCount, path}}>
-console.log('currPage', currPage);
-console.log('pageCount', pageCount);
-console.log('path', path);
-</script>
-
 { pageCount > 1 &&
 	<nav aria-label="page navigation" class="pagination-wrapper mt-3">
 		<ul class="flex pagination justify-center">

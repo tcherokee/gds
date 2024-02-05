@@ -1,0 +1,35 @@
+---
+
+// Types
+import type { imageWithParagraph } from "../../../interfaces/common/types"
+
+// Components
+import Image from "../helpers/images.astro"
+
+const { data } = Astro.props
+
+---
+
+<div class="mb-5">
+    {data.title && <h2 class="pt-3 mb-4 block-title">{data?.title}</h2>}
+    {data?.imageWithParagraph.map((item: imageWithParagraph) => (
+            <div class="p-2 bg-white rounded-lg mb-3">
+                <div class="grid md:grid-cols-4 gap-1">
+                    <div class="mr-2 col-span-1 flex justify-center">
+                        <Image
+                            src={item.image?.data?.attributes?.url}
+                            imageWidth={365}
+                            imageHeight={225}
+                            classes="img-fluid rounded-start"
+                            alt={item?.image?.data?.attributes?.alt}
+                        />
+                    </div>
+                    <div class="flex flex-col md:col-span-3 justify-center">
+                        <div class="font-black">{item.heading}</div>
+                        <Fragment set:html={item.copy} />
+                    </div>
+                </div>
+            </div>
+        )
+    )}
+</div>

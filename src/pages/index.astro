@@ -1,21 +1,26 @@
 ---
-
+// First and Third Party Plugins
 import qs from 'qs'
 
+// Types and Typeguards
 import type { Homepage } from "../../interfaces/homepage.ts"
 import type { Block, BlogBlockTypes, HomeGameListBlock } from "../../interfaces/common/types.ts"
 import type { Game } from "../../interfaces/games.ts"
 import type { Blog } from "../../interfaces/blog.ts"
 
+// Helpers
 import fetchApi from "../../lib/strapi";
 import { loadComponents, mapBlocksToDynamicComponents } from '../../lib/loadBlockComponents'
 
+// Stores
 import { sortOptions } from "../../stores/sortFilters.ts"
+
+// Query Strings
 import { homepageQs } from "../../qs/homepage.ts"
 import { gamesQs } from "../../qs/games.ts"
 import { blogsQs } from "../../qs/blogs.ts"
 
-
+// Components
 import MainLayout from '../layouts/MainLayout.astro';
 
 const sortStore = sortOptions.get()
@@ -46,7 +51,7 @@ const gamesBlock = homepage.attributes.blocks.find(isHomeGameListBlock)
 const gameProviders = gamesBlock && gamesBlock.providers.map(item => item.slotProvider.data.attributes.slug);
 
 // get the qs query for the blogs and the games
-const gamesQuery = gameProviders && gameProviders.map(provider => qs.stringify(gamesQs(gamesBlock?.numberOfGames ?? 6, sortStore[gamesBlock?.sortBy ?? 'Newest'], undefined, provider, undefined), {encodeValuesOnly: true}))
+const gamesQuery = gameProviders && gameProviders.map(provider => qs.stringify(gamesQs({limit:gamesBlock?.numberOfGames ?? 6, sort:sortStore[gamesBlock?.sortBy ?? 'Newest'], page:undefined, providers:[provider ?? ''], categories:[]}), {encodeValuesOnly: true}))
 const blogsQuery = qs.stringify(blogsQs(undefined, blogBlock?.numOfBlogs ?? 6, "createdAt:desc"), {encodeValuesOnly: true})
 
 const fetchHomepageBlogs: Promise<Blog[]> = fetchApi({

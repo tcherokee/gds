@@ -23,8 +23,6 @@
 
     export let data
 
-    $: console.log('sortbyt', data)
-
     // Get provider slugs
     const providerSlugs = data.gameProviders.map(game => game.slotProvider.data.attributes.slug)
 
@@ -38,20 +36,16 @@
     gameVariables.setKey('categories', data.gameCategories)
 
     // Create QS String from the updated variables
-    const query = qs.stringify(gamesQs($gameVariables.limit, $gameVariables.sort, undefined, $gameVariables.providers, $gameVariables.categories), {encodeValuesOnly: true})
+    const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
     gamesQsStore.set(`?${query}`)
-
-    $: console.log('vari', qs.stringify(filterProviders(), {encodeValuesOnly: true}))
 
     const loadMoreGames = () => {
         gameVariables.setKey('limit', $gameVariables.limit + data.numberOfGames)
 
         // Create QS String from the updated variables
-        const query = qs.stringify(gamesQs($gameVariables.limit, $gameVariables.sort, $gameVariables.page, $gameVariables.providers, $gameVariables.categories), {encodeValuesOnly: true})
+        const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
         gamesQsStore.set(`?${query}`)
     }
-
-    $: console.log('data', data)
 
 </script>
 

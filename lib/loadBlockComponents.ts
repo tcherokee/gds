@@ -86,6 +86,30 @@ export const mapBlocksToDynamicComponents = (
             name: "imageCarousel",
             extension: "svelte",
           };
+        case "shared.image-with-paragraph":
+          return {
+            location: "blocks",
+            name: "imageWithParagraphBlock",
+            extension: "astro",
+          };
+        case "shared.medium-image-with-content":
+          return {
+            location: "blocks",
+            name: "imageWithContentBlock",
+            extension: "astro",
+          };
+        case "shared.pros-and-cons":
+          return {
+            location: "blocks",
+            name: "proConBlock",
+            extension: "astro",
+          };
+        case "shared.how-to-group":
+          return {
+            location: "blocks",
+            name: "howToBlock",
+            extension: "astro",
+          };
         default:
           return undefined;
       }

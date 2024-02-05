@@ -55,23 +55,13 @@
 
 	$: toggleOrder = $gameVariables.sort ? $gameVariables.sort?.split(":")[1] : 'desc'
 
-    // Count number of Items selected
-    const countValues = () => {
-        // Reset Selection
-        // selection = 0
-
-        // ;
-    }
-
-    $: console.log('select', selection)
-
 	const handleMobileFilterSubmit = () => {
 
         gameVariables.setKey('categories', mobileVariables.categories || [])
         gameVariables.setKey('providers', mobileVariables.providers || [])
 
 		// Set QS Query String to Get Updated Casinos
-        const query = qs.stringify(gamesQs($gameVariables.limit, $gameVariables.sort, undefined, $gameVariables.providers, $gameVariables.categories), {encodeValuesOnly: true})
+        const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
 		
 		// Set Qs Store to Query Value
         gamesQsStore.set(`?${query}`)
@@ -95,7 +85,7 @@
 			gameVariables.setKey('sort', newSortValue)
         
 			// Set QS Query String to Get Updated Casinos
-			const query = qs.stringify(gamesQs($gameVariables.limit, $gameVariables.sort, undefined, $gameVariables.providers, $gameVariables.categories), {encodeValuesOnly: true})
+			const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
 			
 			// Set Qs Store to Query Value
 			gamesQsStore.set(`?${query}`)
@@ -112,7 +102,6 @@
 
     // Clear Search Input
     const clearSearch = () => {
-        console.log('here')
         searchInputValue = ''
     }
 
@@ -122,7 +111,7 @@
 		validKeys.includes(key as keyof GameFilters) && gameVariables.setKey(key as keyof GameFilters, value)
         
 		// Set QS Query String to Get Updated Casinos
-        const query = qs.stringify(gamesQs($gameVariables.limit, $gameVariables.sort, undefined, $gameVariables.providers, $gameVariables.categories), {encodeValuesOnly: true})
+        const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
 		
 		// Set Qs Store to Query Value
         gamesQsStore.set(`?${query}`)
@@ -149,10 +138,6 @@
 		searchClient.helper.search()
 	}
 
-    // Run Count to set initial selection total
-    // countValues()
-
-    $: console.log($gameVariables, mobileVariables, selection)
 </script>
 
 <div class="text-black relative mb-10 z-20">
