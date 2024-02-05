@@ -6,7 +6,7 @@
   export let imageUrl: string;
   export let title: string;
   export let link: string;
-  const siteID = import.meta.env.SITE_ID;
+  const siteID = import.meta.env.PUBLIC_SITE_ID;
   const gameUrl = `${
     urlTranslate[siteID as keyof typeof urlTranslate]["game-pages"]
   }/${link}`;

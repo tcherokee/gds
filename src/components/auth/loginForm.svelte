@@ -34,7 +34,6 @@
     });
     logInLoader = false;
     const res = await response.json();
-    console.log(res);
     resetCaptcha();
     if (res.jwt) {
       const { firstName, lastName, username, email, bio, cover_image, photo } =

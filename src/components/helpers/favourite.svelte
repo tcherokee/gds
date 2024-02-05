@@ -71,7 +71,7 @@
 									>
 										<a href="/slot-machines/{fav?.slug || ''}">
 											<TransformImage
-												imageUrl={fav?.images?.data?.attributes?.url || ''}
+												imageUrl={fav?.images?.url || ''}
 												imageAlt={fav?.title}
 												imageWidth={65}
 												imageHeight={60}
@@ -84,16 +84,18 @@
 										<a href="/slot-machines/{fav?.slug || ''}">
 											<div class="flex flex-1 flex-col truncate px-4 py-1 text-sm leading-tight">
 												<div class="font-medium uppercase text-left text-xs">{fav?.title || ''}</div>
+												{#if fav?.categories}
+													<div class="text-left text-[8px] m-0 mt-px">
+														<span class="uppercase mr-2">Categorie</span>
+														{#each fav?.categories as category}
+															<span class="mr-1">{category?.title}</span>
+														{:else}
+															''
+														{/each}
+													</div>
+												{/if}
 												<div class="text-left text-[8px] m-0 mt-px">
-													<span class="uppercase mr-2">Categorie</span>
-													{#each fav?.categories?.data as category}
-														<span class="mr-1">{category?.attributes?.title}</span>
-													{:else}
-														''
-													{/each}
-												</div>
-												<div class="text-left text-[8px] m-0 mt-px">
-													<span class="uppercase mr-2">software</span>{fav?.provider?.data?.attributes?.title}
+													<span class="uppercase mr-2">software</span>{fav?.provider?.title}
 												</div>
 												<div class="text-left text-[8px] m-0 mt-px">
 													<span class="uppercase mr-2">rating</span>1/5
