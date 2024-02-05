@@ -4,6 +4,7 @@ import qs from 'qs'
 
 // Stores
 import { sortOptions } from '../../stores/sortFilters';
+import { getTranslations } from "../../stores/addTranslations";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -17,7 +18,7 @@ import { gamesQs } from "../../qs/games.ts"
 //types and typeguards
 import type { GetStaticPaths } from "astro";
 import type { CustomPageItem } from "../../interfaces/custom-pages"
-import type { Block, CasinoListBlock } from "../../interfaces/common/types.ts"
+import type { Block, CasinoListBlock, TranslationData } from "../../interfaces/common/types.ts"
 import type { Game } from "../../interfaces/games.ts"
 
 // Import Svelte Components
@@ -28,6 +29,8 @@ import GameListBlock from '../components/blocks/gameListBlock.svelte';
 import MainLayout from '../layouts/MainLayout.astro';
 import CasinoSidebar from '../components/casino/casinoSidebar.astro';
 import AuthorCard from '../components/general/authorCard.astro';
+
+const translationStore: TranslationData = getTranslations.get();
 
 export const getStaticPaths = (async () => {
 
@@ -110,7 +113,7 @@ const seo = {
                                 return <CasinoTable initialCasinos={(page.attributes.blocks[i] as CasinoListBlock)} client:load />
                             }
                             case 'gameListBlock': {
-                                return <GameListBlock data={page.attributes.blocks[i]} client:load />
+                                return <GameListBlock data={page.attributes.blocks[i]} translations={translationStore} client:load />
                             }
                         }
                     }

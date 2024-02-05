@@ -33,6 +33,7 @@
     "qs": "^6.11.2",
     "splendid-ui": "^0.10.5",
     "svelte": "^4.2.8",
+    "svelte-file-dropzone": "^2.0.4",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.3.3"
   },

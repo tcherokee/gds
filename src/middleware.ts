@@ -2,7 +2,6 @@ import { defineMiddleware } from "astro:middleware";
 
 // `context` and `next` are automatically typed
 export const onRequest = defineMiddleware((context, next) => {
-
   // Authentication logic
   const authCookie = context.cookies.get("_token")?.value;
   const pathname = context.url.pathname;
