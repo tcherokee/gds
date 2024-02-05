@@ -1,5 +1,8 @@
 ---
 
+// Types
+import type { HowTo as HowToType } from "../../../interfaces/common/types"
+// Components
 import HowTo from "../general/howTo.astro"
 
 const { data } = Astro.props
@@ -8,7 +11,7 @@ const { data } = Astro.props
 
 <div class="howto-container">
 	<h2>{data?.title}</h2>
-	{data?.howToGroup.map((howTo, i) => (
+	{data?.howToGroup.map((howTo: HowToType, i:number) => (
             <HowTo
                 howToAlt={howTo?.image?.data?.attributes?.alternativeText}
                 howToImage={howTo?.image?.data?.attributes?.url}

@@ -33,6 +33,7 @@ export type ImageData = {
     width?: number;
     height?: number;
     alt?: string;
+    alternativeText?: string;
   };
 };
 
@@ -249,6 +250,13 @@ export type FaqBlockTypes = BlockBase & {
 export type HowToBlockTypes = BlockBase & {
   title: string;
   description: string;
+};
+
+export type HowTo = {
+  id: number;
+  heading: string;
+  copy: string;
+  image: ImageInfo;
 };
 
 export type ProsCons = {
