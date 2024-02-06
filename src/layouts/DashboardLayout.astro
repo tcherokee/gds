@@ -26,6 +26,7 @@ import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import DashboardSideNav from "../components/dashboard/dashboardSideNav.svelte";
 import { getTranslations } from "../../stores/addTranslations";
+import DashboardFooter from "../components/dashboard/dashboardFooter.svelte";
 
 const translationStore: TranslationData = getTranslations.get();
 
@@ -86,7 +87,6 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
   },
   {}
 );
-
 ---
 
 <!doctype html>
@@ -106,14 +106,16 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
     <title>User Dashboard</title>
     <Tooltips />
   </head>
-  <body>
-    <main>
+  <body class="h-screen overflow-hidden overflow-y-auto">
+    <main class="h-full">
       {
         layout?.attributes?.legalText && (
-          <Legal legalText={layout?.attributes?.legalText} />
+          <div class="sticky z-30 top-0">
+            <Legal legalText={layout?.attributes?.legalText} />
+          </div>
         )
       }
-      <header class="bg-navbar-bkg">
+      <header class="bg-navbar-bkg sticky top-[35px] z-30">
         <Header
           mainNavigation={processedMenus?.mainnavigation}
           logo={layout?.attributes?.Logo?.data?.attributes?.url}
@@ -128,7 +130,9 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
           translations={translationStore}
           client:load
         />
-        <div class="w-full px-4">
+        <div
+          class="w-full px-4 h-full pb-[50px] overflow-hidden overflow-y-auto"
+        >
           <slot
             data-slot-machine-url={processedMenus.subnavigation[0].attributes
               .url}
@@ -136,5 +140,12 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
         </div>
       </div>
     </main>
+    <!-- <footer class="sticky bottom-0 z-30"> -->
+    <DashboardFooter
+      pageUrl={Astro.url.pathname}
+      translations={translationStore}
+      client:load
+    />
+    <!-- </footer> -->
   </body>
 </html>
