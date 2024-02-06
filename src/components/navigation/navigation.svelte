@@ -12,7 +12,10 @@
   //Types
   import type { MenuItem } from "../../../interfaces/menu.ts";
 
+  // Stores
   import { user } from "../../../stores/authStore.ts";
+
+  import { Toasts } from 'svoast'
 
   let mobileChecked = false;
 
@@ -201,6 +204,7 @@
     </div>
   {/if}
 </MediaQuery>
+<Toasts position="top-right" />
 
 <style lang="postcss">
   #toggleMenu {

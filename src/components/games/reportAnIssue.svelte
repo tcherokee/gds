@@ -4,6 +4,7 @@
 	import { createEventDispatcher } from 'svelte'
 
 	import Close from "~icons/kensho-icons/xmark"
+  import { toast } from 'svoast';
 
 	export let gameSlug: any
 
@@ -55,7 +56,7 @@
 			// resetCaptcha();
 		submissionLoader = false;
 		if (res?.error) {
-			// toast.error(res?.error.message);
+			toast.error(res?.error.message);
 		} else {
 			isSubmissionSuccessfull = true;
 			dispatch('click', {});

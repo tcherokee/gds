@@ -45,7 +45,7 @@
   </li>
   <li
     class="group {activeRoute === 'most-played-games'
-      ? 'text-menu-link-text-active bg-menu-link-bg-active'
+      ? 'item-active'
       : ''}"
   >
     <a
@@ -72,7 +72,7 @@
   </li>
   <li
     class="group {activeRoute === 'favourite-games'
-      ? 'text-menu-link-text-active bg-menu-link-bg-active'
+      ? 'item-active'
       : ''}"
   >
     <a
@@ -99,7 +99,7 @@
   </li>
   <li
     class="group {activeRoute === 'weekly-pick'
-      ? 'text-menu-link-text-active bg-menu-link-bg-active'
+      ? 'item-active'
       : ''}"
   >
     <a
@@ -127,7 +127,7 @@
   </li>
   <li
     class="group {activeRoute === 'messages'
-      ? 'text-menu-link-text-active bg-menu-link-bg-active'
+      ? 'item-active'
       : ''}"
   >
     <a
