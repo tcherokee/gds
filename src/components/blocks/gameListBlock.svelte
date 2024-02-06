@@ -11,6 +11,7 @@
 
   // Components
   import GameCard from "../games/gameCard.svelte";
+  import DummyGameCard from "../games/dummyGameCard.svelte";
   import DesktopGameFilter from "../filters/desktopGameFilter.svelte";
   import MobileGameFilter from "../filters/mobileGameFilter.svelte";
 
@@ -95,11 +96,17 @@
       {/if}
     </MediaQuery>
     <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
-      {#if $games.data?.data}
+      {#if !$games.loading}
         {#each genericGame as game}
           <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
             <GameCard game={game} translations={translations} />
           </div>
+        {/each}
+      {:else}
+        {#each {length: data.numberOfGames} as _}
+          <div class={`w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6`}>
+            <DummyGameCard />
+          </div>  
         {/each}
       {/if}
     </div>
