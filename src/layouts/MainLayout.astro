@@ -2,6 +2,7 @@
 //1st and 3rd Party Tools
 import qs from "qs";
 import { Tooltips } from 'astro-tooltips'
+import LazyLoad from "vanilla-lazyload";
 
 // QS Query Strings
 import { layoutQs, menuQs } from "../../qs/layout.ts"
@@ -107,3 +108,9 @@ const { seoData } = Astro.props
     />
   </body>
 </html>
+
+<script lang="ts">
+  var lazyLoadInstance = new LazyLoad({
+    // Your custom settings go here
+  });
+</script>

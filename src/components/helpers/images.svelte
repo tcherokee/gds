@@ -1,5 +1,4 @@
 <script lang="ts">
-  // import { PUBLIC_IMAGE_URL } from '$env/static/public';
 
   export let imageUrl: string;
   export let imageAlt: string = '';
@@ -51,6 +50,6 @@
   src={lowres || transformed}
   alt={imageAlt}
   width={imageWidth || resizedWidth}
-  class="{imageResponsive ? 'img-fluid ' : ''}{imageClass} lazy"
+  class="{imageResponsive ? 'img-fluid lazy' : ''}{imageClass} lazy"
   height={imageHeight || resizedHeight}
 />

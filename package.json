@@ -36,7 +36,8 @@
     "svelte-file-dropzone": "^2.0.4",
     "svoast": "^2.4.4",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vanilla-lazyload": "^17.8.5"
   },
   "devDependencies": {
     "postcss-import": "^15.1.0",

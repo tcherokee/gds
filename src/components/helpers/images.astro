@@ -45,10 +45,12 @@ if (src) {
 }
 ---
 
-<img
+<Image
   src={transformed}
-  alt={alt}
+  alt={alt || ''}
   width={imageWidth || resizedWidth}
   height={imageHeight || resizedHeight}
   class={classes}
+  loading="lazy"
+  decoding="async"
 />
