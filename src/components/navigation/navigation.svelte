@@ -14,6 +14,14 @@
 
   // Stores
   import { user } from "../../../stores/authStore.ts";
+  import { onMount } from "svelte";
+
+  let toggle: boolean
+
+  onMount(() => {
+
+    toggle = !$user
+  })
 
   import { Toasts } from 'svoast'
 
@@ -25,6 +33,7 @@
 
   export let mainNavigation: MenuItem[];
   
+  $: console.log('user', toggle)
 </script>
 
 <MediaQuery query="(max-width: 991px)" let:matches>
@@ -194,7 +203,7 @@
     <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
       <Favourite />
       <a href="/authentication/login" class="pt-2 mt-1 px-2 pb-3 rounded-t">
-        {#if $user?.id}
+        {#if !toggle}
           <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
         {:else}
           <UserSignedOut height="32px" width="32px" class="fill-sign-in" />
