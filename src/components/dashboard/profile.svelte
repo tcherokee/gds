@@ -6,6 +6,7 @@
   import type { TUser } from "../../../interfaces/auth";
   import { onMount } from "svelte";
   import type { TranslationData } from "../../../interfaces/common/types";
+  import { toast } from "svoast";
 
   let userProfile: TUser;
   let userProfileLoader = true;
@@ -144,7 +145,7 @@
     }
 
     updateProfileLoader = false;
-    // toast.success(translations.profileUpdateSuccessToast);
+    toast.success(translations.profileUpdateSuccessToast);
   };
 
   const avatarChangeHandler = (event: any) => {

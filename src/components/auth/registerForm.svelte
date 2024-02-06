@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { toast } from "svoast";
 
   let firstName: string = "";
   let lastName: string = "";
@@ -43,7 +44,7 @@
     resetCaptcha();
     registrationLoader = false;
     if (res?.error) {
-      //   toast.error(res?.error.message);
+        toast.error(res?.error.message);
     } else {
       isRegistrationSuccessfull = true;
     }

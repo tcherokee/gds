@@ -7,6 +7,8 @@
     getUserFavouriteGames,
   } from "../../../stores/authStore";
   import Heart from "~icons/kensho-icons/heart";
+    import { getTranslations } from "../../../stores/addTranslations.ts";
+  import { toast } from "svoast";
 
   export let game: TUserGame | { attributes: GameAttributes };
   export let classes: string;
@@ -36,6 +38,7 @@
 
       //Set the favourites to the new array excluding the game which was previously favourited
       favourite.set(filterOutFav);
+      toast.error($getTranslations.removeToFav)
       if ($user) {
         const userFavouritedGame = $userFavouriteGames.find(
           ({ game }) => game.id === gameId
@@ -99,6 +102,7 @@
         categories,
       };
       favourite.set([...$favourite, favouritedGame]);
+      toast.success($getTranslations.addToFav)
 
       if ($user) {
         const response = await fetch(`/api/dashboard/user-games-add`, {

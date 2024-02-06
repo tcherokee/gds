@@ -1,9 +1,7 @@
 <script lang="ts">
-  // import { user } from '$lib/stores/auth'
-  // import { page } from '$app/stores'
-  // import { base } from '$app/paths'
   import { onMount } from "svelte";
   import { user } from "../../../stores/authStore";
+  import { toast } from "svoast";
 
   export let translations: { [key: string]: string };
   let email: string = "";
@@ -62,8 +60,7 @@
       location.reload();
       // user.set({ firstName, lastName, username, email, bio, cover_image, photo })
     } else {
-      console.error(res?.error.message);
-      // toast.error(res?.error.message)
+      toast.error(res?.error.message)
     }
   };
 

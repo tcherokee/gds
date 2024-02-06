@@ -1,9 +1,5 @@
 <script lang="ts">
-
-  // import { goto } from '$app/navigation'
-  // import { page } from '$app/stores'
-  // import { base } from '$app/paths'
-  // import { toast } from 'svoast'
+  import { toast } from "svoast";
   
   let email: string = "";
   let isResetLinkSent = false;
@@ -19,7 +15,7 @@
     loader = false;
     const res = await response.json();
     if (res.error) {
-      // toast.error(res?.error.message)
+      toast.error(res?.error.message)
     } else {
       isResetLinkSent = true;
     }
