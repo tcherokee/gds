@@ -165,7 +165,7 @@
         <div
             class="glowy-bkg shadow-none rounded-t-none flex overflow-x-auto gap-3 p-2.5"
         >
-            {#if $providersFilters.data}
+            {#if !$providersFilters.loading}
                 {#each $providersFilters.data.data.attributes.filterProviders.data as icon}
                     <button
                         class="max-w-[83px] min-w-[80px] rounded-md {$gameVariables?.providers.indexOf(
@@ -183,6 +183,10 @@
                             imageAlt={icon?.attributes?.slug}
                         />
                     </button>
+                {/each}
+            {:else}
+                {#each {length: 14} as _}
+                    <div class="max-w-[83px] min-w-[80px] min-h-[38px] border-[2px] rounded-md bg-misc/30" />
                 {/each}
             {/if}
         </div>
