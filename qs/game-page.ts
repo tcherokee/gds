@@ -1,4 +1,4 @@
-export const gamepageQs = (slug: string | undefined) => ({
+export const gamepageQs = () => ({
   fields: [
     "title",
     "heading",
@@ -91,12 +91,7 @@ export const gamepageQs = (slug: string | undefined) => ({
           fields: ["title", "slug", "ratingAvg", "ratingCount", "publishedAt"],
           populate: {
             provider: {
-              fields: ["title", "slug"],
-              populate: {
-                images: {
-                  fields: ["url"],
-                },
-              },
+              fields: ["title"],
             },
             images: {
               fields: ["url"],
@@ -131,18 +126,6 @@ export const gamepageQs = (slug: string | undefined) => ({
                 "freeSpin",
               ],
             },
-            providers: {
-              fields: ["title"],
-              populate: {
-                images: {
-                  fields: ["url"],
-                },
-              },
-              pagination: {
-                page: 1,
-                pageSize: 100,
-              },
-            },
             termsAndConditions: {
               fields: ["copy", "gambleResponsibly"],
             },
@@ -152,9 +135,6 @@ export const gamepageQs = (slug: string | undefined) => ({
     },
     seo: {
       fields: ["metaTitle", "metaDescription"],
-    },
-    liveCasinoStats: {
-      fields: ["showLiveStats", "game", "casinoId", "tableId"],
     },
     blocks: {
       populate: {
@@ -167,9 +147,8 @@ export const gamepageQs = (slug: string | undefined) => ({
       },
     },
   },
-  filters: {
-    slug: {
-      $eq: slug,
-    },
+  pagination: {
+    page: 1,
+    pageSize: 10000,
   },
 });

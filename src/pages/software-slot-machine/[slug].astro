@@ -16,6 +16,7 @@ import CasinoComparison from '../../components/casino/casinoComparison.astro';
 import Faqs from "../../components/general/faqs.astro";
 import type { FaqBlockTypes } from '../../../interfaces/common/types';
 
+
 const { slug } = Astro.params;
 
 const gameQuery = qs.stringify(gamesQs(slug,"views:desc",1), {encodeValuesOnly: true})
