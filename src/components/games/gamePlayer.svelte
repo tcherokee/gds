@@ -46,13 +46,13 @@
 	}
 
 	const mostPlayedGamesHandler = async () => {
-		const user = await window.localStorage.getItem('_user')
+		const user = await window.localStorage.getItem('_user:')
 		if (user) {
 			const payload = {
 				game: data.attributes.slug
 			}
 			const response = await fetch(
-				`https://www.giochidislots.com/it/api/dashboard/most-played-games/update?` + new URLSearchParams(payload),
+				`/api/dashboard/most-played-games?` + new URLSearchParams(payload),
 				{
 					method: 'POST'
 				}
