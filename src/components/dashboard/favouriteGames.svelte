@@ -55,6 +55,8 @@
       }
     }
   });
+
+  $: console.log('favs', $userFavouriteGames)
 </script>
 
 <div class="">
