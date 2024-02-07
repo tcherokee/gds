@@ -56,8 +56,6 @@ const popularGames:Game[] = await fetchApi({
     query: `?${popularGamesQuery}`
 })
 
-console.log(popularGames)
-
 ---
 
 {newSlots && (newGames.length > 0 || popularGames.length > 0) &&

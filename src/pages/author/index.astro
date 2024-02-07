@@ -1,0 +1,35 @@
+---
+
+// First and Third Party Plugins
+import qs from 'qs'
+
+// Queries
+import { authorPageQs } from "../../../qs/author"
+
+// Helpers
+import fetchApi from "../../../lib/strapi"
+
+export const getStaticPaths = (async () => {
+
+    // Import the QS Query string for custom slugs and prepare it for the API fetch
+    const query = qs.stringify(authorPageQs(), {encodeValuesOnly: true})
+    
+    // Request to the Fetch Function to get the custom page slugs from the API
+    const authorPage = await fetchApi({
+        endpoint: 'author',
+        wrappedByKey: 'data',
+        query: `?${query}`
+    })
+
+    return authorPage.map((page) => {
+        return {
+            params: {slug: `${page?.attributes?.firstName.toLowerCase()}.${page?.attributes?.lastName.toLowerCase()}`},
+            props: { page }
+        }
+    });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props
+const { slug } = Astro.params
+
+---

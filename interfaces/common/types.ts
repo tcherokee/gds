@@ -199,6 +199,13 @@ export type Link = {
   url: string;
 };
 
+export type IntroductionWithImage = {
+  id: number;
+  introduction: string;
+  heading: string;
+  image: ImageInfo;
+}
+
 export type IntroductionWithImageBlock = BlockBase & {
   introduction: string;
   heading: string;
@@ -244,6 +251,12 @@ export type CasinoListData = {
     casino: {
         data: CasinoData[];
     };
+};
+
+export type Faqs = {
+  id: number;
+  question: string;
+  answer: string;
 };
 
 export type FaqBlockTypes = BlockBase & {
