@@ -11,7 +11,6 @@
 
   // Components
   import GameCard from "../games/gameCard.svelte";
-  import DummyGameCard from "../games/dummyGameCard.svelte";
   import DesktopGameFilter from "../filters/desktopGameFilter.svelte";
   import MobileGameFilter from "../filters/mobileGameFilter.svelte";
 
@@ -84,6 +83,7 @@
       }) ?? [];
     }
   }
+  
 </script>
 
 <div>
@@ -105,7 +105,9 @@
       {:else}
         {#each {length: data.numberOfGames} as _}
           <div class={`w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6`}>
-            <DummyGameCard />
+            <aside
+              class="relative cursor-pointer rounded-lg aspect-[235/244] w-full bg-misc/20 transition-shadow duration-[0.3s] sm:cursor-auto"
+            />
           </div>  
         {/each}
       {/if}
