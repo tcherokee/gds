@@ -1,18 +1,17 @@
 ---
-
+export const prerender = true;
 import qs from 'qs'
-import Icon from 'astro-icon'
 import MainLayout from '../../layouts/MainLayout.astro';
 import { urlTranslate, GameInfoHeader } from '../../../utils/data-store.util'
 import fetchApi from '../../../lib/strapi';
 import { get } from 'svelte/store';
 import { getTranslations } from '../../../stores/addTranslations';
+import type { GetStaticPaths } from "astro";
 import { gamepageQs } from "../../../qs/game-page"
 import type { Gamepage } from "../../../interfaces/game-page"
-import { CleanGamesForGamePage } from '../../../utils/utilities.util'
 import Breadcrumb from '../../components/layout/breadcrumbs.astro'
-import GameListBlock from '../../components/blocks/gameListBlock.astro';
-import CasinoTable from '../../components/casino/casinoTable.astro';
+import RelatedCasino from '../../components/games/relatedCasino.astro';
+import ProviderGames from '../../components/games/providerGames.astro';
 import HowTo from '../../components/general/howTo.astro';
 import ContentBlock from '../../components/blocks/contentBlock.astro';
 import ProsCons from '../../components/general/proCons.astro'
@@ -25,13 +24,29 @@ import QuickLinks from '../../components/helpers/quicklinks.astro'
 import type { LayoutData } from '../../../interfaces/layout';
 import { customPageLayoutAddOnsQs } from "../../../qs/customPages"
 
-const { slug } = Astro.params; //get the game slug from the page url
-const query = qs.stringify(gamepageQs(slug), {encodeValuesOnly: true})
-const gamePage = await fetchApi<Gamepage[]>({
-	endpoint: 'games',
-    wrappedByKey: 'data',
-    query: `?${query}`
-})
+
+export const getStaticPaths = (async () => {
+    const query = qs.stringify(gamepageQs(), {encodeValuesOnly: true});
+	// console.log('query', query);
+	const gamePage = await fetchApi<Gamepage[]>({
+		endpoint: 'games',
+		wrappedByKey: 'data',
+		query: `?${query}`
+	});
+
+	// console.log('gamePage', gamePage);
+
+    return gamePage.map((page) => {
+        return {
+            params: {slug: page?.attributes?.slug},
+            props: { page }
+        }
+    });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props
+const { slug } = Astro.params; //get the slug from the page url
+
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
 const layoutQuery = qs.stringify(customPageLayoutAddOnsQs(), {encodeValuesOnly: true})
@@ -47,28 +62,28 @@ let schema: any = null
 
 const translationStore:any = get(getTranslations);
 
-const gamesData = [...gamePage[0]?.attributes?.provider?.data?.attributes?.games?.data];
-const limitGames = gamesData.splice(0, 6);
+// const gamesData = [...page?.attributes?.provider?.data?.attributes?.games?.data];
+// const limitGames = gamesData.splice(0, 6);
 
 //Cleaup Games Array
-const gamesArray = CleanGamesForGamePage(limitGames)
+// const gamesArray = CleanGamesForGamePage(limitGames)
 
 //generate page url
 let siteID = import.meta.env.SITE_ID
 let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${Astro.params.slug}`;
 
 //set page breadcrumb
-let breadcumb = { breadCrumbText: gamePage[0]?.attributes?.title, breadCrumbUrl: null };
+let breadcumb = { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null };
 
 //set page seo data
 let seo = {
-    pageTitle: gamePage[0]?.attributes?.seo?.metaTitle,
-    metaDescription: gamePage[0]?.attributes?.seo?.metaDescription,
+    pageTitle: page?.attributes?.seo?.metaTitle,
+    metaDescription: page?.attributes?.seo?.metaDescription,
     url: canonical
 }
 
 //list componets on page
-const __blocks = gamePage[0]?.attributes?.blocks
+const __blocks = page?.attributes?.blocks
 
 ---
 
@@ -77,11 +92,12 @@ const __blocks = gamePage[0]?.attributes?.blocks
 
      <div class="curve rounded-b-3xl pb-3">
         <div class="section-wrapper relative">
-            <GamePlayer data={gamePage[0]} {layout} client:load />
+            <GamePlayer data={page} {layout} client:load />
             <div class="mt-6 md:mt-8">
                 <h2 class="text-white !m-0">{translationStore.gamePageRelatedGamesH2}</h2>
                 <div class="mt-4 glass-wrapper">
-					<GameListBlock data={limitGames} />
+					<!-- <GameListBlock data={limitGames} /> -->
+					<ProviderGames slug={page?.attributes?.slug} />
 				</div>
                 <!-- {gamesData?.length > $GamesStore?.length &&
 					<div class="flex justify-center mt-10">
@@ -99,27 +115,23 @@ const __blocks = gamePage[0]?.attributes?.blocks
      <div class="w-full xl:container px-2">
         <div class="mb-10">
 			<h2 class="mt-8 mb-4 md:mt-16">{translationStore.gamePageRelatedCasinoH2}</h2>
-			<CasinoTable
-				casinos={gamePage[0].attributes?.provider?.data?.attributes?.relatedCasinos
-					?.data}
-				customPage={true}
-			/>
+			<RelatedCasino slug={page?.attributes?.slug}/>
 		</div>
 
         <div class="flex flex-col md:flex-row gap-x-8">
             <div class="order-last md:order-first mt-5 md:mt-0">
                 <div class="quicklinks mb-5">
-                    <QuickLinks data={gamePage[0]} />
+                    <QuickLinks data={page} />
                 </div>
                 <div class="intro-content">
-                    <h1 class="text-blue-700 !mt-0">{gamePage[0]?.attributes?.heading}</h1>
-                    <Fragment set:html={gamePage[0]?.attributes?.introduction}></Fragment>
+                    <h1 class="text-blue-700 !mt-0">{page?.attributes?.heading}</h1>
+                    <Fragment set:html={page?.attributes?.introduction}></Fragment>
                 </div>
 
-                {gamePage[0]?.attributes?.howTo &&
+                {page?.attributes?.howTo &&
 					<div class="howto-content">
-						<h2>{gamePage[0]?.attributes?.howTo.title}</h2>
-						{gamePage[0]?.attributes?.howTo?.howToGroup.map((howTo:any, i:number) => 
+						<h2>{page?.attributes?.howTo.title}</h2>
+						{page?.attributes?.howTo?.howToGroup.map((howTo:any, i:number) => 
 							<HowTo
 								count={i + 1}
 								howToWidth={howTo?.image?.data?.attributes?.width}
@@ -132,7 +144,7 @@ const __blocks = gamePage[0]?.attributes?.blocks
 					</div>
 				}
 
-                { gamePage[0]?.attributes?.gameInfoTable &&
+                { page?.attributes?.gameInfoTable &&
 					<div class="info-table-content">
 						<h2 class="mb-[15px]">{translationStore.gameInfoTableH2}</h2>
 						<figure class="table">
@@ -150,7 +162,7 @@ const __blocks = gamePage[0]?.attributes?.blocks
 								<tbody>
 									<tr>
 										{Object.keys(GameInfoHeader).map(key =>
-											<td>{gamePage[0]?.attributes?.gameInfoTable[key]}</td>
+											<td>{page?.attributes?.gameInfoTable[key]}</td>
 										)}
 									</tr>
 								</tbody>
@@ -159,23 +171,23 @@ const __blocks = gamePage[0]?.attributes?.blocks
 					</div>
 				}
 
-                {gamePage[0]?.attributes?.content1 &&
+                {page?.attributes?.content1 &&
 					<div class="game-content">
 						<div>
-							<ContentBlock pageContent={gamePage[0]?.attributes?.content1} />
+							<ContentBlock pageContent={page?.attributes?.content1} />
 						</div>
 					</div>
 				}
 
-                {gamePage[0]?.attributes?.proscons &&
+                {page?.attributes?.proscons &&
 					<div class="procon-content">
 						<div>
 							<ProsCons
-								pros={gamePage[0]?.attributes?.proscons?.pros}
-								cons={gamePage[0]?.attributes?.proscons?.cons}
-								heading={gamePage[0]?.attributes?.proscons?.heading}
-								prosImage={gamePage[0]?.attributes?.proscons?.proImage}
-								consImage={gamePage[0]?.attributes?.proscons?.conImage}
+								pros={page?.attributes?.proscons?.pros}
+								cons={page?.attributes?.proscons?.cons}
+								heading={page?.attributes?.proscons?.heading}
+								prosImage={page?.attributes?.proscons?.proImage}
+								consImage={page?.attributes?.proscons?.conImage}
 							/>
 						</div>
 					</div>
@@ -187,17 +199,17 @@ const __blocks = gamePage[0]?.attributes?.blocks
                     //Image carousel block
                     __blocks.map((block, i) => (
                     (block.__component === 'shared.image-carousel') &&
-                        <ImageCarousel data={gamePage[0]?.attributes.blocks[i]} client:visible  /> 
+                        <ImageCarousel data={page?.attributes.blocks[i]} client:visible  /> 
                     ))
                 }
 
 				 <!-- End page Blocks -->
 
-                 { gamePage[0]?.attributes?.faqs && 
+                 { page?.attributes?.faqs && 
 					<div class="faq-content">
-						{gamePage[0]?.attributes?.faqs?.length && <h2 class="mb-4">{translationStore.faq}</h2> }
+						{page?.attributes?.faqs?.length && <h2 class="mb-4">{translationStore.faq}</h2> }
 						<div>
-							{gamePage[0]?.attributes?.faqs.map((faq:any) => <Faqs data={faq} /> )}
+							{page?.attributes?.faqs.map((faq:any) => <Faqs data={faq} /> )}
 						</div>
 					</div>
 				}
