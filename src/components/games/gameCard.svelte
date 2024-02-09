@@ -21,6 +21,8 @@
     "/" +
     game?.provider?.slug;
 
+    console.log('game', game)
+
 </script>
 
 <aside

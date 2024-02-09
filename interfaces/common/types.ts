@@ -72,7 +72,7 @@ export type GameProvider = {
   slotProvider: ProviderData;
 };
 
-export type BonusSection = IDAttribute & {
+export type AuthorBonusSection = {
   bonusAmount: number;
   availability: string;
   speed: string;
@@ -80,6 +80,8 @@ export type BonusSection = IDAttribute & {
   cashBack: string | null;
   freeSpin: string | null;
 };
+
+export type BonusSection = IDAttribute & AuthorBonusSection;
 
 export type CasinoBonus = {
   id: number;
@@ -129,6 +131,41 @@ export type CasinoAttributes = {
     id: number;
     wageringRequirements: number;
   };
+};
+
+export type AuthorCasinoAttributes = {
+  title: string;
+  slug: string;
+  ratingAvg: number;
+  ratingCount: number;
+  publishedAt: string;
+  Badges?: string | null;
+  images: {
+    id: number;
+    url: string;
+  };
+  provider: {
+    title: string;
+    slug?: string;
+    images: {
+      id: number;
+      url: string;
+    };
+  };
+  bonusSection: AuthorBonusSection;
+  casinoBonus: {
+    id: number;
+    bonusUrl: string;
+    bonusLabel: string;
+    bonusCode: string;
+  };
+  termsAndConditions: {
+    id: number;
+    copy: string;
+    gambleResponsibly: string;
+  };
+  noDepositSection?: AuthorBonusSection;
+  freeSpinsSection?: AuthorBonusSection;
 };
 
 export type CasinoData = {

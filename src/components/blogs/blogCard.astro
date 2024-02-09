@@ -7,7 +7,7 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 import 'dayjs/locale/it'
 
 // Types
-import type { Blog } from "../../../interfaces/blog.ts"
+import type { Blog, AuthorBlogAttributes } from "../../../interfaces/blog.ts"
 
 // Helpers
 import Image from "../helpers/images.astro"
@@ -19,34 +19,34 @@ const { data } = Astro.props
 
 ---
 {
-	data.map((blog: Blog) => (
+	data.map((blog: Blog | AuthorBlogAttributes) => (
 		<div class="blog-card p-0">
 			<figure>
 				<div class="blog-date">
-					<div class="blog-day">{dayjs(blog?.attributes?.createdAt).format('D')}</div>
-					<div class="blog-month">{dayjs(blog?.attributes?.createdAt).format('MMM')}</div>
+					<div class="blog-day">{dayjs((blog as Blog)?.attributes?.createdAt ?? (blog as AuthorBlogAttributes)?.createdAt ).format('D')}</div>
+					<div class="blog-month">{dayjs((blog as Blog)?.attributes?.createdAt ?? (blog as AuthorBlogAttributes)?.createdAt).format('MMM')}</div>
 				</div>
 				<Image
 					classes="blog-image"
-					src ={blog?.attributes?.images?.data?.attributes?.url}
-					alt={blog?.attributes?.title}
+					src ={(blog as Blog)?.attributes?.images?.data?.attributes?.url ?? (blog as AuthorBlogAttributes)?.images.url}
+					alt={(blog as Blog)?.attributes?.title ?? (blog as AuthorBlogAttributes)?.title}
 					imageWidth={430}
 					imageHeight={380}
 				/>
 			</figure>
 			<div class="blog-content">
 				<h4>
-					<a href={`/blog/${blog?.attributes?.slug}`}>{blog?.attributes?.title}</a>
+					<a href={`/blog/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}`}>{(blog as Blog)?.attributes?.title ?? (blog as AuthorBlogAttributes)?.title}</a>
 				</h4>
-				<p>{blog?.attributes?.content1}</p>
+				<p>{(blog as Blog)?.attributes?.content1 ?? (blog as AuthorBlogAttributes)?.content1}</p>
 				<div class="blog-meta flex items-center">
 					<div class="author-icon">
 						<Icon name="user-fill" height="16px" width="14px" class="fill-body-text" />
 					</div>
 					<div class="author-title px-1">Scritto da:</div>
 					<div class="author-name">
-						<a href={`/author/${blog?.attributes?.author?.data?.attributes?.firstName.toLowerCase()}.${blog?.attributes?.author?.data?.attributes?.lastName.toLowerCase()}`}>
-							{blog?.attributes?.author?.data?.attributes?.firstName +" "+ blog?.attributes?.author?.data?.attributes?.lastName}`
+						<a href={`/author/${(blog as Blog)?.attributes?.author?.data?.attributes?.firstName.toLowerCase() ?? (blog as AuthorBlogAttributes)?.author?.firstName.toLowerCase()}.${(blog as Blog)?.attributes?.author?.data?.attributes?.lastName.toLowerCase() ??  (blog as AuthorBlogAttributes)?.author?.lastName.toLowerCase()}`}>
+							{((blog as Blog)?.attributes?.author?.data?.attributes?.firstName ?? (blog as AuthorBlogAttributes)?.author?.firstName) +" "+ ((blog as Blog)?.attributes?.author?.data?.attributes?.lastName ?? (blog as AuthorBlogAttributes)?.author?.lastName)}`
 						</a>
 					</div>
 				</div>

@@ -121,3 +121,52 @@ export const authorPageQs = () => {
       },
     };
 }
+
+export const authorCardQs = () => {
+  return {
+    fields: [
+      "id",
+      "firstName",
+      "lastName",
+      "content1",
+      "facebookLink",
+      "linkedInLink",
+      "twitterLink",
+      "slug",
+      "isAnAuthor",
+    ],
+    populate: {
+      photo: {
+        populate: {
+          fields: ["url"],
+        },
+      },
+    },
+    filters: {
+      isAnAuthor: {
+        $eq: true,
+      },
+    },
+  };
+};
+
+export const authorIndexQs = () => {
+  return {
+    fields: ['id'],
+    populate: {
+      authorPage: {
+        fields: [
+          "metaTitle",
+          "metaDescription",
+          "content1",
+          "content2",
+          "content3",
+          "jobTitle",
+          "experience",
+          "areaOfWork",
+          "specialization",
+        ],
+      },
+    },
+  };
+}
