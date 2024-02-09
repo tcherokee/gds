@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+// import { Image } from "astro:assets";
 
 const {
   src,
@@ -45,8 +45,8 @@ if (src) {
 }
 ---
 
-<Image
-  src={transformed}
+<img
+  src={transformed || "https://placehold.co/600x400"}
   alt={alt || ''}
   width={imageWidth || resizedWidth}
   height={imageHeight || resizedHeight}

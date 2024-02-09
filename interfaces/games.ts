@@ -1,4 +1,4 @@
-import type { ImageData, ProviderData, Category } from "./common/types";
+import type { ImageData, ProviderData, Seo, Category } from "./common/types";
 
 export type Game = {
   id: number;
@@ -20,6 +20,37 @@ export type GameAttributes = {
   provider: ProviderData;
   categories: {
     data: Category[];
+  };
+};
+
+export type AuthorGameAttributes = {
+  id: number;
+  createdAt: string;
+  title: string;
+  slug: string;
+  ratingAvg: number;
+  publishedAt: string;
+  images: {
+    id: number;
+    url: string;
+  };
+  author: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    photo: {
+      id: number;
+      url: string;
+    };
+  };
+  seo: Seo;
+  provider: {
+    title: string;
+    slug?: string;
+    images: {
+      id: number;
+      url: string;
+    };
   };
 };
 

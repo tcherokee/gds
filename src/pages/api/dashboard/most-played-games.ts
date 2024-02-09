@@ -35,3 +35,29 @@ export const GET: APIRoute = async ({ cookies }) => {
     });
   }
 };
+
+export const POST: APIRoute = async ({ cookies, url }) => {
+  const game = url.searchParams.get("game");
+  const body = {
+    data: {
+      game,
+    },
+  };
+
+  const opts = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${cookies.get("_token")?.value}`,
+    },
+    body: JSON.stringify(body),
+  };
+
+  const res = await fetch(
+    `${import.meta.env.PUBLIC_API_URL}/api/most-played-games`,
+    opts
+  );
+  const data = await res.json();
+
+  return new Response(JSON.stringify(data), { status: 200 });
+};

@@ -134,6 +134,12 @@ export const mapBlocksToDynamicComponents = (
             name: "iframe",
             extension: "astro",
           };
+        case "shared.image":
+          return {
+            location: "blocks",
+            name: "imageBlock",
+            extension: "astro",
+          };
         default:
           return undefined;
       }
