@@ -13,7 +13,10 @@ import Link from "../helpers/link.astro";
 import { getTranslations } from "../../../stores/addTranslations.ts"
 
 // Get Astro Data from Props
-const { data } = Astro.props
+const { data, isFlat = false } = Astro.props
+
+// Destructuring Data conditionally to cater for the different format the API returns from author pages
+const {firstName, lastName, photo, twitterLink, facebookLink, linkedInLink, jobTitle, experience, areaOfWork, specialization, content1} = isFlat ? data : data.data.attributes
 
 // Set Up Translation Store
 const translationStore: TranslationData = getTranslations.get()
@@ -25,29 +28,29 @@ const translationStore: TranslationData = getTranslations.get()
 		<div class="mb-5 flex flex-col gap-2  shrink-0">
 			<figure class="author-image rounded-lg overflow-hidden">
 				<Images
-					src={data.data.attributes.photo.data.attributes.url}
+					src={isFlat ? photo.url : photo.data.attributes.url}
 					imageWidth={120}
 					imageHeight={120}
 					classes=""
-					alt="{data.data.attributes.firstName} {data.data.attributes.lastName} photo"
+					alt="{firstName} {lastName} photo"
 				/>
 			</figure>
 			<div class="flex items-center justify-center gap-1 md:justify-normal">
 			{
-				!data.data.attributes.twitterLink && 
-					<Link href={data.data.attributes.twitterLink} > 
+				!twitterLink && 
+					<Link href={twitterLink} > 
 						<Icon name="twitter" height="25px" />
 					</Link>
 			}
 			{
-				!data.data.attributes.facebookLink && 
-					<Link href={data.data.attributes.facebookLink} > 
+				!facebookLink && 
+					<Link href={facebookLink} > 
 						<Icon name="facebook" height="25px" class="fill-facebook" />
 					</Link>
 			}
 			{
-				!data.data.attributes.linkedInLink && 
-					<Link href={data.data.attributes.linkedInLink} > 
+				!linkedInLink && 
+					<Link href={linkedInLink} > 
 						<Icon name="linkedin" height="25px" class="fill-linkedin" />
 					</Link>
 			}
@@ -57,41 +60,41 @@ const translationStore: TranslationData = getTranslations.get()
 	<div class="ml-5">
 		<h4 class="flex !mt-0 !text-[18px] md:!text-[20px] justify-center my-4 md:justify-normal md:mb-1">
 				<Link href="#">
-				{`${data.data.attributes.firstName} ${data.data.attributes.lastName}`}
+				{`${firstName} ${lastName}`}
 			</Link>
 		</h4>
 		<div class="flex md:mr-10 justify-center md:justify-start gap-2 flex-wrap mb-4">
 			{
-				data.data.attributes.jobTitle &&
+				jobTitle &&
 				<div class="bg-grey-300 text-black text-sm flex gap-1 w-fit py-1 px-3 rounded">
 					<span class="block">{translationStore.authorTitle}:</span>
-					<span class="block">{data.data.attributes.jobTitle}</span>
+					<span class="block">{jobTitle}</span>
 				</div>
 			}
 			{
-				data.data.attributes.experience &&
+				experience &&
 				<div class="bg-grey-300 text-black text-sm flex gap-1 w-fit  py-1 px-3 rounded">
 					<span class="block">{translationStore.authorExperience}:</span>
-					<span class="block">{data.data.attributes.experience}</span>
+					<span class="block">{experience}</span>
 				</div>
 			}
 			{
-				data.data.attributes.areaOfWork &&
+				areaOfWork &&
 				<div class="bg-grey-300 text-black text-sm flex gap-1 w-fit  py-1 px-3 rounded">
 					<span class="block">{translationStore.authorAreaWork}:</span>
-					<span class="block">{data.data.attributes.areaOfWork}</span>
+					<span class="block">{areaOfWork}</span>
 				</div>
 			}
 			{
-				data.data.attributes.specialization &&
+				specialization &&
 				<div class="bg-grey-300 text-black text-sm flex gap-1 w-fit  py-1 px-3 rounded">
 					<span class="block">{translationStore.authorSpecialization}:</span>
-					<span class="block">{data.data.attributes.specialization}</span>
+					<span class="block">{specialization}</span>
 				</div>
 			}
 		</div>
 		<div class="">
-			<Fragment set:html={data.data.attributes.content1} />
+			<Fragment set:html={content1} />
 		</div>
 	</div>
 </div>

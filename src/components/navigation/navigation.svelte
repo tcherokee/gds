@@ -33,7 +33,6 @@
 
   export let mainNavigation: MenuItem[];
   
-  $: console.log('user', toggle)
 </script>
 
 <MediaQuery query="(max-width: 991px)" let:matches>
