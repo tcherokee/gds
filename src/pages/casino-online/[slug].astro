@@ -10,30 +10,22 @@ import { casinoproviderQs } from "../../../qs/casino-provider"
 import type { GetStaticPaths } from "astro";
 import type { Casinoprovider } from "../../../interfaces/casino-provider"
 import IntroBlock from "../../components/general/introWithImage.astro";
-import CasinoTableBlock from "../../components/blocks/casinoTableBlock.astro"
+import ProviderCasino from "../../components/casino/providerCasino.astro"
 import ContentBlock from '../../components/blocks/contentBlock.astro';
 import CasinoComparison from '../../components/casino/casinoComparison.astro';
 import Faqs from "../../components/general/faqs.astro";
 import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
 import Breadcrumb from '../../components/layout/breadcrumbs.astro'
 
-console.log('Got here 1');
-
-
 export const getStaticPaths = (async () => {
     // Import the QS Query string for custom slugs and prepare it for the API fetch
-    console.log('Got here 2');
     const query = qs.stringify(casinoproviderQs(), {encodeValuesOnly: true})
-    console.log('query', query);
-
     // Request to the Fetch Function to get page data from API
     const casinoProvider = await fetchApi<Casinoprovider[]>({
         endpoint: 'casino-providers',
         wrappedByKey: 'data',
         query: `?${query}`
     })
-
-    
 
     return casinoProvider.map((page) => {
         return {
@@ -69,7 +61,7 @@ let seo = {
 <script define:vars={{page}}>
     console.log('page', page);
 </script>
-<!-- <MainLayout seoData={seo}>
+<MainLayout seoData={seo}>
 
     <Breadcrumb breadcrumb={breadcumb} />
 
@@ -81,13 +73,7 @@ let seo = {
             authorData={page?.attributes?.author} />
 
         <div class="mb-[40px]">
-            {page?.attributes?.casinoLists.data &&
-                <CasinoTableBlock
-                    customCasinos={page?.attributes?.casinoLists?.data}
-                    customPage={true}
-                    {block}
-                />
-            }
+           <ProviderCasino slug={page?.attributes?.slug} />
         </div>
     </div>
 
@@ -130,4 +116,4 @@ let seo = {
         }
     </div>
 
-</MainLayout> -->
+</MainLayout>

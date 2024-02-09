@@ -27,14 +27,11 @@ import { customPageLayoutAddOnsQs } from "../../../qs/customPages"
 
 export const getStaticPaths = (async () => {
     const query = qs.stringify(gamepageQs(), {encodeValuesOnly: true});
-	// console.log('query', query);
 	const gamePage = await fetchApi<Gamepage[]>({
 		endpoint: 'games',
 		wrappedByKey: 'data',
 		query: `?${query}`
 	});
-
-	// console.log('gamePage', gamePage);
 
     return gamePage.map((page) => {
         return {
