@@ -16,6 +16,7 @@ type Attributes = {
   heading: string | null;
   updatedAt: string;
   seo: Seo;
+  slug: string;
   author: {
     data: Author;
   };
