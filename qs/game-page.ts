@@ -1,4 +1,4 @@
-export const gamepageQs = (slug: string | undefined) => ({
+export const gamepageQs = () => ({
   fields: [
     "title",
     "heading",
@@ -81,80 +81,60 @@ export const gamepageQs = (slug: string | undefined) => ({
     images: {
       fields: ["url"],
     },
-    provider: {
-      fields: ["title", "slug"],
-      populate: {
-        images: {
-          fields: ["url"],
-        },
-        games: {
-          fields: ["title", "slug", "ratingAvg", "ratingCount", "publishedAt"],
-          populate: {
-            provider: {
-              fields: ["title", "slug"],
-              populate: {
-                images: {
-                  fields: ["url"],
-                },
-              },
-            },
-            images: {
-              fields: ["url"],
-            },
-          },
-          sort: "ratingAvg:desc",
-          pagination: {
-            page: 1,
-            pageSize: 10,
-          },
-        },
-        relatedCasinos: {
-          fields: ["title", "slug", "ratingAvg", "ratingCount"],
-          populate: {
-            images: {
-              fields: ["url"],
-            },
-            casinoBonus: {
-              fields: ["bonusUrl", "bonusLabel", "bonusCode"],
-            },
-            noDepositSection: {
-              fields: ["bonusAmount", "termsConditions"],
-            },
-            freeSpinsSection: {
-              fields: ["bonusAmount", "termsConditions"],
-            },
-            bonusSection: {
-              fields: [
-                "bonusAmount",
-                "termsConditions",
-                "cashBack",
-                "freeSpin",
-              ],
-            },
-            providers: {
-              fields: ["title"],
-              populate: {
-                images: {
-                  fields: ["url"],
-                },
-              },
-              pagination: {
-                page: 1,
-                pageSize: 100,
-              },
-            },
-            termsAndConditions: {
-              fields: ["copy", "gambleResponsibly"],
-            },
-          },
-        },
-      },
-    },
+    // provider: {
+    //   fields: ["title", "slug"],
+    //   populate: {
+    //     images: {
+    //       fields: ["url"],
+    //     },
+    //     games: {
+    //       fields: ["title", "slug", "ratingAvg", "ratingCount", "publishedAt"],
+    //       populate: {
+    //         provider: {
+    //           fields: ["title"],
+    //         },
+    //         images: {
+    //           fields: ["url"],
+    //         },
+    //       },
+    //       sort: "ratingAvg:desc",
+    //       pagination: {
+    //         page: 1,
+    //         pageSize: 10,
+    //       },
+    //     },
+    //     relatedCasinos: {
+    //       fields: ["title", "slug", "ratingAvg", "ratingCount"],
+    //       populate: {
+    //         images: {
+    //           fields: ["url"],
+    //         },
+    //         casinoBonus: {
+    //           fields: ["bonusUrl", "bonusLabel", "bonusCode"],
+    //         },
+    //         noDepositSection: {
+    //           fields: ["bonusAmount", "termsConditions"],
+    //         },
+    //         freeSpinsSection: {
+    //           fields: ["bonusAmount", "termsConditions"],
+    //         },
+    //         bonusSection: {
+    //           fields: [
+    //             "bonusAmount",
+    //             "termsConditions",
+    //             "cashBack",
+    //             "freeSpin",
+    //           ],
+    //         },
+    //         termsAndConditions: {
+    //           fields: ["copy", "gambleResponsibly"],
+    //         },
+    //       },
+    //     },
+    //   },
+    // },
     seo: {
       fields: ["metaTitle", "metaDescription"],
-    },
-    liveCasinoStats: {
-      fields: ["showLiveStats", "game", "casinoId", "tableId"],
     },
     blocks: {
       populate: {
@@ -167,9 +147,8 @@ export const gamepageQs = (slug: string | undefined) => ({
       },
     },
   },
-  filters: {
-    slug: {
-      $eq: slug,
-    },
+  pagination: {
+    page: 1,
+    pageSize: 10000,
   },
 });
