@@ -31,7 +31,7 @@ const translationStore: TranslationData = getTranslations.get()
 		<div class="mb-5 flex flex-col gap-2  shrink-0">
 			<figure class="author-image rounded-lg overflow-hidden">
 				<Images
-					src={isFlat ? photo.url : photo.data.attributes.url}
+					src={isFlat ? photo?.url : photo?.data?.attributes?.url}
 					imageWidth={120}
 					imageHeight={120}
 					classes=""

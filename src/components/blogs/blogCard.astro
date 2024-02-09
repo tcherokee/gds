@@ -17,6 +17,8 @@ dayjs.locale(import.meta.env.LANG)
 
 const { data } = Astro.props
 
+console.log('data', data)
+
 ---
 {
 	data.map((blog: Blog | AuthorBlogAttributes) => (
@@ -28,7 +30,7 @@ const { data } = Astro.props
 				</div>
 				<Image
 					classes="blog-image"
-					src ={(blog as Blog)?.attributes?.images?.data?.attributes?.url ?? (blog as AuthorBlogAttributes)?.images.url}
+					src ={(blog as Blog)?.attributes?.images?.data?.attributes?.url ?? (blog as AuthorBlogAttributes)?.images?.url}
 					alt={(blog as Blog)?.attributes?.title ?? (blog as AuthorBlogAttributes)?.title}
 					imageWidth={430}
 					imageHeight={380}
