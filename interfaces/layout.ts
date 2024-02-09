@@ -58,3 +58,17 @@ export type LayoutData = {
   id: number;
   attributes: LayoutAttributes;
 };
+
+export type TAuthorPageData = {
+  id: number;
+  attributes: {
+    authorPage: {
+      id: number;
+      metaTitle: string;
+      metaDescription: string;
+      content1: string;
+      content2: string;
+      content3: string;
+    }
+  }
+};

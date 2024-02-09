@@ -7,14 +7,12 @@ import GameListBlock from '../../components/blocks/gameListBlock.astro';
 
 const { slug } = Astro.props
 const query = qs.stringify(providerGamesQs(slug), {encodeValuesOnly: true});
-// console.log('query', query);
+
 const gamePage = await fetchApi<Gamepage[]>({
     endpoint: 'games',
     wrappedByKey: 'data',
     query: `?${query}`
 });
-
-console.log('gamePage', gamePage);
 
 const gamesData = [...gamePage[0]?.attributes?.provider?.data?.attributes?.games?.data];
 const limitGames = gamesData.splice(0, 6);

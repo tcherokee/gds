@@ -1,5 +1,5 @@
 import { allTasks } from "nanostores";
-import type { CasinoData, TranslationData } from "../interfaces/common/types";
+import type { AuthorCasinoAttributes, CasinoData, TranslationData } from "../interfaces/common/types";
 import { getTranslations } from "../stores/addTranslations";
 
 // Set Nano Store to active state to start data loading
@@ -12,9 +12,9 @@ await allTasks()
 const translationStore: TranslationData = getTranslations.get();
 
 // Function to extract the appropropriate welcome bonus amounts for the casino table
-export const welcomeBonus = (casino: CasinoData) => {
+export const welcomeBonus = (casino: CasinoData | AuthorCasinoAttributes) => {
   const { bonusAmount, cashBack, freeSpin } =
-    casino?.attributes?.bonusSection || {};
+    ((casino as CasinoData)?.attributes?.bonusSection ?? (casino as AuthorCasinoAttributes)?.bonusSection) || {};
 
   const bonuses = [
     bonusAmount && `${bonusAmount}€ ${translationStore.reloadBonus}`,
@@ -26,8 +26,9 @@ export const welcomeBonus = (casino: CasinoData) => {
 };
 
 // Function to extract the appropriate No Deposit Bonus Amounts for the Casino Table
-export const noDepositBonus = (casino: CasinoData) => {
-  const { noDepositSection, freeSpinsSection } = casino?.attributes || {};
+export const noDepositBonus = (casino: CasinoData | AuthorCasinoAttributes) => {
+  const { noDepositSection, freeSpinsSection } =
+    ((casino as CasinoData)?.attributes ?? casino as AuthorCasinoAttributes) || {};
 
   const bonuses = [
     noDepositSection?.bonusAmount &&

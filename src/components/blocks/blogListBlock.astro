@@ -4,11 +4,7 @@ import type { Blog } from "../../../interfaces/blog.ts"
 import Link from "../helpers/link.astro"
 import BlogCard from "../blogs/blogCard.astro"
 
-const { data, blogLink, blogText } = Astro.props
-
-// Ensure that blogLink and blogText are strings
-const blogLinkString: string = blogLink;
-const blogTextString: string = blogText;
+const { data, blogLink = '', blogText = '' } = Astro.props
 
 const truncateAndCleanContent = (blogData: Blog[]): Blog[] => {
     return blogData.map(item => {
@@ -42,9 +38,12 @@ const truncatedData = truncateAndCleanContent(data as Blog[])
 		<div class="grid grid-cols-1 md:grid-cols-3">
 			<BlogCard data={truncatedData} />
 		</div>
-		<div class="grid gap-2 justify-center mt-3">
-			<Link href={blogLinkString} class="btn btn-secondary blog-btn" text={blogTextString} />
-		</div>
+		{
+			blogLink.length > 0 &&
+			<div class="grid gap-2 justify-center mt-3">
+				<Link href={blogLink} class="btn btn-secondary blog-btn" text={blogText} />
+			</div>
+		}
 	</div>
 </div>
 

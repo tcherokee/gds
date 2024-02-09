@@ -3,33 +3,71 @@
 // First and Third Party Plugins
 import qs from 'qs'
 
+// Layouts
+import MainLayout from "../../layouts/MainLayout.astro"
+
+// Types and TypeGuards
+import type { TAuthor } from '../../../interfaces/users'
+import type { TAuthorPageData } from '../../../interfaces/layout'
+
 // Queries
-import { authorPageQs } from "../../../qs/author"
+import { authorIndexQs, authorCardQs } from "../../../qs/author"
 
 // Helpers
 import fetchApi from "../../../lib/strapi"
 
-export const getStaticPaths = (async () => {
+// Components
+import AuthorCard from '../../components/general/authorCard.astro'
 
-    // Import the QS Query string for custom slugs and prepare it for the API fetch
-    const query = qs.stringify(authorPageQs(), {encodeValuesOnly: true})
-    
-    // Request to the Fetch Function to get the custom page slugs from the API
-    const authorPage = await fetchApi({
-        endpoint: 'author',
-        wrappedByKey: 'data',
-        query: `?${query}`
-    })
+// Create Query String
+const query = qs.stringify(authorIndexQs(), {encodeValuesOnly: true})
+const authorCardQuery = qs.stringify(authorCardQs(), {encodeValuesOnly: true})
 
-    return authorPage.map((page) => {
-        return {
-            params: {slug: `${page?.attributes?.firstName.toLowerCase()}.${page?.attributes?.lastName.toLowerCase()}`},
-            props: { page }
-        }
-    });
-}) satisfies GetStaticPaths;
+const authorIndex = await fetchApi<TAuthorPageData>({
+    endpoint: 'layout',
+    wrappedByKey: 'data',
+    query: `?${query}`
+});
 
-const { page } = Astro.props
-const { slug } = Astro.params
+const authors = await fetchApi<TAuthor[]>({
+    endpoint: 'users',
+    wrappedByKey: '',
+    query: `?${authorCardQuery}`
+});
 
+// Create Canonical URL
+const canonical: string =  import.meta.env.PUBLIC_SITE_ID === 'gds' ? `${import.meta.env.PUBLIC_FULL_URL}/` : import.meta.env.PUBLIC_FULL_URL;
+
+const seo = {
+	pageTitle: authorIndex.attributes?.authorPage?.metaTitle,
+    metaDescription: authorIndex.attributes?.authorPage?.metaDescription,
+    url: canonical
+}
+
+console.log(authorIndex)
 ---
+
+<MainLayout seoData={seo}>
+    <div class="featured-background">
+        <div class="intro-content">
+            <div class="xl:container py-20">
+                <Fragment set:html={authorIndex.attributes?.authorPage?.content1} />
+            </div>
+        </div>
+    </div>
+    <div class="xl:container py-5">
+        <Fragment set:html={authorIndex.attributes?.authorPage?.content2} />
+    </div>
+
+    <div class="xl:container py-5 grid grid-cols-4 gap-4 group author-index">
+        {
+            authors.map(author => (
+                <AuthorCard data={author} isFlat={true} authorIndex={true} />
+            ))
+        }
+    </div>
+
+    <div class="xl:container py-5">
+        <Fragment set:html={authorIndex.attributes?.authorPage?.content3} />
+    </div>
+</MainLayout>

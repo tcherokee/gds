@@ -8,6 +8,7 @@ import qs from "qs";
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
 import type { TranslationData } from '../../../interfaces/common/types';
+import type { TAuthor } from "../../../interfaces/users";
 
 // Queries
 import { authorPageQs } from "../../../qs/author";
@@ -24,20 +25,20 @@ import MainLayout from "../../layouts/MainLayout.astro"
 
 // Components
 import AuthorCard from "../../components/general/authorCard.astro"
-import GameCard from "../../components/games/gameCard.svelte"
+import GameCard from "../../components/games/gameCard.astro"
+import BlogCard from "../../components/blogs/blogCard.astro"
+import CasinoTable from "../../components/casino/casinoTable.astro";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
   const query = qs.stringify(authorPageQs(), { encodeValuesOnly: true });
 
   // Request to the Fetch Function to get the custom page slugs from the API
-  const authorPage = await fetchApi({
+  const authorPage = await fetchApi<TAuthor[]>({
     endpoint: "users",
     wrappedByKey: "",
     query: `?${query}`,
   });
-
-  console.log(query)
 
   return authorPage.map((page) => {
     return {
@@ -64,13 +65,33 @@ const seo = {
     url: `${import.meta.env.FULL_URL}${urlTranslate[SITE_ID as keyof typeof urlTranslate]['author-page']}/${slug}`
 }
 
-console.log('page', slug, page.games)
+// Truncate and Clean Blog Object
+const truncatedBlogObj = page.blogs.map(item => {
+    if (item && item.content1) {
+        // Remove HTML tags
+        const plainText = item.content1.replace(/<[^>]*>/g, '');
+
+        // Split into words and truncate to 25 words
+        const words = plainText.split(/\s+/).slice(0, 25).join(' ');
+
+        // Update the content1 field
+        item.content1 = words;
+    }
+    else if (item && item.title) {
+        // Split the title into words and truncate to 10 words
+        const truncatedTitle = item.title.split(/\s+/).slice(0, 10).join(' ');
+
+        // Update the title field
+        item.title = truncatedTitle;
+    }
+    return item;
+});
 
 ---
 
 <MainLayout seoData={seo}>
-    <div class="blog-bg">
-        <div class="section-wrapper">
+    <div class="featured-no-curve pt-5">
+        <div class="section-wrapper glass-wrapper ">
             <div>
                 <div>
                     <AuthorCard  data={page} isFlat={true} />
@@ -78,49 +99,43 @@ console.log('page', slug, page.games)
             </div>
 
             {
-            page.games.length > 0 &&
+                page.games.length > 0 &&
                 <div class="mt-5">
                     <div class="mb-5">
-                        <h1>Ultimi giochi recensiti dall'autore</h1>
+                        <h2>Ultimi giochi recensiti dall'autore</h2>
                     </div>
                     <div class="grid md:grid-cols-6 gap-3">
                         {page?.games.map((game, i) => (
-                                <GameCard {game} />
+                                <GameCard game={game}  translations={translationStore}/>
                             )
                         )}
                     </div>
                 </div>
             }
 
-            <!-- {#if authorData?.data?.attributes?.blogs.length > 0}
+            {
+                page?.blogs.length > 0 &&
                 <div class="mt-5">
                     <div class="mb-5">
-                        <h1>Articoli recenti dell'autore</h1>
+                        <h2>Articoli recenti dell'autore</h2>
                     </div>
                     <div class="grid md:grid-cols-3 gap-3 md:gap-8">
-                        {#each authorData?.data?.attributes?.blogs as blog, index}
-                            {#if index <= 8}
-                                <div class="mb-3">
-                                    <BlogCard {blog} isFlatData />
-                                </div>
-                            {/if}
-                        {/each}
+                        <BlogCard data={truncatedBlogObj} />
                     </div>
                 </div>
-            {/if} -->
+            }
 
-            <!-- {#if authorData?.data?.attributes?.casinos.length > 0}
+            {
+                page?.casinos.length > 0 &&
                 <div class="mt-5">
-                    <h1>Casino recensiti dall'autore</h1>
+                    <h2>Casino recensiti dall'autore</h2>
                     <div class="mb-5">
-                        <CasinoTableBlock
-                            customPage={true}
-                            authorCasinos={authorData?.data?.attributes?.casinos}
-                            {block}
+                        <CasinoTable
+                            casinos={page?.casinos}
                         />
                     </div>
                 </div>
-            {/if} -->
+            }
         </div>
     </div>
 </MainLayout>

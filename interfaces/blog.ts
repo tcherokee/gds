@@ -30,3 +30,26 @@ export type BlogAttributes = {
   };
   seo: Seo;
 };
+
+export type AuthorBlogAttributes = {
+  title: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+  content1: string;
+  publishedAt: string;
+  images: {
+    id: number;
+    url: string;
+  };
+  author: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    photo: {
+      id: number;
+      url: string;
+    };
+  };
+  seo: Seo;
+};
