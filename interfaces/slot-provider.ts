@@ -1,6 +1,16 @@
-import type { Seo, Author, ImageInfo } from "./common/types";
+import type {
+  Seo,
+  Block,
+  Author,
+  CasinoBonus,
+  ImageInfo,
+  BonusSection,
+  TermsAndConditions,
+  CasinoGeneralInfo,
+  CasinoComparison,
+} from "./common/types";
 
-export type Casinoprovider = {
+export type Slotprovider = {
   id: number;
   attributes: Attributes;
 };
@@ -12,21 +22,21 @@ type Attributes = {
   content2: string;
   content3: string;
   updatedAt: string;
+  dateCreated: string;
+  showGameFilterPanel: boolean;
   IntroductionWithImage: {
     heading: string;
     id: number;
     image: ImageInfo;
     Introduction: string;
   };
-  casinoLists: {
+  relatedCasinos: {
     data: {
-      slug: string;
+      title: string;
       playthrough: string;
       ratingAvg: number;
       ratingCount: number;
-      authorRatings: number;
-      publishedAt: string;
-    };
+    }[];
   };
   seo: Seo;
   author: {
@@ -37,14 +47,4 @@ type Attributes = {
     id: number;
     question: string;
   }[];
-  casinoComparison: {
-    data: {
-      slug: string;
-      playthrough: string;
-      ratingAvg: number;
-      ratingCount: number;
-      authorRatings: number;
-      publishedAt: string;
-    }[];
-  };
 };
