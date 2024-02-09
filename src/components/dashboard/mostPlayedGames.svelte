@@ -19,6 +19,7 @@
     }
     mostPlayedGamesLoader = false;
   });
+  
 </script>
 
 <div class="">

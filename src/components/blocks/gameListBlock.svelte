@@ -2,8 +2,6 @@
   // First and Third Party Components
   import qs from "qs";
 
-  import { filterProviders } from "../../../qs/layout.ts";
-
   // Stores
   import { sortOptions } from "../../../stores/sortFilters.ts";
   import { gameVariables, games, gamesQsStore } from "../../../stores/games.ts";
@@ -40,7 +38,7 @@
   gameVariables.setKey("limit", data.numberOfGames);
   gameVariables.setKey("sort", $sortOptions[data.sortBy] || "ratingAvg:desc");
   gameVariables.setKey("providers", providerSlugs);
-  gameVariables.setKey("categories", data.gameCategories);
+  gameVariables.setKey("categories", categorySlugs);
 
   // Create QS String from the updated variables
   const query = qs.stringify(gamesQs($gameVariables), {
@@ -99,7 +97,7 @@
       {#if !$games.loading}
         {#each genericGame as game}
           <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
-            <GameCard game={game} translations={translations} />
+            <GameCard game={game} translations={$getTranslations} />
           </div>
         {/each}
       {:else}
