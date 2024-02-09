@@ -31,10 +31,11 @@ export const gamesQs = (
   sort: sort,
 });
 
-export const slotProvidersQs = (slug: string = "") => ({
+export const slotProvidersQs = () => ({
   fields: [
     "title",
     "heading",
+    "slug",
     "createdAt",
     "content1",
     "content2",
@@ -92,7 +93,8 @@ export const slotProvidersQs = (slug: string = "") => ({
       },
     },
   },
-  filters: {
-    slug: { $eq: slug },
+  pagination: {
+    page: 1,
+    pageSize: 10000,
   },
 });

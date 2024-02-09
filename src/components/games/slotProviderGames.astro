@@ -1,0 +1,29 @@
+---
+import qs from 'qs'
+import { urlTranslate } from '../../../utils/data-store.util'
+import fetchApi from '../../../lib/strapi';
+import { gamesQs } from "../../../qs/ssm-games"
+import type { Gamepage } from "../../../interfaces/game-page"
+import GameListBlock from '../../components/blocks/gameListBlock.astro';
+import Pagination from '../../components/helpers/pagination.astro';
+
+const { slug } = Astro.props
+
+const query = qs.stringify(gamesQs(slug,"views:desc",1), {encodeValuesOnly: true});
+const games = await fetchApi<Gamepage[]>({
+    endpoint: 'games',
+    wrappedByKey: 'data',
+    query: `?${query}`
+});
+
+let siteID = import.meta.env.SITE_ID
+let siteURL = import.meta.env.FULL_URL
+---
+
+<GameListBlock data={games}  />
+<!-- 
+<Pagination
+    currPage={games?.meta?.pagination?.page}
+    pageCount={games?.meta?.pagination?.pageCount}
+    path=`${urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']}/${slug}`
+/> -->
