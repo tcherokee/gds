@@ -99,7 +99,10 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         >
                                              <Fragment set:html={welcomeBonus(casino)} />
                                         </Link>
-                                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={(casino as CasinoData)?.attributes?.bonusSection?.termsConditions ?? (casino as AuthorCasinoAttributes)?.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                        <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={(casino as CasinoData)?.attributes?.bonusSection?.termsConditions ?? (casino as AuthorCasinoAttributes)?.bonusSection?.termsConditions} data-tooltip-placement="auto">
+                                            {translationStore.wageringRequirement} 
+                                            <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
+                                        </span>
                                         <div class="wrap-collabsible w-full md:hidden mt-2">
                                             <input id={`welcomeBonus${i}`} class="toggle hidden peer" type="checkbox" />
                                             <label for={`welcomeBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
@@ -132,7 +135,10 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                             >
                                                 <Fragment set:html={noDepositBonus(casino)?.bonus} />
                                             </Link>
-                                            <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                            <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="auto">
+                                                {translationStore.wageringRequirement} 
+                                                <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
+                                            </span>
                                             <div class="wrap-collabsible w-full md:hidden mt-2">
                                                 <input id={`noDepositBonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                 <label for={`noDepositBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open" tabindex="0">
@@ -163,7 +169,10 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                     text={((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) ? ((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) : translationStore.visitSite}
                                                 />
 										    }
-                                            <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={(casino as CasinoData)?.attributes?.termsAndConditions?.copy ?? (casino as AuthorCasinoAttributes)?.termsAndConditions?.copy} data-tooltip-placement="left">{translationStore.termsConditions} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                            <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={(casino as CasinoData)?.attributes?.termsAndConditions?.copy ?? (casino as AuthorCasinoAttributes)?.termsAndConditions?.copy} data-tooltip-placement="auto">
+                                                {translationStore.termsConditions} 
+                                                <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
+                                            </span>
                                             <div class="wrap-collabsible w-full md:hidden mt-2">
                                                 <input id={`bonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                 <label for={`bonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
