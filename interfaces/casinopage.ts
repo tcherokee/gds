@@ -21,6 +21,7 @@ type Attributes = {
   heading: string | null;
   updatedAt: string;
   blocks: Block[];
+  slug: string;
   seo: Seo;
   author: {
     data: Author;
