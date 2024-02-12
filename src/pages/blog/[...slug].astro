@@ -8,6 +8,7 @@ import { urlTranslate } from '../../../utils/data-store.util'
 import {blogpageQs} from "../../../qs/blog-page"
 import type { Blog, BlogList } from "../../../interfaces/blog"
 import { blogcardQs } from "../../../qs/blog-cards"
+import BlogListBlock from '../../components/blocks/blogListBlock.astro';
 import BlogCard from '../../components/blogs/blogCard.astro';
 import Images from '../../components/helpers/images.astro';
 import TimeDate from '../../components/helpers/timeDate.svelte';
@@ -53,6 +54,9 @@ let seo = {
 }
 
 ---
+<script define:vars={{blogCards}}>
+	console.log('blog', blogCards);
+</script>
 
 <MainLayout seoData={seo}>
     <div class="blog-bg relative after:content-['']">
@@ -85,7 +89,7 @@ let seo = {
                     } -->
                 </div>
                 <div class="md:w-2/6 sidebar">
-				<BlogCard data={blogCards.data} />
+				<BlogListBlock data={blogCards} singleBlogPage={true} />
 			</div>
             </div>
         </div>

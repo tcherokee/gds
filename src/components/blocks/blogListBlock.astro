@@ -4,7 +4,7 @@ import type { Blog } from "../../../interfaces/blog.ts"
 import Link from "../helpers/link.astro"
 import BlogCard from "../blogs/blogCard.astro"
 
-const { data, blogLink = '', blogText = '' } = Astro.props
+const { data, blogLink = '', blogText = '', singleBlogPage = false } = Astro.props
 
 const truncateAndCleanContent = (blogData: Blog[]): Blog[] => {
     return blogData.map(item => {
@@ -33,9 +33,12 @@ const truncatedData = truncateAndCleanContent(data as Blog[])
 
 ---
 
+<script define:vars={{data}}>
+	console.log('blog', data);
+</script>
 <div>
 	<div class="blog-container">
-		<div class="grid grid-cols-1 md:grid-cols-3">
+		<div class={singleBlogPage ? "flex flex-col" : "grid grid-cols-1 md:grid-cols-3"}>
 			<BlogCard data={truncatedData} />
 		</div>
 		{
