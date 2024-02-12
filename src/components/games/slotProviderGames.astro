@@ -1,10 +1,13 @@
 ---
 import qs from 'qs'
 import { urlTranslate } from '../../../utils/data-store.util'
+import type { TranslationData } from "../../../interfaces/common/types.ts"
+import { get } from 'svelte/store';
+import { getTranslations } from '../../../stores/addTranslations';
 import fetchApi from '../../../lib/strapi';
 import { gamesQs } from "../../../qs/ssm-games"
-import type { Gamepage } from "../../../interfaces/game-page"
-import GameListBlock from '../../components/blocks/gameListBlock.astro';
+import GameListBlock from '../../components/blocks/gameListBlock.svelte';
+// import GameListBlock from '../../components/blocks/gameListBlock.astro';
 import Pagination from '../../components/helpers/pagination.astro';
 
 const { slug } = Astro.props
@@ -17,8 +20,28 @@ const games = await fetchApi<any>({
 });
 
 let siteID = import.meta.env.SITE_ID
+
+const translationStore: TranslationData = getTranslations.get();
+
+const gameBlock = {
+    numberOfGames: 30,
+    sortBy: "Most Popular",
+    showGameFilterPanel: true,
+    showGameMoreButton: true,
+    gameCategories: [],
+    gameProviders: [{
+            slotProvider: {
+                data: {
+                    attributes: {
+                        slug: slug
+                    }
+                }
+            }
+        }]
+    
+}
 ---
-<GameListBlock data={games.data}  />
+<GameListBlock data={gameBlock} translations={translationStore} client:load />
 
 <Pagination
     currPage={games?.meta?.pagination?.page}
