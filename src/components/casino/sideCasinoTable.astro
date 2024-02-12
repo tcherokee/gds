@@ -1,19 +1,19 @@
 ---
 
-	// First and Third Party Plugins
-    import { get } from 'svelte/store';
-
 	// Stores
     import { getTranslations } from '../../../stores/addTranslations';
 
 	// Helpers
 	import Images from '../helpers/images.astro';
 
+	// Types
+	import type { TranslationData } from '../../../interfaces/common/types';
+
 
     const {casinos, title, type = 'BEST'} = Astro.props
 
 	//get translation context
-    const translationStore:any = get(getTranslations);
+    const translationStore: TranslationData = getTranslations.get();
 
 ---
 

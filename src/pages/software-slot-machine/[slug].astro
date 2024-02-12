@@ -1,14 +1,25 @@
 ---
 export const prerender = true;
-import type { GetStaticPaths } from "astro";
+
+// First and Third Party Plugins
 import qs from 'qs'
-import fetchApi from '../../../lib/strapi';
-import MainLayout from '../../layouts/MainLayout.astro';
-import { urlTranslate } from '../../../utils/data-store.util'
-import { get } from 'svelte/store';
-import { getTranslations } from '../../../stores/addTranslations';
-import { slotProvidersQs } from "../../../qs/ssm-games"
+
+// Types
+import type { GetStaticPaths } from "astro";
 import type { Slotprovider } from "../../../interfaces/slot-provider"
+
+// Stores
+import { getTranslations } from '../../../stores/addTranslations';
+
+// Queries
+import { slotProvidersQs } from "../../../qs/ssm-games"
+
+// Helpers
+import { urlTranslate } from '../../../utils/data-store.util'
+import fetchApi from '../../../lib/strapi';
+
+// Components
+import MainLayout from '../../layouts/MainLayout.astro';
 import Breadcrumb from '../../components/layout/breadcrumbs.astro'
 import IntroBlock from '../../components/general/introWithImage.astro';
 import SlotProviderGames from '../../components/games/slotProviderGames.astro';
@@ -35,10 +46,11 @@ export const getStaticPaths = (async () => {
     });
 }) satisfies GetStaticPaths;
 
+// Set Up Translation Store
+const translationStore: TranslationData = getTranslations.get()
+
 const { page } = Astro.props;
 const { slug } = Astro.params;
-
-const translationStore:any = get(getTranslations);
 
 let siteID = import.meta.env.SITE_ID
 let siteURL = import.meta.env.FULL_URL

@@ -1,10 +1,17 @@
 ---
-import MainLayout from "../../layouts/MainLayout.astro";
-import { get } from "svelte/store";
+
+// Types
+import type { TranslationData } from "../../../interfaces/common/types";
+
+// Stores
 import { getTranslations } from "../../../stores/addTranslations";
+
+// Components
+import MainLayout from "../../layouts/MainLayout.astro";
 import RegisterForm from "../../components/auth/registerForm.svelte";
 
-const translationStore: any = get(getTranslations);
+// Set Up Translation Store
+const translationStore: TranslationData = getTranslations.get()
 
 // TODO
 let seo = {
