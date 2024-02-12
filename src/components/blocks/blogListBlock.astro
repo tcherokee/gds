@@ -32,10 +32,6 @@ const truncateAndCleanContent = (blogData: Blog[]): Blog[] => {
 const truncatedData = truncateAndCleanContent(data as Blog[])
 
 ---
-
-<script define:vars={{data}}>
-	console.log('blog', data);
-</script>
 <div>
 	<div class="blog-container">
 		<div class={singleBlogPage ? "flex flex-col" : "grid grid-cols-1 md:grid-cols-3"}>

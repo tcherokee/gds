@@ -3,7 +3,14 @@ export const gamesQs = (
   sort: string = "",
   page: number = 1
 ) => ({
-  fields: ["title", "slug", "ratingAvg", "ratingCount", "publishedAt"],
+  fields: [
+    "title",
+    "slug",
+    "ratingAvg",
+    "ratingCount",
+    "publishedAt",
+    "showGameFilterPanel",
+  ],
   populate: {
     provider: {
       fields: ["title", "slug"],
@@ -14,7 +21,7 @@ export const gamesQs = (
       },
     },
     categories: {
-      fields: ["title"],
+      fields: ["title", "slug"],
     },
     images: {
       fields: ["url"],
