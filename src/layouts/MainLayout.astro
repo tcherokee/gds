@@ -3,6 +3,7 @@
 import qs from "qs";
 import { Tooltips } from 'astro-tooltips'
 import LazyLoad from "vanilla-lazyload";
+import { ViewTransitions } from 'astro:transitions' 
 
 // QS Query Strings
 import { layoutQs, menuQs } from "../../qs/layout.ts"
@@ -79,6 +80,7 @@ const { seoData } = Astro.props
 <!doctype html>
 <html lang="en">
   <head>
+    <ViewTransitions />
     <meta charset="UTF-8" />
     <meta name="description" content={seoData.metaDescription} />
     <meta name="viewport" content="width=device-width" />
