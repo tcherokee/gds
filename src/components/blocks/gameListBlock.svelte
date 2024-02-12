@@ -22,9 +22,6 @@
 
   export let data;
 
-  console.log('gameListBlock', data);
-  
-
   // Get provider slugs
   const providerSlugs = data.gameProviders.map(
     (game:any) => game.slotProvider.data.attributes.slug
