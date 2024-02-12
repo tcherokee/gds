@@ -24,13 +24,13 @@
 
   // Get provider slugs
   const providerSlugs = data.gameProviders.map(
-    (game) => game.slotProvider.data.attributes.slug
+    (game:any) => game.slotProvider.data.attributes.slug
   );
 
   // Get Category Slugs
-  const categorySlugs = data.gameCategories.map(
-    (game) => game.slotCategories.data.attributes.slug
-  );
+  const categorySlugs = data?.gameCategories.map(
+    (game:any) => game.slotCategories.data.attributes.slug
+  )
 
   export let translations: TranslationData;
 

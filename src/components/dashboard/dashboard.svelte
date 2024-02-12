@@ -123,7 +123,7 @@
         </div>
       </div>
       <div class="px-3 pt-5 pb-3 -mt-[72px]">
-        <div class="gap-2 grid-cols-2 md:grid">
+        <div class="gap-2 grid grid-cols-1 md:grid-cols-2">
           <div class="bg-white p-3 rounded-[6px] border border-blue-100">
             <div class="flex items-center gap-x-2">
               <HourGlassSvg class="w-[14px] h-5" />

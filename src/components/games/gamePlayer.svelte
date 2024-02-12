@@ -19,12 +19,10 @@
 	import Fullscreen from "~icons/kensho-icons/fullscreen"
 	import Chevrondown from "~icons/kensho-icons/chevron-down"
 	import Reload from "~icons/kensho-icons/reload"
-	import Heart from "~icons/kensho-icons/heart"
 	import Danger from "~icons/kensho-icons/exclamation"
 	import Close from "~icons/kensho-icons/xmark"
 	import Info from "~icons/kensho-icons/info-no-circle"
     
-
 
 	let fullscreen: boolean = false
 	let startGame: boolean = false

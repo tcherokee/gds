@@ -26,6 +26,7 @@
 <aside
   class="relative cursor-pointer rounded-lg aspect-[235/244] w-full transition-shadow duration-[0.3s] sm:cursor-auto"
 >
+  <a class="absolute w-full h-full md:hidden" href={gameURL}></a>
   <div class="absolute pointer-events-none h-full left-0 top-0 w-full">
     <Image
       imageUrl={game?.images?.url}
