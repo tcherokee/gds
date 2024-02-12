@@ -59,12 +59,6 @@ let schema: any = null
 
 const translationStore:any = get(getTranslations);
 
-// const gamesData = [...page?.attributes?.provider?.data?.attributes?.games?.data];
-// const limitGames = gamesData.splice(0, 6);
-
-//Cleaup Games Array
-// const gamesArray = CleanGamesForGamePage(limitGames)
-
 //generate page url
 let siteID = import.meta.env.SITE_ID
 let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${Astro.params.slug}`;
