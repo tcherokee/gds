@@ -1,8 +1,20 @@
 ---
-const { data, timeDate, authorData } = Astro.props;
 
+// Types
+import type { TranslationData } from "../../../interfaces/common/types.ts"
+
+// Stores
+import { getTranslations } from "../../../stores/addTranslations";
+
+// Set Up Translation Store
+const translationStore: TranslationData = getTranslations.get()
+
+// Helpers
 import TimeDate from "../helpers/timeDate.svelte";
 import TransformImage from "../helpers/images.astro";
+
+const { data, timeDate, authorData } = Astro.props;
+
 import HeaderAuthor from "../helpers/headerAuthor.astro"
 
 ---
@@ -21,17 +33,19 @@ import HeaderAuthor from "../helpers/headerAuthor.astro"
           <TimeDate {timeDate} />
           {authorData && <HeaderAuthor author={authorData} />}
         </div>
-        <div class="mt-4 mb-5 lg:mb-0">
+        <div class="flex flex-col-reverse mt-4 mb-5 lg:mb-0">
+          <input type="checkbox" id="ReadMore" class="hidden peer" />
+          <label
+            for="ReadMore"
+            class="absolute font-bold tracking-tight text-xs underline peer-checked:hidden underline-offset-4 right-0 bottom-0 block lg:hidden"
+          >
+            {translationStore.showMore}
+          </label>
           <span
-            class="clamped line-clamp-2 open:line-clamp-none lg:line-clamp-none"
+            class="clamped line-clamp-2 lg:line-clamp-none peer-checked:line-clamp-none peer-checked:*:-mb-4"
           >
             <Fragment set:html={data?.introduction} />
           </span>
-          <button
-            class="absolute font-bold tracking-tight text-xs underline underline-offset-4 right-0 bottom-0 block lg:hidden"
-          >
-            Read More
-          </button>
         </div>
       </div>
     </div>

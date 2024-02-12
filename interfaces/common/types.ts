@@ -1,5 +1,7 @@
 // API Responses and Fetch Function
 
+import type GameListBlock from "../../src/components/blocks/gameListBlock.svelte";
+
 export type ApiResponse<T> = {
   data: {
     id: number;
@@ -70,6 +72,45 @@ export type ProviderData = {
 export type GameProvider = {
   id: number;
   slotProvider: ProviderData;
+};
+
+export type CategoryAttributes = {
+  title?: string;
+  slug: string
+}
+
+export type Category = {
+  id: number;
+  attributes: CategoryAttributes;
+};
+
+export type CategoryData = {
+  data: {
+    id?: number;
+    attributes: CategoryAttributes;
+  };
+}
+
+export type GameCategory = {
+  id?: number;
+  slotCategories: CategoryData;
+};
+
+export type HomeGameListBlock = BlockBase & {
+  numberOfGames: number;
+  sortBy: string;
+  link: LinkAttribute;
+  providers: GameProvider[];
+  categories: GameCategory[];
+};
+
+export type CustomGameList = {
+  numberOfGames: number;
+  sortBy: string;
+  gameProviders: GameProvider[];
+  gameCategories: GameCategory[];
+  showGameFilterPanel: boolean;
+  showGameMoreButton: boolean;
 };
 
 export type AuthorBonusSection = {
@@ -211,25 +252,6 @@ export type Author = {
   };
 };
 
-export type Category = {
-  id: number;
-  attributes: {
-    title?: string;
-    slug?: string;
-  };
-};
-
-export type Provider = {
-  id: number;
-  attributes: {
-    title: string;
-    slug: string;
-    images: {
-      data: ImageData;
-    };
-  };
-};
-
 export type Link = {
   id: number;
   label: string;
@@ -247,13 +269,6 @@ export type IntroductionWithImageBlock = BlockBase & {
   introduction: string;
   heading: string;
   image: ImageInfo;
-};
-
-export type HomeGameListBlock = BlockBase & {
-  numberOfGames: number;
-  sortBy: string;
-  link: LinkAttribute;
-  providers: GameProvider[];
 };
 
 export type SingleContentBlock = BlockBase & {
@@ -345,6 +360,8 @@ export type CasinoListBlock = BlockBase & {
   casinosList: CasinoListData[];
 };
 
+export type TGameListBlock = BlockBase & CustomGameListBlock
+
 export type Block =
   | IntroductionWithImageBlock
   | CasinoComparisonBlock
@@ -356,7 +373,8 @@ export type Block =
   | FaqBlockTypes
   | HowToBlockTypes
   | ImageWithParagraphTypes
-  | ProsAndConsTypes;
+  | ProsAndConsTypes
+  | TGameListBlock;
 
 export type Casino = {
   id: number;

@@ -1,5 +1,9 @@
 import type { BreadcrumbData } from "./common/types";
-import type { Provider, ImageData, Casino } from "./common/types";
+import type {
+  TProviderAttributesOnly,
+  ImageData,
+  Casino,
+} from "./common/types";
 
 export type Layout = {
   data: {
@@ -38,7 +42,7 @@ type LayoutAttributes = {
   categoriesBreadcrumbs: BreadcrumbData[];
   casinoProvidersBreadcrumbs: BreadcrumbData[];
   filterProviders: {
-    data: Provider[];
+    data: TProviderAttributesOnly[];
   };
   most_loved_casinos: {
     data: Casino[];

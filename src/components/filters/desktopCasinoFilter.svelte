@@ -149,7 +149,10 @@
 				<div id="desktop-menu-0" class="inline-block basis-52 text-left">
 					<div>
 						<div
-							class="relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border {$casinoVariables.bonusKey ? 'bg-filter-alternate-toggle' : ''}"
+							class="
+								relative group p-2 rounded-[4px] bg-white/[.5] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border
+								{$casinoVariables.bonusKey ? 'bg-filter-alternate-toggle' : ''}
+							"
 							aria-expanded="false"
 							role="button"
 							tabindex="-1"
@@ -195,12 +198,16 @@
 				<div id="desktop-menu-0" class="inline-block basis-52 text-left">
 					<div>
 						<div
-							class="relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border {$casinoVariables.condition ? 'bg-filter-alternate-toggle' : ''}"
+							class="
+								relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border text-white/[.7] bg-white/[.5] cursor-not-allowed
+								{$casinoVariables.condition ? 'bg-filter-alternate-toggle' : ''}
+								{$casinoVariables.bonusKey ? '!text-black cursor-pointer' : ''}
+							"
 							aria-expanded="false"
 							role="button"
 							tabindex="-1"
 							{...(toggles.toggleConditions ? { open:'' } : {})}
-							on:click={() => handleToggle('toggleConditions')}
+							on:click={() => $casinoVariables.bonusKey && handleToggle('toggleConditions')}
 						>
 							<span class="uppercase text-xs pointer-events-none">
 								{$casinoVariables.condition ? getLabelByValue($conditions, $casinoVariables.condition) : translationStore.condition }
@@ -241,7 +248,11 @@
 					<div id="desktop-menu-0" class="relativ w-full inline-block text-left">
 						<div>
 							<div
-								class="relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none {$casinoVariables.amount ? 'bg-filter-alternate-toggle' : ''}"
+								class="
+									relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none text-white/[.7] bg-white/[.5] cursor-not-allowed
+									{$casinoVariables.amount ? 'bg-filter-alternate-toggle' : ''}
+									{$casinoVariables.bonusKey ? '!text-black cursor-pointer' : ''}
+								"
 								aria-expanded="false"
 								role="button"
 								tabindex="-1"
@@ -289,7 +300,11 @@
 					<div id="desktop-menu-0" class="relativ w-full inline-block text-left">
 						<div>
 							<div
-								class="relative group p-2 flex rounded-[4px] h-11 w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none {$casinoVariables.wagering ? 'bg-filter-alternate-toggle' : ''}"
+								class="
+									relative group p-2 flex rounded-[4px] h-11 w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none text-white/[.7] bg-white/[.5] cursor-not-allowed
+									{$casinoVariables.wagering ? 'bg-filter-alternate-toggle' : ''}
+									{$casinoVariables.bonusKey ? '!text-black cursor-pointer' : ''}
+								"
 								aria-expanded="false"
 								role="button"
 								tabindex="-1"

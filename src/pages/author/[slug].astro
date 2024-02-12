@@ -25,8 +25,9 @@ import MainLayout from "../../layouts/MainLayout.astro"
 
 // Components
 import AuthorCard from "../../components/general/authorCard.astro"
-import GameCard from "../../components/games/gameCard.astro"
+import GameListBlock from "../../components/blocks/gameListBlock.svelte";
 import BlogCard from "../../components/blogs/blogCard.astro"
+import BlogListBlock from "../../components/blocks/blogListBlock.svelte"
 import CasinoTable from "../../components/casino/casinoTable.astro";
 
 export const getStaticPaths = (async () => {
@@ -63,6 +64,18 @@ const seo = {
     pageTitle: `${page.firstName} ${page.firstName}`,
     metaDescription: page?.content1,
     url: `${import.meta.env.FULL_URL}${urlTranslate[SITE_ID as keyof typeof urlTranslate]['author-page']}/${slug}`
+}
+
+// Create Game Variables Object
+
+const gameBlockObj = {
+    __component: 'games.games-carousel',
+  numberOfGames: 18,
+  sortBy: 'Newest',
+  showGameFilterPanel: false,
+  showGameMoreButton: true,
+  gameProviders: [],
+  gameCategories: []
 }
 
 // Truncate and Clean Blog Object
@@ -104,12 +117,7 @@ const truncatedBlogObj = page.blogs.map(item => {
                     <div class="mb-5">
                         <h2>Ultimi giochi recensiti dall'autore</h2>
                     </div>
-                    <div class="grid md:grid-cols-6 gap-3">
-                        {page?.games.map((game, i) => (
-                                <GameCard game={game}  translations={translationStore}/>
-                            )
-                        )}
-                    </div>
+                    <GameListBlock data={gameBlockObj} author={page.slug} client:load />
                 </div>
             }
 
