@@ -177,7 +177,10 @@
                                                 >
                                                     {@html welcomeBonus(casino)}
                                                 </a>
-                                                <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.bonusSection?.termsConditions} data-tooltip-placement="left">{$getTranslations.wageringRequirement} <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                                <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.bonusSection?.termsConditions} data-tooltip-placement="auto">
+                                                    {$getTranslations.wageringRequirement} 
+                                                    <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" />
+                                                </span>
                                                 <div class="wrap-collabsible w-full md:hidden mt-2">
                                                     <input id={`welcomeBonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                     <label for={`welcomeBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
@@ -209,7 +212,10 @@
                                                     >
                                                         {@html noDepositBonus(casino)?.bonus}
                                                     </a>
-                                                    <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="left">{$getTranslations.wageringRequirement} <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                                    <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="auto">
+                                                        {$getTranslations.wageringRequirement} 
+                                                        <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" />
+                                                    </span>
                                                     <div class="wrap-collabsible w-full md:hidden mt-2">
                                                         <input id={`noDepositBonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                         <label for={`noDepositBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open" tabindex="0">
@@ -243,7 +249,10 @@
                                                             {casino?.attributes?.casinoBonus?.bonusCode ? casino?.attributes?.casinoBonus?.bonusCode : $getTranslations.visitSite}
                                                         </a>
                                                     {/if}
-                                                    <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.termsAndConditions?.copy} data-tooltip-placement="left">{$getTranslations.termsConditions} <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
+                                                    <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.termsAndConditions?.copy} data-tooltip-placement="auto">
+                                                        {$getTranslations.termsConditions} 
+                                                        <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" />
+                                                    </span>
                                                     <div class="wrap-collabsible w-full md:hidden mt-2">
                                                         <input id={`bonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                         <label for={`bonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
