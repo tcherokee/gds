@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+import type { GetStaticPaths } from "astro";
 import qs from 'qs'
 import fetchApi from '../../../lib/strapi';
 import MainLayout from '../../layouts/MainLayout.astro';
@@ -10,14 +12,26 @@ import BlogCard from '../../components/blogs/blogCard.astro';
 import Images from '../../components/helpers/images.astro';
 import TimeDate from '../../components/helpers/timeDate.svelte';
 
-const {slug} = Astro.params
-//get the single blog content
-const query = qs.stringify(blogpageQs(slug), {encodeValuesOnly: true})
-const blog = await fetchApi<Blog[]>({
-	endpoint: 'blogs',
-    wrappedByKey: 'data',
-    query: `?${query}`
-})
+export const getStaticPaths = (async () => {
+    // Import the QS Query string for custom slugs and prepare it for the API fetch
+    const query = qs.stringify(blogpageQs(), {encodeValuesOnly: true})
+    // Request to the Fetch Function to get page data from API
+    const blog = await fetchApi<Blog[]>({
+		endpoint: 'blogs',
+		wrappedByKey: 'data',
+		query: `?${query}`
+	})
+
+    return blog.map((page) => {
+        return {
+            params: {slug: page?.attributes?.slug},
+            props: { page }
+        }
+    });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props
+const { slug } = Astro.params; //get the slug from the page url
 
 // get blog cards for side menu
 const blogCardquery = qs.stringify(blogcardQs(3), {encodeValuesOnly: true})
@@ -29,12 +43,12 @@ const blogCards = await fetchApi<BlogList>({
 
 const siteID = import.meta.env.SITE_ID
 const siteURL = import.meta.env.FULL_URL
-const canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']}/${blog[0]?.attributes?.slug}`
+const canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']}/${page?.attributes?.slug}`
 
 //set page seo data
 let seo = {
-    pageTitle: blog[0]?.attributes?.seo?.metaTitle,
-    metaDescription: blog[0]?.attributes?.seo?.metaDescription,
+    pageTitle: page?.attributes?.seo?.metaTitle,
+    metaDescription: page?.attributes?.seo?.metaDescription,
     url: canonical
 }
 
@@ -46,27 +60,27 @@ let seo = {
             <div class="md:flex md:-mx-3 [&>*]:px-3">
                 <div class="md:w-4/6">
                     <h1>
-                        {blog[0]?.attributes?.title}
+                        {page?.attributes?.title}
                     </h1>
                     <span class="text-white flex items-center gap-2 mb-4">
-                        <TimeDate timeDate={blog[0]?.attributes?.createdAt} />
-                        <!-- <HeaderAuthor author={blog[0]?.attributes?.author} />  -->
+                        <TimeDate timeDate={page?.attributes?.createdAt} />
+                        <!-- <HeaderAuthor author={page?.attributes?.author} />  -->
                     </span>
 
                     <div class="mb-5">
                         <Images
-                            src={blog[0]?.attributes?.images?.data?.attributes?.url}
-                            alt={blog[0]?.attributes?.title}
+                            src={page?.attributes?.images?.data?.attributes?.url}
+                            alt={page?.attributes?.title}
                             imageWidth={820}
                             imageHeight={550}
                         />
                     </div>
                     <div class="blog-content">
-                        <Fragment set:html={blog[0]?.attributes?.content1} />
+                        <Fragment set:html={page?.attributes?.content1} />
                     </div>
-                    <!-- {blog[0]?.attributes?.author?.data &&
+                    <!-- {page?.attributes?.author?.data &&
                         <div class="mt-10 mb-10 md:mb-0">
-                            <Author author={blog[0]?.attributes?.author} />
+                            <Author author={page?.attributes?.author} />
                         </div>
                     } -->
                 </div>

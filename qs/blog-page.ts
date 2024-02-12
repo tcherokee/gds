@@ -1,4 +1,4 @@
-export const blogpageQs = (blogSlug: string | undefined) => ({
+export const blogpageQs = () => ({
   fields: ["title", "slug", "createdAt", "updatedAt", "content1"],
   populate: {
     images: {
@@ -27,9 +27,8 @@ export const blogpageQs = (blogSlug: string | undefined) => ({
       fields: ["metaTitle", "metaDescription"],
     },
   },
-  filters: {
-    slug: {
-      $eq: blogSlug,
-    },
+  pagination: {
+    page: 1,
+    pageSize: 10000,
   },
 });
