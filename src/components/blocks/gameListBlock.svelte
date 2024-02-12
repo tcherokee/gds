@@ -1,6 +1,8 @@
 <script lang="ts">
   // First and Third Party Components
   import qs from "qs";
+  import Lazyload from "vanilla-lazyload"
+  import { onMount } from "svelte";
 
   // Stores
   import { sortOptions } from "../../../stores/sortFilters.ts";
@@ -17,10 +19,11 @@
   import MediaQuery from "../helpers/mediaQuery.svelte";
 
   // Types
-  import type { Game, TUserGame } from "../../../interfaces/games.ts";
-  import type { TranslationData } from "../../../interfaces/common/types.ts";
+  import type { TUserGame } from "../../../interfaces/games.ts";
+  import type { CustomGameList } from "../../../interfaces/common/types.ts";
 
-  export let data;
+  export let data: CustomGameList;
+  export let author: string = '';
 
   // Get provider slugs
   const providerSlugs = data.gameProviders.map(
@@ -32,13 +35,12 @@
     (game:any) => game.slotCategories.data.attributes.slug
   )
 
-  export let translations: TranslationData;
-
   // Set Game Variables for API Call
   gameVariables.setKey("limit", data.numberOfGames);
   gameVariables.setKey("sort", $sortOptions[data.sortBy] || "ratingAvg:desc");
   gameVariables.setKey("providers", providerSlugs);
   gameVariables.setKey("categories", categorySlugs);
+  gameVariables.setKey('author', author);
 
   // Create QS String from the updated variables
   const query = qs.stringify(gamesQs($gameVariables), {

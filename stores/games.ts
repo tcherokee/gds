@@ -18,6 +18,7 @@ export const gameVariables = map({
   page: 1,
   providers: [],
   categories: [],
+  author: ''
 });
 
 export const gamesQsStore = atom<string | undefined>(undefined);

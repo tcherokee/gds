@@ -5,7 +5,8 @@ export const gamesQs = ({
   sort = "ratingAvg:desc",
   page = 1,
   providers = [],
-  categories = []
+  categories = [],
+  author = ''
 }: GameFilters) => {
   return {
     fields: ["title", "slug", "ratingAvg", "publishedAt"],
@@ -45,6 +46,13 @@ export const gamesQs = ({
           },
         },
       }),
-    }
+      ...(author && {
+        author: {
+          slug: {
+            $in: author,
+          },
+        },
+      }),
+    },
   };
 };

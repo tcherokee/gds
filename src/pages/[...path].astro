@@ -111,7 +111,7 @@ const seo = {
                                 return <CasinoTable initialCasinos={(page.attributes.blocks[i] as CasinoListBlock)} client:load />
                             }
                             case 'gameListBlock': {
-                                return <GameListBlock data={page.attributes.blocks[i]} translations={translationStore} client:load />
+                                return <GameListBlock data={page.attributes.blocks[i]} client:load />
                             }
                         }
                     }
