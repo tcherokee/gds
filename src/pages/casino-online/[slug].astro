@@ -1,5 +1,6 @@
 ---
 export const prerender = true;
+import type { GetStaticPaths } from "astro";
 import qs from 'qs'
 import MainLayout from '../../layouts/MainLayout.astro';
 import { urlTranslate } from '../../../utils/data-store.util'
@@ -7,7 +8,6 @@ import fetchApi from '../../../lib/strapi';
 import { get } from 'svelte/store';
 import { getTranslations } from '../../../stores/addTranslations';
 import { casinoproviderQs } from "../../../qs/casino-provider"
-import type { GetStaticPaths } from "astro";
 import type { Casinoprovider } from "../../../interfaces/casino-provider"
 import IntroBlock from "../../components/general/introWithImage.astro";
 import ProviderCasino from "../../components/casino/providerCasino.astro"
