@@ -88,7 +88,7 @@ const { seoData } = Astro.props
     <link rel="icon" type="image/svg+xml" href={favicon} />
     <meta name="generator" content={Astro.generator} />
     <title>{seoData.pageTitle}</title>
-    <Tooltips />
+    <Tooltips placement="auto"/>
   </head>
   <body>
     <main>
@@ -108,4 +108,22 @@ const { seoData } = Astro.props
       footerNavigations={processedMenus.footernavigations}
     />
   </body>
+
+  <style lang="scss">
+    :global(.tippy-box[data-theme='default']) {
+      padding: 0 !important;
+      @apply text-[10px] text-black leading-[16px] border border-secondary-tint bg-white rounded-[4px] max-w-[300px];
+      :global(p) {
+        font-size: 10px !important;
+        line-height: 1rem;
+        margin-bottom: 0 !important;
+      }
+      :global(.tippy-arrow) {
+        color: theme('colors.secondary-tint');
+      }
+    }
+    /* :global(.tippy-box[data-theme='default']) {
+      font-size: 10px: !important;
+    } */
+  </style>
 </html>
