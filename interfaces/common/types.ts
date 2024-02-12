@@ -54,9 +54,9 @@ export type BlockBase = IDAttribute & {
 };
 
 export type ProviderAttribute = {
-  title: string;
+  title?: string;
   slug?: string;
-  images: ImageInfo;
+  images?: ImageInfo;
 };
 
 export type TProviderAttributesOnly = IDAttribute & {
@@ -64,13 +64,14 @@ export type TProviderAttributesOnly = IDAttribute & {
 };
 
 export type ProviderData = {
-  data: IDAttribute & {
+  data: {
+    id?: number;
     attributes: ProviderAttribute;
   };
 };
 
 export type GameProvider = {
-  id: number;
+  id?: number;
   slotProvider: ProviderData;
 };
 
