@@ -1,14 +1,28 @@
 ---
 export const prerender = true;
+
+// First and Third Party Plugins
 import qs from 'qs'
-import MainLayout from '../../layouts/MainLayout.astro';
+
+// Types
+import type { GetStaticPaths } from "astro";
+import type { Gamepage } from "../../../interfaces/game-page"
+import type { LayoutData } from '../../../interfaces/layout';
+import type { TranslationData } from '../../../interfaces/common/types';
+
+// Helpers
 import { urlTranslate, GameInfoHeader } from '../../../utils/data-store.util'
 import fetchApi from '../../../lib/strapi';
-import { get } from 'svelte/store';
+
+// Stores
 import { getTranslations } from '../../../stores/addTranslations';
-import type { GetStaticPaths } from "astro";
+
+// Queries
 import { gamepageQs } from "../../../qs/game-page"
-import type { Gamepage } from "../../../interfaces/game-page"
+import { customPageLayoutAddOnsQs } from "../../../qs/customPages"
+
+// Components
+import MainLayout from '../../layouts/MainLayout.astro';
 import Breadcrumb from '../../components/layout/breadcrumbs.astro'
 import RelatedCasino from '../../components/games/relatedCasino.astro';
 import ProviderGames from '../../components/games/providerGames.astro';
@@ -21,8 +35,8 @@ import Faqs from '../../components/general/faqs.astro';
 import GamePlayer from '../../components/games/gamePlayer.svelte'
 import QuickLinks from '../../components/helpers/quicklinks.astro'
 
-import type { LayoutData } from '../../../interfaces/layout';
-import { customPageLayoutAddOnsQs } from "../../../qs/customPages"
+// Set Up Translation Store
+const translationStore: TranslationData = getTranslations.get()
 
 
 export const getStaticPaths = (async () => {
@@ -54,10 +68,6 @@ const layout = await fetchApi<LayoutData>({
     wrappedByKey: 'data',
     query: `?${layoutQuery}`
 })
-
-let schema: any = null
-
-const translationStore:any = get(getTranslations);
 
 //generate page url
 let siteID = import.meta.env.SITE_ID

@@ -5,12 +5,13 @@ import svelte from "@astrojs/svelte";
 import node from "@astrojs/node";
 import Icons from "unplugin-icons/vite";
 import { FileSystemIconLoader } from "unplugin-icons/loaders";
-
+import compress from "astro-compress";
 dotenv.config();
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), svelte()],
+  integrations: [tailwind(), svelte(), compress()],
+  base: process.env.PUBLIC_SITE_ID === "gds" ? "/it" : "",
   vite: {
     plugins: [
       Icons({
