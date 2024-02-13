@@ -11,7 +11,7 @@ import fetchApi from '../../../lib/strapi';
 import type { LayoutData } from '../../../interfaces/layout';
 import { layoutQs } from '../../../qs/layout';
 
-const {breadcrumb} = Astro.props
+const {breadcrumbs = [], breadcrumbKey} = Astro.props
 
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -24,24 +24,26 @@ const layout = await fetchApi<LayoutData>({
     query: `?${query}`
 })
 
-const {attributes: {casinoProvidersBreadcrumbs}} = layout
+// const {attributes: {casinoProvidersBreadcrumbs}} = layout;
 
-let breadcrumbs = [
-	...casinoProvidersBreadcrumbs,
-	breadcrumb
+let pageBreadcrumbs = [
+	...breadcrumbs
 ]
+if (breadcrumbKey && layout.attributes[breadcrumbKey]) {
+    pageBreadcrumbs.unshift(...layout.attributes[breadcrumbKey])
+}
 
 ---
 <div class="custom-breadcrumbs bg-breadcrumb-bkg">
 	<div class="xl:container py-2 px-2">
 		<div class="text-xs leading-[12px] text-breadcrumb-text uppercase">
 
-            { breadcrumbs && 
-                	breadcrumbs.map((breadcrumb:any, i:number) => (
+            { pageBreadcrumbs.length && 
+                	pageBreadcrumbs.map((breadcrumb:any, i:number) => (
                        breadcrumb.breadCrumbUrl !== null ? 
                        <Link href={breadcrumb.breadCrumbUrl}>{breadcrumb.breadCrumbText}</Link> 
                        <span class="my-0 mr-[5px] ml-[2px] text-breadcrumb-separator">
-                            {breadcrumbs.length > i + 1 ? '/' : ''}
+                            {pageBreadcrumbs.length > i + 1 ? '/' : ''}
                         </span>
                        : 
                        <span>{breadcrumb.breadCrumbText}</span>

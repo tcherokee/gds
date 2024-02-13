@@ -4,8 +4,7 @@
     // import BlogCard from "../blogs/blogCard.astro"
 
     export let data
-
-    console.log('data', data)
+	
 </script>
 
 <div>
