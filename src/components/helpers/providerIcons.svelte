@@ -41,7 +41,7 @@
 	}
 </script>
 
-<div class="provider-container">
+<div class="flex flex-wrap">
 	{#each items as provider}
 		<Images
 			imageUrl={isFlatData
@@ -84,9 +84,6 @@
 </div>
 
 <style lang="scss">
-	.provider-container {
-		display: flex;
-		flex-wrap: wrap;
 
 		:global(.provider-images) {
 			border-radius: 4px;
@@ -107,7 +104,7 @@
 			align-items: center;
 			margin: 3px;
 		}
-	}
+	
 
 	:global(.tooltip) {
 		:global(img) {
