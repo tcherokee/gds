@@ -29,6 +29,7 @@ import CasinoSidebar from '../../components/casino/casinoSidebar.astro';
 // Helpers
 import fetchApi from "../../../lib/strapi"
 import { urlTranslate } from '../../../utils/data-store.util';
+import Breadcrumbs from '../../components/layout/breadcrumbs.astro';
 
 export const getStaticPaths = (async () => {
 
@@ -95,6 +96,7 @@ const seo = {
 ---
 
 <MainLayout seoData={seo}>
+    <Breadcrumbs breadcrumbs={[{breadCrumbText: page?.attributes?.title, breadCrumbUrl: null}]} breadcrumbKey="categoriesBreadcrumbs"/>
     <div class="featured-background">
         <IntroWithImage
             data={introBlock}

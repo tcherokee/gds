@@ -73,9 +73,6 @@ const layout = await fetchApi<LayoutData>({
 let siteID = import.meta.env.SITE_ID
 let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${Astro.params.slug}`;
 
-//set page breadcrumb
-let breadcumb = { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null };
-
 //set page seo data
 let seo = {
     pageTitle: page?.attributes?.seo?.metaTitle,
@@ -85,11 +82,11 @@ let seo = {
 
 //list componets on page
 const __blocks = page?.attributes?.blocks
-
+console.log([{ breadCrumbText: page?.attributes?.title, breadCrumbUrl: null }]);
 ---
 
 <MainLayout seoData={seo}>
-     <Breadcrumb breadcrumb={breadcumb} />
+     <Breadcrumb breadcrumbs={[{ breadCrumbText: page?.attributes?.title, breadCrumbUrl: null }]} breadcrumbKey="gamesBreadcrumbs" />
 
      <div class="curve rounded-b-3xl pb-3">
         <div class="section-wrapper relative">
