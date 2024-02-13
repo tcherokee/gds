@@ -50,13 +50,13 @@
       </label>
     </div>
 
-    <a href="/authentication/login" class="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t">
+    <Link href="/authentication/login" classes="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t">
       {#if $user}
         <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
       {:else}
         <UserSignedOut height="32px" width="32px" class="fill-sign-in" />
       {/if}
-    </a>
+    </Link>
 
     <div
       class="invisible relative z-40 delay-500 open:delay-[0ms] open:visible"
