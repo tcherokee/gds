@@ -6,6 +6,9 @@
   import Image from "../helpers/images.svelte";
   import AddToFav from "../helpers/addToFavs.svelte";
   import { urlTranslate } from "../../../utils/data-store.util";
+  import Link from "../helpers/link.svelte";
+
+  // Types
   import type { Game, TUserGame } from "../../../interfaces/games";
 
   export let game: TUserGame;
@@ -26,7 +29,7 @@
 <aside
   class="relative cursor-pointer rounded-lg aspect-[235/244] w-full transition-shadow duration-[0.3s] sm:cursor-auto"
 >
-  <a class="absolute w-full h-full md:hidden" href={gameURL}></a>
+  <Link classes="absolute w-full h-full md:hidden" href={gameURL}></Link>
   <div class="absolute pointer-events-none h-full left-0 top-0 w-full">
     <Image
       imageUrl={game?.images?.url}
@@ -62,8 +65,8 @@
         class="btn btn-secondary uppercase text-white w-[130px] mb-3"
         >{translations.playFunBtn}</a
       >
-      <a href={provideURL} class="btn btn-misc uppercase text-white w-[130px]"
-        >{translations.playRealBtn}</a
+      <Link href={provideURL} classes="btn btn-misc uppercase text-white w-[130px]"
+        >{translations.playRealBtn}</Link
       >
     </div>
     <div
@@ -73,16 +76,16 @@
         class="flex justify-between items-center mb-[2px] transition-transform duration-[0.3s] translate-y-[20px] sm:group-hover:translate-y-0"
       >
         <h4 class="text-white text-sm font-bold !m-0">
-          <a href="/{game?.slug}">{game?.title}</a>
+          <Link href="/{game?.slug}">{game?.title}</Link>
         </h4>
         <AddToFav game={game} classes="w-4 h-[14px]" />
       </div>
       <div
         class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100"
       >
-        <a href="/{game?.slug}" class="text-[#CED4DA] text-xs">
+        <Link href="/{game?.slug}" classes="text-[#CED4DA] text-xs">
           {game?.provider?.title}&nbsp;•&nbsp;
-        </a>
+        </Link>
         <div class="w-[10px] h-[10px]">
           <StarIcon />
         </div>

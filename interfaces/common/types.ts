@@ -518,3 +518,15 @@ export type ProsConsBlock = {
 export type Toggles = {
   [key: string]: boolean;
 };
+
+export type TRedirects = {
+  id: number;
+  attributes: {
+    redirectUrl: string;
+    redirectTarget: string;
+    redirectMethod: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+  };
+};

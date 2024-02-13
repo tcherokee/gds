@@ -1,5 +1,7 @@
 ---
 
+	// First and Third Party Plugins
+	import { Link } from "astro-link"
     import type { TranslationData, CasinoBlock } from "../../../interfaces/common/types.ts"
     import { getTranslations } from "../../../stores/addTranslations.ts"
     import CasinoTable from "../casino/casinoTable.astro";
@@ -40,9 +42,9 @@
 				<CasinoTable casinos={casinos} />
 				{isHomepage &&
 					<div class="flex justify-center mt-[25px]">
-						<a href={block?.link.url} class="btn btn-secondary casino-table-btn p-2.5">
+						<Link href={block?.link.url} class="btn btn-secondary casino-table-btn p-2.5">
                             {block?.link.label}
-                        </a>
+                        </Link>
 					</div>
 				}
 			</div>

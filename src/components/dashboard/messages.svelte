@@ -4,6 +4,8 @@
   import { messages, readMessages } from "../../../stores/authStore";
   import Loader from "../helpers/loader.svelte";
   import type { TranslationData } from "../../../interfaces/common/types";
+  import Link from "../helpers/link.svelte";
+
   let selectedMessage: TUserMessage | null;
   let deleteMessageLoader: { [key: string]: boolean } = {};
 
@@ -184,9 +186,9 @@
         <div class="py-12 px-8">
           <div class="text-center text-base text-white">
             {translations.emptyUserMessages}
-            <a class="text-misc underline" href="/contact-us">
+            <Link classes="text-misc underline" href="/contact-us">
               {translations.contactUsHere}
-            </a>
+            </Link>
           </div>
         </div>
       {/if}
