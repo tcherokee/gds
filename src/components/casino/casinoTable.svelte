@@ -20,6 +20,7 @@
     import ReadOnlyRatings from '../helpers/readOnlyRatings.svelte'
     import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
     import MediaQuery from "../helpers/mediaQuery.svelte"
+    import Link from '../helpers/link.svelte'
 
     // Images
     import ArrowRight from "~icons/kensho-icons/arrow-right"
@@ -135,14 +136,14 @@
                                                 <span class="w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold {badgesOptions[i]}">#{i + 1}</span>
                                             {/if}
                                                 
-                                                <a
+                                                <Link
                                                     href={casino?.attributes?.casinoBonus?.bonusUrl}
-                                                    class="block rounded border border-[transparent] {i <= 2 && badgesOptions[i]}"
+                                                    classes="block rounded border border-[transparent] {i <= 2 && badgesOptions[i]}"
                                                     type="external"
                                                     rel="sponsored"
                                                 >
                                                     <Image imageUrl={casino?.attributes?.images?.data?.attributes.url} imageClass="w-full rounded" imageAlt={casino?.attributes?.title} imageWidth={230} imageHeight={100} />
-                                                </a>
+                                            </Link>
                                             </div>
                                         </td>
                                         <td class="text-center w-1/2 md:w-auto">
@@ -151,13 +152,13 @@
                                                     <ReadOnlyRatings avgRating={casino?.attributes?.ratingAvg} ratingCount={casino?.attributes?.ratingCount} showVotes={true} />
                                                 </div>
                                                 <div class="flex items-center">
-                                                    <a
-                                                        class="casino-name text-[14px] text-grey-500 mr-[11px]"
+                                                    <Link
+                                                        classes="casino-name text-[14px] text-grey-500 mr-[11px]"
                                                         href={`/casino/recensione/${casino?.attributes?.slug}`}
                                                     >
                                                         <span class="hidden sm:inline-flex sm:pr-1">{casino?.attributes?.title}</span>
                                                         <span class="underline">{$getTranslations.review}</span>
-                                                    </a>
+                                                    </Link>
                                                     <ArrowRight class="w-[14px]" />
                                                 </div>
                                             </div>
@@ -169,14 +170,14 @@
                                                 >
                                                     {$getTranslations.casinoTableHeadingBonus}
                                                 </div>
-                                                <a
+                                                <Link
                                                     href={casino?.attributes?.casinoBonus?.bonusUrl}
-                                                    class="flex underline text-center"
+                                                    classes="flex underline text-center"
                                                     type="external"
                                                     rel="sponsored"
                                                 >
                                                     {@html welcomeBonus(casino)}
-                                                </a>
+                                              </Link>
                                                 <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.bonusSection?.termsConditions} data-tooltip-placement="auto">
                                                     {$getTranslations.wageringRequirement} 
                                                     <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" />
@@ -204,14 +205,14 @@
                                                     {$getTranslations.withoutDeposit}
                                                 </div>
                                                 {#if noDepositBonus(casino)?.bonus}
-                                                    <a
+                                                    <Link
                                                         href={casino?.attributes?.casinoBonus?.bonusUrl}
-                                                        class="flex underline text-center"
+                                                        classes="flex underline text-center"
                                                         type="external"
                                                         rel="sponsored"
                                                     >
                                                         {@html noDepositBonus(casino)?.bonus}
-                                                    </a>
+                                                    </Link>
                                                     <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="auto">
                                                         {$getTranslations.wageringRequirement} 
                                                         <CircleInfo width="12px" height="12px" class="fill-text-grey-500 ml-1" />
@@ -240,14 +241,14 @@
                                                         <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{$getTranslations.bonusCode}</div>
                                                     {/if}
                                                     {#if casino?.attributes?.casinoBonus?.bonusUrl}
-                                                        <a
+                                                        <Link
                                                             href={casino?.attributes?.casinoBonus?.bonusUrl}
-                                                            class="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
+                                                            classes="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
                                                             type="external"
                                                             rel="sponsored"
                                                         >
                                                             {casino?.attributes?.casinoBonus?.bonusCode ? casino?.attributes?.casinoBonus?.bonusCode : $getTranslations.visitSite}
-                                                        </a>
+                                                        </Link>
                                                     {/if}
                                                     <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={casino?.attributes?.termsAndConditions?.copy} data-tooltip-placement="auto">
                                                         {$getTranslations.termsConditions} 
