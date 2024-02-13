@@ -13,7 +13,6 @@ const CACHE_DURATION: number = 7 * 24 * 60 * 60 * 1000; // Cache Redirects for 7
 
 // `context` and `next` are automatically typed
 export const onRequest = defineMiddleware(async (context, next) => {
-    console.log('here')
     try {
       // Redirection
       if (!cachedRedirects || Date.now() - cacheTimestamp > CACHE_DURATION) {
@@ -26,21 +25,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
           cachedRedirects = redirects
         cacheTimestamp = Date.now();
       }
-        
-        console.log('there', cachedRedirects)
 
       // Loop through each item in the data array
         for (const item of cachedRedirects ?? []) {
-          console.log("anywhere");
           //Destructure Attributes
           const { redirectUrl, redirectTarget, redirectMethod } =
             item.attributes;
-
-          console.log(
-            redirectUrl,
-            context.url.pathname,
-            context.url.pathname === redirectUrl
-          );
 
           // Remove trailing slash from pathname if it exists
           const pathname = context.url.pathname.replace(/\/$/, "");

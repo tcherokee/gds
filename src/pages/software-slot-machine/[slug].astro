@@ -64,9 +64,7 @@ const seo = {
 }
 
 ---
-<script define:vars={{page}}>
-    console.log(page)
-</script>
+
 <MainLayout seoData={seo}>
 
     <Breadcrumb breadcrumbs={[{ breadCrumbText: page?.attributes?.title, breadCrumbUrl: null }]} breadcrumbKey="providersBreadcrumbs" />

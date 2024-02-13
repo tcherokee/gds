@@ -11,7 +11,7 @@ import fetchApi from '../../../lib/strapi';
 import type { LayoutData } from '../../../interfaces/layout';
 import { layoutQs } from '../../../qs/layout';
 
-const {breadcrumbs, breadcrumbKey} = Astro.props
+const {breadcrumbs = [], breadcrumbKey} = Astro.props
 
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
