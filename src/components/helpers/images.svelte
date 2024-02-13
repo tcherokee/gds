@@ -50,6 +50,6 @@
   src={lowres || transformed}
   alt={imageAlt}
   width={imageWidth || resizedWidth}
-  class="{imageResponsive ? 'img-fluid lazy' : ''}{imageClass} lazy"
+  class="{imageResponsive ? 'img-fluid lazy ' : ''}{imageClass} lazy"
   height={imageHeight || resizedHeight}
 />
