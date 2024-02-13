@@ -9,6 +9,7 @@ import type {
   CasinoGeneralInfo,
   CasinoComparison,
   ProsConsBlock,
+  BreadcrumbData,
 } from "./common/types";
 
 export type Casinopage = {

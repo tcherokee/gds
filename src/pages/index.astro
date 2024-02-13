@@ -24,6 +24,7 @@ import { blogsQs } from "../../qs/blogs.ts"
 
 // Components
 import MainLayout from '../layouts/MainLayout.astro';
+import Breadcrumbs from '../components/layout/breadcrumbs.astro';
 
 const sortStore = sortOptions.get()
 
@@ -97,6 +98,7 @@ let seo = {
 ---
 
 <MainLayout seoData={seo}>
+	<Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 	<div class="featured-background">
 		{
 			Components.map((Component, i) => (

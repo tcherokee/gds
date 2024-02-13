@@ -1,18 +1,19 @@
 ---
 
-import qs from 'qs'
+import qs from 'qs';
 
 // Helpers
 import fetchApi from '../../../lib/strapi';
+import { urlTranslate } from '../../../utils/data-store.util';
 import Images from "../helpers/images.astro";
 
 // QS Query String
-import { customPageLayoutAddOnsQs } from "../../../qs/customPages"
+import { customPageLayoutAddOnsQs } from "../../../qs/customPages";
 
 // Types
+import type { CasinoData, TranslationData } from "../../../interfaces/common/types.ts";
 import type { LayoutData } from '../../../interfaces/layout';
-import type { TranslationData, BonusSection } from "../../../interfaces/common/types.ts"
-import { getTranslations } from "../../../stores/addTranslations.ts"
+import { getTranslations } from "../../../stores/addTranslations.ts";
 
 const translationStore: TranslationData = getTranslations.get()
 
@@ -34,6 +35,7 @@ const casinoArray = [
     {casino: no_deposit_casinos, title: translationStore.bestNoDepositBonus, bonus: 'noDepositSection'}, 
     {casino: free_spin_casinos, title: translationStore.bestFreeSpins, bonus: 'freeSpinsSection'}
 ]
+const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 ---
 
 <div class="sticky top-2">
@@ -65,7 +67,11 @@ const casinoArray = [
                                                     <div>{casino?.attributes?.[casinoObj.bonus]?.bonusAmount}{casinoObj.bonus !== 'freeSpinsSectio' ? '€' : ''}</div>
                                                 </div>
                                             </div>
-                                            <button class="btn btn-misc uppercase text-white !text-[14px] px-[22.5px] w-fit h-[37px]">{translationStore.review}</button>
+                                            <a
+                                                class="btn btn-misc uppercase text-white !text-[14px] px-[22.5px] w-fit h-[37px]"
+                                                href={urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+casino.attributes?.slug}>
+                                                {translationStore.review}
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
