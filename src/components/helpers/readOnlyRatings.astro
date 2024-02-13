@@ -3,13 +3,13 @@
 import type { TranslationData } from "../../../interfaces/common/types.ts"
 import { getTranslations } from "../../../stores/addTranslations.ts"
 
-const { avgRating, showVotes, ratingClasses} = Astro.props
+const { avgRating, showVotes, ratingClasses = 'flex-col', ratingCount} = Astro.props
 
 const translationStore: TranslationData = getTranslations.get()
 ---
 
 <div class="container flex  w-auto p-0 m-0">
-	<div class={"ratings inline-flex "+ratingClasses+" relative p-0 m-0"}>
+	<div class={"ratings inline-flex "+ratingClasses+" flex-col relative p-0 m-0"}>
 		<div class="stars h-6">
 			<svg viewBox="0 0 1000 200" class="rating inline-flex h-full">
 				<defs>
@@ -41,7 +41,7 @@ const translationStore: TranslationData = getTranslations.get()
 		{
 			(ratingClasses === 'flex-col') ? 
 			<span class="flex items-center justify-center text-center rating-text text-[14px] mt-2">
-				<span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {translationStore.from} 5 {translationStore.votes}
+				<span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {translationStore.from} {ratingCount} {translationStore.votes}
 			</span>
 			:
 			<span class="flex items-center justify-center text-center rating-text text-[14px] ml-1">

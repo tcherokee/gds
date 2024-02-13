@@ -63,14 +63,13 @@ const seo = {
     url: canonical
 }
 
-const breadcumb = { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null };
 ---
 <script define:vars={{page}}>
     console.log(page)
 </script>
 <MainLayout seoData={seo}>
 
-    <Breadcrumb breadcrumb={breadcumb} />
+    <Breadcrumb breadcrumbs={[{ breadCrumbText: page?.attributes?.title, breadCrumbUrl: null }]} breadcrumbKey="providersBreadcrumbs" />
     <div class="featured-background pb-5">
         <IntroBlock
             data={page?.attributes?.IntroductionWithImage}

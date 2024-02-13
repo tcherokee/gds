@@ -61,7 +61,7 @@ let siteID = import.meta.env.SITE_ID
 let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']}/${slug}`;
 
 //set page breadcrumb
-let breadcumb = { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null };
+let breadcumb = [{ breadCrumbText: page?.attributes?.title, breadCrumbUrl: null }];
 
 //set page seo data
 let seo = {
@@ -74,7 +74,7 @@ let seo = {
 
 <MainLayout seoData={seo}>
 
-    <Breadcrumb breadcrumb={breadcumb} />
+    <Breadcrumb breadcrumb={breadcumb} breadcrumbKey="casinoProvidersBreadcrumbs" />
 
     <div class="featured-background">
 
