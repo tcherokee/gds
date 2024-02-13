@@ -530,3 +530,8 @@ export type TRedirects = {
     publishedAt: string;
   };
 };
+
+export type TBreadcrumbs = {
+  breadcrumbs: string;
+  breadcrumbKey: string;
+};
