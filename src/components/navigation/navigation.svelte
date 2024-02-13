@@ -1,7 +1,10 @@
 <script lang="ts">
+
+  // Helpers
   import MediaQuery from "../helpers/mediaQuery.svelte";
   import Search from "../helpers/search.svelte";
   import Favourite from "../helpers/favourite.svelte";
+  import Link from "../helpers/link.svelte";
 
   // Images
   import Xmark from "~icons/kensho-icons/xmark";
@@ -123,21 +126,21 @@
                               id="sub-menu-{nav?.id}"
                             >
                               {#each nav?.attributes?.children?.data as child}
-                                <a
+                                <Link
                                   href={child?.attributes?.url}
-                                  class="flex w-full items-center rounded-md py-2 pl-8 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
+                                  classes="flex w-full items-center rounded-md py-2 pl-8 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
                                 >
                                   {child?.attributes?.title}
-                                </a>
+                                </Link>
                               {/each}
                             </div>
                           </div>
                         {:else}
-                          <a
+                          <Link
                             href={nav?.attributes?.url}
-                            class="flex w-full items-center rounded-md py-2 pl-2 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
+                            classes="flex w-full items-center rounded-md py-2 pl-2 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
                             >{nav?.attributes?.title}
-                          </a>
+                        </Link>
                         {/if}
                       {/each}
                     </nav>
@@ -170,12 +173,12 @@
               />
             </button>
           {:else}
-            <a
+            <Link
               href={nav?.attributes?.url}
-              class="group flex w-full items-center uppercase rounded-md p-3 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
+              classes="group flex w-full items-center uppercase rounded-md p-3 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
             >
               {nav?.attributes?.title}
-            </a>
+          </Link>
           {/if}
 
           {#if nav?.attributes?.children?.data?.length > 0}
@@ -185,12 +188,12 @@
             >
               <div class="relative grid gap-4 bg-nav-hover-bkg px-4 py-4">
                 {#each nav?.attributes?.children?.data as child}
-                  <a
+                  <Link
                     href={child?.attributes?.url}
-                    class="-m-3 uppercase block rounded-md p-3 transition duration-150 ease-in-out hover:bg-gray-50 text-navbar-text"
+                    classes="-m-3 uppercase block rounded-md p-3 transition duration-150 ease-in-out hover:bg-gray-50 text-navbar-text"
                   >
                     {child?.attributes?.title}
-                  </a>
+                  </Link>
                 {/each}
               </div>
             </div>
@@ -201,13 +204,13 @@
 
     <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
       <Favourite />
-      <a href="/authentication/login" class="pt-2 mt-1 px-2 pb-3 rounded-t">
+      <Link href="/authentication/login" classes="pt-2 mt-1 px-2 pb-3 rounded-t">
         {#if !toggle}
           <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
         {:else}
           <UserSignedOut height="32px" width="32px" class="fill-sign-in" />
         {/if}
-      </a>
+      </Link>
       <Search />
     </div>
   {/if}

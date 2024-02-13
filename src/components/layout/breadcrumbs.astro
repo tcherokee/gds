@@ -1,5 +1,8 @@
 ---
+
+// First and Third Party Plugins
 import qs from 'qs'
+import { Link } from "astro-link"
 
 // Helpers
 import fetchApi from '../../../lib/strapi';
@@ -36,7 +39,7 @@ let breadcrumbs = [
             { breadcrumbs && 
                 	breadcrumbs.map((breadcrumb:any, i:number) => (
                        breadcrumb.breadCrumbUrl !== null ? 
-                       <a href={breadcrumb.breadCrumbUrl}>{breadcrumb.breadCrumbText}</a> 
+                       <Link href={breadcrumb.breadCrumbUrl}>{breadcrumb.breadCrumbText}</Link> 
                        <span class="my-0 mr-[5px] ml-[2px] text-breadcrumb-separator">
                             {breadcrumbs.length > i + 1 ? '/' : ''}
                         </span>

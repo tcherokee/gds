@@ -1,4 +1,6 @@
 ---
+// First and Third Party Plugins
+import { Link } from 'astro-link'
 
 // Types and TypeGuards
 import type { Block, TranslationData, quicklinksObj } from "../../../interfaces/common/types.ts"
@@ -150,7 +152,7 @@ const quickLinks = block ? extractH2TextBlock(block) : extractH2Text(data.attrib
                 {
                     quickLinks.map((link: quicklinksObj) => (
                         <li class="py-0.5 px-0 m-0">
-                            <a class="underline underline-offset-4" href={`#${link.id}`}>{link.text}</a>
+                            <Link class="underline underline-offset-4" href={`#${link.id}`}>{link.text}</Link>
                         </li>
                     ))
                 }

@@ -1,5 +1,12 @@
 ---
+
+// First & Third Party Plugins
+import { Link } from 'astro-link'
+
+// Helpers
 import { Image } from "astro:assets";
+
+// Components
 import Navigation from "../navigation/navigation.svelte";
 
 const { mainNavigation, logo } = Astro.props;
@@ -13,10 +20,10 @@ const { mainNavigation, logo } = Astro.props;
   <div
     class="absolute left-1/2 -translate-x-2/4 lg:translate-x-0 lg:relative lg:left-auto flex lg:flex-1"
   >
-    <a href="/" href="home">
+    <Link href="/">
       <span class="sr-only">Giochi Di Slots</span>
       <Image src={logo} height="50" width="120" alt="logo" />
-    </a>
+    </Link>
   </div>
   <Navigation mainNavigation={mainNavigation} client:load />
 </nav>
