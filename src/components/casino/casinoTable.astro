@@ -53,13 +53,13 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore.newCasino}</span>
                                         :<></>
                                     }
-                                    <div class="h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative">
+                                    <div class:list={["h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative", i === 0 ? 'casino-logo__first' : i === 1 ? 'casino-logo__second' : i === 2 ? 'casino-logo__third' : '']}>
                                         
-                                    {i <= 2 && <span class:list={["w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b", badgesOptions[i]]}>#{i + 1}</span>}
+                                    {i <= 2 && <span class:list={["casino-logo__tag w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b"]}>#{i + 1}</span>}
                                         
                                         <Link
                                             href={(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}
-                                            classes={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgesOptions[i]}`}
+                                            classes={`block rounded border`}
                                             type="external"
                                             rel="sponsored"
                                         >
@@ -209,6 +209,38 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
             tr {
                 td {
                     @apply rounded-none md:rounded-lg p-0 h-auto md:h-[120px] md:max-w-[256px] xl:min-w-[170px] first:bg-grey-100 last:bg-grey-100;
+                    &.casino-logo {
+                        :global(a) {
+                            @apply border border-[transparent];
+                        }
+                        .casino-logo__first {
+							:global(a) {
+								background: linear-gradient(to bottom, #ffd976, #ffbb38);
+							}
+							.casino-logo__tag {
+								background: linear-gradient(to bottom, #ffd976, #ffbb38);
+								box-shadow: 0px 0px 4px #ffbd3b, 0px 1px 6px rgba(16, 24, 40, 0.1);
+							}
+						}
+                        .casino-logo__second {
+							:global(a) {
+								background: linear-gradient(to bottom, #dbe5ef, #b1bbc6);
+							}
+							.casino-logo__tag {
+								background: linear-gradient(to bottom, #dbe5ef, #b1bbc6);
+								box-shadow: 0px 0px 4px #d7e1eb, 0px 1px 6px rgba(16, 24, 40, 0.1);
+							}
+						}
+						.casino-logo__third {
+							:global(a) {
+								background: linear-gradient(to bottom, #de7d45, #9b4e22);
+							}
+							.casino-logo__tag {
+								background: linear-gradient(to bottom, #de7d45, #9b4e22);
+								box-shadow: 0px 0px 4px #d77842, 0px 1px 6px rgba(16, 24, 40, 0.1);
+							}
+						}
+                    }
                 }
             }
         }

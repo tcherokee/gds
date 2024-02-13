@@ -1,5 +1,3 @@
-import { getContext } from 'svelte'
-import { get } from 'svelte/store'
 export class Utilities {
 	static groupArrayElements(array = [], totalElementsPerGroup) {
 		let groups = []

@@ -1,10 +1,17 @@
 ---
-import DashboardLayout from "../../layouts/DashboardLayout.astro";
-import MesssagesPage from "../../components/dashboard/messages.svelte";
-import { get } from "svelte/store";
+
+// Types
+import type { TranslationData } from "../../../interfaces/common/types";
+
+// Stores
 import { getTranslations } from "../../../stores/addTranslations";
 
-const translationStore: any = get(getTranslations);
+// Components
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import MesssagesPage from "../../components/dashboard/messages.svelte";
+
+// Set Up Translation Store
+const translationStore: TranslationData = getTranslations.get()
 ---
 
 <DashboardLayout>

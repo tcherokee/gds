@@ -28,6 +28,7 @@ import GameListBlock from '../components/blocks/gameListBlock.svelte';
 import MainLayout from '../layouts/MainLayout.astro';
 import CasinoSidebar from '../components/casino/casinoSidebar.astro';
 import AuthorCard from '../components/general/authorCard.astro';
+import Breadcrumbs from '../components/layout/breadcrumbs.astro';
 
 const translationStore: TranslationData = getTranslations.get();
 
@@ -96,6 +97,7 @@ const seo = {
 
 ---
 <MainLayout seoData={seo}>
+    <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
 	<div class="featured-background">
 		{
 			Components.map((Component, i) => {

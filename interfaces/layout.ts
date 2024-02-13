@@ -22,6 +22,7 @@ export type FooterImage = {
 };
 
 type LayoutAttributes = {
+  [key: string | symbol]: any;
   legalText: string;
   footerContent: string;
   gameInfoText: string;
