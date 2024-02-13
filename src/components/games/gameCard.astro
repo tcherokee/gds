@@ -3,6 +3,7 @@
 // First or Third Party Plugins
 import Icon from "astro-icon"
 import dayjs from 'dayjs'
+import { Link } from 'astro-link'
 
 // Import Types
 import type { TranslationData } from "../../../interfaces/common/types.ts"
@@ -10,7 +11,6 @@ import type { TranslationData } from "../../../interfaces/common/types.ts"
 // Helpers
 import { getTranslations } from "../../../stores/addTranslations.ts"
 import Image from "../helpers/images.astro"
-import Link from "../helpers/link.astro"
 import AddToFav from "../helpers/addToFavs.svelte"
 import { urlTranslate } from "../../../utils/data-store.util"
 
@@ -24,7 +24,7 @@ let provideURL = urlTranslate[siteID as keyof typeof urlTranslate]['casino-provi
 ---
 
 <aside class="relative cursor-pointer rounded-lg aspect-[235/244] w-full transition-shadow duration-[0.3s] sm:cursor-auto">
-	<a class="absolute w-full h-full md:hidden" href={gameURL}></a>
+	<Link class="absolute w-full h-full md:hidden" href={gameURL}></Link>
 	<div class="absolute pointer-events-none h-full left-0 top-0 w-full">
 		<Image
 			src={game?.attributes?.images?.data?.attributes?.url ?? game?.images?.url}
@@ -46,8 +46,8 @@ let provideURL = urlTranslate[siteID as keyof typeof urlTranslate]['casino-provi
 				: ''}
 		</div>
 		<div class="transition-all duration-[0.3s] scale-75 flex flex-col items-center opacity-0 absolute top-[50%] left-[50%] -translate-y-1/2 -translate-x-1/2 sm:group-hover:scale-100 sm:group-hover:opacity-100">
-			<a href={gameURL} class="btn btn-secondary uppercase text-white w-[130px] mb-3">{translationStore.playFunBtn}</a>
-			<a href={provideURL} class="btn btn-misc uppercase text-white w-[130px]">{translationStore.playRealBtn}</a>
+			<Link href={gameURL} class="btn btn-secondary uppercase text-white w-[130px] mb-3">{translationStore.playFunBtn}</Link>
+			<Link href={provideURL} class="btn btn-misc uppercase text-white w-[130px]">{translationStore.playRealBtn}</Link>
 		</div>
 		<div class="game-title-container p-2 rounded-b-lg bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]">
 			<div
@@ -58,10 +58,10 @@ let provideURL = urlTranslate[siteID as keyof typeof urlTranslate]['casino-provi
 				<AddToFav game={game} classes="w-4 h-[14px]" client:visible />
 			</div>
 			<div class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100">
-				<a href="/{game?.attributes?.slug}"
+				<Link href="/{game?.attributes?.slug}"
 					class="text-[#CED4DA] text-xs">
 					{game?.attributes?.provider?.data?.attributes?.title ?? game?.provider?.title}&nbsp;•&nbsp;
-				</a>
+				</Link>
 				<div class="w-[10px] h-[10px]">
 					<Icon name="star-icon" />
 				</div>

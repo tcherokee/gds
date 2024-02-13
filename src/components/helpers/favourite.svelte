@@ -4,6 +4,7 @@
     import { getTranslations } from '../../../stores/addTranslations';
 	import  { favourite } from "../../../stores/favouriteStore"
 	import TransformImage from "../helpers/images.svelte"
+	import Link from "./link.svelte";
 
     // Import Images
     import Heart from "~icons/kensho-icons/heart"
@@ -69,19 +70,19 @@
 									<div
 										class="flex justify-items-start overflow-hidden w-16 flex-shrink-0 items-center justify-center rounded-l-md border-grey-300 border-l border-t border-b"
 									>
-										<a href="/slot-machines/{fav?.slug || ''}">
+										<Link href="/slot-machines/{fav?.slug || ''}">
 											<TransformImage
 												imageUrl={fav?.images?.url || ''}
 												imageAlt={fav?.title}
 												imageWidth={65}
 												imageHeight={60}
 											/>
-										</a>
+										</Link>
 									</div>
 									<div
 										class="relative flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-grey-300 bg-white"
 									>
-										<a href="/slot-machines/{fav?.slug || ''}">
+										<Link href="/slot-machines/{fav?.slug || ''}">
 											<div class="flex flex-1 flex-col truncate px-4 py-1 text-sm leading-tight">
 												<div class="font-medium uppercase text-left text-xs">{fav?.title || ''}</div>
 												{#if fav?.categories}
@@ -101,7 +102,7 @@
 													<span class="uppercase mr-2">rating</span>1/5
 												</div>
 											</div>
-										</a>
+										</Link>
 										<button class="absolute top-1 right-1" on:click={() => removeFromFavs(fav)}>
 											<Xmark class="h-6 w-6" />
 										</button>

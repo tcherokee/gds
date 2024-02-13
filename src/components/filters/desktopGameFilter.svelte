@@ -13,6 +13,7 @@
     // Helpers
     import { urlTranslate } from "../../../utils/data-store.util";
     import Image from "../helpers/images.svelte";
+    import Link from '../helpers/link.svelte';
 
     // Images
     import Xmark from "~icons/kensho-icons/xmark"
@@ -156,10 +157,10 @@
             <h4 class="text-sm font-bold text-filter-provider-header-text capitalize !m-0">
                 {$getTranslations.mostLovedProviders}
             </h4>
-            <a href="/"
+            <Link href="/"
                 ><span class="text-sm font-bold text-filter-provider-header-text uppercase"
                     >{$getTranslations.seeAllProviders}</span
-                ></a
+                ></Link
             >
         </div>
         <div

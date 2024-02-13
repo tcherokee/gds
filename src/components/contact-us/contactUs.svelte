@@ -1,6 +1,9 @@
 <script lang="ts">
-//   import UploadCloud2Svg from "$assets/icons/upload-cloud-2.svg";
+  // Types
   import type { TranslationData } from "../../../interfaces/common/types";
+
+  // Helpers
+  import Link from "../helpers/link.svelte";
 
   export let translations: TranslationData;
 
@@ -287,9 +290,10 @@
                 for="privacyPolicy"
                 class="ml-3 block text-sm text-grey-500"
                 >{translations.contactUsFormPrivacy}
-                <a href="/" class="underline">{translations.privacyPolicy}.</a
-                ></label
-              >
+                <Link href="/" classes="underline">
+                  {translations.privacyPolicy}.
+                </Link>
+              </label>
             </div>
 
             <div class="">

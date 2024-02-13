@@ -1,5 +1,8 @@
 ---
 
+// First and Third Party Plugins
+import { Link } from "astro-link"
+
 // Types
 import type { TranslationData } from '../../../interfaces/common/types';
 
@@ -34,20 +37,20 @@ arrPages = buildArr(currPage, pageCount)
 		<ul class="flex pagination justify-center">
 			{currPage !== 1 &&
 				<li class="page-item hidden sm:flex">
-					<a class="page-link" href={`${path}${currPage === 2 ? '' : '/p' + (currPage - 1)}`}>
+					<Link class="page-link" href={`${path}${currPage === 2 ? '' : '/p' + (currPage - 1)}`}>
                         {translationStore.paginationFirst}
-                    </a>
+                    </Link>
 				</li>
 			}
 			{ arrPages.map(i =>
                 <li class={`page-item ${currPage === i || i === '...' && 'disabled'} ${i !== '...' &&
 						'default'}`}>
-					<a class="page-link" href={i === '...' ? '#' : `${path}${i === 1 ? '' : '/p' + i}`}>{i}</a>
+					<Link class="page-link" href={i === '...' ? '#' : `${path}${i === 1 ? '' : '/p' + i}`}>{i}</Link>
 				</li>
 			)}
 			{currPage !== pageCount &&
 				<li class="page-item hidden sm:flex">
-					<a class="page-link" href={`${path}/p${currPage + 1}`}>{translationStore.paginationLast}</a>
+					<Link class="page-link" href={`${path}/p${currPage + 1}`}>{translationStore.paginationLast}</Link>
 				</li>
 			}
 		</ul>

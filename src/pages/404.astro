@@ -1,0 +1,25 @@
+---
+
+// Layouts
+import MainLayout from "../layouts/MainLayout.astro";
+
+// Create Canonical URL
+const canonical: string =  import.meta.env.PUBLIC_SITE_ID === 'gds' ? `${import.meta.env.PUBLIC_FULL_URL}/` : import.meta.env.PUBLIC_FULL_URL;
+
+const seo = {
+	pageTitle: "404 Error",
+    metaDescription: "404 Error",
+    url: canonical
+}
+---
+
+<MainLayout seoData={seo}>
+  <div class="featured-background">
+        <div class="intro-content">
+            <div class="xl:container py-20">
+                <h1>404</h1>
+                <h2>Here there be dragons</h2>
+            </div>
+        </div>
+    </div>
+</MainLayout>
