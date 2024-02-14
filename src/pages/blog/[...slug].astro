@@ -44,7 +44,7 @@ const blogCards = await fetchApi<BlogList>({
 
 const siteID = import.meta.env.SITE_ID
 const siteURL = import.meta.env.FULL_URL
-const canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']}/${page?.attributes?.slug}/`
+const canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']}/${page?.attributes?.slug}`
 
 //set page seo data
 let seo = {

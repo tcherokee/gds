@@ -71,7 +71,7 @@ const layout = await fetchApi<LayoutData>({
 
 //generate page url
 let siteID = import.meta.env.SITE_ID
-let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${Astro.params.slug}/`;
+let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${Astro.params.slug}`;
 
 //set page seo data
 let seo = {

@@ -27,7 +27,7 @@ const layoutData = await fetchApi<any>({
 
 let siteID = import.meta.env.SITE_ID
 let siteURL = import.meta.env.FULL_URL
-let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-index']}/`
+let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-index']}`
 
 //set page seo data
 let seo = {

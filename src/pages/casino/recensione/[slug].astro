@@ -75,7 +75,7 @@ const Components = await loadComponents(__blocks);
 let siteID = import.meta.env.SITE_ID;
 let canonical: string = `${import.meta.env.FULL_URL}${
   urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"]
-}/${Astro.params.slug}/`;
+}/${Astro.params.slug}`;
 
 let seo = {
   pageTitle: page?.attributes?.seo?.metaTitle,
