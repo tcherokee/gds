@@ -81,14 +81,13 @@ let seo = {
   url: canonical,
 };
 
-const breadcrumbs = [{
-    breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: null,
-}]
 ---
 
 <MainLayout seoData={seo}>
-  <Breadcrumb breadcrumbs={breadcrumbs} breadcrumbKey="casinoBreadcrumbs" />
+  <Breadcrumb breadcrumbs={[{
+    breadCrumbText: page?.attributes?.title,
+    breadCrumbUrl: null,
+  }]} breadcrumbKey="casinoBreadcrumbs" />
   <div class="casino-page">
     <div class="iframe-bkg curve rounded-b-3xl pb-3">
       <div class="section-wrapper">
