@@ -11,7 +11,7 @@ dotenv.config();
 export default defineConfig({
   integrations: [tailwind(), svelte()],
   base: process.env.PUBLIC_SITE_ID === "gds" ? "/it" : "",
-  trailingSlash: "never",
+  trailingSlash: "always",
   vite: {
     plugins: [
       Icons({
@@ -49,6 +49,6 @@ export default defineConfig({
   },
   output: "server",
   adapter: node({
-    mode: "standalone",
+    mode: "middleware ",
   }),
 });
