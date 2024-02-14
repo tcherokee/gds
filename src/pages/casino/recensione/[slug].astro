@@ -1,67 +1,61 @@
 ---
 export const prerender = true;
 import type { GetStaticPaths } from "astro";
-import qs from "qs";
-import MainLayout from "../../../layouts/MainLayout.astro";
-import { urlTranslate } from "../../../../utils/data-store.util";
-import fetchApi from "../../../../lib/strapi";
-import { casinopageQs } from "../../../../qs/casinopage";
-import type { Casinopage } from "../../../../interfaces/casinopage";
-import TimeDate from "../../../components/helpers/timeDate.svelte";
-import HeaderAuthor from "../../../components/helpers/headerAuthor.astro";
-import Image from "../../../components/helpers/images.astro";
-import Link from "../../../components/helpers/link.astro";
-import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
-import { get } from "svelte/store";
-import { getTranslations } from "../../../../stores/addTranslations";
-import Icon from "astro-icon";
-import Images from "../../../components/helpers/images.astro";
-import ProviderIcons from "../../../components/helpers/providerIcons.svelte";
-import Collapse from "../../../components/helpers/collapse.astro";
-import QuickLinks from "../../../components/helpers/quicklinks.astro";
-import {
-  loadComponents,
-  mapBlocksToDynamicComponents,
-} from "../../../../lib/loadBlockComponents";
-import HowTo from "../../../components/general/howTo.astro";
-import ProsCons from "../../../components/general/proCons.astro";
-import ContentBlock from "../../../components/blocks/contentBlock.astro";
-import CasinoComparison from "../../../components/casino/casinoComparison.astro";
+import qs from 'qs'
+import MainLayout from '../../../layouts/MainLayout.astro';
+import { urlTranslate } from '../../../../utils/data-store.util'
+import fetchApi from '../../../../lib/strapi';
+import { casinopageQs } from "../../../../qs/casinopage"
+import type { Casinopage } from "../../../../interfaces/casinopage"
+import TimeDate from '../../../components/helpers/timeDate.svelte';
+import HeaderAuthor from '../../../components/helpers/headerAuthor.astro';
+import Image from '../../../components/helpers/images.astro';
+import Link from '../../../components/helpers/link.astro';
+import ReadOnlyRatings from '../../../components/helpers/readOnlyRatings.astro';
+import { get } from 'svelte/store';
+import { getTranslations } from '../../../../stores/addTranslations';
+import Icon from 'astro-icon';
+import Images from '../../../components/helpers/images.astro';
+import ProviderIcons from '../../../components/helpers/providerIcons.svelte';
+import Collapse from "../../../components/helpers/collapse.astro"
+import QuickLinks from '../../../components/helpers/quicklinks.astro';
+import { loadComponents, mapBlocksToDynamicComponents } from '../../../../lib/loadBlockComponents';
+import HowTo from '../../../components/general/howTo.astro';
+import ProsCons from '../../../components/general/proCons.astro'
+import ContentBlock from '../../../components/blocks/contentBlock.astro';
+import CasinoComparison from '../../../components/casino/casinoComparison.astro';
 import Faqs from "../../../components/general/faqs.astro";
 import ImageCarousel from "../../../components/general/imageCarousel.svelte";
-import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
+import Breadcrumb from '../../../components/layout/breadcrumbs.astro'
 
 export const getStaticPaths = (async () => {
-  // Import the QS Query string for custom slugs and prepare it for the API fetch
-  const query = qs.stringify(casinopageQs(), { encodeValuesOnly: true });
-  // Request to the Fetch Function to get page data from API
-  const casinoPage = await fetchApi<Casinopage[]>({
-    endpoint: "casinos",
-    wrappedByKey: "data",
-    query: `?${query}`,
-  });
+    // Import the QS Query string for custom slugs and prepare it for the API fetch
+    const query = qs.stringify(casinopageQs(), {encodeValuesOnly: true})
+    // Request to the Fetch Function to get page data from API
+    const casinoPage = await fetchApi<Casinopage[]>({
+		endpoint: 'casinos',
+		wrappedByKey: 'data',
+		query: `?${query}`
+	})
 
-  return casinoPage.map((page) => {
-    return {
-      params: { slug: page?.attributes?.slug },
-      props: { page },
-    };
-  });
+    return casinoPage.map((page) => {
+        return {
+            params: {slug: page?.attributes?.slug},
+            props: { page }
+        }
+    });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
+const { page } = Astro.props
 const { slug } = Astro.params; //get the slug from the page url
 
-const translationStore: any = get(getTranslations);
+const translationStore:any = get(getTranslations)
 
-const termsAndConditions = `${page?.attributes?.termsAndConditions?.copy}`;
-const termsAndConditionsCleaned = termsAndConditions.replace(
-  /(<([^>]+)>)/gi,
-  ""
-);
+const termsAndConditions = `${page?.attributes?.termsAndConditions?.copy}`
+const termsAndConditionsCleaned = termsAndConditions.replace(/(<([^>]+)>)/gi, '')
 
-const testimonial = `${page?.attributes?.testimonial?.testimonial}`;
-const testimonialCleaned = testimonial.replace(/(<([^>]+)>)/gi, "");
+const testimonial = `${page?.attributes?.testimonial?.testimonial}`
+const testimonialCleaned = testimonial.replace(/(<([^>]+)>)/gi, '')
 
 let casinoFeatures = page?.attributes?.casinoFeatures;
 
@@ -70,915 +64,580 @@ const __blocks = mapBlocksToDynamicComponents(page?.attributes.blocks);
 const Components = await loadComponents(__blocks);
 
 //generate page url
-let siteID = import.meta.env.SITE_ID;
-let canonical: string = `${import.meta.env.FULL_URL}${
-  urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"]
-}/${Astro.params.slug}`;
+let siteID = import.meta.env.SITE_ID
+let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']}/${Astro.params.slug}`;
 
 let seo = {
-  pageTitle: page?.attributes?.seo?.metaTitle,
-  metaDescription: page?.attributes?.seo?.metaDescription,
-  url: canonical,
-};
+    pageTitle: page?.attributes?.seo?.metaTitle,
+    metaDescription: page?.attributes?.seo?.metaDescription,
+    url: canonical
+}
 
-const breadcrumbs = [{
-    breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: null,
-}]
+let breadcumb = { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null };
 ---
-
 <MainLayout seoData={seo}>
-  <Breadcrumb breadcrumbs={breadcrumbs} breadcrumbKey="casinoBreadcrumbs" />
-  <div class="casino-page">
-    <div class="iframe-bkg curve rounded-b-3xl pb-3">
-      <div class="section-wrapper">
-        <div class="row heading-date">
-          <div class="text-white">
-            <h1 class="!m-0 text-white">
-              {page?.attributes?.heading}
-            </h1>
-            <div class="flex items-center gap-2">
-              <TimeDate timeDate={page?.attributes?.updatedAt} />
-              <HeaderAuthor author={page?.attributes?.author} />
-            </div>
-          </div>
-        </div>
+	<Breadcrumb breadcrumb={breadcumb} />
+    <div class="casino-page">
+        <div class="iframe-bkg curve rounded-b-3xl pb-3">
+            <div class="section-wrapper">
+                <div class="row heading-date">
+				    <div class="text-white">
+                        <h1 class="!m-0 text-white">
+                            {page?.attributes?.heading}
+                        </h1>
+                        <div class="flex items-center gap-2">
+                            <TimeDate timeDate={page?.attributes?.updatedAt} />
+                            <HeaderAuthor author={page?.attributes?.author} /> 
+                        </div>
+                    </div>
+                </div>
 
-        <div class="grid md:grid-cols-4 gap-5 mt-5 md:mt-12">
-          <div class="bg-white flex flex-col p-3 rounded relative z-10">
-            <div>
-              <Link
-                href={page?.attributes?.casinoBonus?.bonusUrl}
-                classes="block rounded border border-[transparent]"
-                rel="sponsored"
-              >
-                <Image
-                  src={page?.attributes?.images?.data?.attributes?.url}
-                  classes="w-full rounded"
-                  alt={page?.attributes?.title}
-                  imageWidth={330}
-                  ,
-                  imageHeight={150}
-                />
-              </Link>
-            </div>
-            <div class="mt-2 flex items-center justify-center">
-              <ReadOnlyRatings
-                avgRating={page?.attributes?.ratingAvg}
-                showVotes={true}
-                ratingClasses="flex-col"
-              />
-            </div>
-            <div class="flex flex-col my-10">
-              <div class="flex items-center mb-3">
-                <span class="block"
-                  ><Icon
-                    name="pounds-img"
-                    height="25px"
-                    width="40px"
-                    class="inline-block m-[2px]"
-                  /></span
-                >
-                <div class="flex ml-5 font-bold">
-                  <Link
-                    rel="sponsored"
-                    type="external"
-                    classes="text-decoration-underline text-blue-300"
-                    href={page?.attributes?.casinoBonus?.bonusUrl}
-                    text={page?.attributes?.casinoBonus?.bonusLabel}
-                  />
-                </div>
-              </div>
-              <table class="casino-details-box">
-                <tbody>
-                  <tr class="border-b-0">
-                    <td>
-                      <div class="flex items-center">
-                        <span class="block mr-5"
-                          ><Icon
-                            name="money-bag-black"
-                            height="25px"
-                            width="40px"
-                            class="inline-block m-[2px]"
-                          /></span
-                        >
-                        <span class="bonus-heading"
-                          >{translationStore.reloadBonus}</span
-                        >
-                      </div>
-                    </td>
-                    <td>
-                      <div class="bonus-value font-bold pl-1">
-                        {
-                          page?.attributes?.bonusSection.bonusAmount
-                            ? `${page?.attributes?.bonusSection.bonusAmount}€`
-                            : ""
-                        }
-                        {
-                          page?.attributes?.bonusSection?.cashBack &&
-                          page?.attributes?.bonusSection?.bonusAmount
-                            ? "+ <br />"
-                            : ""
-                        }
-                        {
-                          page?.attributes?.bonusSection?.cashBack
-                            ? `${page?.attributes?.bonusSection?.cashBack}`
-                            : ""
-                        }
-                        {
-                          (page?.attributes?.bonusSection?.cashBack ||
-                            page?.attributes?.bonusSection?.bonusAmount) &&
-                            page?.attributes?.bonusSection?.freeSpin && <br />
-                        }
-                        {
-                          page?.attributes?.bonusSection?.freeSpin &&
-                            `${page?.attributes?.bonusSection?.freeSpin}`
-                        }
-                      </div>
-                    </td>
-                  </tr>
-                  <tr class="border-b-0">
-                    <td>
-                      <div class="flex items-center">
-                        <span class="block mr-5"
-                          ><Icon
-                            name="gift-bag-black"
-                            height="25px"
-                            width="40px"
-                            class="inline-block m-[2px]"
-                          /></span
-                        >
-                        <span class="bonus-heading"
-                          >{translationStore.withoutDeposit}</span
-                        >
-                      </div>
-                    </td>
-                    <td>
-                      <div class="bonus-value font-bold pl-1">
-                        {
-                          page?.attributes?.noDepositSection?.bonusAmount
-                            ? `${
-                                page?.attributes?.noDepositSection
-                                  ?.bonusAmount || 0
-                              }€ ${translationStore.withoutDeposit}`
-                            : ""
-                        }
-                        {
-                          page?.attributes?.noDepositSection &&
-                          page?.attributes?.noDepositSection?.bonusAmount &&
-                          page?.attributes?.freeSpinsSection &&
-                          page?.attributes?.freeSpinsSection?.bonusAmount ? (
-                            <>
-                              <span>+</span>
-                              <br />
-                            </>
-                          ) : (
-                            ""
-                          )
-                        }
-                        {
-                          page?.attributes?.freeSpinsSection &&
-                          page?.attributes?.freeSpinsSection?.bonusAmount
-                            ? `${
-                                page?.attributes?.freeSpinsSection
-                                  ?.bonusAmount || 0
-                              } ${translationStore.freeSpins}`
-                            : ""
-                        }
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="mb-5">
-              <Link
-                classes="btn btn-misc block w-full uppercase"
-                rel="sponsored"
-                type="external"
-                text={translationStore.accessWebsite}
-                href={page?.attributes?.casinoBonus?.bonusUrl}
-              />
-            </div>
-            <Collapse
-              id="termsConditions"
-              label={translationStore.termsConditions}
-              containerClass="mt-1 text-[12px]"
-              labelClass="ml-3 font-bold text-[16px] cursor-pointer"
-              checked={true}
-            >
-              <Icon
-                slot="icon"
-                name="up-arrow"
-                width="15px"
-                id="terms-toggle-icon"
-                class="inline-block m-[2px] peer-checked:group-[]:rotate-180"
-              />
-              <span slot="content">{termsAndConditionsCleaned}</span>
-            </Collapse>
-          </div>
+                <div class="grid md:grid-cols-4 gap-5 mt-5 md:mt-12">
+                    <div class="bg-white flex flex-col p-3 rounded relative z-10">
+                        <div>
 
-          <div class="md:col-span-3">
-            <div class="bg-white p-3 casino-summary-wrapper rounded">
-              <div class="grid md:grid-cols-2 gap-3 mb-5">
-                <div
-                  class="casino-table-div p-2 features-div bg-white rounded-lg"
-                >
-                  <table class="sc-9ded7dbe-10 jWaRDy characteristics w-full">
-                    <thead>
-                      <tr>
-                        <th colspan="2" class="p-0 text-white">
-                          <div class="summary-table-heading tb-summary-heading">
-                            <span class="block mr-4 bg-white rounded-full p-1">
-                              <Icon
-                                name="globe"
-                                width="25px"
-                                class="inline-block m-[2px]"
-                              />
-                            </span>
-                            <div class="font-bold">
-                              {translationStore.features}
+                            <Link
+                                href={page?.attributes?.casinoBonus?.bonusUrl}
+                                classes="block rounded border border-[transparent]"
+                                rel="sponsored"
+                            >
+								<Image 
+								src={page?.attributes?.images?.data?.attributes?.url}
+								classes="w-full rounded"
+								alt={page?.attributes?.title}
+								imageWidth={330}, 
+								imageHeight={150} 
+								/>
+							</Link>
+                        </div>
+                        <div class="mt-2 flex items-center justify-center">
+                            <ReadOnlyRatings avgRating={page?.attributes?.ratingAvg} showVotes={true} ratingClasses="flex-col" />
+                        </div>
+                        <div class="flex flex-col my-10">
+                            <div class="flex items-center mb-3">
+                                <span class="block"><Icon name="pounds-img" height="25px" width="40px" class="inline-block m-[2px]" /></span>
+                                <div class="flex ml-5 font-bold">
+                                    <Link rel="sponsored" type="external" classes="text-decoration-underline text-blue-300"
+                                        href={page?.attributes?.casinoBonus?.bonusUrl} text={page?.attributes?.casinoBonus?.bonusLabel} />
+                                </div>
                             </div>
-                          </div>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <!-- {casinoFeatures &&  -->
-                      {
-                        casinoFeatures.map((cf, index) =>
-                          index === casinoFeatures.length - 1 ? (
-                            <tr>
-                              <td class="p-2">
-                                <Icon name="check-circle" height="25px" />
-                              </td>
-                              <td>{cf.feature}</td>
-                            </tr>
-                          ) : (
-                            <tr class="border-b border-black">
-                              <td class="p-2">
-                                <Icon name="check-circle" height="25px" />
-                              </td>
-                              <td>{cf.feature}</td>
-                            </tr>
-                          )
-                        )
-                      }
-                      <!-- } -->
-                    </tbody>
-                  </table>
-                </div>
-                <div
-                  class="casino-table-div p-2 general-div bg-white rounded-lg"
-                >
-                  <table class="sc-9ded7dbe-10 jWaRDy w-full">
-                    <thead>
-                      <tr>
-                        <th colspan="2" class="p-0 text-white">
-                          <div class="summary-table-heading tb-summary-heading">
-                            <span class="block mr-4 bg-white rounded-full p-1">
-                              <Icon
-                                name="check-list"
-                                width="25px"
-                                fill="#01579B"
-                              />
-                            </span>
-                            <div class="font-bold">
-                              {translationStore.generalInfo}
-                            </div>
-                          </div>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="border-b-1">
-                        <td>
-                          <div class="flex items-center">
-                            <span class="block mr-2"
-                              ><Icon
-                                name="external-link"
-                                width="20px"
-                                fill="#01579B"
-                              /></span
-                            >
-                            {translationStore.website}
-                          </div>
-                        </td>
-                        <td class=""
-                          >{page?.attributes?.casinoGeneralInfo?.website}</td
-                        >
-                      </tr>
-                      <tr class="border-b-1">
-                        <td>
-                          <div class="flex items-center">
-                            <span class="block mr-2"
-                              ><Icon
-                                name="people"
-                                width="20px"
-                                fill="#01579B"
-                              /></span
-                            >
-                            {translationStore.society}
-                          </div>
-                        </td>
-                        <td>{page?.attributes?.casinoGeneralInfo?.societa}</td>
-                      </tr>
-                      <tr class="border-b-1">
-                        <td>
-                          <div class="flex items-center">
-                            <span class="block mr-2"
-                              ><Icon
-                                name="badge"
-                                width="20px"
-                                fill="#01579B"
-                              /></span
-                            >
-                            {translationStore.license}
-                          </div>
-                        </td>
-                        <td
-                          >{
-                            page?.attributes?.casinoGeneralInfo
-                              ?.regulationLicense
-                          }</td
-                        >
-                      </tr>
-                      <tr class="border-b-1">
-                        <td>
-                          <div class="flex items-center">
-                            <span class="block mr-2"
-                              ><Icon
-                                name="phone"
-                                width="20px"
-                                fill="#01579B"
-                              /></span
-                            >
-                            {translationStore.phone}
-                          </div>
-                        </td>
-                        <td>{page?.attributes?.casinoGeneralInfo?.telephone}</td
-                        >
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="flex items-center">
-                            <span class="block mr-2"
-                              ><Icon
-                                name="email"
-                                width="20px"
-                                fill="#01579B"
-                              /></span
-                            >
-                            {translationStore.email}
-                          </div>
-                        </td>
-                        <td>{page?.attributes?.casinoGeneralInfo?.email}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="testimonial-wrapper rounded-lg">
-                <div class="casino-detail-testimonial">
-                  <div class="flex flex-col justify-evenly p-3">
-                    <div class="flex justify-between">
-                      <div
-                        class="flex testimonial_author w-full justify-around md:justify-start"
-                      >
-                        <div class="approval-author mr-10">
-                          <div class="review_author_img mr-2">
-                            <Images
-                              src={page?.attributes?.author?.data?.attributes
-                                ?.photo?.data?.attributes?.url}
-                              alt="Reviewer Image"
-                              imageWidth={60}
-                              imageHeight={60}
-                              imageResponsive={false}
-                              classes=" rounded-full"
+                            <table class="casino-details-box">
+                                <tbody>
+                                    <tr class="border-b-0">
+                                        <td>
+                                            <div class="flex items-center">
+                                                <span class="block mr-5"><Icon name="money-bag-black" height="25px" width="40px" class="inline-block m-[2px]" /></span>
+                                                <span class="bonus-heading">{translationStore.reloadBonus}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="bonus-value font-bold pl-1">
+                                                { page?.attributes?.bonusSection.bonusAmount ? `${page?.attributes?.bonusSection.bonusAmount}€`:''}
+                                                {(page?.attributes?.bonusSection?.cashBack && page?.attributes?.bonusSection?.bonusAmount) ? '+ <br />':''}
+                                                {page?.attributes?.bonusSection?.cashBack ? `${page?.attributes?.bonusSection?.cashBack}`:''}
+                                                {((page?.attributes?.bonusSection?.cashBack || page?.attributes?.bonusSection?.bonusAmount) && page?.attributes?.bonusSection?.freeSpin) && <br />}
+                                                {page?.attributes?.bonusSection?.freeSpin && `${page?.attributes?.bonusSection?.freeSpin}`}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b-0">
+                                        <td>
+                                            <div class="flex items-center">
+                                                <span class="block mr-5"><Icon name="gift-bag-black" height="25px" width="40px" class="inline-block m-[2px]" /></span>
+                                                <span class="bonus-heading">{translationStore.withoutDeposit}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="bonus-value font-bold pl-1">
+                                                {
+												page?.attributes?.noDepositSection?.bonusAmount ? 
+												`${page?.attributes?.noDepositSection?.bonusAmount || 0}€ ${translationStore.withoutDeposit}`:''
+												}
+                                                {
+												(page?.attributes?.noDepositSection && page?.attributes?.noDepositSection?.bonusAmount && page?.attributes?.freeSpinsSection && page?.attributes?.freeSpinsSection?.bonusAmount) ? 
+												<span>+</span><br /> : ''}
+                                                {
+												page?.attributes?.freeSpinsSection && page?.attributes?.freeSpinsSection?.bonusAmount ? `${page?.attributes?.freeSpinsSection?.bonusAmount || 0} ${translationStore.freeSpins}` : ''}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mb-5">
+                            <Link
+                                classes="btn btn-misc block w-full uppercase"
+                                rel="sponsored"
+                                type="external"
+                                text={translationStore.accessWebsite}
+                                href={page?.attributes?.casinoBonus?.bonusUrl}
                             />
-                          </div>
-                          <div class="flex flex-col details-container">
-                            <div class="approval-author-details">
-                              <span>{translationStore.reviewedBy}</span>
-                              <span class="">
-                                <Link
-                                  href=""
-                                  text={page?.attributes?.author?.data
-                                    ?.attributes?.firstName +
-                                    " " +
-                                    page?.attributes?.author?.data?.attributes
-                                      ?.lastName}
-                                />
-                              </span>
-                              <span
-                                >{
-                                  page?.attributes?.author?.data?.attributes
-                                    ?.jobTitle
-                                }</span
-                              >
+                        </div>
+						<Collapse id="termsConditions" label={translationStore.termsConditions} containerClass="mt-1 text-[12px]" labelClass="ml-3 font-bold text-[16px] cursor-pointer" checked={true}>
+							<Icon slot="icon" name="up-arrow" width="15px" id="terms-toggle-icon" class="inline-block m-[2px] peer-checked:group-[]:rotate-180" />
+							<span slot="content" >{termsAndConditionsCleaned}</span>
+						</Collapse>
+                    </div>
+
+                    <div class="md:col-span-3">
+                        <div class="bg-white p-3 casino-summary-wrapper rounded">
+                            <div class="grid md:grid-cols-2 gap-3 mb-5">
+                                <div class="casino-table-div p-2 features-div bg-white rounded-lg">
+									<table class="sc-9ded7dbe-10 jWaRDy characteristics w-full">
+										<thead>
+											<tr>
+												<th colspan="2" class="p-0 text-white">
+													<div class="summary-table-heading tb-summary-heading">
+														<span class="block mr-4 bg-white rounded-full p-1">
+															<Icon name="globe" width="25px" class="inline-block m-[2px]" />
+														</span>
+														<div class="font-bold">{translationStore.features}</div>
+													</div>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<!-- {casinoFeatures &&  -->
+												{casinoFeatures.map((cf,index) => 
+													index === casinoFeatures.length - 1 ? 
+														<tr>
+															<td class="p-2"><Icon name="check-circle" height="25px"/></td>
+															<td>{cf.feature}</td>
+														</tr> :
+														<tr class="border-b border-black">
+															<td class="p-2"><Icon name="check-circle" height="25px" /></td>
+															<td>{cf.feature}</td>
+														</tr>
+												)}
+											<!-- } -->
+										</tbody>
+									</table>
+                                </div>
+								<div class="casino-table-div p-2 general-div bg-white rounded-lg">
+                                    <table class="sc-9ded7dbe-10 jWaRDy w-full">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="2" class="p-0 text-white">
+                                                    <div class="summary-table-heading tb-summary-heading">
+                                                        <span class="block mr-4 bg-white rounded-full p-1">
+                                                            <Icon name="check-list" width="25px" fill="#01579B" />
+                                                        </span>
+                                                        <div class="font-bold">{translationStore.generalInfo}</div>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+									<tbody>
+										<tr class="border-b-1">
+											<td>
+												<div class="flex items-center">
+													<span class="block mr-2"
+														><Icon name="external-link" width="20px" fill="#01579B" /></span
+													>
+													{translationStore.website}
+												</div>
+											</td>
+											<td class=""
+												>{page?.attributes?.casinoGeneralInfo
+													?.website}</td
+											>
+										</tr>
+										<tr class="border-b-1">
+											<td>
+												<div class="flex items-center">
+													<span class="block mr-2"><Icon name="people" width="20px" fill="#01579B" /></span>
+													{translationStore.society}
+												</div>
+											</td>
+											<td
+												>{page?.attributes?.casinoGeneralInfo
+													?.societa}</td
+											>
+										</tr>
+										<tr class="border-b-1">
+											<td>
+												<div class="flex items-center">
+													<span class="block mr-2"><Icon name="badge" width="20px" fill="#01579B" /></span>
+													{translationStore.license}
+												</div>
+											</td>
+											<td
+												>{page?.attributes?.casinoGeneralInfo
+													?.regulationLicense}</td
+											>
+										</tr>
+										<tr class="border-b-1">
+											<td>
+												<div class="flex items-center">
+													<span class="block mr-2"><Icon name="phone" width="20px" fill="#01579B" /></span>
+													{translationStore.phone}
+												</div>
+											</td>
+											<td
+												>{page?.attributes?.casinoGeneralInfo
+													?.telephone}</td
+											>
+										</tr>
+										<tr>
+											<td>
+												<div class="flex items-center">
+													<span class="block mr-2"><Icon name="email" width="20px" fill="#01579B" /></span>
+													{translationStore.email}
+												</div>
+											</td>
+											<td
+												>{page?.attributes?.casinoGeneralInfo
+													?.email}</td
+											>
+										</tr>
+									</tbody>
+								</table>
+                                </div>
                             </div>
-                          </div>
-                        </div>
-                        <div class="approval-author">
-                          <div class="review_author_img mr-2">
-                            <Image
-                              src={page?.attributes?.testimonial?.approvedBy
-                                ?.data?.attributes?.photo?.data?.attributes
-                                ?.url}
-                              alt="Approver image"
-                              imageWidth={60}
-                              imageHeight={60}
-                              imageResponsive={false}
-                              classes=" rounded-full"
-                            />
-                          </div>
-                          <div class="flex flex-col details-container">
-                            <div class="approval-author-details">
-                              <span>{translationStore.approvedBy}</span>
-                              <span class="">
-                                <Link
-                                  href=""
-                                  text={page?.attributes?.author?.data
-                                    ?.attributes?.firstName +
-                                    " " +
-                                    page?.attributes?.author?.data?.attributes
-                                      ?.lastName}
-                                />
-                              </span>
-                              <span
-                                >{
-                                  page?.attributes?.testimonial?.approvedBy
-                                    ?.data?.attributes?.jobTitle
-                                }</span
-                              >
+                            <div class="testimonial-wrapper rounded-lg">
+                                <div class="casino-detail-testimonial">
+                                    <div class="flex flex-col justify-evenly p-3">
+                                        <div class="flex justify-between">
+                                            <div class="flex testimonial_author w-full justify-around md:justify-start">
+                                                <div class="approval-author mr-10">
+                                                    <div class="review_author_img mr-2">
+                                                        <Images
+														src={page?.attributes?.author?.data?.attributes?.photo?.data?.attributes?.url}
+														alt="Reviewer Image"
+														imageWidth={60}
+														imageHeight={60}
+														imageResponsive={false}
+														classes=" rounded-full"
+													/>
+                                                    </div>
+                                                    <div class="flex flex-col details-container">
+                                                        <div class="approval-author-details">
+                                                            <span>{translationStore.reviewedBy}</span>
+                                                            <span class="">
+                                                                <Link
+                                                                href=""
+                                                                text={page?.attributes?.author?.data
+                                                                        ?.attributes?.firstName+" "+page?.attributes?.author?.data
+                                                                        ?.attributes?.lastName}
+                                                                />
+                                                            </span>
+                                                            <span
+                                                                >{page?.attributes?.author?.data
+                                                                    ?.attributes?.jobTitle}</span
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="approval-author">
+                                                    <div class="review_author_img mr-2">
+                                                        <Image
+                                                            src={page?.attributes
+                                                                ?.testimonial?.approvedBy?.data?.attributes?.photo?.data?.attributes
+                                                                ?.url}
+                                                            alt="Approver image"
+                                                            imageWidth={60}
+                                                            imageHeight={60}
+                                                            imageResponsive={false}
+                                                            classes=" rounded-full"
+                                                        />
+                                                    </div>
+                                                    <div class="flex flex-col details-container">
+                                                        <div class="approval-author-details">
+                                                            <span>{translationStore.approvedBy}</span>
+                                                            <span class="">
+                                                                <Link
+                                                                href=""
+                                                                text={page?.attributes?.author?.data
+                                                                            ?.attributes?.firstName+" "+page?.attributes?.author?.data
+                                                                            ?.attributes?.lastName}
+                                                                />
+                                                            </span>
+                                                            <span>{page?.attributes?.testimonial
+                                                                    ?.approvedBy?.data?.attributes?.jobTitle}</span
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="hidden md:block"><Icon name="adm-icons" width="250px" /></div>
+                                        </div>
+										<div class="mt-3 mb-10 flex justify-start">
+											<ReadOnlyRatings 
+											avgRating={page?.attributes?.authorRatings} 
+											showVotes={true} 
+											ratingClass={"flex-row justify-center items-center"} />
+										</div>
+
+										<blockquote class="testimonial">
+											<i>"{testimonialCleaned}"</i>
+										</blockquote>
+                                    </div>
+                                </div>
                             </div>
-                          </div>
+							<div class="grid md:grid-cols-2 mt-5">
+								<div class="border-b md:border-r md:border-b-0 mb-5 pb-5 border-gray-500">
+									<div class="flex py-3 items-center mb-3">
+										<span class="block mr-3"><Icon name="card-icon" height="25px"/></span>
+										<h5 class="text-xl font-bold text-white !mt-0">{translationStore.payment}</h5>
+									</div>
+									<div class="flex flex-wrap">
+										{ page?.attributes?.paymentOptions?.wireTransfer &&
+											<span class="payment-icon"><Icon name="payments/wire" width="45px" height="28px" /></span>}
+										
+										{ page?.attributes?.paymentOptions?.skrill &&
+											<span class="payment-icon"><Icon name="payments/skrill" width="45px" height="28px" /></span>}
+										
+										{ page?.attributes?.paymentOptions?.postepay &&
+											<span class="payment-icon"><Icon name="payments/postepay" width="45px" height="28px" /></span>}
+										
+										{ page?.attributes?.paymentOptions?.paysafe &&
+											<span class="payment-icon"><Icon name="payments/paysafe" width="45px" height="28px" /></span>}
+										
+										{ page?.attributes?.paymentOptions?.paypal &&
+											<span class="payment-icon"><Icon name="payments/paypal" width="45px" height="28px" /></span>}
+										
+										{ page?.attributes?.paymentOptions?.neteller &&
+											<span class="payment-icon"><Icon name="payments/neteller" width="45px" height="28px" /></span>}
+										
+										{ page?.attributes?.paymentOptions?.uKash &&
+											<span class="payment-icon"><Icon name="payments/ukash" width="45px" height="28px" /></span>}
+										
+										{ 
+										page?.attributes?.paymentOptions?.creditCard && 
+											<span class="payment-icon"><Icon name="payments/debit" width="45px" height="28px" /></span>}
+									</div>
+								</div>
+								<div class="md:ml-4">
+									<div class="flex py-3 text-white items-center mb-3">
+										<span class="block mr-3"><Icon name="software-card" height="25px" fill="#01579B" /></span>
+										<h5 class="text-xl font-bold text-white !mt-0">{translationStore.software}</h5>
+									</div>
+									<div class="flex">
+										<div class="provider-img-container">
+											{ page?.attributes?.providers?.data &&
+												<ProviderIcons providers={page?.attributes?.providers?.data} client:load />
+												}
+										</div>
+									</div>
+								</div>
+							</div>
                         </div>
-                      </div>
-                      <div class="hidden md:block">
-                        <Icon name="adm-icons" width="250px" />
-                      </div>
                     </div>
-                    <div class="mt-3 mb-10 flex justify-start">
-                      <ReadOnlyRatings
-                        avgRating={page?.attributes?.authorRatings}
-                        showVotes={true}
-                        ratingClass={"flex-row justify-center items-center"}
-                      />
-                    </div>
-
-                    <blockquote class="testimonial">
-                      <i>"{testimonialCleaned}"</i>
-                    </blockquote>
-                  </div>
                 </div>
-              </div>
-              <div class="grid md:grid-cols-2 mt-5">
-                <div
-                  class="border-b md:border-r md:border-b-0 mb-5 pb-5 border-gray-500"
-                >
-                  <div class="flex py-3 items-center mb-3">
-                    <span class="block mr-3"
-                      ><Icon name="card-icon" height="25px" /></span
-                    >
-                    <h5 class="text-xl font-bold text-white !mt-0">
-                      {translationStore.payment}
-                    </h5>
-                  </div>
-                  <div class="flex flex-wrap">
-                    {
-                      page?.attributes?.paymentOptions?.wireTransfer && (
-                        <span class="payment-icon">
-                          <Icon
-                            name="payments/wire"
-                            width="45px"
-                            height="28px"
-                          />
-                        </span>
-                      )
-                    }
-
-                    {
-                      page?.attributes?.paymentOptions?.skrill && (
-                        <span class="payment-icon">
-                          <Icon
-                            name="payments/skrill"
-                            width="45px"
-                            height="28px"
-                          />
-                        </span>
-                      )
-                    }
-
-                    {
-                      page?.attributes?.paymentOptions?.postepay && (
-                        <span class="payment-icon">
-                          <Icon
-                            name="payments/postepay"
-                            width="45px"
-                            height="28px"
-                          />
-                        </span>
-                      )
-                    }
-
-                    {
-                      page?.attributes?.paymentOptions?.paysafe && (
-                        <span class="payment-icon">
-                          <Icon
-                            name="payments/paysafe"
-                            width="45px"
-                            height="28px"
-                          />
-                        </span>
-                      )
-                    }
-
-                    {
-                      page?.attributes?.paymentOptions?.paypal && (
-                        <span class="payment-icon">
-                          <Icon
-                            name="payments/paypal"
-                            width="45px"
-                            height="28px"
-                          />
-                        </span>
-                      )
-                    }
-
-                    {
-                      page?.attributes?.paymentOptions?.neteller && (
-                        <span class="payment-icon">
-                          <Icon
-                            name="payments/neteller"
-                            width="45px"
-                            height="28px"
-                          />
-                        </span>
-                      )
-                    }
-
-                    {
-                      page?.attributes?.paymentOptions?.uKash && (
-                        <span class="payment-icon">
-                          <Icon
-                            name="payments/ukash"
-                            width="45px"
-                            height="28px"
-                          />
-                        </span>
-                      )
-                    }
-
-                    {
-                      page?.attributes?.paymentOptions?.creditCard && (
-                        <span class="payment-icon">
-                          <Icon
-                            name="payments/debit"
-                            width="45px"
-                            height="28px"
-                          />
-                        </span>
-                      )
-                    }
-                  </div>
-                </div>
-                <div class="md:ml-4">
-                  <div class="flex py-3 text-white items-center mb-3">
-                    <span class="block mr-3"
-                      ><Icon
-                        name="software-card"
-                        height="25px"
-                        fill="#01579B"
-                      /></span
-                    >
-                    <h5 class="text-xl font-bold text-white !mt-0">
-                      {translationStore.software}
-                    </h5>
-                  </div>
-                  <div class="flex">
-                    <div class="provider-img-container">
-                      {
-                        page?.attributes?.providers?.data && (
-                          <ProviderIcons
-                            providers={page?.attributes?.providers?.data}
-                            client:load
-                          />
-                        )
-                      }
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
+
+		<div class="section-wrapper">
+			<div class="fixed block md:hidden right-0 bottom-3 h-10 w-full z-[999]">
+				<div class="flex justify-between p-2 bg-white">
+					<div class="border border-grey-300 rounded-r-lg mr-2">
+						<Images
+							src={page?.attributes?.images?.data?.attributes
+								?.url}
+							alt={page?.attributes?.title}
+							imageWidth={80}
+							imageHeight={0}
+						/>
+					</div>
+					<Link
+						class="btn btn-misc block w-full uppercase"
+						rel="sponsored"
+						type="external"
+						href={page?.attributes?.casinoBonus?.bonusUrl}
+						text={translationStore.accessWebsite}
+					>
+				</div>
+			</div>
+
+			<div class="grid md:grid-cols-4 gap-8">
+				<div class="col-span-1 md:col-span-3">
+					<QuickLinks data={page} />
+
+					{ page?.attributes?.blocks &&
+						Components.map((Component, i) => (
+							<Component 
+								data={page?.attributes.blocks[i]}
+							/>
+						))
+					}
+
+					<ImageCarousel data={page?.attributes.blocks[0]} client:visible  /> 
+					
+					<div class="row qc">
+						<div class="" set:html={page?.attributes?.introduction}></div>
+					</div>
+
+					{page?.attributes?.howTo && <h2>{page?.attributes?.howTo.title}</h2>}
+
+					{page?.attributes?.howTo &&
+						page?.attributes?.howTo?.howToGroup.map((howTo, i) => (
+							<HowTo
+								count={i + 1}
+								howToImage={howTo?.image?.data?.attributes?.url}
+								howToWidth={howTo?.image?.data?.attributes?.width}
+								howToHeight={howTo?.image?.data?.attributes?.height}
+								howToCopy={howTo.copy}
+								howToHeading={howTo.heading}
+							/>
+						))
+					}
+
+					{page?.attributes?.content1 &&
+						<div>
+							<ContentBlock
+								pageContent={page?.attributes?.content1}
+							/>
+						</div>
+					}
+
+					{page?.attributes?.content2 &&
+						<div>
+							<ContentBlock
+								pageContent={page?.attributes?.content2}
+							/>
+						</div>
+					}
+
+					{page?.attributes?.content3 &&
+						<div class="mt-3">
+							<ContentBlock
+								pageContent={page?.attributes?.content3}
+							/>
+						</div>
+					}
+
+					{page?.attributes?.proscons &&
+						<ProsCons
+							heading={page?.attributes?.proscons?.heading}
+							pros={page?.attributes?.proscons?.pros}
+							cons={page?.attributes?.proscons?.cons}
+							prosImage={page?.attributes?.proscons?.proImage}
+							consImage={page?.attributes?.proscons?.conImage}
+						/>
+					}
+
+					{page?.attributes?.content4 &&
+						<div class="mt-3">
+							<ContentBlock
+								pageContent={page?.attributes?.content4}
+							/>
+						</div>
+					}
+
+					<div class="">
+						<CasinoComparison
+							data={page?.attributes?.casinoComparison.data}
+						/>
+					</div>
+				{page?.attributes?.faqs &&
+					<div class="mt-3 qc">
+						<div class="mb-4">
+							<h2 class="faq-title">{translationStore.faq}</h2>
+						</div>
+
+						<div class="mb-5">
+							{page?.attributes?.faqs.map((faq:any) => 
+								<Faqs data={faq} />
+							)}
+						</div>
+					</div>
+				}
+				</div>
+
+				<div class="col-span-1 hidden md:block">
+					<div class="bg-white flex flex-col p-3 rounded sticky top-3">
+						<div>
+
+								<Link
+									href={page?.attributes?.casinoBonus?.bonusUrl}
+									classes="block rounded border border-[transparent]"
+									rel="sponsored"
+								>
+									<Image 
+									src={page?.attributes?.images?.data?.attributes?.url}
+									classes="w-full rounded"
+									alt={page?.attributes?.title}
+									imageWidth={330}, 
+									imageHeight={150} 
+									/>
+								</Link>
+							</div>
+							<div class="mt-2 flex items-center justify-center">
+								<ReadOnlyRatings avgRating={page?.attributes?.ratingAvg} showVotes={true} ratingClasses="flex-col" />
+							</div>
+							<div class="flex flex-col my-10">
+								<div class="flex items-center mb-3">
+									<span class="block"><Icon name="pounds-img" height="25px" width="40px" class="inline-block m-[2px]" /></span>
+									<div class="flex ml-5 font-bold">
+										<Link rel="sponsored" type="external" classes="text-decoration-underline text-blue-300"
+											href={page?.attributes?.casinoBonus?.bonusUrl} text={page?.attributes?.casinoBonus?.bonusLabel} />
+									</div>
+								</div>
+								<table class="casino-details-box">
+									<tbody>
+										<tr class="border-b-0">
+											<td>
+												<div class="flex items-center">
+													<span class="block mr-5"><Icon name="money-bag-black" height="25px" width="40px" class="inline-block m-[2px]" /></span>
+													<span class="bonus-heading">{translationStore.reloadBonus}</span>
+												</div>
+											</td>
+											<td>
+												<div class="bonus-value font-bold pl-1">
+													{ page?.attributes?.bonusSection.bonusAmount ? `${page?.attributes?.bonusSection.bonusAmount}€`:''}
+													{(page?.attributes?.bonusSection?.cashBack && page?.attributes?.bonusSection?.bonusAmount) ? '+ <br />':''}
+													{page?.attributes?.bonusSection?.cashBack ? `${page?.attributes?.bonusSection?.cashBack}`:''}
+													{((page?.attributes?.bonusSection?.cashBack || page?.attributes?.bonusSection?.bonusAmount) && page?.attributes?.bonusSection?.freeSpin) && <br />}
+													{page?.attributes?.bonusSection?.freeSpin && `${page?.attributes?.bonusSection?.freeSpin}`}
+												</div>
+											</td>
+										</tr>
+										<tr class="border-b-0">
+											<td>
+												<div class="flex items-center">
+													<span class="block mr-5"><Icon name="gift-bag-black" height="25px" width="40px" class="inline-block m-[2px]" /></span>
+													<span class="bonus-heading">{translationStore.withoutDeposit}</span>
+												</div>
+											</td>
+											<td>
+												<div class="bonus-value font-bold pl-1">
+													{
+													page?.attributes?.noDepositSection?.bonusAmount ? 
+													`${page?.attributes?.noDepositSection?.bonusAmount || 0}€ ${translationStore.withoutDeposit}`:''
+													}
+													{
+													(page?.attributes?.noDepositSection && page?.attributes?.noDepositSection?.bonusAmount && page?.attributes?.freeSpinsSection && page?.attributes?.freeSpinsSection?.bonusAmount) ? 
+													<span>+</span><br /> : ''}
+													{
+													page?.attributes?.freeSpinsSection && page?.attributes?.freeSpinsSection?.bonusAmount ? `${page?.attributes?.freeSpinsSection?.bonusAmount || 0} ${translationStore.freeSpins}` : ''}
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="mb-5">
+								<Link
+									classes="btn btn-misc block w-full uppercase"
+									rel="sponsored"
+									type="external"
+									text={translationStore.accessWebsite}
+									href={page?.attributes?.casinoBonus?.bonusUrl}
+								/>
+							</div>
+							<Collapse id="termsConditions-2" label={translationStore.termsConditions} containerClass="mt-1 text-[12px]" labelClass="ml-3 font-bold text-[16px] cursor-pointer" checked={true}>
+								<Icon slot="icon" name="up-arrow" width="15px" id="terms-toggle-icon" class="inline-block m-[2px] peer-checked:group-[]:rotate-180" />
+								<span slot="content" >{termsAndConditionsCleaned}</span>
+							</Collapse>
+					</div>
+				</div>
+			</div>
+		</div>
     </div>
+</MainLayout>
 
-    <div class="section-wrapper">
-      <div class="fixed block md:hidden right-0 bottom-3 h-10 w-full z-[999]">
-        <div class="flex justify-between p-2 bg-white">
-          <div class="border border-grey-300 rounded-r-lg mr-2">
-            <Images
-              src={page?.attributes?.images?.data?.attributes?.url}
-              alt={page?.attributes?.title}
-              imageWidth={80}
-              imageHeight={0}
-            />
-          </div>
-          <Link
-            class="btn btn-misc block w-full uppercase"
-            rel="sponsored"
-            type="external"
-            href={page?.attributes?.casinoBonus?.bonusUrl}
-            text={translationStore.accessWebsite}
-          />
-        </div>
 
-        <div class="grid md:grid-cols-4 gap-8">
-          <div class="col-span-1 md:col-span-3">
-            <QuickLinks data={page} />
-
-            {
-              page?.attributes?.blocks &&
-                Components.map((Component, i) => (
-                  <Component data={page?.attributes.blocks[i]} />
-                ))
-            }
-
-            <ImageCarousel data={page?.attributes.blocks[0]} client:visible />
-
-            <div class="row qc">
-              <div class="" set:html={page?.attributes?.introduction} />
-            </div>
-
-            {
-              page?.attributes?.howTo && (
-                <h2>{page?.attributes?.howTo.title}</h2>
-              )
-            }
-
-            {
-              page?.attributes?.howTo &&
-                page?.attributes?.howTo?.howToGroup.map((howTo, i) => (
-                  <HowTo
-                    count={i + 1}
-                    howToImage={howTo?.image?.data?.attributes?.url}
-                    howToWidth={howTo?.image?.data?.attributes?.width}
-                    howToHeight={howTo?.image?.data?.attributes?.height}
-                    howToCopy={howTo.copy}
-                    howToHeading={howTo.heading}
-                  />
-                ))
-            }
-
-            {
-              page?.attributes?.content1 && (
-                <div>
-                  <ContentBlock pageContent={page?.attributes?.content1} />
-                </div>
-              )
-            }
-
-            {
-              page?.attributes?.content2 && (
-                <div>
-                  <ContentBlock pageContent={page?.attributes?.content2} />
-                </div>
-              )
-            }
-
-            {
-              page?.attributes?.content3 && (
-                <div class="mt-3">
-                  <ContentBlock pageContent={page?.attributes?.content3} />
-                </div>
-              )
-            }
-
-            {
-              page?.attributes?.proscons && (
-                <ProsCons
-                  heading={page?.attributes?.proscons?.heading}
-                  pros={page?.attributes?.proscons?.pros}
-                  cons={page?.attributes?.proscons?.cons}
-                  prosImage={page?.attributes?.proscons?.proImage}
-                  consImage={page?.attributes?.proscons?.conImage}
-                />
-              )
-            }
-
-            {
-              page?.attributes?.content4 && (
-                <div class="mt-3">
-                  <ContentBlock pageContent={page?.attributes?.content4} />
-                </div>
-              )
-            }
-
-            <div class="">
-              <CasinoComparison
-                data={page?.attributes?.casinoComparison.data}
-              />
-            </div>
-            {
-              page?.attributes?.faqs && (
-                <div class="mt-3 qc">
-                  <div class="mb-4">
-                    <h2 class="faq-title">{translationStore.faq}</h2>
-                  </div>
-
-                  <div class="mb-5">
-                    {page?.attributes?.faqs.map((faq: any) => (
-                      <Faqs data={faq} />
-                    ))}
-                  </div>
-                </div>
-              )
-            }
-          </div>
-
-          <div class="col-span-1 hidden md:block">
-            <div class="bg-white flex flex-col p-3 rounded sticky top-3">
-              <div>
-                <Link
-                  href={page?.attributes?.casinoBonus?.bonusUrl}
-                  classes="block rounded border border-[transparent]"
-                  rel="sponsored"
-                >
-                  <Image
-                    src={page?.attributes?.images?.data?.attributes?.url}
-                    classes="w-full rounded"
-                    alt={page?.attributes?.title}
-                    imageWidth={330}
-                    ,
-                    imageHeight={150}
-                  />
-                </Link>
-              </div>
-              <div class="mt-2 flex items-center justify-center">
-                <ReadOnlyRatings
-                  avgRating={page?.attributes?.ratingAvg}
-                  showVotes={true}
-                  ratingClasses="flex-col"
-                />
-              </div>
-              <div class="flex flex-col my-10">
-                <div class="flex items-center mb-3">
-                  <span class="block"
-                    ><Icon
-                      name="pounds-img"
-                      height="25px"
-                      width="40px"
-                      class="inline-block m-[2px]"
-                    /></span
-                  >
-                  <div class="flex ml-5 font-bold">
-                    <Link
-                      rel="sponsored"
-                      type="external"
-                      classes="text-decoration-underline text-blue-300"
-                      href={page?.attributes?.casinoBonus?.bonusUrl}
-                      text={page?.attributes?.casinoBonus?.bonusLabel}
-                    />
-                  </div>
-                </div>
-                <table class="casino-details-box">
-                  <tbody>
-                    <tr class="border-b-0">
-                      <td>
-                        <div class="flex items-center">
-                          <span class="block mr-5"
-                            ><Icon
-                              name="money-bag-black"
-                              height="25px"
-                              width="40px"
-                              class="inline-block m-[2px]"
-                            /></span
-                          >
-                          <span class="bonus-heading"
-                            >{translationStore.reloadBonus}</span
-                          >
-                        </div>
-                      </td>
-                      <td>
-                        <div class="bonus-value font-bold pl-1">
-                          {
-                            page?.attributes?.bonusSection.bonusAmount
-                              ? `${page?.attributes?.bonusSection.bonusAmount}€`
-                              : ""
-                          }
-                          {
-                            page?.attributes?.bonusSection?.cashBack &&
-                            page?.attributes?.bonusSection?.bonusAmount
-                              ? "+ <br />"
-                              : ""
-                          }
-                          {
-                            page?.attributes?.bonusSection?.cashBack
-                              ? `${page?.attributes?.bonusSection?.cashBack}`
-                              : ""
-                          }
-                          {
-                            (page?.attributes?.bonusSection?.cashBack ||
-                              page?.attributes?.bonusSection?.bonusAmount) &&
-                              page?.attributes?.bonusSection?.freeSpin && <br />
-                          }
-                          {
-                            page?.attributes?.bonusSection?.freeSpin &&
-                              `${page?.attributes?.bonusSection?.freeSpin}`
-                          }
-                        </div>
-                      </td>
-                    </tr>
-                    <tr class="border-b-0">
-                      <td>
-                        <div class="flex items-center">
-                          <span class="block mr-5"
-                            ><Icon
-                              name="gift-bag-black"
-                              height="25px"
-                              width="40px"
-                              class="inline-block m-[2px]"
-                            /></span
-                          >
-                          <span class="bonus-heading"
-                            >{translationStore.withoutDeposit}</span
-                          >
-                        </div>
-                      </td>
-                      <td>
-                        <div class="bonus-value font-bold pl-1">
-                          {
-                            page?.attributes?.noDepositSection?.bonusAmount
-                              ? `${
-                                  page?.attributes?.noDepositSection
-                                    ?.bonusAmount || 0
-                                }€ ${translationStore.withoutDeposit}`
-                              : ""
-                          }
-                          {
-                            page?.attributes?.noDepositSection &&
-                            page?.attributes?.noDepositSection?.bonusAmount &&
-                            page?.attributes?.freeSpinsSection &&
-                            page?.attributes?.freeSpinsSection?.bonusAmount ? (
-                              <>
-                                <span>+</span>
-                                <br />
-                              </>
-                            ) : (
-                              ""
-                            )
-                          }
-                          {
-                            page?.attributes?.freeSpinsSection &&
-                            page?.attributes?.freeSpinsSection?.bonusAmount
-                              ? `${
-                                  page?.attributes?.freeSpinsSection
-                                    ?.bonusAmount || 0
-                                } ${translationStore.freeSpins}`
-                              : ""
-                          }
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="mb-5">
-                <Link
-                  classes="btn btn-misc block w-full uppercase"
-                  rel="sponsored"
-                  type="external"
-                  text={translationStore.accessWebsite}
-                  href={page?.attributes?.casinoBonus?.bonusUrl}
-                />
-              </div>
-              <Collapse
-                id="termsConditions-2"
-                label={translationStore.termsConditions}
-                containerClass="mt-1 text-[12px]"
-                labelClass="ml-3 font-bold text-[16px] cursor-pointer"
-                checked={true}
-              >
-                <Icon
-                  slot="icon"
-                  name="up-arrow"
-                  width="15px"
-                  id="terms-toggle-icon"
-                  class="inline-block m-[2px] peer-checked:group-[]:rotate-180"
-                />
-                <span slot="content">{termsAndConditionsCleaned}</span>
-              </Collapse>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <style lang="postcss">
+<style lang="postcss">
 	.expanded {
         display: none;
     }
@@ -1563,4 +1222,3 @@ const breadcrumbs = [{
 				transition: all 0.3s cubic-bezier(0.37, 0.75, 0.61, 1.05) 0s;
 			}
 </style>
-</MainLayout>
