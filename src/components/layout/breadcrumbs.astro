@@ -32,7 +32,7 @@ const breadcrumStore: any = getBreadcrumbs.get();
 if (breadcrumbKey && breadcrumStore[breadcrumbKey]) {
   pageBreadcrumbs.unshift(...breadcrumStore[breadcrumbKey]);
 }
-console.log("BREADCRUMB_STORE", breadcrumStore);
+
 ---
 
 <div class="custom-breadcrumbs bg-breadcrumb-bkg">
