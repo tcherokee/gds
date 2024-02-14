@@ -12,6 +12,8 @@
   import TrophySvg from "~icons/kensho-dashboard-icons/trophy";
 
   import GameListItem from "./gameListItem.svelte";
+  import Link from "../helpers/link.svelte";
+
   import {
     user,
     userFavouriteGames,
@@ -104,20 +106,20 @@
             <div
               class="shrink-0 justify-center flex items-center gap-x-2 h-fit"
             >
-              <a
-                href="/dashboard/profile"
-                class="text-[#7C838D] flex items-center bg-white rounded-[6px] gap-x-[6px] rounded-md py-[6px] px-4 text-sm font-bold"
+              <Link
+                href="/dashboard/profile/"
+                classes="text-[#7C838D] flex items-center bg-white rounded-[6px] gap-x-[6px] rounded-md py-[6px] px-4 text-sm font-bold"
               >
                 <UserSvg class="w-5 h-5" />
                 <span>{translations.editProfile}</span>
-              </a>
-              <a
-                href="/dashboard/messages"
-                class="text-[#7C838D] flex items-center bg-white rounded-[6px] gap-x-[6px] rounded-md py-[6px] px-4 text-sm font-bold"
+              </Link>
+              <Link
+                href="/dashboard/messages/"
+                classes="text-[#7C838D] flex items-center bg-white rounded-[6px] gap-x-[6px] rounded-md py-[6px] px-4 text-sm font-bold"
               >
                 <ChatsSvg class="w-5 h-5" />
                 <span>{translations.message}</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -154,24 +156,24 @@
                 <div class="text-sm text-center text-blue-700 font-medium">
                   {translations.emptyMostPlayedGames}
                 </div>
-                <a
-                  href={$slotMachineUrl}
-                  class="text-center w-fit min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
+                <Link
+                  href={`${$slotMachineUrl}/`}
+                  classes="text-center w-fit min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
                 >
                   {translations.seeAllGames}
-                </a>
+                </Link>
               </div>
             {/if}
 
             {#if $userMostPlayedGames?.length > 3}
               <div class="mt-5">
-                <a
-                  href="/dashboard/most-played-games"
+                <Link
+                  href="/dashboard/most-played-games/"
                   type="button"
-                  class="register-btn flex w-full justify-center items-center px-3 py-[7px]"
+                  classes="register-btn flex w-full justify-center items-center px-3 py-[7px]"
                 >
                   VIEW ALL
-                </a>
+                </Link>
               </div>
             {/if}
           </div>
@@ -205,22 +207,22 @@
                 <div class="text-sm text-center text-blue-700 font-medium">
                   {translations.emptyFavoriteGames}
                 </div>
-                <a
-                  href={$slotMachineUrl}
-                  class="text-center w-fit min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
+                <Link
+                  href={`${$slotMachineUrl}/`}
+                  classes="text-center w-fit min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
                 >
                   {translations.seeAllGames}
-                </a>
+                </Link>
               </div>
             {/if}
             {#if $userFavouriteGames.length > 3}
               <div class="mt-5">
-                <a
-                  href="/dashboard/favourite-games"
-                  class="register-btn flex w-full justify-center items-center px-3 py-[7px]"
+                <Link
+                  href="/dashboard/favourite-games/"
+                  classes="register-btn flex w-full justify-center items-center px-3 py-[7px]"
                 >
                   VIEW ALL
-                </a>
+                </Link>
               </div>
             {/if}
           </div>
@@ -258,12 +260,12 @@
             </div>
             {#if $weeklyPickedGames?.length > 3}
               <div class="mt-5">
-                <a
-                  href="/dashboard/favourite-games"
-                  class="register-btn flex w-full justify-center items-center px-3 py-[7px] cursor-pointer"
+                <Link
+                  href="/dashboard/favourite-games/"
+                  classes="register-btn flex w-full justify-center items-center px-3 py-[7px] cursor-pointer"
                 >
                   VIEW ALL
-                </a>
+                </Link>
               </div>
             {/if}
           </div>

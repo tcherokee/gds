@@ -1,5 +1,6 @@
 ---
 
+import { Link } from "astro-link"
 // Types
 import type { TranslationData } from "../../../interfaces/common/types";
 
@@ -40,12 +41,12 @@ let seo = {
       <LoginForm translations={translationStore} client:only="svelte" />
       <p class="text-center text-base text-blue-500 !mb-0">
         {translationStore.noAccount}
-        <a
-          href={"/authentication/register"}
+        <Link
+          href={"/authentication/register/"}
           class="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
         >
           {translationStore.signUp}
-        </a>
+      </Link>
       </p>
     </div>
   </div>

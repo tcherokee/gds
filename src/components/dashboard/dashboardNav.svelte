@@ -2,6 +2,8 @@
   import { readMessages, messages } from "../../../stores/authStore";
   import type { TranslationData } from "../../../interfaces/common/types";
 
+  import Link from "../helpers/link.svelte";
+
   let activeRoute = "home";
   export let translations: TranslationData;
   export let pageUrl: string;
@@ -21,9 +23,9 @@
 
 <ul role="list" class="space-y-0.5">
   <li class="group {activeRoute === 'home' ? 'item-active' : ''}">
-    <a
-      href="/dashboard"
-      class="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
+    <Link
+      href="/dashboard/"
+      classes="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
       'SIDE'
         ? 'group-[.item-active]:bg-menu-link-bg-active'
         : ''}"
@@ -41,16 +43,16 @@
         />
       </svg>
       <span>Home</span>
-    </a>
+    </Link>
   </li>
   <li
     class="group {activeRoute === 'most-played-games'
       ? 'item-active'
       : ''}"
   >
-    <a
-      href="/dashboard/most-played-games"
-      class="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
+    <Link
+      href="/dashboard/most-played-games/"
+      classes="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
       'SIDE'
         ? 'group-[.item-active]:bg-menu-link-bg-active'
         : ''}"
@@ -68,16 +70,16 @@
         />
       </svg>
       <span>{translations.mostPlayed}</span>
-    </a>
+    </Link>
   </li>
   <li
     class="group {activeRoute === 'favourite-games'
       ? 'item-active'
       : ''}"
   >
-    <a
-      href="/dashboard/favourite-games"
-      class="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
+    <Link
+      href="/dashboard/favourite-games/"
+      classes="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
       'SIDE'
         ? 'group-[.item-active]:bg-menu-link-bg-active'
         : ''}"
@@ -95,16 +97,16 @@
         />
       </svg>
       <span>{translations.favouriteGame}</span>
-    </a>
+    </Link>
   </li>
   <li
     class="group {activeRoute === 'weekly-pick'
       ? 'item-active'
       : ''}"
   >
-    <a
-      href="/dashboard/weekly-pick"
-      class="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
+    <Link
+      href="/dashboard/weekly-pick/"
+      classes="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
       'SIDE'
         ? 'group-[.item-active]:bg-menu-link-bg-active'
         : ''}"
@@ -123,16 +125,16 @@
       </svg>
 
       <span>{translations.pickOfTheWeek}</span>
-    </a>
+    </Link>
   </li>
   <li
     class="group {activeRoute === 'messages'
       ? 'item-active'
       : ''}"
   >
-    <a
-      href="/dashboard/messages"
-      class="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
+    <Link
+      href="/dashboard/messages/"
+      classes="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium group-[.item-active]:text-menu-link-text-active {source ===
       'SIDE'
         ? 'group-[.item-active]:bg-menu-link-bg-active'
         : ''}"
@@ -158,12 +160,12 @@
           <span>{$messages.length - $readMessages.length}</span>
         </div>
       {/if}
-    </a>
+    </Link>
   </li>
   <li>
-    <a
-      href="/contact-us"
-      class="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium"
+    <Link
+      href="/contact-us/"
+      classes="text-menu-link-text flex items-center gap-x-3 rounded-tl-md rounded-bl-md py-2.5 px-4 -mr-4 text-base font-medium"
     >
       <svg
         width="24"
@@ -179,6 +181,6 @@
       </svg>
 
       <span>{translations.contactUs}</span>
-    </a>
+    </Link>
   </li>
 </ul>

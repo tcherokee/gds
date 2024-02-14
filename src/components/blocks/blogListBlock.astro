@@ -41,7 +41,7 @@ const truncatedData = truncateAndCleanContent(data as Blog[])
 		{
 			blogLink.length > 0 &&
 			<div class="grid gap-2 justify-center mt-3">
-				<Link href={blogLink} class="btn btn-secondary blog-btn" text={blogText} />
+				<Link href={`${blogLink}/`} class="btn btn-secondary blog-btn" text={blogText} />
 			</div>
 		}
 	</div>

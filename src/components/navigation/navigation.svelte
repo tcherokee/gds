@@ -50,7 +50,7 @@
       </label>
     </div>
 
-    <Link href="/authentication/login" classes="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t">
+    <Link href="/authentication/login/" classes="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t">
       {#if $user}
         <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
       {:else}
@@ -127,7 +127,7 @@
                             >
                               {#each nav?.attributes?.children?.data as child}
                                 <Link
-                                  href={child?.attributes?.url}
+                                  href={`${child?.attributes?.url}/`}
                                   classes="flex w-full items-center rounded-md py-2 pl-8 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
                                 >
                                   {child?.attributes?.title}
@@ -137,7 +137,7 @@
                           </div>
                         {:else}
                           <Link
-                            href={nav?.attributes?.url}
+                            href={`${nav?.attributes?.url}/`}
                             classes="flex w-full items-center rounded-md py-2 pl-2 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
                             >{nav?.attributes?.title}
                         </Link>
@@ -174,7 +174,7 @@
             </button>
           {:else}
             <Link
-              href={nav?.attributes?.url}
+              href={`${nav?.attributes?.url}/`}
               classes="group flex w-full items-center uppercase rounded-md p-3 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
             >
               {nav?.attributes?.title}
@@ -189,7 +189,7 @@
               <div class="relative grid gap-4 bg-nav-hover-bkg px-4 py-4">
                 {#each nav?.attributes?.children?.data as child}
                   <Link
-                    href={child?.attributes?.url}
+                    href={`${child?.attributes?.url}/`}
                     classes="-m-3 uppercase block rounded-md p-3 transition duration-150 ease-in-out hover:bg-gray-50 text-navbar-text"
                   >
                     {child?.attributes?.title}

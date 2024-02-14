@@ -42,7 +42,7 @@
                                     class="game-actions scale-75 flex flex-col items-center min-w-[150px] opacity-0 absolute top-[50%] left-[50%] -translate-y-1/2 -translate-x-1/2 sm:group-hover:scale-100 sm:group-hover:opacity-100"
                                 >
                                     <Link
-                                        href={urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['provider-pages']+"/"+provider?.attributes?.slug}
+                                        href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['provider-pages']+"/"+provider?.attributes?.slug}/`}
                                         classes="btn btn-misc"
                                     >
                                         {translationStore.playFunBtn}
@@ -53,7 +53,7 @@
                                 >
                                     <div class="mb-[2px] game-title-box">
                                         <h4 class="text-white text-sm font-bold !m-0">
-                                            <Link href={urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['provider-pages']+"/"+provider?.attributes?.slug}>
+                                            <Link href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['provider-pages']+"/"+provider?.attributes?.slug}/`}>
                                                 {provider?.attributes?.title}
                                             </Link>
                                         </h4>

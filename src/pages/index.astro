@@ -87,7 +87,7 @@ const Components = await loadComponents(mapBlocksToDynamicComponents(homepage.at
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 const PUBLIC_FULL_URL = import.meta.env.FULL_URL
 
-let canonical: string =  PUBLIC_SITE_ID === 'gds' ? `${PUBLIC_FULL_URL}/` : PUBLIC_FULL_URL;
+let canonical: string =  `${PUBLIC_FULL_URL}/`;
 
 let seo = {
 	pageTitle: homepage.attributes?.seo?.metaTitle,

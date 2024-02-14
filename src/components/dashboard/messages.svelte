@@ -186,7 +186,7 @@
         <div class="py-12 px-8">
           <div class="text-center text-base text-white">
             {translations.emptyUserMessages}
-            <Link classes="text-misc underline" href="/contact-us">
+            <Link classes="text-misc underline" href="/contact-us/">
               {translations.contactUsHere}
             </Link>
           </div>

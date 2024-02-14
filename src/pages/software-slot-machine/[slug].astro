@@ -55,7 +55,7 @@ const { slug } = Astro.params;
 
 let siteID = import.meta.env.SITE_ID
 let siteURL = import.meta.env.FULL_URL
-let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']}/${slug}`
+let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']}/${slug}/`
 
 const seo = {
     pageTitle: page?.attributes?.seo?.metaTitle,

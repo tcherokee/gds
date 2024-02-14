@@ -13,6 +13,7 @@
     import Images from '../helpers/images.svelte';
 	import AddToFav from "../helpers/addToFavs.svelte"
 	import ReportAnIssue from "./reportAnIssue.svelte"
+	import Link from '../helpers/link.svelte';
 
 	// Import Images
 	import NoGameImage from "~icons/kensho-icons/no-game"
@@ -126,12 +127,12 @@
                     <div class="flex items-center mb-3">
                         <h3 class="game-title mr-3 !my-0 mt-10 mb-4">{data?.attributes?.title}</h3>
                         <div class="game-provider text-white text-xs">
-                            da <a
-                                href={providePageURL}
-                                class="uppercase"
+                            da <Link
+                                href={`${providePageURL}/`}
+                                classes="uppercase"
                             >
                                 {data?.attributes?.provider?.data?.attributes?.title}
-                                </a>
+							</Link>
                         </div>
                     </div>
                     <Images
@@ -181,10 +182,10 @@
                 <div
                     class=" md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center md:m-auto"
                 >
-                    <a
-                        href={casinoProviderPageURL}
-                        class="btn btn-misc btn-real-money w-32 md:w-[200px] mr-3 uppercase"
-                        >{$getTranslations.playRealBtn}</a>
+                    <Link
+                        href={`${casinoProviderPageURL}/`}
+                        classes="btn btn-misc btn-real-money w-32 md:w-[200px] mr-3 uppercase"
+                        >{$getTranslations.playRealBtn}</Link>
                         <div class="buttons">
 
                             <button

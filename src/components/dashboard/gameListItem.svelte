@@ -3,6 +3,9 @@
   import Image from "../helpers/images.svelte";
   import { urlTranslate } from "../../../utils/data-store.util";
 
+  // Components
+  import Link from "../helpers/link.svelte";
+
   export let imageUrl: string;
   export let title: string;
   export let link: string;
@@ -26,10 +29,10 @@
     </div>
     <div class="line-clamp-2 text-black">{title}</div>
   </div>
-  <a
-    href={gameUrl}
-    class="flex w-fit h-[37px] justify-center items-center uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold text-white"
+  <Link
+    href={`${gameUrl}/`}
+    classes="flex w-fit h-[37px] justify-center items-center uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold text-white"
   >
     {$getTranslations.play}
-  </a>
+  </Link>
 </div>

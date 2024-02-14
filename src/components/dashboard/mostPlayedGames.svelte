@@ -3,6 +3,7 @@
   import { slotMachineUrl, userMostPlayedGames } from "../../../stores/authStore";
   import GameCard from "../games/gameCard.svelte";
   import Loader from "../helpers/loader.svelte";
+  import Link from "../helpers/link.svelte";
   import type { TDashboardGame } from "../../../interfaces/games";
   import type { TranslationData } from "../../../interfaces/common/types";
 
@@ -43,12 +44,12 @@
           <div class="text-base text-center text-white font-bold">
             {translations.emptyMostPlayedGames}
           </div>
-          <a
-            href={$slotMachineUrl}
+          <Link
+            href={`${$slotMachineUrl}/`}
             class="text-center min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
           >
             {translations.seeAllGames}
-          </a>
+          </Link>
         </div>
       {/if}
     </div>

@@ -2,6 +2,9 @@
   import { onMount } from "svelte";
   import { toast } from "svoast";
 
+  // Components
+  import Link from "../helpers/link.svelte";
+
   let firstName: string = "";
   let lastName: string = "";
   let email: string = "";
@@ -247,12 +250,12 @@
         </p>
         <p class="text-center text-base text-blue-500 !mb-0">
           {translations.haveAccount}
-          <a
-            href={"/authentication/login"}
-            class="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
+          <Link
+            href={"/authentication/login/"}
+            classes="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
           >
             {translations.logIn}
-        </a>
+          </Link>
         </p>
       </div>
     {:else}
@@ -266,7 +269,7 @@
         </p>
         <p class="text-sm text-blue-500">{translations.checkSpamMessage}.</p>
         <a
-          href={"/authentication/login"}
+          href={"/authentication/login/"}
           class="block text-base text-center min-h-[44px] rounded-md btn-secondary px-3 py-2.5 text-sm font-semibold"
         >
           {translations.backToSignIn}

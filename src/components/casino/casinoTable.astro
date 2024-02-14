@@ -58,7 +58,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                     {i <= 2 && <span class:list={["casino-logo__tag w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b"]}>#{i + 1}</span>}
                                         
                                         <Link
-                                            href={(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}
+                                            href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}/`}
                                             classes={`block rounded border`}
                                             type="external"
                                             rel="sponsored"
@@ -75,7 +75,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         <div class="flex items-center">
                                             <Link
                                                 classes="casino-name text-[14px] text-grey-500 mr-[11px]"
-                                                href={urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+(casino as CasinoData)?.attributes?.slug ?? (casino as AuthorCasinoAttributes)?.slug}
+                                                href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+(casino as CasinoData)?.attributes?.slug ?? (casino as AuthorCasinoAttributes)?.slug}/`}
                                             >
                                                 <span class="hidden sm:inline-flex sm:pr-1">{(casino as CasinoData)?.attributes?.title ?? (casino as AuthorCasinoAttributes)?.title}</span>
                                                 <span class="underline">{translationStore.review}</span>
@@ -92,7 +92,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                             {translationStore.casinoTableHeadingBonus}
                                         </div>
                                         <Link
-                                            href={(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}
+                                            href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}/`}
                                             classes="flex underline text-center"
                                             type="external"
                                             rel="sponsored"
@@ -128,7 +128,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         {
                                             noDepositBonus(casino)?.bonus ?
                                             <Link
-                                                href={(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}
+                                                href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}/`}
                                                 classes="flex underline text-center"
                                                 type="external"
                                                 rel="sponsored"
@@ -162,7 +162,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                             {((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) && <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{translationStore.bonusCode}</div>}
                                             {((casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl )&&
                                                 <Link
-                                                    href={(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}
+                                                    href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}/`}
                                                     classes="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
                                                     type="external"
                                                     rel="sponsored"

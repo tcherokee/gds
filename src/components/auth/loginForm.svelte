@@ -3,6 +3,9 @@
   import { user } from "../../../stores/authStore";
   import { toast } from "svoast";
 
+  // Components
+  import Link from "../helpers/link.svelte";
+
   export let translations: { [key: string]: string };
   let email: string = "";
   let password: string = "";
@@ -169,12 +172,12 @@
     </div>
 
     <div>
-      <a
-        href={"/authentication/forgot-password"}
-        class="block text-base text-misc font-bold transition duration-150 ease-in-out hover:text-misc/90"
+      <Link
+        href={"/authentication/forgot-password/"}
+        classes="block text-base text-misc font-bold transition duration-150 ease-in-out hover:text-misc/90"
       >
         {translations.forgotPassword}
-      </a>
+      </Link>
     </div>
   </div>
 

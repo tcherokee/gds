@@ -7,6 +7,7 @@
   } from "../../../stores/authStore";
   import Loader from "../helpers/loader.svelte";
   import GameCard from "../games/gameCard.svelte";
+  import Link from "../helpers/link.svelte";
   import { onMount } from "svelte";
   import type { TranslationData } from "../../../interfaces/common/types";
 
@@ -102,12 +103,12 @@
           <div class="text-base text-center text-white font-bold">
             {translations.emptyFavoriteGames}
           </div>
-          <a
-            href={$slotMachineUrl}
-            class="text-center min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
+          <Link
+            href={`${$slotMachineUrl}/`}
+            classes="text-center min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
           >
             {translations.seeAllGames}
-          </a>
+        </Link>
         </div>
       {/if}
     </div>

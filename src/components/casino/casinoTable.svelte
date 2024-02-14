@@ -137,7 +137,7 @@
                                             {/if}
                                                 
                                                 <Link
-                                                    href={casino?.attributes?.casinoBonus?.bonusUrl}
+                                                    href={`${casino?.attributes?.casinoBonus?.bonusUrl}/`}
                                                     classes="block rounded border border-[transparent] {i <= 2 && badgesOptions[i]}"
                                                     type="external"
                                                     rel="sponsored"
@@ -154,7 +154,7 @@
                                                 <div class="flex items-center">
                                                     <Link
                                                         classes="casino-name text-[14px] text-grey-500 mr-[11px]"
-                                                        href={`/casino/recensione/${casino?.attributes?.slug}`}
+                                                        href={`/casino/recensione/${casino?.attributes?.slug}/`}
                                                     >
                                                         <span class="hidden sm:inline-flex sm:pr-1">{casino?.attributes?.title}</span>
                                                         <span class="underline">{$getTranslations.review}</span>
@@ -171,7 +171,7 @@
                                                     {$getTranslations.casinoTableHeadingBonus}
                                                 </div>
                                                 <Link
-                                                    href={casino?.attributes?.casinoBonus?.bonusUrl}
+                                                    href={`${casino?.attributes?.casinoBonus?.bonusUrl}/`}
                                                     classes="flex underline text-center"
                                                     type="external"
                                                     rel="sponsored"
@@ -206,7 +206,7 @@
                                                 </div>
                                                 {#if noDepositBonus(casino)?.bonus}
                                                     <Link
-                                                        href={casino?.attributes?.casinoBonus?.bonusUrl}
+                                                        href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
                                                         classes="flex underline text-center"
                                                         type="external"
                                                         rel="sponsored"
@@ -242,7 +242,7 @@
                                                     {/if}
                                                     {#if casino?.attributes?.casinoBonus?.bonusUrl}
                                                         <Link
-                                                            href={casino?.attributes?.casinoBonus?.bonusUrl}
+                                                            href={`${casino?.attributes?.casinoBonus?.bonusUrl}/`}
                                                             classes="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
                                                             type="external"
                                                             rel="sponsored"

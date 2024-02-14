@@ -29,7 +29,7 @@
 <aside
   class="relative cursor-pointer rounded-lg aspect-[235/244] w-full transition-shadow duration-[0.3s] sm:cursor-auto"
 >
-  <Link classes="absolute w-full h-full md:hidden" href={gameURL}></Link>
+  <Link classes="absolute w-full h-full md:hidden" href={`${gameURL}/`}></Link>
   <div class="absolute pointer-events-none h-full left-0 top-0 w-full">
     <Image
       imageUrl={game?.images?.url}
@@ -60,12 +60,12 @@
     <div
       class="transition-all duration-[0.3s] scale-75 flex flex-col items-center opacity-0 absolute top-[50%] left-[50%] -translate-y-1/2 -translate-x-1/2 sm:group-hover:scale-100 sm:group-hover:opacity-100"
     >
-      <a
-        href={gameURL}
-        class="btn btn-secondary uppercase text-white w-[130px] mb-3"
-        >{translations.playFunBtn}</a
-      >
-      <Link href={provideURL} classes="btn btn-misc uppercase text-white w-[130px]"
+      <Link
+        href={`${gameURL}/`}
+        classes="btn btn-secondary uppercase text-white w-[130px] mb-3"
+        >{translations.playFunBtn}
+      </Link>
+      <Link href={`${provideURL}/`} classes="btn btn-misc uppercase text-white w-[130px]"
         >{translations.playRealBtn}</Link
       >
     </div>
@@ -76,14 +76,14 @@
         class="flex justify-between items-center mb-[2px] transition-transform duration-[0.3s] translate-y-[20px] sm:group-hover:translate-y-0"
       >
         <h4 class="text-white text-sm font-bold !m-0">
-          <Link href="/{game?.slug}">{game?.title}</Link>
+          <Link href={`/${game?.slug}/`}>{game?.title}</Link>
         </h4>
         <AddToFav game={game} classes="w-4 h-[14px]" />
       </div>
       <div
         class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100"
       >
-        <Link href="/{game?.slug}" classes="text-[#CED4DA] text-xs">
+        <Link href={`/${game?.slug}/`} classes="text-[#CED4DA] text-xs">
           {game?.provider?.title}&nbsp;•&nbsp;
         </Link>
         <div class="w-[10px] h-[10px]">

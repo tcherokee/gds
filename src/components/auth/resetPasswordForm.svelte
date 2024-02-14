@@ -2,6 +2,9 @@
   import { onMount } from "svelte";
   import { toast } from "svoast";
 
+  // Components
+  import Link from "../helpers/link.svelte";
+
   let code = "";
   let password = "";
   let passwordConfirmation = "";
@@ -106,12 +109,12 @@
 
     <p class="text-center text-base text-blue-500 !mb-0">
       Go back to?
-      <a
-        href={"/authentication/login"}
+      <Link
+        href={"/authentication/login/"}
         class="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
       >
         Login
-      </a>
+      </Link>
     </p>
   </div>
 </div>

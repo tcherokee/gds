@@ -152,7 +152,7 @@ const quickLinks = block ? extractH2TextBlock(block) : extractH2Text(data.attrib
                 {
                     quickLinks.map((link: quicklinksObj) => (
                         <li class="py-0.5 px-0 m-0">
-                            <Link class="underline underline-offset-4" href={`#${link.id}`}>{link.text}</Link>
+                            <Link class="underline underline-offset-4" href={`#${link.id}/`}>{link.text}</Link>
                         </li>
                     ))
                 }

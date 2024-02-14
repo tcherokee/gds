@@ -1,9 +1,10 @@
 ---
 
+import { Link } from 'astro-link'
 import type { MenuItem } from "../../../interfaces/menu.ts"
 import type { FooterImage } from "../../../interfaces/layout.ts"
-import Link from "../helpers/link.astro"
 import Image from "../helpers/images.astro"
+import Images from '../helpers/images.svelte'
 
 const { footerContent, footerImages, footerNavigation, footerNavigations} = Astro.props
 
@@ -19,14 +20,18 @@ const { footerContent, footerImages, footerNavigation, footerNavigations} = Astr
                 {
                     footerNavigations.map((nav: MenuItem) => (
                         <div class="w-1/2 md:w-1/4">
-                            <Link href={nav.attributes.url} classes="underline mb-3 uppercase font-semibold block text-sm text-footer-quicklink-text" text={nav.attributes.title} />
+                            <Link href={`${nav.attributes.url}/`} class="underline mb-3 uppercase font-semibold block text-sm text-footer-quicklink-text">
+                                {nav.attributes.title}
+                            </Link>
                             <ul>
                                 {nav.attributes.children.data.length > 0 && (
                                     <>
                                         {
                                             nav.attributes.children.data.map((child) => (
                                                 <li>
-                                                    <Link href={child.attributes.url} classes="text-sm text-footer-quicklink-text" text={child.attributes.title} />
+                                                    <Link href={`${child.attributes.url}/`} class="text-sm text-footer-quicklink-text">
+                                                        {child.attributes.title} 
+                                                    </Link>
                                                 </li>
                                             ))
                                         }
@@ -48,7 +53,9 @@ const { footerContent, footerImages, footerNavigation, footerNavigations} = Astr
                 footerImages.length > 0 && (
                     footerImages.map((img: FooterImage) => (
                         img?.imageLink ?
-                        <Link href={img.imageLink} image={{src:img?.image?.data?.attributes?.url, originalHeight:img?.image?.data?.attributes?.height, originalWidth:img?.image?.data?.attributes?.width, imageHeight:40, imageWidth:0, classes:"gambling-logos", alt:`${img.imageName} logo`}} />
+                        <Link href={`${img.imageLink}/`}>
+                            <Image src={img?.image?.data?.attributes?.url} originalHeight={img?.image?.data?.attributes?.height} originalWidth={img?.image?.data?.attributes?.width} imageHeight={40} imageWidth={0} classes="gambling-logos" alt={`${img.imageName} logo`} />
+                        </Link>
                         : <Image src={img?.image?.data?.attributes?.url} imageHeight={40} originalHeight={img?.image?.data?.attributes?.height} originalWidth={img?.image?.data?.attributes?.width} imageWidth={0} classes="gambling-logos" alt={`${img?.imageName} logo`} />
                     ))
                 )
@@ -59,7 +66,9 @@ const { footerContent, footerImages, footerNavigation, footerNavigations} = Astr
                 {
                     footerNavigation.length > 0 && (
                         footerNavigation.map((nav: MenuItem) => (
-                            <Link href={nav.attributes.url} classes="text-right text-sm text-footer-quicklink-text" text={nav.attributes.title} />
+                            <Link href={`${nav.attributes.url}/`} class="text-right text-sm text-footer-quicklink-text">
+                                {nav.attributes.title}
+                            </Link>
                         ))
                     )
                 }

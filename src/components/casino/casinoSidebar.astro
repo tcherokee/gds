@@ -15,6 +15,9 @@ import type { CasinoData, TranslationData } from "../../../interfaces/common/typ
 import type { LayoutData } from '../../../interfaces/layout';
 import { getTranslations } from "../../../stores/addTranslations.ts";
 
+// Components
+import { Link } from "astro-link"
+
 const translationStore: TranslationData = getTranslations.get()
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -67,11 +70,11 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                     <div>{casino?.attributes?.[casinoObj.bonus]?.bonusAmount}{casinoObj.bonus !== 'freeSpinsSectio' ? '€' : ''}</div>
                                                 </div>
                                             </div>
-                                            <a
+                                            <Link
                                                 class="btn btn-misc uppercase text-white !text-[14px] px-[22.5px] w-fit h-[37px]"
-                                                href={urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+casino.attributes?.slug}>
+                                                href={urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+casino.attributes?.slug+"/"}>
                                                 {translationStore.review}
-                                            </a>
+                                            </Link>
                                         </div>
                                     </td>
                                 </tr>

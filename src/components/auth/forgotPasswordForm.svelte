@@ -1,5 +1,6 @@
 <script lang="ts">
   import { toast } from "svoast";
+  import Link from "../helpers/link.svelte";
   
   let email: string = "";
   let isResetLinkSent = false;
@@ -84,21 +85,21 @@
     {/if}
     <div class="space-y-6">
       {#if isResetLinkSent}
-        <a
-          href={"/authentication/login"}
-          class="block text-base text-center min-h-[44px] rounded-md btn-secondary px-3 py-2.5 text-sm font-semibold"
+        <Link
+          href={"/authentication/login/"}
+          classes="block text-base text-center min-h-[44px] rounded-md btn-secondary px-3 py-2.5 text-sm font-semibold"
         >
           {translations.backToSignIn}
-        </a>
+        </Link>
       {/if}
       <p class="text-center text-base text-blue-500 !mb-0">
         {translations.noAccount}
-        <a
-          href={"/authentication/register"}
-          class="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
+        <Link
+          href={"/authentication/register/"}
+          classes="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
         >
           {translations.signUp}
-        </a>
+        </Link>
       </p>
     </div>
   </div>

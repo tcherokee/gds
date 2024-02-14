@@ -70,7 +70,7 @@
 									<div
 										class="flex justify-items-start overflow-hidden w-16 flex-shrink-0 items-center justify-center rounded-l-md border-grey-300 border-l border-t border-b"
 									>
-										<Link href="/slot-machines/{fav?.slug || ''}">
+										<Link href={`/slot-machines/${fav?.slug || ''}/`}>
 											<TransformImage
 												imageUrl={fav?.images?.url || ''}
 												imageAlt={fav?.title}
@@ -82,7 +82,7 @@
 									<div
 										class="relative flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-grey-300 bg-white"
 									>
-										<Link href="/slot-machines/{fav?.slug || ''}">
+										<Link href={`/slot-machines/${fav?.slug || ''}/`}>
 											<div class="flex flex-1 flex-col truncate px-4 py-1 text-sm leading-tight">
 												<div class="font-medium uppercase text-left text-xs">{fav?.title || ''}</div>
 												{#if fav?.categories}

@@ -36,7 +36,7 @@ const authors = await fetchApi<TAuthor[]>({
 });
 
 // Create Canonical URL
-const canonical: string =  import.meta.env.PUBLIC_SITE_ID === 'gds' ? `${import.meta.env.PUBLIC_FULL_URL}/` : import.meta.env.PUBLIC_FULL_URL;
+const canonical: string =  `${import.meta.env.PUBLIC_FULL_URL}/`;
 
 const seo = {
 	pageTitle: authorIndex.attributes?.authorPage?.metaTitle,
