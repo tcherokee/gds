@@ -46,7 +46,7 @@ function setupMeilisearch(noResults, indexName, containerId, resultsId) {
       templates: {
         // Template literals could be extracted to a function to avoid redundancy
         item(hit, { html, components }) {
-          return html`<a class="col-span-1 flex rounded-md shadow-sm" href=${import.meta.env.PUBLIC_FULL_URL}/slot-machine/${hit.slug}/ data-sveltekit-reload>
+          return html`<a class="col-span-1 flex rounded-md shadow-sm" href=/it/slot-machines/${hit.slug}/ data-sveltekit-reload>
 							<div class="flex justify-items-start overflow-hidden w-16 flex-shrink-0 items-center justify-center rounded-l-md border-grey-300 border-l border-t border-b">
 								<img src=${hit.logo} class=""/>
 							</div>

@@ -142,8 +142,7 @@ let seo = {
                 >
                 <div class="flex ml-5 font-bold">
                   <Link
-                    rel="sponsored"
-                    type="external"
+                    externalInNewTab={true}
                     class="text-decoration-underline text-blue-300"
                     href={`${page?.attributes?.casinoBonus?.bonusUrl}/`}
 				  >
@@ -256,8 +255,7 @@ let seo = {
             <div class="mb-5">
               <Link
                 class="btn btn-misc block w-full uppercase"
-                rel="sponsored"
-                type="external"
+                externalInNewTab={true}
                 href={`${page?.attributes?.casinoBonus?.bonusUrl}/`}
 			  >
                 {translationStore.accessWebsite}
@@ -694,8 +692,7 @@ let seo = {
           </div>
           <Link
             class="btn btn-misc block w-full uppercase"
-            rel="sponsored"
-            type="external"
+            externalInNewTab={true}
             href={`${page?.attributes?.casinoBonus?.bonusUrl}/`}
 		  >
             {translationStore.accessWebsite}
@@ -810,9 +807,9 @@ let seo = {
           <div class="bg-white flex flex-col p-3 rounded sticky top-3">
             <div>
               <Link
-                href={page?.attributes?.casinoBonus?.bonusUrl}
-                classes="block rounded border border-[transparent]"
-                rel="sponsored"
+                href={`${page?.attributes?.casinoBonus?.bonusUrl}/`}
+                class="block rounded border border-[transparent]"
+                externalInNewTab={true}
               >
                 <Image
                   src={page?.attributes?.images?.data?.attributes?.url}
@@ -843,12 +840,12 @@ let seo = {
                 >
                 <div class="flex ml-5 font-bold">
                   <Link
-                    rel="sponsored"
-                    type="external"
-                    classes="text-decoration-underline text-blue-300"
-                    href={page?.attributes?.casinoBonus?.bonusUrl}
-                    text={page?.attributes?.casinoBonus?.bonusLabel}
-                  />
+                    externalInNewTab={true}
+                    class="text-decoration-underline text-blue-300"
+                    href={`${page?.attributes?.casinoBonus?.bonusUrl}/`}
+				  >
+                    {page?.attributes?.casinoBonus?.bonusLabel}
+				  </Link>
                 </div>
               </div>
               <table class="casino-details-box">
@@ -955,12 +952,12 @@ let seo = {
             </div>
             <div class="mb-5">
               <Link
-                classes="btn btn-misc block w-full uppercase"
-                rel="sponsored"
-                type="external"
-                text={translationStore.accessWebsite}
-                href={page?.attributes?.casinoBonus?.bonusUrl}
-              />
+			  	href={`${page?.attributes?.casinoBonus?.bonusUrl}/`}
+                class="btn btn-misc block w-full uppercase"
+                externalInNewTab={true}
+			  >
+                {translationStore.accessWebsite}
+			  </Link>
             </div>
             <Collapse
               id="termsConditions-2"
