@@ -26,7 +26,7 @@
 
   onMount(async () => {
     userProfileLoader = true;
-    const res = await fetch(`/api/dashboard/user`);
+    const res = await fetch(`${import.meta.env.BASE_URL}api/dashboard/user`);
     if (res.ok) {
       userProfile = await res.json();
       userFirstName = userProfile.firstName;
@@ -56,7 +56,7 @@
     if (avatarFile) {
       if ($user?.photo) {
         fetch(
-          `/api/dashboard/delete-user-image?` +
+          `${import.meta.env.BASE_URL}api/dashboard/delete-user-image?` +
             new URLSearchParams(`id=${$user?.photo.id}`),
           {
             method: "DELETE",
@@ -70,7 +70,7 @@
       formData.append("ref", "plugin::users-permissions.user");
       formData.append("refId", `${userProfile.id}`);
       formData.append("field", "photo");
-      const response = await fetch(`/api/dashboard/update-user-image`, {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/update-user-image`, {
         method: "POST",
         body: formData,
       });
@@ -96,14 +96,14 @@
 
       if ($user?.cover_image) {
         fetch(
-          `/api/dashboard/delete-user-image?` +
+          `${import.meta.env.BASE_URL}api/dashboard/delete-user-image?` +
             new URLSearchParams(`id=${$user?.cover_image.id}`),
           {
             method: "DELETE",
           }
         );
       }
-      const response = await fetch(`/api/dashboard/update-user-image`, {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/update-user-image`, {
         method: "POST",
         body: formData,
       });
@@ -129,7 +129,7 @@
         lastName: userLastName,
         bio: userBio,
       };
-      const response = await fetch(`/api/dashboard/user`, {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/user`, {
         method: "PATCH",
         body: JSON.stringify(userUpdatePayload),
       });

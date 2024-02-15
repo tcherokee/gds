@@ -28,9 +28,15 @@ let pageBreadcrumbs = [...breadcrumbs];
 //   pageBreadcrumbs.unshift(...layout.attributes[breadcrumbKey]);
 // }
 
-const breadcrumStore: any = getBreadcrumbs.get();
+const breadcrumStore: any = await getBreadcrumbs.get();
 if (breadcrumbKey && breadcrumStore[breadcrumbKey]) {
   pageBreadcrumbs.unshift(...breadcrumStore[breadcrumbKey]);
+}
+if (breadcrumbKey && !breadcrumbs.length && !breadcrumStore[breadcrumbKey]) {
+  pageBreadcrumbs = [{
+    breadCrumbText: 'HOME',
+    breadCrumbUrl: null
+  }];
 }
 
 ---
