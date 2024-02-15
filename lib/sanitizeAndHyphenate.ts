@@ -1,4 +1,4 @@
-export const sanitizeAndHyphenate = (text: string): string => {
+export const sanitizeAndHyphenate = (text: string) => {
   
   if (text) {
     const updatedText = text

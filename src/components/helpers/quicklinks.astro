@@ -32,34 +32,34 @@ const extractH2TextBlock = (components: Block[]): quicklinksObj[] => {
             const matches = [...component.content.matchAll(h2Regex)];
             return matches.map(match => ({
                 text: match[1],
-                id: sanitizeAndHyphenate(match[1]),
+                id: sanitizeAndHyphenate(match[1]) || '',
             }));
         } else if (isHowToBlockType(component)) {
             return [{
                 text: component.title,
-                id: sanitizeAndHyphenate(component.title),
+                id: sanitizeAndHyphenate(component.title) || '',
             }];
         } else if (isFaqBlockType(component) && !faqProcessed) {
             // Set FAQ Processed to true to ensure only One heading gets created for the FAQs.
             faqProcessed = true
             return [{
                 text: translationStore.faq,
-                id: sanitizeAndHyphenate(translationStore.faq),
+                id: sanitizeAndHyphenate(translationStore.faq) || '',
             }];
         } else if (isProsAndConsType(component)) {
             return [{
                 text: component.heading,
-                id: sanitizeAndHyphenate(component.heading)
+                id: sanitizeAndHyphenate(component.heading) || ''
             }]
         } else if (isImageWithParagraphType(component)) {
             return [{
                 text: component.title,
-                id: sanitizeAndHyphenate(component.title)
+                id: sanitizeAndHyphenate(component.title) || ''
             }]
         } else if (isIntroductionWithImageBlock(component)) {
             return [{
                 text: component.heading,
-                id: sanitizeAndHyphenate(component.heading)
+                id: sanitizeAndHyphenate(component.heading) || ''
             }]
         } else {
             return [];
@@ -150,7 +150,7 @@ const quickLinks = block ? extractH2TextBlock(block) : extractH2Text(data.attrib
         <div slot="content" class="flex">
             <ul class="grid capitalize m-0 p-0 pr-4 md:grid-cols-2 w-full gap-2">
                 {
-                    quickLinks.map((link: quicklinksObj) => (
+                    quickLinks.map(link => (
                         <li class="py-0.5 px-0 m-0">
                             <Link class="underline underline-offset-4" href={`#${link.id}/`}>{link.text}</Link>
                         </li>

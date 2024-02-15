@@ -4,7 +4,7 @@
     import { get } from 'svelte/store';
 
     // Import Types
-    import type { CasinoFilters, BonusLabels, Toggles } from '../../../interfaces/common/types';
+    import type { CasinoFilters, BonusLabels } from '../../../interfaces/common/types';
 
     // Import QS Function
     import { casinosQs } from "../../../qs/casinos"

@@ -18,7 +18,7 @@ import { gamesQs } from "../../qs/games.ts"
 //types and typeguards
 import type { GetStaticPaths } from "astro";
 import type { CustomPageItem } from "../../interfaces/custom-pages"
-import type { Block, CasinoListBlock, TranslationData } from "../../interfaces/common/types.ts"
+import type { Block, CasinoListBlock, TGameListBlock, TranslationData } from "../../interfaces/common/types.ts"
 
 // Import Svelte Components
 import CasinoTable from '../components/casino/casinoTable.svelte';
@@ -113,7 +113,7 @@ const seo = {
                                 return <CasinoTable initialCasinos={(page.attributes.blocks[i] as CasinoListBlock)} client:load />
                             }
                             case 'gameListBlock': {
-                                return <GameListBlock data={page.attributes.blocks[i]} client:load />
+                                return <GameListBlock data={(page.attributes.blocks[i] as TGameListBlock)} client:load />
                             }
                         }
                     }

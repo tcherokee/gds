@@ -4,7 +4,7 @@ import type { CasinoFilters } from "../interfaces/common/types";
 export const casinosQs = ({
   limit = 1000,
   sort = "ratingAvg:desc",
-  providers = "",
+  providers = [""],
   ids = [],
   bonusKey = "",
   condition = "",

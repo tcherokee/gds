@@ -1,9 +1,10 @@
 import instantsearch from "instantsearch.js";
+import type { TSearchGame } from "../interfaces/search";
 import { searchBox, hits, configure } from "instantsearch.js/es/widgets";
 import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
 
 // Define common setup for Meilisearch to reduce redundancy
-function setupMeilisearch(noResults, indexName, containerId, resultsId) {
+function setupMeilisearch(noResults: any, indexName: string, containerId: string, resultsId: string) {
   
   return instantsearch({
     indexName: indexName,
@@ -30,9 +31,9 @@ function setupMeilisearch(noResults, indexName, containerId, resultsId) {
       cssClasses: {
         list: ["mt-3", "grid", "grid-cols-1", "gap-2", "md:grid-cols-2"],
       },
-      transformItems(items) {
+      transformItems(items: any) {
         // Error handling if the logo URL is incorrect or missing
-        return items.map((item) => {
+        return items.map((item: TSearchGame) => {
           const logoUrl = item.logo?.includes(".com")
             ? `${import.meta.env.PUBLIC_IMAGE_URL}/65x60/filters:quality(80)` +
               item.logo.substring(item.logo.indexOf(".com") + 4)
@@ -93,7 +94,7 @@ function setupMeilisearch(noResults, indexName, containerId, resultsId) {
 }
 
 // Refactored functions to use the setupMeilisearch function
-export const useMeilisearch = (noResults) => {
+export const useMeilisearch = (noResults: any) => {
   const search = setupMeilisearch(
     noResults,
     import.meta.env.PUBLIC_MEILISEARCH_INDEX_NAME,
@@ -104,7 +105,7 @@ export const useMeilisearch = (noResults) => {
   return { search };
 };
 
-export const useMeilisearchMain = (noResults) => {
+export const useMeilisearchMain = (noResults: any) => {
   const searchMain = setupMeilisearch(
     noResults,
     import.meta.env.PUBLIC_MEILISEARCH_INDEX_NAME,
