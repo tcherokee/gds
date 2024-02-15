@@ -43,7 +43,7 @@
   });
 
   const logoutHandler = async () => {
-    const response = await fetch(`/api/auth/logout`, {
+    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/logout`, {
       method: "POST",
       body: JSON.stringify({}),
     });
