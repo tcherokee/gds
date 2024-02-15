@@ -32,11 +32,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
           const { redirectUrl, redirectTarget, redirectMethod } =
             item.attributes;
 
-          // Remove trailing slash from pathname if it exists
-          const pathname = context.url.pathname.replace(/\/$/, "");
-
           // Check if the current URL matches the redirectUrl
-          if (pathname === redirectUrl) {
+          if (context.url.pathname === redirectUrl) {
             // Determine the status code for the redirect
             const statusCode = redirectMethod === "permanent" ? 308 : 307;
 
