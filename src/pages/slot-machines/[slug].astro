@@ -34,6 +34,7 @@ import ImageCarousel from '../../components/general/imageCarousel.svelte';
 import Faqs from '../../components/general/faqs.astro';
 import GamePlayer from '../../components/games/gamePlayer.svelte'
 import QuickLinks from '../../components/helpers/quicklinks.astro'
+import AuthorCard from '../../../components/general/authorCard.astro';
 
 // Set Up Translation Store
 const translationStore: TranslationData = getTranslations.get()
@@ -210,6 +211,8 @@ const __blocks = page?.attributes?.blocks
 						</div>
 					</div>
 				}
+
+				<AuthorCard data={page.attributes.author}/>
             </div>
             <div class="basis-[315px] shrink-0 order-first order-last">
                 <CasinoSideBar />

@@ -32,6 +32,7 @@ import CasinoComparison from "../../../components/casino/casinoComparison.astro"
 import Faqs from "../../../components/general/faqs.astro";
 import ImageCarousel from "../../../components/general/imageCarousel.svelte";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
+import AuthorCard from '../../../components/general/authorCard.astro';
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -84,7 +85,9 @@ let seo = {
 };
 
 ---
-
+<script define:vars={{page}}>
+  console.log(page);
+</script>
 <MainLayout seoData={seo}>
   <Breadcrumb breadcrumbs={[{
     breadCrumbText: page?.attributes?.title,
@@ -501,10 +504,10 @@ let seo = {
                                 <Link
                                   href=""
                                 >
-								{page?.attributes?.author?.data
+								{page?.attributes?.testimonial?.approvedBy?.data
                                     ?.attributes?.firstName +
                                     " " +
-                                    page?.attributes?.author?.data?.attributes
+                                    page?.attributes?.testimonial?.approvedBy?.data?.attributes
                                       ?.lastName}
                                 </Link>
                               </span>
@@ -704,13 +707,6 @@ let seo = {
         <div class="col-span-1 md:col-span-3">
           <QuickLinks data={page} />
 
-          {
-            page?.attributes?.blocks &&
-              Components.map((Component, i) => (
-                <Component data={page?.attributes.blocks[i]} />
-              ))
-          }
-
           <ImageCarousel data={page?.attributes.blocks[0]} client:visible />
 
           <div class="row qc">
@@ -801,6 +797,8 @@ let seo = {
               </div>
             )
           }
+
+          <AuthorCard data={page.attributes.author}/>
         </div>
 
         <div class="col-span-1 hidden md:block">
