@@ -11,8 +11,9 @@
 
   $: {
     const splittedUrlPathname = pageUrl.split("/");
+    const lengthCheck = import.meta.env.BASE_URL ? 4 : 2;
     activeRoute =
-      splittedUrlPathname.length > 2 ? splittedUrlPathname[2] : "home";
+      splittedUrlPathname.length > lengthCheck ? splittedUrlPathname[import.meta.env.BASE_URL ? 3 : 2] : "home";
   }
 </script>
 
