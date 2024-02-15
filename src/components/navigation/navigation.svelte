@@ -204,7 +204,7 @@
 
     <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
       <Favourite />
-      <Link href="/authentication/login" classes="pt-2 mt-1 px-2 pb-3 rounded-t">
+      <Link href="/authentication/login/" classes="pt-2 mt-1 px-2 pb-3 rounded-t">
         {#if !toggle}
           <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
         {:else}
