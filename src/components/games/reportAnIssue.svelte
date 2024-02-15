@@ -9,7 +9,7 @@
 	export let gameSlug: any
 
     const siteID = import.meta.env.PUBLIC_SITE_ID;
-    const publicURL = import.meta.env.PUBLIC_FULL_URL;
+    const publicURL = process.env.PUBLIC_FULL_URL || import.meta.env.PUBLIC_FULL_URL;
 
     const gameURL: string = `${publicURL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${gameSlug}`
 	let message: string = "";
@@ -46,7 +46,7 @@
 		};
 		
 		const response = await fetch(
-		`/api/reportAnIssue`,
+		`${import.meta.env.BASE_URL}api/reportAnIssue`,
 		{
 			method: "POST",
 			body: JSON.stringify(issuePayload),
