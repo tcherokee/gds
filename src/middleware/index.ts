@@ -62,11 +62,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
         authCookie &&
         (authenticationIndex === 2 || authenticationIndex === 1)
       ) {
-        return Response.redirect(new URL("/dashboard", context.url), 302);
+        return Response.redirect(
+          new URL(`${import.meta.env.BASE_URL}/dashboard/`, context.url),
+          302
+        );
       }
       if (!authCookie && (dashboardIndex === 2 || dashboardIndex === 1)) {
         return Response.redirect(
-          new URL("/authentication/login", context.url),
+          new URL(
+            `${import.meta.env.BASE_URL}/authentication/login/`,
+            context.url
+          ),
           302
         );
       }

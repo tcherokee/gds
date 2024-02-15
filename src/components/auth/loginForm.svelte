@@ -29,7 +29,7 @@
       password,
       recaptchaToken,
     };
-    const response = await fetch(`/api/auth/login`, {
+    const response = await fetch(`/api/auth/login/`, {
       method: "POST",
       body: JSON.stringify(loginPayload),
     });
