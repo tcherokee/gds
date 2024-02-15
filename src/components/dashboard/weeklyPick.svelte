@@ -12,7 +12,7 @@
 
   onMount(async () => {
     weeklyPickedLoader = true;
-    const res = await fetch(`/api/dashboard/weekly-pick-games`);
+    const res = await fetch(`${import.meta.env.BASE_URL}api/dashboard/weekly-pick-games`);
     if (res.ok) {
       weeklyGames = await res.json();
     }

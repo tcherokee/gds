@@ -17,6 +17,7 @@
 
   // Stores
   import { user } from "../../../stores/authStore.ts";
+  import { y } from "../../../stores/window.ts";
   import { onMount } from "svelte";
 
   let toggle: boolean
@@ -35,9 +36,13 @@
   };
 
   export let mainNavigation: MenuItem[];
+  const backToTop = () => {
+		document.body.scrollIntoView()
+	}
   
 </script>
 
+<svelte:window bind:scrollY={$y} />
 <MediaQuery query="(max-width: 991px)" let:matches>
   {#if matches}
     <div class="relative z-40 flex items-center">
@@ -216,6 +221,21 @@
   {/if}
 </MediaQuery>
 <Toasts position="top-right" />
+<button
+  class="hidden w-12 h-12 fixed bottom-14 right-2.5 z-40 data-active:block"
+  on:click={backToTop}
+  data-ui={$y > 50 ? 'active' : null}
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="scroll-arrow" viewBox="0 0 512 512">
+    <path
+      class="fill-scroll-up-arrow"
+      d="M390.6 310.6c-12.5 12.5-32.75 12.5-45.25 0L256 221.3L166.6 310.6c-12.5 12.5-32.75 12.5-45.25 0s-12.5-32.75 0-45.25l112-112C239.6 147.1 247.8 144 256 144s16.38 3.125 22.62 9.375l112 112C403.1 277.9 403.1 298.1 390.6 310.6z"
+    /><path
+      class="fill-scroll-up-bkg"
+      d="M256 0C114.6 0 0 114.6 0 256c0 141.4 114.6 256 256 256s256-114.6 256-256C512 114.6 397.4 0 256 0zM390.6 310.6c-12.5 12.5-32.75 12.5-45.25 0L256 221.3L166.6 310.6c-12.5 12.5-32.75 12.5-45.25 0s-12.5-32.75 0-45.25l112-112C239.6 147.1 247.8 144 256 144s16.38 3.125 22.62 9.375l112 112C403.1 277.9 403.1 298.1 390.6 310.6z"
+    />
+  </svg>
+</button>
 
 <style lang="postcss">
   #toggleMenu {

@@ -24,9 +24,9 @@
   onMount(async () => {
     slotMachineUrl.set(slotMachineURL);
     const authEndpoints = [
-		'/api/dashboard/user',
-		'/api/dashboard/messages',
-		'/api/dashboard/message-action'
+		`${import.meta.env.BASE_URL}api/dashboard/user`,
+		`${import.meta.env.BASE_URL}api/dashboard/messages`,
+		`${import.meta.env.BASE_URL}api/dashboard/message-action`
 	]
 	const [
 		userProfile,
@@ -50,6 +50,7 @@
     location.reload();
     user.set(null);
   };
+  console.log('PAGEURL', pageUrl);
 </script>
 
 <aside
