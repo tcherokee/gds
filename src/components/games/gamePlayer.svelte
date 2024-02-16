@@ -1,6 +1,7 @@
 <script lang="ts">
 
 	export let data: any;
+	export let gamePageURL: string;
 	export let layout: any;
 
 	// Svelte Stuff
@@ -288,7 +289,7 @@
 </div>
 
 {#if ReportAnIssueOpen}
-	<ReportAnIssue gameSlug={data?.attributes?.slug} on:click={ReportAnIssueModal} />
+	<ReportAnIssue {gamePageURL} on:click={ReportAnIssueModal} />
 {/if}
 
 <style lang="scss">
