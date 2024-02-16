@@ -71,14 +71,14 @@ const layout = await fetchApi<LayoutData>({
 })
 
 //generate page url
-let siteID = import.meta.env.SITE_ID
-let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${Astro.params.slug}`;
+const siteID = import.meta.env.SITE_ID
+const siteURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${slug}`;
 
 //set page seo data
 let seo = {
     pageTitle: page?.attributes?.seo?.metaTitle,
     metaDescription: page?.attributes?.seo?.metaDescription,
-    url: canonical
+    url: siteURL
 }
 
 //list componets on page
@@ -90,7 +90,7 @@ const __blocks = page?.attributes?.blocks
 
      <div class="curve rounded-b-3xl pb-3">
         <div class="section-wrapper relative">
-            <GamePlayer data={page} {layout} client:load />
+            <GamePlayer data={page} gamePageURL={siteURL} {layout} client:load />
             <div class="mt-6 md:mt-8">
                 <h2 class="text-white !m-0">{translationStore.gamePageRelatedGamesH2}</h2>
                 <div class="mt-4 glass-wrapper">

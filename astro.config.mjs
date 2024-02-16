@@ -5,11 +5,14 @@ import svelte from "@astrojs/svelte";
 import node from "@astrojs/node";
 import Icons from "unplugin-icons/vite";
 import { FileSystemIconLoader } from "unplugin-icons/loaders";
+import sitemap from "@astrojs/sitemap";
 dotenv.config();
+
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), svelte()],
+  site: process.env.PUBLIC_FULL_URL,
+  integrations: [tailwind(), svelte(), sitemap()],
   base: process.env.PUBLIC_SITE_ID === "gds" ? "/it" : "",
   trailingSlash: "always",
   vite: {

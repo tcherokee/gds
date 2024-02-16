@@ -1,24 +1,16 @@
 <script lang="ts">
-	import { urlTranslate } from '../../../utils/data-store.util'
     import { getTranslations } from '../../../stores/addTranslations';
 	import { createEventDispatcher } from 'svelte'
 
 	import Close from "~icons/kensho-icons/xmark"
-  import { toast } from 'svoast';
+  	import { toast } from 'svoast';
 
-	export let gameSlug: any
-
-    const siteID = import.meta.env.PUBLIC_SITE_ID;
-    const publicURL = process.env.PUBLIC_FULL_URL || import.meta.env.PUBLIC_FULL_URL;
-
-    const gameURL: string = `${publicURL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${gameSlug}`
+	export let gamePageURL: string;
+    
 	let message: string = "";
 	const deviceID: any = window.navigator.userAgent;
 	let isSubmissionSuccessfull = false;
   	let submissionLoader = false;
-
-
-	const gdsBase = siteID === 'gds' ? '/it' : ''
 
 	const dispatch = createEventDispatcher()
 
@@ -39,7 +31,7 @@
 		const issuePayload = {
 			formName: 'Report Game Form',
 			formData: {
-				gameURL,
+				gamePageURL,
 				message,
 				deviceID
 			}
@@ -96,7 +88,7 @@
 							name="gameURL"
 							id="gameURL"
 							class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-							value={gameURL}
+							value={gamePageURL}
 							readonly
 						/>
 
