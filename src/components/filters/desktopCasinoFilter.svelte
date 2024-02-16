@@ -150,8 +150,8 @@
 					<div>
 						<div
 							class="
-								relative group p-2 rounded-[4px] bg-white/[.5] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border
-								{$casinoVariables.bonusKey ? 'bg-filter-alternate-toggle' : ''}
+								relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border
+								{$casinoVariables.bonusKey ? 'bg-filter-alternate-toggle' : 'bg-white/[.5]'}
 							"
 							aria-expanded="false"
 							role="button"
@@ -199,8 +199,8 @@
 					<div>
 						<div
 							class="
-								relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border text-white/[.7] bg-white/[.5] cursor-not-allowed
-								{$casinoVariables.condition ? 'bg-filter-alternate-toggle' : ''}
+								relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border text-white/[.7] cursor-not-allowed
+								{$casinoVariables.condition ? 'bg-filter-alternate-toggle' : 'bg-white/[.5]'}
 								{$casinoVariables.bonusKey ? '!text-black cursor-pointer' : ''}
 							"
 							aria-expanded="false"
@@ -249,8 +249,8 @@
 						<div>
 							<div
 								class="
-									relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none text-white/[.7] bg-white/[.5] cursor-not-allowed
-									{$casinoVariables.amount ? 'bg-filter-alternate-toggle' : ''}
+									relative group p-2 rounded-[4px] h-11 flex w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none text-white/[.7] cursor-not-allowed
+									{$casinoVariables.amount ? 'bg-filter-alternate-toggle' : 'bg-white/[.5]'}
 									{$casinoVariables.bonusKey ? '!text-black cursor-pointer' : ''}
 								"
 								aria-expanded="false"
@@ -301,8 +301,8 @@
 						<div>
 							<div
 								class="
-									relative group p-2 flex rounded-[4px] h-11 w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none text-white/[.7] bg-white/[.5] cursor-not-allowed
-									{$casinoVariables.wagering ? 'bg-filter-alternate-toggle' : ''}
+									relative group p-2 flex rounded-[4px] h-11 w-full items-center justify-between text-sm font-medium border-grey-100 border open:rounded-b-none text-white/[.7]  cursor-not-allowed
+									{$casinoVariables.wagering ? 'bg-filter-alternate-toggle' : 'bg-white/[.5]'}
 									{$casinoVariables.bonusKey ? '!text-black cursor-pointer' : ''}
 								"
 								aria-expanded="false"
