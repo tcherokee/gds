@@ -24,9 +24,9 @@
   onMount(async () => {
     slotMachineUrl.set(slotMachineURL);
     const authEndpoints = [
-		`${import.meta.env.BASE_URL}api/dashboard/user`,
-		`${import.meta.env.BASE_URL}api/dashboard/messages`,
-		`${import.meta.env.BASE_URL}api/dashboard/message-action`
+		`${import.meta.env.BASE_URL}api/dashboard/user/`,
+		`${import.meta.env.BASE_URL}api/dashboard/messages/`,
+		`${import.meta.env.BASE_URL}api/dashboard/message-action/`
 	]
 	const [
 		userProfile,
@@ -43,14 +43,13 @@
   });
 
   const logoutHandler = async () => {
-    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/logout`, {
+    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/logout/`, {
       method: "POST",
       body: JSON.stringify({}),
     });
     location.reload();
     user.set(null);
   };
-  console.log('PAGEURL', pageUrl);
 </script>
 
 <aside

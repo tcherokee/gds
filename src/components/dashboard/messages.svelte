@@ -16,7 +16,7 @@
 
   onMount(async () => {
     userMessagesLoader = true;
-    const res = await fetch(`${import.meta.env.BASE_URL}api/dashboard/messages`);
+    const res = await fetch(`${import.meta.env.BASE_URL}api/dashboard/messages/`);
     if (res.ok) {
       userMessages = await res.json();
     }
@@ -34,7 +34,7 @@
 
   const deleteMessageHandler = async (message: any) => {
     deleteMessageLoader[message.id] = true;
-    const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/message-action`, {
+    const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/message-action/`, {
       method: "POST",
       body: JSON.stringify({
         message_id: message.id,
@@ -55,7 +55,7 @@
 
   const readMessageHandler = async (message_id: number) => {
     if (!$readMessages.includes(message_id)) {
-      const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/message-action`, {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/message-action/`, {
         method: "POST",
         body: JSON.stringify({
           message_id,

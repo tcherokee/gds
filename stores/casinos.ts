@@ -84,8 +84,6 @@ export const alphabeticProviders = computed(providers, (providersArr) => {
       // Push the item to the corresponding group
       acc[firstLetter].push({ label, value, image });
 
-      console.log('acc', acc)
-
       return acc;
     }, {} as Record<string, TAlphabetProviders[] >);
     

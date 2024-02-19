@@ -53,12 +53,12 @@ let provideURL = urlTranslate[siteID as keyof typeof urlTranslate]['casino-provi
 			<div
 				class="flex justify-between items-center mb-[2px] transition-transform duration-[0.3s] translate-y-[20px] sm:group-hover:translate-y-0">
 				<h4 class="text-white text-sm font-bold !m-0">
-					<Link href={`/${game?.attributes?.slug}/`}>{game?.attributes?.title ?? game.title}</Link>
+					<Link href={`/${gameURL}/`}>{game?.attributes?.title ?? game.title}</Link>
 				</h4>
 				<AddToFav game={game} classes="w-4 h-[14px]" client:visible />
 			</div>
 			<div class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100">
-				<Link href={`/${game?.attributes?.slug}/`}
+				<Link href={`/${gameURL}/`}
 					class="text-[#CED4DA] text-xs">
 					{game?.attributes?.provider?.data?.attributes?.title ?? game?.provider?.title}&nbsp;•&nbsp;
 				</Link>
