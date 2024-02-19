@@ -25,7 +25,7 @@ export const slotMachineUrl = atom<string>("");
 // Fetch User Favourite Games
 export const getUserFavouriteGames = async () => {
   const userFavGamesRes = await fetch(
-    `${import.meta.env.BASE_URL}api/dashboard/user-games`,
+    `${import.meta.env.BASE_URL}api/dashboard/user-games/`,
     {
       method: "GET",
     }

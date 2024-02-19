@@ -49,9 +49,9 @@
   };
   onMount(async () => {
     const authEndpoints = [
-      `${import.meta.env.BASE_URL}api/dashboard/user-games`,
-      `${import.meta.env.BASE_URL}api/dashboard/most-played-games`,
-      `${import.meta.env.BASE_URL}api/dashboard/weekly-pick-games`,
+      `${import.meta.env.BASE_URL}api/dashboard/user-games/`,
+      `${import.meta.env.BASE_URL}api/dashboard/most-played-games/`,
+      `${import.meta.env.BASE_URL}api/dashboard/weekly-pick-games/`,
     ];
     const [userGames, mostPlayedGames, pickOfTheWeekGames] = await Promise.all(
       authEndpoints.map((endpoint) => fetchData(endpoint))

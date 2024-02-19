@@ -52,7 +52,7 @@
 				game: data.attributes.slug
 			}
 			const response = await fetch(
-				`${import.meta.env.BASE_URL}api/dashboard/most-played-games?` + new URLSearchParams(payload),
+				`${import.meta.env.BASE_URL}api/dashboard/most-played-games/?` + new URLSearchParams(payload),
 				{
 					method: 'POST'
 				}
