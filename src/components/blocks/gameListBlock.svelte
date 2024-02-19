@@ -96,20 +96,22 @@
       {/if}
     </MediaQuery>
     <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
-      {#if !$games.loading}
-        {#each genericGame as game}
-          <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
-            <GameCard game={game} translations={$getTranslations} />
-          </div>
-        {/each}
-      {:else}
-        {#each {length: data.numberOfGames} as _}
-          <div class={`w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6`}>
-            <aside
-              class="relative cursor-pointer rounded-lg aspect-[235/244] w-full bg-misc/20 transition-shadow duration-[0.3s] sm:cursor-auto"
-            />
-          </div>  
-        {/each}
+      {#if genericGame.length > 0}
+        {#if !$games.loading}
+          {#each genericGame as game}
+            <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
+              <GameCard game={game} translations={$getTranslations} />
+            </div>
+          {/each}
+        {:else}
+          {#each {length: data.numberOfGames} as _}
+            <div class={`w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6`}>
+              <aside
+                class="relative cursor-pointer rounded-lg aspect-[235/244] w-full bg-misc/20 transition-shadow duration-[0.3s] sm:cursor-auto"
+              />
+            </div>  
+          {/each}
+        {/if}
       {/if}
     </div>
     <!-- Load More Button -->
