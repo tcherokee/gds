@@ -50,7 +50,6 @@
     location.reload();
     user.set(null);
   };
-  console.log('PAGEURL', pageUrl);
 </script>
 
 <aside
