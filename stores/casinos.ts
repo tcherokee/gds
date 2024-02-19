@@ -6,11 +6,29 @@ import type {
   CasinoFilters,
   CasinoData,
   CasinoListBlock,
+  ProviderAttribute,
+  TProviderAttributesOnly,
 } from "../interfaces/common/types";
 
 type QSCasinoData = {
   data: CasinoData[]
 }
+
+type TFetchProviders = {
+  data: {
+    data: TProviderAttributesOnly[];
+  };
+};
+
+type TAlphabetProviders = {
+  label: string;
+  value: string;
+  image: string;
+}
+
+type TAlphabetProvidersAcc = {
+  [key: string]: TAlphabetProviders[]
+};
 
 // Import Store Fetcher Helper
 import { createFetcherStore } from "./fetcher";
@@ -46,28 +64,28 @@ export const providers = createFetcherStore([
 
 export const alphabeticProviders = computed(providers, (providersArr) => {
   
-  const { data } = providersArr
+  const { data  } = providersArr as TFetchProviders
 
   if (data) {
-    const grouped = (data?.data).reduce((acc, item) => {
+    const grouped = (data?.data).reduce((acc: Record<string, TAlphabetProviders[]>, item: TProviderAttributesOnly) => {
       // Extract required information
-      const label = item.attributes.title;
-      const value = item.attributes.slug;
-      const image = item.attributes.images.data.attributes.url;
+      const label = item.attributes.title || '';
+      const value = item.attributes.slug || '';
+      const image = item.attributes.images?.data.attributes.url || '';
 
       // Get the first letter of the label
       const firstLetter = label[0].toUpperCase();
 
       // Create a new group if it doesn't exist
       if (!acc[firstLetter]) {
-        acc[firstLetter] = [];
+        acc[firstLetter] = []
       }
 
       // Push the item to the corresponding group
       acc[firstLetter].push({ label, value, image });
 
       return acc;
-    }, {});
+    }, {} as Record<string, TAlphabetProviders[] >);
     
   
     // Sort Array

@@ -29,17 +29,20 @@
       password,
       recaptchaToken,
     };
-    const response = await fetch(`/api/auth/login`, {
+
+    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/login/`, {
       method: "POST",
       body: JSON.stringify(loginPayload),
     });
-    logInLoader = false;
     const res = await response.json();
+    logInLoader = false;
     resetCaptcha();
+
     if (res.jwt) {
-      const { firstName, lastName, username, email, bio, cover_image, photo } =
+      const { id, firstName, lastName, username, email, bio, cover_image, photo } =
         res.user;
       user.set({
+        id,
         firstName,
         lastName,
         username,
@@ -48,20 +51,7 @@
         cover_image,
         photo,
       });
-      // window.localStorage.setItem(
-      //   "_user",
-      //   JSON.stringify({
-      //     firstName,
-      //     lastName,
-      //     username,
-      //     email,
-      //     bio,
-      //     cover_image,
-      //     photo,
-      //   })
-      // );
       location.reload();
-      // user.set({ firstName, lastName, username, email, bio, cover_image, photo })
     } else {
       toast.error(res?.error.message)
     }

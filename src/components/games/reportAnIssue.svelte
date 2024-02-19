@@ -38,7 +38,7 @@
 		};
 		
 		const response = await fetch(
-		`${import.meta.env.BASE_URL}api/reportAnIssue`,
+		`${import.meta.env.BASE_URL}api/reportAnIssue/`,
 		{
 			method: "POST",
 			body: JSON.stringify(issuePayload),

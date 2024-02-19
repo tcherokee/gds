@@ -23,7 +23,7 @@
       password,
       passwordConfirmation,
     };
-    const response = await fetch(`/api/auth/reset-password`, {
+    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/reset-password/`, {
       method: "POST",
       body: JSON.stringify(resetPasswordPayload),
     });

@@ -1,8 +1,8 @@
 export class Utilities {
-	static groupArrayElements(array = [], totalElementsPerGroup) {
+	static groupArrayElements(array = [], totalElementsPerGroup: any) {
 		let groups = []
 		for (let i = 0; i < array.length; i += totalElementsPerGroup) {
-			let group = []
+			let group: any = []
 			for (let j = 0; j < totalElementsPerGroup; j++) {
 				if (array[i + j]) {
 					group.push(array[i + j])
@@ -14,9 +14,9 @@ export class Utilities {
 	}
 }
 
-export const CleanGamesForBlock = (gamesArr) => {
-	return gamesArr.map((games) => {
-		return games.data.map((game) => {
+export const CleanGamesForBlock = (gamesArr: any) => {
+	return gamesArr.map((games: any) => {
+		return games.data.map((game: any) => {
 			if (!game) {
 				return
 			}
@@ -26,18 +26,18 @@ export const CleanGamesForBlock = (gamesArr) => {
 	})
 }
 
-export const NewCleanGamesForBlock = (gamesArr) => {
-	return gamesArr.map((gameArray) => {
+export const NewCleanGamesForBlock = (gamesArr: any) => {
+	return gamesArr.map((gameArray: any) => {
 		return gameArray
-			.map((game) => {
+			.map((game: any) => {
 				return game ? { id: game.id, ...game.attributes } : null
 			})
 			.filter(Boolean)
 	})
 }
 
-export const CleanGamesForGamePage = (games) => {
-	return games.map((game) => {
+export const CleanGamesForGamePage = (games: any) => {
+	return games.map((game: any) => {
 		if (!game) {
 			return
 		}
@@ -46,7 +46,7 @@ export const CleanGamesForGamePage = (games) => {
 	})
 }
 
-export const CleanSingleGameForGamePage = (game) => {
+export const CleanSingleGameForGamePage = (game: any) => {
 	if (!game) {
 		return
 	}
@@ -54,10 +54,10 @@ export const CleanSingleGameForGamePage = (game) => {
 	return { id: game.id, ...game.attributes }
 }
 
-export const CleanCasinosForBlock = (casinoArr, noDepositMsg, freeSpinsMsg) => {
+export const CleanCasinosForBlock = (casinoArr: any, noDepositMsg: any, freeSpinsMsg: any) => {
 	//get translation context
 
-	return casinoArr.map((casino) => {
+	return casinoArr.map((casino: any) => {
 		let wageringReqs = ''
 
 		if (!casino) {
@@ -75,8 +75,8 @@ export const CleanCasinosForBlock = (casinoArr, noDepositMsg, freeSpinsMsg) => {
 	})
 }
 
-export const CleanAuthorsForAuthorPage = (authors) => {
-	return authors.map((author) => {
+export const CleanAuthorsForAuthorPage = (authors: any) => {
+	return authors.map((author: any) => {
 		if (!author) {
 			return
 		}
@@ -85,8 +85,8 @@ export const CleanAuthorsForAuthorPage = (authors) => {
 	})
 }
 
-export const CleanAuthorCasinosForBlock = (casinoArr) => {
-	return casinoArr.map((casino) => {
+export const CleanAuthorCasinosForBlock = (casinoArr: any) => {
+	return casinoArr.map((casino: any) => {
 		if (!casino) {
 			return
 		}
@@ -95,7 +95,7 @@ export const CleanAuthorCasinosForBlock = (casinoArr) => {
 			...casino,
 			images: { data: { id: casino?.images?.id, attributes: { url: casino?.images?.url } } },
 			providers: {
-				data: casino.providers.map((provider) => {
+				data: casino.providers.map((provider: any) => {
 					return {
 						id: provider.id,
 						attributes: {

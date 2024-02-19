@@ -29,12 +29,6 @@ export type LayoutQueryOptions = {
     providersBreadcrumbs: BreadCrumbField;
     categoriesBreadcrumbs: BreadCrumbField;
     casinoProvidersBreadcrumbs: BreadCrumbField;
-    filterProviders: {
-      fields: string[];
-      populate: {
-        images: ImageField;
-      };
-    };
     most_loved_casinos: CasinoField;
     no_deposit_casinos: CasinoField;
     free_spin_casinos: CasinoField;

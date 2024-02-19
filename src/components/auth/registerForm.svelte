@@ -37,7 +37,7 @@
       recaptchaToken,
     };
     const response = await fetch(
-      `/api/auth/register`,
+      `${import.meta.env.BASE_URL}api/auth/register/`,
       {
         method: "POST",
         body: JSON.stringify(loginPayload),

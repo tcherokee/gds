@@ -45,7 +45,7 @@
         );
         if (userFavouritedGame) {
           const response = await fetch(
-            `/api/dashboard/user-games-delete?` + new URLSearchParams(`favoriteId=${userFavouritedGame.id}`),
+            `${import.meta.env.BASE_URL}api/dashboard/user-games-delete/?` + new URLSearchParams(`favoriteId=${userFavouritedGame.id}`),
             {
               method: "DELETE",
             }
@@ -105,7 +105,7 @@
       toast.success($getTranslations.addToFav)
 
       if ($user) {
-        const response = await fetch(`/api/dashboard/user-games-add`, {
+        const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/user-games-add/`, {
           method: "POST",
           body: JSON.stringify({
             games: [gameId],

@@ -19,12 +19,12 @@ onMount(getTranslations, () => {
         query: `?${translationQuery}`,
       });
 
-      const translations = response.attributes.translation.reduce(
+      const translations = response.attributes.translation.reduce<Record<string, string>>(
         (acc, { key, value }) => {
           acc[key] = value;
           return acc;
         },
-        {}
+        {} as Record<string, string>
       );
 
       getTranslations.set(translations);

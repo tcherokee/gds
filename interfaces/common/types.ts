@@ -361,7 +361,7 @@ export type CasinoListBlock = BlockBase & {
   casinosList: CasinoListData[];
 };
 
-export type TGameListBlock = BlockBase & CustomGameListBlock
+export type TGameListBlock = BlockBase & CustomGameList
 
 export type Block =
   | IntroductionWithImageBlock
@@ -462,6 +462,7 @@ export type GameFilters = {
   page: number | undefined;
   providers: string[];
   categories: string[];
+  author?: string;
 };
 
 export type GameFiltersQuery = {

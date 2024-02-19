@@ -1,4 +1,4 @@
-import type { Block, DynamicComponent } from "../interfaces/common/types";
+import type { Block, CasinoListBlock, DynamicComponent } from "../interfaces/common/types";
 
 export const mapBlocksToDynamicComponents = (
   blocks: Block[]
@@ -55,7 +55,8 @@ export const mapBlocksToDynamicComponents = (
             extension: "astro",
           };
         case "casinos.casino-list":
-          if (block.showCasinoFilters !== true) {
+          const casinoListBlock = block as CasinoListBlock;
+          if (casinoListBlock.showCasinoFilters !== true) {
             return {
               location: "blocks",
               name: "casinoListBlock",

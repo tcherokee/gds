@@ -137,7 +137,7 @@
                                             {/if}
                                                 
                                                 <Link
-                                                    href={`${casino?.attributes?.casinoBonus?.bonusUrl}/`}
+                                                    href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
                                                     classes="block rounded border border-[transparent] {i <= 2 && badgesOptions[i]}"
                                                     type="external"
                                                     rel="sponsored"
@@ -171,7 +171,7 @@
                                                     {$getTranslations.casinoTableHeadingBonus}
                                                 </div>
                                                 <Link
-                                                    href={`${casino?.attributes?.casinoBonus?.bonusUrl}/`}
+                                                    href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
                                                     classes="flex underline text-center"
                                                     type="external"
                                                     rel="sponsored"
@@ -242,7 +242,7 @@
                                                     {/if}
                                                     {#if casino?.attributes?.casinoBonus?.bonusUrl}
                                                         <Link
-                                                            href={`${casino?.attributes?.casinoBonus?.bonusUrl}/`}
+                                                            href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
                                                             classes="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
                                                             type="external"
                                                             rel="sponsored"
