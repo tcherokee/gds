@@ -31,7 +31,7 @@ import ContentBlock from '../../components/blocks/contentBlock.astro';
 import ProsCons from '../../components/general/proCons.astro'
 import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
 import ImageCarousel from '../../components/general/imageCarousel.svelte';
-import Faqs from '../../components/general/faqs.astro';
+import FaqListBlock from '../../components/blocks/faqListBlock.astro';
 import GamePlayer from '../../components/games/gamePlayer.svelte'
 import QuickLinks from '../../components/helpers/quicklinks.astro'
 import AuthorCard from '../../components/general/authorCard.astro';
@@ -203,11 +203,11 @@ const __blocks = page?.attributes?.blocks
 
 				 <!-- End page Blocks -->
 
-                 { page?.attributes?.faqs && 
+                 { page?.attributes?.faqs.length > 0 && 
 					<div class="faq-content">
-						{page?.attributes?.faqs?.length && <h2 class="mb-4">{translationStore.faq}</h2> }
+						<h2 class="mb-4">{translationStore.faq}</h2>
 						<div>
-							{page?.attributes?.faqs.map((faq:any) => <Faqs data={faq} /> )}
+							{page?.attributes?.faqs.map((faq:any) => <FaqListBlock data={faq} /> )}
 						</div>
 					</div>
 				}

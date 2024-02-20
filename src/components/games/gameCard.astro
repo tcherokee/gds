@@ -22,7 +22,6 @@ let siteID = import.meta.env.SITE_ID
 let gameURL = urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']+"/"+(game?.attributes?.slug ?? game.slug);
 let provideURL = urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']+"/"+game?.attributes?.provider?.data?.attributes?.slug ?? game?.provider?.slug;
 ---
-
 <aside class="relative cursor-pointer rounded-lg aspect-[235/244] w-full transition-shadow duration-[0.3s] sm:cursor-auto">
 	<Link class="absolute w-full h-full md:hidden" href={`${gameURL}/`}></Link>
 	<div class="absolute pointer-events-none h-full left-0 top-0 w-full">
