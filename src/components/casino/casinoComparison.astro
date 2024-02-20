@@ -2,6 +2,7 @@
 
 import dayjs from 'dayjs'
 import Icon from 'astro-icon'
+import { Link } from 'astro-link'
 
 // Types
 import type { TranslationData, CasinoComparison } from "../../../interfaces/common/types.ts"
@@ -13,7 +14,6 @@ import { getTranslations } from "../../../stores/addTranslations.ts"
 import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
 
 // Components
-import Link from "../helpers/link.astro"
 import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
 import Images from '../helpers/images.astro'
 import Collapse from '../helpers/collapse.astro'
@@ -56,8 +56,8 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                             {i <= 2 && <span class={`w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b ${badgesOptions[i]}`}>#{i + 1}</span>}
                             
                             <Link
-                                href={casinoData?.attributes?.casinoBonus?.bonusUrl}
-                                classes={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgesOptions[i]}`}
+                                href={`${casinoData?.attributes?.casinoBonus?.bonusUrl}/`}
+                                class={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgesOptions[i]}`}
                                 type="external"
                                 rel="sponsored"
                             >
@@ -79,8 +79,8 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         </div>
                         <div class="flex items-center">
                             <Link
-                                classes="flex text-[14px] space-x-4 text-grey-500 mr-[11px]"
-                                href={`/casino/recensione/${casinoData?.attributes?.slug}`}
+                                class="flex text-[14px] space-x-4 text-grey-500 mr-[11px]"
+                                href={`/casino/recensione/${casinoData?.attributes?.slug}/`}
                             >
                                 <span class="underline">{translationStore.review}</span>
                                 <Icon name="arrow-right" class="w-[14px] fill-grey-500" />
@@ -91,7 +91,7 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         <div class="text-[#7C838D] text-center text-sm leading-[18px] font-bold">
                             {translationStore.casinoTableHeadingBonus}
                         </div>
-                        <Link href={casinoData?.attributes.casinoBonus?.bonusUrl} classes="flex underline text-center font-bold my-4" type="external" rel="sponsored">
+                        <Link href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored">
                             {welcomeBonus(casinoData)}
                         </Link>
                         <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
@@ -105,7 +105,7 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         <div class="text-[#7C838D] text-center text-sm leading-[18px] font-bold">
                             {translationStore.withoutDeposit}
                         </div>
-                        <Link href={casinoData?.attributes.casinoBonus?.bonusUrl} classes="flex underline text-center font-bold my-4" type="external" rel="sponsored">
+                        <Link href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored">
                             <Fragment set:html={noDepositBonus(casinoData)?.bonus} />
                         </Link>
                         <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casinoData)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
@@ -120,8 +120,8 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                             {casinoData?.attributes.casinoBonus?.bonusCode && <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{translationStore.bonusCode}</div>}
                             {casinoData?.attributes.casinoBonus?.bonusUrl &&
                                 <Link
-                                    href={casinoData?.attributes.casinoBonus?.bonusUrl}
-                                    classes="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
+                                    href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`}
+                                    class="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
                                     type="external"
                                     rel="sponsored"
                                     text={casinoData?.attributes.casinoBonus?.bonusCode ?casinoData?.attributes?.casinoBonus?.bonusCode : translationStore.visitSite}

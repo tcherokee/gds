@@ -169,7 +169,7 @@
             {#if !$providersFilters.loading}
                 {#each $providersFilters.data.data.attributes.filterProviders.data as icon}
                     <button
-                        class="max-w-[83px] min-w-[80px] rounded-md {$gameVariables?.providers.indexOf(
+                        class="max-w-[83px] min-w-[80px] rounded-md {$gameVariables?.providers.length === 1 && $gameVariables?.providers.indexOf(
                             icon?.attributes?.slug
                         ) > -1
                             ? 'border-[2px] border-accent-500'

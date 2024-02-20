@@ -76,14 +76,14 @@
         class="flex justify-between items-center mb-[2px] transition-transform duration-[0.3s] translate-y-[20px] sm:group-hover:translate-y-0"
       >
         <h4 class="text-white text-sm font-bold !m-0">
-          <Link href={`/${game?.slug}/`}>{game?.title}</Link>
+          <Link href={`${gameURL}/`}>{game?.title}</Link>
         </h4>
         <AddToFav game={game} classes="w-4 h-[14px]" />
       </div>
       <div
         class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100"
       >
-        <Link href={`/${game?.slug}/`} classes="text-[#CED4DA] text-xs">
+        <Link href={`${gameURL}/`} classes="text-[#CED4DA] text-xs">
           {game?.provider?.title}&nbsp;•&nbsp;
         </Link>
         <div class="w-[10px] h-[10px]">

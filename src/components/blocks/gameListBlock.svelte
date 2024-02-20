@@ -83,8 +83,6 @@
       }) ?? [];
     }
   }
-
-  $: console.log('data', $games)
   
 </script>
 
