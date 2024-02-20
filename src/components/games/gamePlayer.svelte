@@ -95,7 +95,7 @@
   };
 
   onMount(async () => {
-	console.log(data);
+	// console.log(data);
   });
 </script>
 

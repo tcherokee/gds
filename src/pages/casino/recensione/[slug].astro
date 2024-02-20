@@ -76,7 +76,7 @@ const Components = await loadComponents(__blocks);
 //generate page url
 let siteID = import.meta.env.SITE_ID;
 let canonical: string = `${import.meta.env.FULL_URL}${
-  urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"]
+  urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]
 }/${Astro.params.slug}`;
 
 let seo = {
@@ -86,6 +86,9 @@ let seo = {
 };
 
 ---
+<script define:vars={{page}}>
+ console.log(page)
+</script>
 
 <MainLayout seoData={seo}>
   <Breadcrumb breadcrumbs={[{
@@ -536,9 +539,8 @@ let seo = {
                     <div class="mt-3 mb-10 flex justify-start">
                       <ReadOnlyRatings
                         avgRating={page?.attributes?.authorRatings}
-                        showVotes={true}
-                        ratingClass={"flex-row justify-center items-center"}
-                        ratingCount={page.attributes.ratingCount}
+                        showVotes={false}
+                        ratingClasses={"flex-row justify-center items-center"}
                       />
                     </div>
 
