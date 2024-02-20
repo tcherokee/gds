@@ -4,6 +4,7 @@ import Icon from "astro-icon"
 
 // Types
 import type { TranslationData } from "../../../interfaces/common/types.ts"
+import { urlTranslate } from '../../../utils/data-store.util'
 
 //Helpers
 import Images from "../helpers/images.astro";
@@ -23,6 +24,12 @@ const contentSplit = content1?.slice(0, 100) + '&hellip;'
 
 // Set Up Translation Store
 const translationStore: TranslationData = getTranslations.get()
+
+//generate author page url
+const lcFirstName = firstName?.toLowerCase()
+const lcLastName = lastName?.toLowerCase()
+const siteID = import.meta.env.SITE_ID
+const authorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['author-page']}/${lcFirstName}.${lcLastName}/`;
 
 ---
 
@@ -65,7 +72,7 @@ const translationStore: TranslationData = getTranslations.get()
 
 	<div class="ml-5">
 		<h4 class="flex !mt-0 !text-[18px] md:!text-[20px] justify-center my-4 md:justify-normal md:mb-1 group-[.author-index]:justify-center">
-				<Link href="#">
+				<Link href={authorPageURL}>
 				{`${firstName} ${lastName}`}
 			</Link>
 		</h4>
