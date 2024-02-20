@@ -14,6 +14,7 @@ import TimeDate from "../../../components/helpers/timeDate.svelte";
 import HeaderAuthor from "../../../components/helpers/headerAuthor.astro";
 import Image from "../../../components/helpers/images.astro";
 import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
+import RatingStar from "../../../components/helpers/ratingStar.svelte";
 import { get } from "svelte/store";
 import { getTranslations } from "../../../../stores/addTranslations";
 import Icon from "astro-icon";
@@ -125,12 +126,20 @@ let seo = {
               </Link>
             </div>
             <div class="mt-2 flex items-center justify-center">
-              <ReadOnlyRatings
+              <RatingStar 
+                avgRating={page?.attributes?.ratingAvg}
+                ratingClasses="flex-col"
+                ratingCount={page.attributes.ratingCount}
+                itemId={page.id+''}
+                ratingType={'casinos'}
+                client:load
+              />
+              <!-- <ReadOnlyRatings
                 avgRating={page?.attributes?.ratingAvg}
                 showVotes={true}
                 ratingClasses="flex-col"
                 ratingCount={page.attributes.ratingCount}
-              />
+              /> -->
             </div>
             <div class="flex flex-col my-10">
               <div class="flex items-center mb-3">
@@ -820,12 +829,20 @@ let seo = {
               </Link>
             </div>
             <div class="mt-2 flex items-center justify-center">
-              <ReadOnlyRatings
+              <RatingStar 
+                avgRating={page?.attributes?.ratingAvg}
+                ratingClasses="flex-col"
+                ratingCount={page.attributes.ratingCount}
+                itemId={page.id+''}
+                ratingType={'casinos'}
+                client:load
+              />
+              <!-- <ReadOnlyRatings
                 avgRating={page?.attributes?.ratingAvg}
                 showVotes={true}
                 ratingClasses="flex-col"
                 ratingCount={page.attributes.ratingCount}
-              />
+              /> -->
             </div>
             <div class="flex flex-col my-10">
               <div class="flex items-center mb-3">

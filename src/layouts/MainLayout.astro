@@ -83,6 +83,7 @@ const { seoData } = Astro.props
     <meta name="description" content={seoData.metaDescription} />
     <meta name="viewport" content="width=device-width" />
     <link rel="canonical" href={`${seoData.url}/`} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     {seoData?.author && <meta name="author" content={seoData?.author} />}
     <link rel="icon" type="image/svg+xml" href={favicon} />
     <meta name="generator" content={Astro.generator} />
