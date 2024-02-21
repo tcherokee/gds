@@ -1,160 +1,234 @@
 ---
 export const prerender = true;
-import qs from 'qs'
+import qs from "qs";
 
 // Stores
-import { sortOptions } from '../../stores/sortFilters';
+import { sortOptions } from "../../stores/sortFilters";
 import { getTranslations } from "../../stores/addTranslations";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
-import { loadComponents, mapBlocksToDynamicComponents } from '../../lib/loadBlockComponents'
-import { urlTranslate } from '../../utils/data-store.util'
+import {
+  loadComponents,
+  mapBlocksToDynamicComponents,
+} from "../../lib/loadBlockComponents";
+import { urlTranslate } from "../../utils/data-store.util";
 
 // Query Strings
-import { customPageQs } from "../../qs/customPages"
-import { gamesQs } from "../../qs/games.ts"
+import { customPageQs } from "../../qs/customPages";
+import { gamesQs } from "../../qs/games.ts";
 
 //types and typeguards
 import type { GetStaticPaths } from "astro";
-import type { CustomPageItem } from "../../interfaces/custom-pages"
-import type { Block, CasinoListBlock, TGameListBlock, TranslationData } from "../../interfaces/common/types.ts"
+import type { CustomPageItem } from "../../interfaces/custom-pages";
+import type {
+  Block,
+  CasinoListBlock,
+  TGameListBlock,
+  TranslationData,
+  TCasinoLiveVideo
+} from "../../interfaces/common/types.ts";
 
 // Import Svelte Components
-import CasinoTable from '../components/casino/casinoTable.svelte';
-import GameListBlock from '../components/blocks/gameListBlock.svelte';
+import CasinoTable from "../components/casino/casinoTable.svelte";
+import GameListBlock from "../components/blocks/gameListBlock.svelte";
+import CasinoLiveVideo from "../components/general/casinoLiveVideo.svelte";
 
 // Astro Layouts & Components
-import MainLayout from '../layouts/MainLayout.astro';
-import CasinoSidebar from '../components/casino/casinoSidebar.astro';
-import AuthorCard from '../components/general/authorCard.astro';
-import Breadcrumbs from '../components/layout/breadcrumbs.astro';
+import MainLayout from "../layouts/MainLayout.astro";
+import CasinoSidebar from "../components/casino/casinoSidebar.astro";
+import AuthorCard from "../components/general/authorCard.astro";
+import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 
 const translationStore: TranslationData = getTranslations.get();
 
 export const getStaticPaths = (async () => {
+  // Import the QS Query string for custom slugs and prepare it for the API fetch
+  const query = qs.stringify(customPageQs(), { encodeValuesOnly: true });
 
-    // Import the QS Query string for custom slugs and prepare it for the API fetch
-    const query = qs.stringify(customPageQs(), {encodeValuesOnly: true})
-    
-    // Request to the Fetch Function to get the custom page slugs from the API
-    const customPage = await fetchApi<CustomPageItem[]>({
-        endpoint: 'custom-pages',
-        wrappedByKey: 'data',
-        query: `?${query}`
-    })
+  // Request to the Fetch Function to get the custom page slugs from the API
+  const customPage = await fetchApi<CustomPageItem[]>({
+    endpoint: "custom-pages",
+    wrappedByKey: "data",
+    query: `?${query}`,
+  });
 
-    return customPage.map((page) => {
-        return {
-            params: {path: page?.attributes?.urlPath},
-            props: { page }
-        }
-    });
+  return customPage.map((page) => {
+    return {
+      params: { path: page?.attributes?.urlPath },
+      props: { page },
+    };
+  });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props
-const { path } = Astro.params
+const { page } = Astro.props;
+const { path } = Astro.params;
 
 // Games Variables
-const sortObj = sortOptions.get()
+const sortObj = sortOptions.get();
 
 // Function to determins how to structure the blocks in the custom pages. Based on the structure of the blocks the number of items in the blue section could change.
 const getLoopCounter = (blocks: Block[]): number => {
-    if (!blocks || blocks.length < 2) return 2; // Default value if blocks array is not as expected
+  if (!blocks || blocks.length < 2) return 2; // Default value if blocks array is not as expected
 
-    const secondBlockComponent = blocks[1]?.['__component'];
-    const thirdBlockComponent = blocks[2]?.['__component'];
+  const secondBlockComponent = blocks[1]?.["__component"];
+  const thirdBlockComponent = blocks[2]?.["__component"];
 
-    if (secondBlockComponent === 'games.new-and-loved-slots' && 
-        (thirdBlockComponent === 'casinos.casino-list' || thirdBlockComponent === 'games.games-carousel')) {
-        return 3;
-    }
+  if (
+    secondBlockComponent === "games.new-and-loved-slots" &&
+    (thirdBlockComponent === "casinos.casino-list" ||
+      thirdBlockComponent === "games.games-carousel")
+  ) {
+    return 3;
+  }
 
-    if (secondBlockComponent?.includes('shared') && secondBlockComponent !== 'shared.provider-list') {
-        return 1;
-    }
+  if (
+    secondBlockComponent?.includes("shared") &&
+    secondBlockComponent !== "shared.provider-list"
+  ) {
+    return 1;
+  }
 
-    return 2;
+  return 2;
 };
 
 const loopCounter = getLoopCounter(page?.attributes?.blocks);
 
 // Get the index of the first occurrence of the FAQ
-const faqIndex = page?.attributes?.blocks.findIndex(block => block.__component === 'shared.faqs')
+const faqIndex = page?.attributes?.blocks.findIndex(
+  (block) => block.__component === "shared.faqs"
+);
 
 // First mapping components so I can check them against the svelte extentsion
-const mappedComponents = mapBlocksToDynamicComponents(page.attributes.blocks)
+const mappedComponents = mapBlocksToDynamicComponents(page.attributes.blocks);
 
 // Dynamically importing the components
-const Components = await loadComponents(mappedComponents)
+const Components = await loadComponents(mappedComponents);
+console.log("DYNAMIC_PAGE", mappedComponents);
 
 // SEO Object
 const seo = {
-    pageTitle: page?.attributes?.seo?.metaTitle,
-    metaDescription: page?.attributes?.seo?.metaDescription,
-    url: `${import.meta.env.FULL_URL}/${path}`
-}
-
+  pageTitle: page?.attributes?.seo?.metaTitle,
+  metaDescription: page?.attributes?.seo?.metaDescription,
+  url: `${import.meta.env.FULL_URL}/${path}`,
+};
 ---
+
 <MainLayout seoData={seo}>
-    <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
-	<div class="featured-background">
-		{
-			Components.map((Component, i) => {
-                if (i < loopCounter) {
-                    if (mappedComponents[i].extension === 'astro') {
-                        return <Component 
-                            data={page.attributes.blocks[i]}
-                            {...(page?.attributes?.blocks[i]?.__component === 'casinos.casino-list' ? { isCustom: true, isTop: true } : {})}
-                        />
-                    } else {
-                        switch (mappedComponents[i].name) {
-                            case 'casinoTable': {
-                                return <CasinoTable initialCasinos={(page.attributes.blocks[i] as CasinoListBlock)} client:load />
-                            }
-                            case 'gameListBlock': {
-                                return <GameListBlock data={(page.attributes.blocks[i] as TGameListBlock)} client:load />
-                            }
-                        }
+  <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
+  <div class="featured-background">
+    {
+      Components.map((Component, i) => {
+        if (i < loopCounter) {
+          if (mappedComponents[i].extension === "astro") {
+            return (
+              <Component
+                data={page.attributes.blocks[i]}
+                {...(page?.attributes?.blocks[i]?.__component ===
+                "casinos.casino-list"
+                  ? { isCustom: true, isTop: true }
+                  : {})}
+              />
+            );
+          } else {
+            switch (mappedComponents[i].name) {
+              case "casinoTable": {
+                return (
+                  <CasinoTable
+                    initialCasinos={
+                      page.attributes.blocks[i] as CasinoListBlock
                     }
-                }
-            })
-		}
-	</div>
+                    client:load
+                  />
+                );
+              }
+              case "gameListBlock": {
+                return (
+                  <GameListBlock
+                    data={page.attributes.blocks[i] as TGameListBlock}
+                    client:load
+                  />
+                );
+              }
+              case "casinoLiveVideo": {
+                return (
+                  <CasinoLiveVideo
+                    translations={translationStore}
+                    playbackUrl={(page?.attributes?.blocks[i] as TCasinoLiveVideo).playbackUrl}
+                    client:load
+                  />
+                );
+              }
+            }
+          }
+        }
+      })
+    }
+  </div>
 
-    <div class="xl:container content-auto px-2 pt-5">
-		<div class="flex flex-col md:flex-row gap-x-8">
-			<div class="order-last md:order-first">
-                {
-                    Components.map((Component, i) => {
-                        if (i >= loopCounter) {
-                            if (mappedComponents[i].extension === 'astro') {
-                                return <Component 
-                                    data={page.attributes.blocks[i]}
-                                    {...(page?.attributes?.blocks[i]?.__component === 'shared.quicklinks' ? {block:page.attributes.blocks} : {} )}
-                                    {...(i === faqIndex ? {firstFaq: true} : {} )}
-                                    {...(page?.attributes?.blocks[i]?.__component === 'casinos.casino-list' || page?.attributes?.blocks[i]?.__component === 'casinos.casinos-comparison' ? { isCustom: true } : {})}
-                                />
-                            } else {
-                                switch (mappedComponents[i].name) {
-                                    case 'casinoTable': {
-                                        return <CasinoTable initialCasinos={(page.attributes.blocks[i] as CasinoListBlock)} client:load />
-                                    }
-                                    case 'gameListBlock': {
-                                        return <GameListBlock data={(page.attributes.blocks[i] as TGameListBlock)} client:load />
-                                    }
-                                }
-                            }
+  <div class="xl:container content-auto px-2 pt-5">
+    <div class="flex flex-col md:flex-row gap-x-8">
+      <div class="order-last md:order-first">
+        {
+          Components.map((Component, i) => {
+            if (i >= loopCounter) {
+              if (mappedComponents[i].extension === "astro") {
+                return (
+                  <Component
+                    data={page.attributes.blocks[i]}
+                    {...(page?.attributes?.blocks[i]?.__component ===
+                    "shared.quicklinks"
+                      ? { block: page.attributes.blocks }
+                      : {})}
+                    {...(i === faqIndex ? { firstFaq: true } : {})}
+                    {...(page?.attributes?.blocks[i]?.__component ===
+                      "casinos.casino-list" ||
+                    page?.attributes?.blocks[i]?.__component ===
+                      "casinos.casinos-comparison"
+                      ? { isCustom: true }
+                      : {})}
+                  />
+                );
+              } else {
+                switch (mappedComponents[i].name) {
+                  case "casinoTable": {
+                    return (
+                      <CasinoTable
+                        initialCasinos={
+                          page.attributes.blocks[i] as CasinoListBlock
                         }
-                    })
+                        client:load
+                      />
+                    );
+                  }
+                  case "gameListBlock": {
+                    return (
+                      <GameListBlock
+                        data={page.attributes.blocks[i] as TGameListBlock}
+                        client:load
+                      />
+                    );
+                  }
+                  case "casinoLiveVideo": {
+                    return (
+                      <CasinoLiveVideo
+                        translations={translationStore}
+                        playbackUrl={(page?.attributes?.blocks[i] as TCasinoLiveVideo).playbackUrl}
+                        client:load
+                      />
+                    );
+                  }
                 }
+              }
+            }
+          })
+        }
 
-                <AuthorCard data={page.attributes.author}/>
-            </div>
-            <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-                <CasinoSidebar />
-            </div>
-        </div>
+        <AuthorCard data={page.attributes.author} />
+      </div>
+      <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
+        <CasinoSidebar />
+      </div>
     </div>
+  </div>
 </MainLayout>
-
