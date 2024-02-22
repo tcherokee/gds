@@ -11,7 +11,7 @@ export const providerGamesQs = (slug: string | undefined) => ({
           fields: ["title", "slug", "ratingAvg", "ratingCount", "publishedAt"],
           populate: {
             provider: {
-              fields: ["title"],
+              fields: ["title", "slug"],
             },
             images: {
               fields: ["url"],

@@ -14,6 +14,7 @@ import TimeDate from "../../../components/helpers/timeDate.svelte";
 import HeaderAuthor from "../../../components/helpers/headerAuthor.astro";
 import Image from "../../../components/helpers/images.astro";
 import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
+import RatingStar from "../../../components/helpers/ratingStar.svelte";
 import { get } from "svelte/store";
 import { getTranslations } from "../../../../stores/addTranslations";
 import Icon from "astro-icon";
@@ -75,7 +76,7 @@ const Components = await loadComponents(__blocks);
 //generate page url
 let siteID = import.meta.env.SITE_ID;
 let canonical: string = `${import.meta.env.FULL_URL}${
-  urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"]
+  urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]
 }/${Astro.params.slug}`;
 
 let seo = {
@@ -85,6 +86,9 @@ let seo = {
 };
 
 ---
+<script define:vars={{page}}>
+ console.log(page)
+</script>
 
 <MainLayout seoData={seo}>
   <Breadcrumb breadcrumbs={[{
@@ -125,12 +129,20 @@ let seo = {
               </Link>
             </div>
             <div class="mt-2 flex items-center justify-center">
-              <ReadOnlyRatings
+              <RatingStar 
+                avgRating={page?.attributes?.ratingAvg}
+                ratingClasses="flex-col"
+                ratingCount={page.attributes.ratingCount}
+                itemId={page.id+''}
+                ratingType={'casinos'}
+                client:load
+              />
+              <!-- <ReadOnlyRatings
                 avgRating={page?.attributes?.ratingAvg}
                 showVotes={true}
                 ratingClasses="flex-col"
                 ratingCount={page.attributes.ratingCount}
-              />
+              /> -->
             </div>
             <div class="flex flex-col my-10">
               <div class="flex items-center mb-3">
@@ -527,9 +539,8 @@ let seo = {
                     <div class="mt-3 mb-10 flex justify-start">
                       <ReadOnlyRatings
                         avgRating={page?.attributes?.authorRatings}
-                        showVotes={true}
-                        ratingClass={"flex-row justify-center items-center"}
-                        ratingCount={page.attributes.ratingCount}
+                        showVotes={false}
+                        ratingClasses={"flex-row justify-center items-center"}
                       />
                     </div>
 
@@ -820,12 +831,20 @@ let seo = {
               </Link>
             </div>
             <div class="mt-2 flex items-center justify-center">
-              <ReadOnlyRatings
+              <RatingStar 
+                avgRating={page?.attributes?.ratingAvg}
+                ratingClasses="flex-col"
+                ratingCount={page.attributes.ratingCount}
+                itemId={page.id+''}
+                ratingType={'casinos'}
+                client:load
+              />
+              <!-- <ReadOnlyRatings
                 avgRating={page?.attributes?.ratingAvg}
                 showVotes={true}
                 ratingClasses="flex-col"
                 ratingCount={page.attributes.ratingCount}
-              />
+              /> -->
             </div>
             <div class="flex flex-col my-10">
               <div class="flex items-center mb-3">

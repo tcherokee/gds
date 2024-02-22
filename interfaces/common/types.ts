@@ -375,7 +375,12 @@ export type Block =
   | HowToBlockTypes
   | ImageWithParagraphTypes
   | ProsAndConsTypes
-  | TGameListBlock;
+  | TGameListBlock
+  | TCasinoLiveVideo;
+
+export type TCasinoLiveVideo = BlockBase & {
+  playbackUrl: string;
+};
 
 export type Casino = {
   id: number;
