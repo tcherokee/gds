@@ -1,6 +1,6 @@
 import { persistentAtom } from "@nanostores/persistent";
 
-export const cookies = persistentAtom<boolean>("_acceptCookies:", false, {
+export const cookies = persistentAtom<boolean>("acceptCookies", false, {
   encode(value) {
     return JSON.stringify(value);
   },
