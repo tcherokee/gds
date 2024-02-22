@@ -119,9 +119,9 @@ export const mapBlocksToDynamicComponents = (
           };
         case "casinos.casino-live-video":
           return {
-            location: "casino",
-            name: "casinoVideo",
-            extension: "astro",
+            location: "general",
+            name: "casinoLiveVideo",
+            extension: "svelte",
           };
         case "games.live-stats":
           return {
