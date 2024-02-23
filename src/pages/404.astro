@@ -4,6 +4,9 @@
 // Layouts
 import MainLayout from "../layouts/MainLayout.astro";
 
+// First and Third Pary Plugins
+import Icon from "astro-icon"
+
 // Create Canonical URL
 const canonical: string =  `${import.meta.env.PUBLIC_FULL_URL}`;
 
@@ -15,12 +18,9 @@ const seo = {
 ---
 
 <MainLayout seoData={seo}>
-  <div class="featured-background">
-        <div class="intro-content">
-            <div class="xl:container py-20">
-                <h1>404</h1>
-                <h2>Here there be dragons</h2>
-            </div>
+    <div class="xl:container content-auto px-2 pt-5">
+        <div class="flex flex-col items-center justify-center md:flex-row gap-x-8">
+            <Icon name="404" width="100%" class="inline-block m-[2px]" fill="#01579B" />
         </div>
     </div>
 </MainLayout>
