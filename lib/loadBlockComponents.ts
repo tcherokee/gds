@@ -1,4 +1,8 @@
-import type { Block, CasinoListBlock, DynamicComponent } from "../interfaces/common/types";
+import type {
+  Block,
+  CasinoListBlock,
+  DynamicComponent,
+} from "../interfaces/common/types";
 
 export const mapBlocksToDynamicComponents = (
   blocks: Block[]
@@ -139,6 +143,12 @@ export const mapBlocksToDynamicComponents = (
           return {
             location: "blocks",
             name: "imageBlock",
+            extension: "astro",
+          };
+        case "shared.author-quote":
+          return {
+            location: "general",
+            name: "authorQuote",
             extension: "astro",
           };
         default:
