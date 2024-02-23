@@ -38,7 +38,7 @@ const { mainNavigation, logo, subNavigation } = Astro.props;
 				class="bg-gray-900 text-navbar-text uppercase rounded-md py-2 px-3 inline-flex items-center text-sm font-medium"
 				aria-current="page">
 				<Image
-					src={nav.attributes.images.data?.attributes.url}
+					src={`${nav.attributes.images.data?.attributes.url}`}
 					width={i === 0 ? 19 : 15}
 					height={15}
 					alt={nav?.attributes?.title+"  image"}
