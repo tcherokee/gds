@@ -8,11 +8,14 @@ import { Image } from "astro:assets";
 
 // Components
 import Navigation from "../navigation/navigation.svelte";
+import type { MenuItem } from '../../../interfaces/menu';
 
-const { mainNavigation, logo } = Astro.props;
-
+const { mainNavigation, logo, subNavigation } = Astro.props;
+	
 ---
-
+<script define:vars={{subNavigation}}>
+  console.log('subNavigation',subNavigation);
+</script>
 <nav
   class="mx-auto h-16 flex xl:container relative items-center justify-between p-2"
   aria-label="Global"
@@ -25,5 +28,23 @@ const { mainNavigation, logo } = Astro.props;
       <Image src={logo} height="50" width="120" alt="logo" />
     </Link>
   </div>
-  <Navigation mainNavigation={mainNavigation} client:load />
+  <Navigation mainNavigation={mainNavigation} subNavigation={subNavigation} client:load />
 </nav>
+
+{subNavigation.length > 0 &&
+	<nav class="lg:hidden flex lg:space-x-8 lg:py-2 justify-center bg-subNavbar-bkg" aria-label="Global">
+		{subNavigation.map((nav:MenuItem, i:number) => (
+			<Link href={nav?.attributes?.url}
+				class="bg-gray-900 text-navbar-text uppercase rounded-md py-2 px-3 inline-flex items-center text-sm font-medium"
+				aria-current="page">
+				<Image
+					src={nav.attributes.images.data?.attributes.url}
+					width={i === 0 ? 19 : 15}
+					height={15}
+					alt={nav?.attributes?.title+"  image"}
+				/>
+				{nav?.attributes?.title}
+			</Link>
+    ))}
+	</nav>
+}

@@ -6,6 +6,7 @@
   import Favourite from "../helpers/favourite.svelte";
   import Link from "../helpers/link.svelte";
 
+
   // Images
   import Xmark from "~icons/kensho-icons/xmark";
   import Angle from "~icons/kensho-icons/angle";
@@ -36,6 +37,8 @@
   };
 
   export let mainNavigation: MenuItem[];
+  export let subNavigation: MenuItem[];
+
   const backToTop = () => {
 		document.body.scrollIntoView()
 	}

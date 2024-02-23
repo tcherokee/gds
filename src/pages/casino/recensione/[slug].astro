@@ -79,6 +79,16 @@ let canonical: string = `${import.meta.env.FULL_URL}${
   urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]
 }/${Astro.params.slug}`;
 
+// Approved Author
+const approvedAuthorFirstName = page?.attributes?.testimonial?.approvedBy?.data?.attributes?.firstName?.toLowerCase();
+const approvedAuthorLastName = page?.attributes?.testimonial?.approvedBy?.data?.attributes?.lastName?.toLowerCase();
+const approvedAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['author-page']}/${approvedAuthorFirstName}.${approvedAuthorLastName}/`;
+
+// Review Author 
+const reviewAuthorFirstName = page?.attributes?.author?.data?.attributes?.firstName ?.toLowerCase();
+const reviewAuthorLastName = page?.attributes?.author?.data?.attributes?.lastName ?.toLowerCase();
+const reviewAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['author-page']}/${reviewAuthorFirstName}.${reviewAuthorLastName}/`;
+
 let seo = {
   pageTitle: page?.attributes?.seo?.metaTitle,
   metaDescription: page?.attributes?.seo?.metaDescription,
@@ -477,7 +487,7 @@ let seo = {
                               <span>{translationStore.reviewedBy}</span>
                               <span class="">
                                 <Link
-                                  href=""
+                                  href={reviewAuthorPageURL}
 								>
                                   {page?.attributes?.author?.data
                                     ?.attributes?.firstName +
@@ -513,7 +523,7 @@ let seo = {
                               <span>{translationStore.approvedBy}</span>
                               <span class="">
                                 <Link
-                                  href=""
+                                  href={approvedAuthorPageURL}
                                 >
 								{page?.attributes?.testimonial?.approvedBy?.data
                                     ?.attributes?.firstName +
