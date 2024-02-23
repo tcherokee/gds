@@ -1,0 +1,101 @@
+---
+
+const { data } = Astro.props;
+
+// Helpers
+import { Image } from "astro:assets";
+
+// First and Third Pary Plugins
+import Icon from "astro-icon"
+
+---
+<script define:vars={{data}}>
+ console.log('Author Quote',data)
+</script>
+<div class="bg-white p-3 casino-summary-wrapper rounded my-5">
+	<div class="flex flex-col justify-evenly p-3">
+		<div class="flex justify-between mb-3">
+			<div class="flex testimonial_author w-full md:justify-start">
+				<div class="approval-author mr-10">
+					<div class="review_author_img mr-2">
+						<Image
+							src={`${data?.image?.data?.attributes?.url}`}
+							width={40}
+							height={40}
+							alt={data?.authorName}
+						/>
+					</div>
+					<div class="flex flex-col details-container">
+						<div class="approval-author-details">
+							<span class="">{data?.authorName}</span>
+							<span class="">{data?.authorJobTitle}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<i class="">"{data?.quote}"</i>
+	</div>
+</div>
+
+<style lang="scss">
+	.casino-summary-wrapper {
+		backdrop-filter: blur(6px);
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		border-radius: 5px;
+		background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='16px' height='10px' viewBox='0 0 16 10' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3Eformat_quote%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Icons' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='Rounded' transform='translate(-444.000000, -2109.000000)'%3E%3Cg id='Editor' transform='translate(100.000000, 1960.000000)'%3E%3Cg id='-Round-/-Editor-/-format_quote' transform='translate(340.000000, 142.000000)'%3E%3Cg%3E%3Cpolygon id='Path' points='0 0 24 0 24 24 0 24'%3E%3C/polygon%3E%3Cpath d='M7.17,17 C7.68,17 8.15,16.71 8.37,16.26 L9.79,13.42 C9.93,13.14 10,12.84 10,12.53 L10,8 C10,7.45 9.55,7 9,7 L5,7 C4.45,7 4,7.45 4,8 L4,12 C4,12.55 4.45,13 5,13 L7,13 L5.97,15.06 C5.52,15.95 6.17,17 7.17,17 Z M17.17,17 C17.68,17 18.15,16.71 18.37,16.26 L19.79,13.42 C19.93,13.14 20,12.84 20,12.53 L20,8 C20,7.45 19.55,7 19,7 L15,7 C14.45,7 14,7.45 14,8 L14,12 C14,12.55 14.45,13 15,13 L17,13 L15.97,15.06 C15.52,15.95 16.17,17 17.17,17 Z' id='🔹-Icon-Color' fill='%23a8dbf8'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E ");
+		background-repeat: no-repeat;
+		background-position: right 20px top 20px;
+		background-size: 55px;
+	}
+
+	.testimonial-wrapper {
+		background: #eef4f9;
+	}
+
+	.testimonial_author {
+		font-size: 12px;
+		align-items: flex-start;
+
+		.approval {
+			display: flex;
+			// flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			max-width: 230px;
+
+			.review_author_img {
+				width: 40px;
+				height: 40px;
+				margin-right: 10px;
+				overflow: hidden;
+				flex-shrink: 0;
+
+				:global(img) {
+					border-radius: 50%;
+				}
+			}
+
+			.details-container {
+				align-items: center;
+				justify-content: center;
+
+				.approver-details {
+					text-align: center;
+				}
+			}
+		}
+
+		@media (min-width: theme('screens.lg')) {
+			justify-content: space-between;
+		}
+	}
+
+	.approval-author {
+		@apply flex md:flex-row items-center approval;
+	}
+
+	.approval-author-details {
+		@apply flex flex-col md:items-start text-xs text-[#0f79b6];
+	}
+</style>
