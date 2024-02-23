@@ -1,11 +1,11 @@
 ---
 //1st and 3rd Party Tools
 import qs from "qs";
-import { Tooltips } from 'astro-tooltips'
-import { ViewTransitions } from 'astro:transitions'
+import { Tooltips } from "astro-tooltips";
+import { ViewTransitions } from "astro:transitions";
 
 // QS Query Strings
-import { layoutQs, menuQs } from "../../qs/layout.ts"
+import { layoutQs, menuQs } from "../../qs/layout.ts";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -15,18 +15,22 @@ import "../styles/app.postcss";
 
 //Types and TypeGuards
 import type { LayoutData } from "../../interfaces/layout";
-import type { NavigationItem, ProcessedMenus} from "../../interfaces/menu.ts";
-import { isMainLayoutData, isNavigationItemArray } from "../../interfaces/common/typeguards"
+import type { NavigationItem, ProcessedMenus } from "../../interfaces/menu.ts";
+import {
+  isMainLayoutData,
+  isNavigationItemArray,
+} from "../../interfaces/common/typeguards";
 
 //Components
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
+import CookiesConsent from "../components/general/cookiesConsent.svelte";
 
 // Setting up the queries in array for use in the promise all map
 const queries = {
-  layout: qs.stringify(layoutQs(), {encodeValuesOnly: true}),
-  menus: qs.stringify(menuQs(), {encodeValuesOnly: true})
+  layout: qs.stringify(layoutQs(), { encodeValuesOnly: true }),
+  menus: qs.stringify(menuQs(), { encodeValuesOnly: true }),
 };
 
 // Set the types in an array for use in the promise all map
@@ -46,34 +50,44 @@ const responses = await Promise.all(
     fetchApi<EndpointTypes[typeof endpoint]>({
       endpoint,
       wrappedByKey: "data",
-      query: endpoint === "menus" ? `?nested&${queries[endpoint]}` : `?${queries[endpoint]}`,
-    }),
-  ),
+      query:
+        endpoint === "menus"
+          ? `?nested&${queries[endpoint]}`
+          : `?${queries[endpoint]}`,
+    })
+  )
 );
 
 // Using type guards to safely cast the types
-const layout = isMainLayoutData(responses[0]) ? responses[0] : console.error("Invalid layout data");
-const menu = isNavigationItemArray(responses[1]) ? responses[1] : console.error("Invalid menu data");
+const layout = isMainLayoutData(responses[0])
+  ? responses[0]
+  : console.error("Invalid layout data");
+const menu = isNavigationItemArray(responses[1])
+  ? responses[1]
+  : console.error("Invalid menu data");
 
 // Process menu data
-const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce((acc: ProcessedMenus, menu: NavigationItem) => {
-  const title = menu.attributes.title;
-  const items = menu.attributes.items.data;
-  if (
-    title === "Sub Navigation" ||
-    title === "Main Navigation" ||
-    title === "Footer Navigation" ||
-    title === "Footer Navigations"
-  ) {
-    acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
-  }
+const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
+  (acc: ProcessedMenus, menu: NavigationItem) => {
+    const title = menu.attributes.title;
+    const items = menu.attributes.items.data;
+    if (
+      title === "Sub Navigation" ||
+      title === "Main Navigation" ||
+      title === "Footer Navigation" ||
+      title === "Footer Navigations"
+    ) {
+      acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
+    }
 
-  return acc;
-}, {});
+    return acc;
+  },
+  {}
+);
 
 const favicon = `https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.env.SITE_ID}.png`;
 
-const { seoData } = Astro.props
+const { seoData } = Astro.props;
 ---
 
 <!doctype html>
@@ -88,22 +102,28 @@ const { seoData } = Astro.props
     <link rel="icon" type="image/svg+xml" href={favicon} />
     <meta name="generator" content={Astro.generator} />
     <title>{seoData.pageTitle}</title>
-    <Tooltips placement="auto"/>
+    <Tooltips placement="auto" />
 
-    <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=GTM-TLJMVQX"></script>
+    <script
+      type="text/partytown"
+      src="https://www.googletagmanager.com/gtag/js?id=GTM-TLJMVQX"></script>
     <script type="text/partytown">
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-      gtag('config', 'GTM-TLJMVQX');
+      gtag("config", "GTM-TLJMVQX");
     </script>
-    
   </head>
   <body>
-
     <main>
-      {layout?.attributes?.legalText && <Legal legalText={layout?.attributes?.legalText} />}
+      {
+        layout?.attributes?.legalText && (
+          <Legal legalText={layout?.attributes?.legalText} />
+        )
+      }
       <header class="bg-navbar-bkg">
         <Header
           mainNavigation={processedMenus?.mainnavigation}
@@ -119,23 +139,29 @@ const { seoData } = Astro.props
       footerNavigation={processedMenus?.footernavigation}
       footerNavigations={processedMenus.footernavigations}
     />
-  </body>
-
-  <style lang="scss">
-    :global(.tippy-box[data-theme='default']) {
-      padding: 0 !important;
-      @apply text-[10px] text-black leading-[16px] border border-secondary-tint bg-white rounded-[4px] max-w-[300px];
-      :global(p) {
-        font-size: 10px !important;
-        line-height: 1rem;
-        margin-bottom: 0 !important;
+    <CookiesConsent
+      headerText={layout?.attributes?.cookiesHeaderText+''}
+      description={layout?.attributes?.cookiesDescription+''}
+      link={layout?.attributes?.cookiesUrl+''}
+      linkText={layout?.attributes?.cookiesLinkText+''}
+      client:load
+    />
+    <style lang="scss">
+      :global(.tippy-box[data-theme="default"]) {
+        padding: 0 !important;
+        @apply text-[10px] text-black leading-[16px] border border-secondary-tint bg-white rounded-[4px] max-w-[300px];
+        :global(p) {
+          font-size: 10px !important;
+          line-height: 1rem;
+          margin-bottom: 0 !important;
+        }
+        :global(.tippy-arrow) {
+          color: theme("colors.secondary-tint");
+        }
       }
-      :global(.tippy-arrow) {
-        color: theme('colors.secondary-tint');
-      }
-    }
-    /* :global(.tippy-box[data-theme='default']) {
+      /* :global(.tippy-box[data-theme='default']) {
       font-size: 10px: !important;
     } */
-  </style>
+    </style>
+  </body>
 </html>
