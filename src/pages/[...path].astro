@@ -113,7 +113,9 @@ const seo = {
   url: `${import.meta.env.FULL_URL}/${path}`,
 };
 ---
-
+<script define:vars={{page}}>
+ console.log('Custom Page',page)
+</script>
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
   <div class="featured-background">
