@@ -7,8 +7,6 @@
 	let isMute = true;
 	let isPlaying = false;
 
-    console.log('playbackurl', playbackUrl);
-
 	onMount(() => {
 		const videoPlayer = document.getElementById('casino-live-video');
 		// const playbackUrl = videoPlayer?.getAttribute('data-url')

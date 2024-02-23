@@ -36,6 +36,11 @@
     const readMessagesStr = userMessageActions.id ? userMessageActions.read_messages : '';
 	  const readMessageList = readMessagesStr ? JSON.parse(readMessagesStr) : [];
 
+    if (userProfile?.error) {
+      logoutHandler();
+      return;
+    }
+
     user.set({ ...userProfile });
     readMessages.set(readMessageList)
     messages.set(userMessages)
@@ -48,7 +53,12 @@
       body: JSON.stringify({}),
     });
     location.reload();
-    user.set(null);
+
+    setTimeout(() => {
+      user.set(null);
+      readMessages.set([]);
+      messages.set([]);
+    }, 1000);
   };
 </script>
 
@@ -61,10 +71,7 @@
     <div
       class="sticky bottom-0 py-8 -mb-8 bg-dash-menu-nav-bg border-t border-t-white -mx-4 px-8"
     >
-      <div
-        class="flex gap-x-4 justify-between items-center cursor-pointer"
-        on:click={logoutHandler}
-      >
+      <div class="flex gap-x-4 justify-between items-center cursor-pointer">
         <div class="flex items-center gap-x-3 w-[calc(100%_-_34px]">
           <div
             class="shrink-0 flex justify-center items-center w-10 h-10 rounded-full bg-purple-700 border-white border-[2px]"
@@ -79,7 +86,7 @@
               />
             {/if}
           </div>
-          <div class="">
+          <div>
             <div class="text-sm text-white line-clamp-1 font-semibold">
               {$user?.firstName}
               {$user?.lastName}
@@ -89,7 +96,9 @@
             </div>
           </div>
         </div>
-        <SignoutSvg class="shrink-0 w-[18px] text-blue-100" />
+        <button title="logout" on:click={logoutHandler}>
+          <SignoutSvg class="shrink-0 w-[18px] text-blue-100" />
+        </button>
       </div>
     </div>
   </nav>
