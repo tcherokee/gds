@@ -37,7 +37,6 @@
   };
 
   export let mainNavigation: MenuItem[];
-  export let subNavigation: MenuItem[];
 
   const backToTop = () => {
 		document.body.scrollIntoView()
