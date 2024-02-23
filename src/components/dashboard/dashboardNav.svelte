@@ -1,13 +1,28 @@
 <script lang="ts">
-  import { readMessages, messages } from "../../../stores/authStore";
+  import { readMessages, messages, user } from "../../../stores/authStore";
   import type { TranslationData } from "../../../interfaces/common/types";
 
   import Link from "../helpers/link.svelte";
+  import SignoutSvg from "~icons/kensho-dashboard-icons/signout";
 
   let activeRoute = "home";
   export let translations: TranslationData;
   export let pageUrl: string;
   export let source: "SIDE" | "FOOTER";
+
+  const logoutHandler = async () => {
+    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/logout/`, {
+      method: "POST",
+      body: JSON.stringify({}),
+    });
+    location.reload();
+
+    setTimeout(() => {
+      user.set(null);
+      readMessages.set([]);
+      messages.set([]);
+    }, 1000);
+  };
 
   $: {
     const splittedUrlPathname = pageUrl.split("/");
@@ -183,5 +198,11 @@
 
       <span>{translations.contactUs}</span>
     </Link>
+  </li>
+  <li class="md:hidden">
+    <button class="flex justify-between gap-x-3 px-4 py-2.5" on:click={logoutHandler}>
+      <SignoutSvg class="shrink-0 w-6 h-6 text-blue-100" />
+      <div class="text-menu-link-text text-base">Logout</div>
+    </button>
   </li>
 </ul>
