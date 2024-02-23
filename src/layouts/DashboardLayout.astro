@@ -131,6 +131,7 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
       <header class="bg-navbar-bkg sticky top-[35px] z-30">
         <Header
           mainNavigation={processedMenus?.mainnavigation}
+          subNavigation={processedMenus?.subnavigation}
           logo={layout?.attributes?.Logo?.data?.attributes?.url}
         />
       </header>
