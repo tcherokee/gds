@@ -40,11 +40,15 @@
           new URLSearchParams(ratingVariables),
         { method: "PUT" }
       );
+      const resData = await res.json()
+      console.log(resData);
 
       if (res.status !== 200) {
         return;
       }
 
+      ratingCount = resData.ratingCount;
+      avgRating = resData.ratingAvg;
       ratings.set([
         ...ratings.get(),
         {
