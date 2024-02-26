@@ -42,7 +42,7 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
         {
             casinos.map((casinoData: any, i: number) => (
 
-                <div class="flex flex-col basis-1 md:basis-1/3">
+                <div class="flex flex-col basis-1 md:basis-1/3 casino-logo">
                     <div class="">
                         {
                            casinoData?.attributes?.Badges 
@@ -51,9 +51,11 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                             ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore.newCasino}</span>
                             :<></>
                         }
-                        <div class="h-full px-3 py-2 bg-white rounded-tl-lg relative">
+                        <div
+                            class:list={["h-full px-3 py-2 bg-white rounded-tl-lg relative", i === 0 ? 'casino-logo__first' : i === 1 ? 'casino-logo__second' : i === 2 ? 'casino-logo__third' : '']}
+                            >
                             
-                            {i <= 2 && <span class={`w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b ${badgesOptions[i]}`}>#{i + 1}</span>}
+                            {i <= 2 && <span class={`casino-logo__tag w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b ${badgesOptions[i]}`}>#{i + 1}</span>}
                             
                             <Link
                                 href={`${casinoData?.attributes?.casinoBonus?.bonusUrl}/`}
@@ -91,8 +93,9 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         <div class="text-[#7C838D] text-center text-sm leading-[18px] font-bold">
                             {translationStore.casinoTableHeadingBonus}
                         </div>
-                        <Link href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored">
-                            {welcomeBonus(casinoData)}
+                        <Link
+                            href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored"
+                            set:html={welcomeBonus(casinoData)}>
                         </Link>
                         <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
                         <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
@@ -141,3 +144,38 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
         }
     </div>
 </div>
+
+<style lang="postcss">
+    .casino-logo {
+        :global(a) {
+            @apply border border-[transparent];
+        }
+        .casino-logo__first {
+            :global(a) {
+                background: linear-gradient(to bottom, #ffd976, #ffbb38);
+            }
+            .casino-logo__tag {
+                background: linear-gradient(to bottom, #ffd976, #ffbb38);
+                box-shadow: 0px 0px 4px #ffbd3b, 0px 1px 6px rgba(16, 24, 40, 0.1);
+            }
+        }
+        .casino-logo__second {
+            :global(a) {
+                background: linear-gradient(to bottom, #dbe5ef, #b1bbc6);
+            }
+            .casino-logo__tag {
+                background: linear-gradient(to bottom, #dbe5ef, #b1bbc6);
+                box-shadow: 0px 0px 4px #d7e1eb, 0px 1px 6px rgba(16, 24, 40, 0.1);
+            }
+        }
+        .casino-logo__third {
+            :global(a) {
+                background: linear-gradient(to bottom, #de7d45, #9b4e22);
+            }
+            .casino-logo__tag {
+                background: linear-gradient(to bottom, #de7d45, #9b4e22);
+                box-shadow: 0px 0px 4px #d77842, 0px 1px 6px rgba(16, 24, 40, 0.1);
+            }
+        }
+}
+</style>
