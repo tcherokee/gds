@@ -1,0 +1,22 @@
+---
+import type { TranslationData } from "../../../interfaces/common/types";
+import { getTranslations } from "../../../stores/addTranslations";
+
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import "dayjs/locale/it";
+dayjs.extend(advancedFormat);
+dayjs.locale(import.meta.env.LANG);
+
+const { timeDate } = Astro.props;
+
+const formattedDate = dayjs(timeDate).format("D MMM YYYY");
+
+const translationStore: TranslationData = getTranslations.get();
+---
+
+<div class="sub-header text-[0.6875em] italic capitalize">
+  {translationStore.lastUpdated}
+  <!-- {dayjs(timeDate).format('D MMM YYYY')} -->
+  {formattedDate}
+</div>
