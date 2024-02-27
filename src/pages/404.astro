@@ -14,8 +14,11 @@ import Icon from "astro-icon"
 import { gamesQs } from "../../qs/games.ts"
 import type { Game } from '../../interfaces/games';
 import fetchApi from '../../lib/strapi';
+import { casinosQs } from '../../qs/casinos';
+import type { Casinopage } from '../../interfaces/casinopage';
 
 import GameListBlock from '../components/blocks/gameListBlock.astro';
+import CasinoTable from '../components/casino/casinoTable.astro';
 
 const translationStore: any = get(getTranslations);
 
@@ -33,6 +36,26 @@ const games = await fetchApi<Game[]>({
     query: `?${gamesQuery}`
 });
 
+
+const query = qs.stringify(casinosQs({
+    limit:12,
+    sort: "ratingAvg:desc",
+    providers:[],
+    ids: [],
+    bonusKey:"",
+    condition:"",
+    amount:"",
+    wagering:"",
+    speed:""
+}), { encodeValuesOnly: true });
+
+// Request to the Fetch Function to get page data from API
+const casinos = await fetchApi<Casinopage[]>({
+    endpoint: "casinos",
+    wrappedByKey: "data",
+    query: `?${query}`,
+});
+
 // Create Canonical URL
 const canonical: string =  `${import.meta.env.PUBLIC_FULL_URL}`;
 
@@ -42,8 +65,9 @@ const seo = {
     url: canonical
 }
 ---
-<script define:vars={{games}}>
+<script define:vars={{games, casinos}}>
     console.log(games);
+    console.log(casinos);
 </script>
 <MainLayout seoData={seo}>
     <div class="xl:container content-auto px-2 pt-5">
@@ -58,6 +82,13 @@ const seo = {
             <h2>{translationStore.favoriteGames}</h2>
             <div class="mt-3 d-flex flex-wrap">
                 <GameListBlock data={games} />
+            </div>
+        </div>
+
+        <div class="mt-10">
+            <h2>Casino Online</h2>
+            <div class="mt-3 d-flex flex-wrap">
+                <CasinoTable casinos={casinos} />
             </div>
         </div>
     </div>
