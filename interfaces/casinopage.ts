@@ -10,6 +10,7 @@ import type {
   CasinoComparison,
   ProsConsBlock,
   BreadcrumbData,
+  CasinoData,
 } from "./common/types";
 
 export type Casinopage = {
@@ -55,7 +56,7 @@ type Attributes = {
     creditCard: boolean;
   };
   providers: {
-    data: string;
+    data: CasinoData[];
   };
   introduction: string;
   howTo: {
