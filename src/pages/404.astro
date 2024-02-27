@@ -1,11 +1,37 @@
 ---
 // export const prerender = true;
+import qs from 'qs'
 
 // Layouts
+import { get } from "svelte/store";
+import { getTranslations } from "../../stores/addTranslations";
+
 import MainLayout from "../layouts/MainLayout.astro";
 
 // First and Third Pary Plugins
 import Icon from "astro-icon"
+
+import { gamesQs } from "../../qs/games.ts"
+import type { Game } from '../../interfaces/games';
+import fetchApi from '../../lib/strapi';
+
+import GameListBlock from '../components/blocks/gameListBlock.astro';
+
+const translationStore: any = get(getTranslations);
+
+const gamesQuery = qs.stringify(gamesQs({
+    limit:12, 
+    sort:'createdAt:desc', 
+    page:1, 
+    providers:[], 
+    categories:[]
+}), {encodeValuesOnly: true});
+
+const games = await fetchApi<Game[]>({
+    endpoint: 'games',
+    wrappedByKey: 'data',
+    query: `?${gamesQuery}`
+});
 
 // Create Canonical URL
 const canonical: string =  `${import.meta.env.PUBLIC_FULL_URL}`;
@@ -16,11 +42,23 @@ const seo = {
     url: canonical
 }
 ---
-
+<script define:vars={{games}}>
+    console.log(games);
+</script>
 <MainLayout seoData={seo}>
     <div class="xl:container content-auto px-2 pt-5">
         <div class="flex flex-col items-center justify-center md:flex-row gap-x-8">
             <Icon name="404" width="100%" class="inline-block m-[2px]" fill="#01579B" />
+        </div>
+        <div class="mt-3">
+            <h2>{translationStore.pageNotFound}</h2>
+        </div>
+
+        <div class="mt-10">
+            <h2>{translationStore.favoriteGames}</h2>
+            <div class="mt-3 d-flex flex-wrap">
+                <GameListBlock data={games} />
+            </div>
         </div>
     </div>
 </MainLayout>
