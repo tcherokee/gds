@@ -10,7 +10,7 @@ import { getTranslations } from "../../../stores/addTranslations";
 const translationStore: TranslationData = getTranslations.get()
 
 // Helpers
-import TimeDate from "../helpers/timeDate.svelte";
+import TimeDate from "../helpers/timeDate.astro";
 import TransformImage from "../helpers/images.astro";
 
 const { data, timeDate, authorData } = Astro.props;
@@ -30,7 +30,7 @@ import HeaderAuthor from "../helpers/headerAuthor.astro"
       <div class="mx-auto {!transformHero && 'pt-10 lg:pt-0'} lg:mx-0">
         <h1 id="features-heading" class="font-medium m-0">{data?.heading}</h1>
         <div class="flex gap-2 items-center">
-          <TimeDate {timeDate} />
+          <TimeDate timeDate={timeDate} />
           {authorData && <HeaderAuthor author={authorData} />}
         </div>
         <div class="flex flex-col-reverse mt-4 mb-5 lg:mb-0">
