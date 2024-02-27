@@ -38,7 +38,7 @@ const games = await fetchApi<Game[]>({
 
 
 const query = qs.stringify(casinosQs({
-    limit:12,
+    limit:6,
     sort: "ratingAvg:desc",
     providers:[],
     ids: [],
@@ -65,10 +65,7 @@ const seo = {
     url: canonical
 }
 ---
-<script define:vars={{games, casinos}}>
-    console.log(games);
-    console.log(casinos);
-</script>
+
 <MainLayout seoData={seo}>
     <div class="xl:container content-auto px-2 pt-5">
         <div class="flex flex-col items-center justify-center md:flex-row gap-x-8">
