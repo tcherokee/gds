@@ -3,7 +3,7 @@
 
     export let avgRating: number
     export let showVotes: boolean
-    export let ratingClasses: string
+    export let ratingClasses: string = 'flex-col';
 </script>
 
 <div class="container flex  w-auto p-0 m-0">
