@@ -21,6 +21,8 @@
     import { alphabeticProviders} from "../../../stores/casinos"
     import { gameVariables, providersFilters, gamesQsStore, categoriesFilters } from "../../../stores/games";
 
+    export let page = 1;
+
     //get translation context
     const translationStore:any = get(getTranslations);
 
@@ -57,6 +59,7 @@
 
 	const handleMobileFilterSubmit = () => {
 
+        gameVariables.setKey('page', 1);
         gameVariables.setKey('categories', mobileVariables.categories || [])
         gameVariables.setKey('providers', mobileVariables.providers || [])
 
@@ -83,6 +86,7 @@
 			const newSortValue = key + ":" + value
 
 			gameVariables.setKey('sort', newSortValue)
+            gameVariables.setKey('page', page);
         
 			// Set QS Query String to Get Updated Casinos
 			const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
@@ -109,7 +113,8 @@
 
 		// Validate the key in indeed in the list of casino filters key then use type assertion to squash the typescript error
 		validKeys.includes(key as keyof GameFilters) && gameVariables.setKey(key as keyof GameFilters, value)
-        
+        gameVariables.setKey('page', 1);
+
 		// Set QS Query String to Get Updated Casinos
         const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
 		
@@ -127,7 +132,7 @@
 		mobileVariables = {
             limit: 1000,
             sort: "ratingAvg:desc",
-            page: 1,
+            page: page,
             providers: [],
             categories: []
         }

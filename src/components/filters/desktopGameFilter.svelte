@@ -75,7 +75,7 @@
             const newSortValue = key + ":" + value
             
 			gameVariables.setKey('sort', newSortValue)
-            gameVariables.setKey('page', 1);
+            gameVariables.setKey('page', page);
         
 			// Set QS Query String to Get Updated games
 			const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})

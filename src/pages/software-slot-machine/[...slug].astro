@@ -7,7 +7,7 @@ import qs from "qs";
 // Types
 import type { GetStaticPaths } from "astro";
 import type { Slotprovider } from "../../../interfaces/slot-provider";
-import type { TranslationData } from "../../../interfaces/common/types";
+import type { Faqs, TranslationData } from "../../../interfaces/common/types";
 
 // Stores
 import { getTranslations } from "../../../stores/addTranslations";
@@ -27,7 +27,7 @@ import SlotProviderGames from "../../components/games/slotProviderGames.astro";
 import ContentBlock from "../../components/blocks/contentBlock.astro";
 import CasinoSideBar from "../../components/casino/casinoSidebar.astro";
 import CasinoComparison from "../../components/casino/casinoComparison.astro";
-import Faqs from "../../components/general/faqs.astro";
+import FaqsComponent from "../../components/general/faqs.astro";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -53,7 +53,6 @@ export const getStaticPaths = (async () => {
       query: `?${query}`,
     });
 
-    console.log("<<GAMES>>", games);
     prerenderPath.push({
       params: { slug },
       props: { page: slotProviders[i] },
@@ -67,7 +66,7 @@ export const getStaticPaths = (async () => {
       }
     }
   }
-  console.log("PRERENDER_PATH", prerenderPath);
+  
   return prerenderPath;
 
   //   return slotProviders.map((page) => {
@@ -153,8 +152,8 @@ const seo = {
             <div class="content mt-4">
               <h2 class="mb-4">{translationStore.faq}</h2>
 
-              {page?.attributes?.faqs.map((faq) => (
-                <Faqs data={faq} />
+              {page?.attributes?.faqs.map((faq: {data: Faqs} ) => (
+                <FaqsComponent data={faq} />
               ))}
             </div>
           )
