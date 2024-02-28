@@ -9,7 +9,7 @@ import sitemap from "@astrojs/sitemap";
 import partytown from "@astrojs/partytown";
 dotenv.config();
 
-console.log("url", process.env.PUBLIC_FULL_URL);
+console.log("url", process.env.PUBLIC_FULL_URL, process.env.PUBLIC_SITE_ID);
 
 // https://astro.build/config
 export default defineConfig({
