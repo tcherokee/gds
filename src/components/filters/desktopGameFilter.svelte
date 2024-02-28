@@ -25,6 +25,7 @@
     import type { Toggles, GameFilters, BonusLabels } from '../../../interfaces/common/types';
 
     export let showGameFilterPanel: boolean
+    export let page = 1;
 
     // Variables
     let searchInput: HTMLElement
@@ -49,6 +50,7 @@
     const handleClick = (provider) => {
         // Set Store Provider Variable Key
         gameVariables.setKey('providers', [provider])
+        gameVariables.setKey('page', 1);
 
         // Create QS String from the updated variables
         const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
@@ -73,6 +75,7 @@
             const newSortValue = key + ":" + value
             
 			gameVariables.setKey('sort', newSortValue)
+            gameVariables.setKey('page', 1);
         
 			// Set QS Query String to Get Updated games
 			const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
@@ -111,6 +114,7 @@
 
 		// Validate the key in indeed in the list of casino filters key then use type assertion to squash the typescript error
 		validKeys.includes(key as keyof GameFilters) && gameVariables.setKey(key as keyof GameFilters, value)
+        gameVariables.setKey('page', 1);
         
 		// Set QS Query String to Get Updated Casinos
         const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
@@ -131,6 +135,7 @@
 		// Validate the key in indeed in the list of casino filters key then use type assertion to squash the typescript error
 		validKeys.includes(key as keyof GameFilters) && gameVariables.setKey(key as keyof GameFilters, value)
 
+        gameVariables.setKey('page', page);
         // Set QS Query String to Get Updated Casinos
         const query = qs.stringify(gamesQs($gameVariables), {encodeValuesOnly: true})
 
