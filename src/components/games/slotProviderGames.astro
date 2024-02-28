@@ -9,7 +9,6 @@ import Pagination from '../../components/helpers/pagination.astro';
 const { slug } = Astro.props
 const newSlug = slug.includes('/') ? slug.split('/')[0] : slug;
 const page = slug.includes('/') ? slug.split('/')[1].split('p')[1] : 1;
-console.log('SLOTPROVIDER_SLUG', slug, newSlug, page);
 
 const query = qs.stringify(gamesQs(newSlug,"views:desc",page), {encodeValuesOnly: true});
 const games = await fetchApi<any>({
@@ -17,8 +16,6 @@ const games = await fetchApi<any>({
     isPaginated: true,
     query: `?${query}`
 });
-
-console.log('<<GAMES>>', games);
 
 let siteID = import.meta.env.SITE_ID
 

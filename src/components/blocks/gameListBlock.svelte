@@ -25,7 +25,6 @@
   export let data: CustomGameList;
   export let author: string = '';
   export let page = 1;
-  console.log(page);
 
   // Get provider slugs
   const providerSlugs = data.gameProviders.map(
@@ -93,7 +92,7 @@
   <div class="flex flex-col align-center relative xl:container px-2 pb-5">
     <MediaQuery query="(max-width: 768px)" let:matches>
       {#if matches}
-        <MobileGameFilter showGameFilterPanel={data.showGameFilterPanel} />
+        <MobileGameFilter {page}/>
       {:else}
         <DesktopGameFilter {page} showGameFilterPanel={data.showGameFilterPanel} />
       {/if}
