@@ -37,6 +37,8 @@ ENV PUBLIC_API_URL=$PUBLIC_API_URL \
     PUBLIC_ROOT_DOMAIN=$PUBLIC_ROOT_DOMAIN \
     NODE_ENV=$NODE_ENV
 
+RUN npm -v
+RUN node -v
 RUN npm install
 RUN npm run build
 
