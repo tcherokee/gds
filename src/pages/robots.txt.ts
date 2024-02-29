@@ -1,9 +1,7 @@
 import type { APIRoute } from "astro";
 
-console.log(import.meta.env.NODE_ENV);
-
 const rootURL = () => {
-    if (import.meta.env.NODE_ENV === 'production') {
+    if (import.meta.env.ROOT_DOMAIN.includes("www")) {
         return `Allow: /`
     } else {
         return `Disallow: /`
