@@ -3,6 +3,7 @@
 
     export let avgRating: number
     export let showVotes: boolean
+	export let ratingCount: number;
     export let ratingClasses: string = 'flex-col';
 </script>
 
@@ -38,7 +39,7 @@
 		</div>
 		{#if  ratingClasses === 'flex-col'}
 			<span class="flex items-center justify-center text-center rating-text text-[14px] mt-2">
-				<span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {$getTranslations.from} 5 {$getTranslations.votes}
+				<span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {$getTranslations.from} {ratingCount} {$getTranslations.votes}
 			</span>
 		{:else}
 			<span class="flex items-center justify-center text-center rating-text text-[14px] ml-1">
