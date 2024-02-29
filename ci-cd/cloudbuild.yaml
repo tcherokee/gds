@@ -36,6 +36,8 @@ steps:
         'PUBLIC_ROOT_DOMAIN=${_PUBLIC_ROOT_DOMAIN}',
         '--build-arg',
         'PUBLIC_FULL_URL=${_PUBLIC_FULL_URL}',
+        '--build-arg',
+        'NODE_ENV=${_NODE_ENV}',
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '.'
@@ -96,6 +98,8 @@ steps:
       - 'PUBLIC_ROOT_DOMAIN=${_PUBLIC_ROOT_DOMAIN}'
       - '--set-env-vars'
       - 'PUBLIC_FULL_URL=${_PUBLIC_FULL_URL}'
+      - '--set-env-vars'
+      - 'NODE_ENV=${_NODE_ENV}'
 
 substitutions:
   _OUTPUT_DIST_PATH: '/'
@@ -120,5 +124,6 @@ substitutions:
   _PUBLIC_IMAGE_URL: ''
   _PUBLIC_ROOT_DOMAIN: ''
   _PUBLIC_FULL_URL: ''
+  _NODE_ENV: 'development'
 
 timeout: 2700s
