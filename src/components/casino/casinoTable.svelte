@@ -34,6 +34,7 @@
   import { welcomeBonus, noDepositBonus } from "../../../lib/casinoBonusLayout";
   import MediaQuery from "../helpers/mediaQuery.svelte";
   import Link from "../helpers/link.svelte";
+  import { sortOptions } from "../../../stores/sortFilters";
 
   // Images
   import ArrowRight from "~icons/kensho-icons/arrow-right";
@@ -57,7 +58,7 @@
   let currentCasinosLength = numberPerLoadMore;
 
   // Set Sort Key in Casino Variables Store
-  casinoVariables.setKey("sort", casinoSort || "ratingAvg:desc");
+  casinoVariables.setKey("sort", $sortOptions[casinoSort] || "ratingAvg:desc");
 
   // Set bonusKey Key in Casino Variables Store
   casinoVariables.setKey(
