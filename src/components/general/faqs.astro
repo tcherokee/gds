@@ -1,27 +1,34 @@
 ---
-
-
 // Types
-import type { TranslationData } from "../../../interfaces/common/types.ts"
+import type {
+  Faqs,
+  TranslationData,
+} from "../../../interfaces/common/types.ts";
 
 // Stores
-import { getTranslations } from "../../../stores/addTranslations.ts"
+import { getTranslations } from "../../../stores/addTranslations.ts";
 
 // Components
 import Collapse from "../helpers/collapse.astro";
 
-const translationStore: TranslationData = getTranslations.get()
+const translationStore: TranslationData = getTranslations.get();
 
-const { data } = Astro.props
+const { data } = Astro.props;
 ---
 
-<Collapse id={"data"+data.id} label={data.question} labelIcon={`<span class="mr-3">D:</span>`} containerClass="mb-5" labelClass="text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3" collapseClass="bg-white rounded-b-md" checked={true} >
-    <div slot="content" class="flex">
-        <span class="mr-4 text-xl">
-            R:
-        </span> 
-        <span>
-            <Fragment set:html={data.answer} />
-        </span>
-    </div>  
+<Collapse
+  id={"data" + data.id}
+  label={data.question}
+  labelIcon={`<span class="mr-3">D:</span>`}
+  containerClass="mb-5"
+  labelClass="text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3"
+  collapseClass="bg-white rounded-b-md"
+  checked={true}
+>
+  <div slot="content" class="flex">
+    <span class="mr-4 text-xl"> R:</span>
+    <span>
+      <Fragment set:html={data.answer} />
+    </span>
+  </div>
 </Collapse>

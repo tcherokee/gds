@@ -9,6 +9,7 @@ import { layoutQs, menuQs } from "../../qs/layout.ts";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
+import GoogleAnalytics from "../components/helpers/googleAnalytics.astro";
 
 //Styles
 import "../styles/app.postcss";
@@ -103,19 +104,7 @@ const { seoData } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{seoData.pageTitle}</title>
     <Tooltips placement="auto" />
-
-    <script
-      type="text/partytown"
-      src="https://www.googletagmanager.com/gtag/js?id=GTM-TLJMVQX"></script>
-    <script type="text/partytown">
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "GTM-TLJMVQX");
-    </script>
+    <GoogleAnalytics />
   </head>
   <body>
     <main>

@@ -7,8 +7,10 @@ import GameListBlock from '../../components/blocks/gameListBlock.svelte';
 import Pagination from '../../components/helpers/pagination.astro';
 
 const { slug } = Astro.props
+const newSlug = slug.includes('/') ? slug.split('/')[0] : slug;
+const page = slug.includes('/') ? slug.split('/')[1].split('p')[1] : 1;
 
-const query = qs.stringify(gamesQs(slug,"views:desc",1), {encodeValuesOnly: true});
+const query = qs.stringify(gamesQs(newSlug,"views:desc",page), {encodeValuesOnly: true});
 const games = await fetchApi<any>({
     endpoint: 'games',
     isPaginated: true,
@@ -18,16 +20,16 @@ const games = await fetchApi<any>({
 let siteID = import.meta.env.SITE_ID
 
 const gameBlock = {
-    numberOfGames: 30,
+    numberOfGames: 36,
     sortBy: "Most Popular",
     showGameFilterPanel: true,
-    showGameMoreButton: true,
+    showGameMoreButton: false,
     gameCategories: [],
     gameProviders: [{
             slotProvider: {
                 data: {
                     attributes: {
-                        slug: slug
+                        slug: newSlug
                     }
                 }
             }
@@ -35,10 +37,10 @@ const gameBlock = {
     
 }
 ---
-<GameListBlock data={gameBlock} client:load />
+<GameListBlock data={gameBlock} {page} client:load />
 
 <Pagination
     currPage={games?.meta?.pagination?.page}
     pageCount={games?.meta?.pagination?.pageCount}
-    path=`${urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']}/${slug}`
+    path=`${urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']}/${newSlug}`
 />

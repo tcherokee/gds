@@ -1,0 +1,167 @@
+---
+export const prerender = true;
+
+// First and Third Party Plugins
+import qs from "qs";
+
+// Types
+import type { GetStaticPaths } from "astro";
+import type { Slotprovider } from "../../../interfaces/slot-provider";
+import type { Faqs, TranslationData } from "../../../interfaces/common/types";
+
+// Stores
+import { getTranslations } from "../../../stores/addTranslations";
+
+// Queries
+import { gamesQs, slotProvidersQs } from "../../../qs/ssm-games";
+
+// Helpers
+import { urlTranslate } from "../../../utils/data-store.util";
+import fetchApi from "../../../lib/strapi";
+
+// Components
+import MainLayout from "../../layouts/MainLayout.astro";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+import IntroBlock from "../../components/general/introWithImage.astro";
+import SlotProviderGames from "../../components/games/slotProviderGames.astro";
+import ContentBlock from "../../components/blocks/contentBlock.astro";
+import CasinoSideBar from "../../components/casino/casinoSidebar.astro";
+import CasinoComparison from "../../components/casino/casinoComparison.astro";
+import FaqsComponent from "../../components/general/faqs.astro";
+
+export const getStaticPaths = (async () => {
+  // Import the QS Query string for custom slugs and prepare it for the API fetch
+  const slotProvidersQuery = qs.stringify(slotProvidersQs(), {
+    encodeValuesOnly: true,
+  });
+  // Request to the Fetch Function to get page data from API
+  const slotProviders = await fetchApi<Slotprovider[]>({
+    endpoint: "slot-providers",
+    wrappedByKey: "data",
+    query: `?${slotProvidersQuery}`,
+  });
+
+  let prerenderPath: any[] = [];
+  for (let i = 0; i < slotProviders.length; i++) {
+    const slug = slotProviders[i]?.attributes?.slug;
+    const query = qs.stringify(gamesQs(slug, "views:desc", 1), {
+      encodeValuesOnly: true,
+    });
+    const games = await fetchApi<any>({
+      endpoint: "games",
+      isPaginated: true,
+      query: `?${query}`,
+    });
+
+    prerenderPath.push({
+      params: { slug },
+      props: { page: slotProviders[i] },
+    });
+    if (games && games.meta?.pagination) {
+      for (let p = 1; p <= games.meta?.pagination?.pageCount; p++) {
+        prerenderPath.push({
+          params: { slug: `${slug}/p${p}` },
+          props: { page: slotProviders[i] },
+        });
+      }
+    }
+  }
+  
+  return prerenderPath;
+
+  //   return slotProviders.map((page) => {
+  //     return {
+  //       params: { slug: page?.attributes?.slug },
+  //       props: { page },
+  //     };
+  //   });
+}) satisfies GetStaticPaths;
+
+// Set Up Translation Store
+const translationStore: TranslationData = getTranslations.get();
+
+const { page } = Astro.props;
+const { slug } = Astro.params;
+
+let siteID = import.meta.env.SITE_ID;
+let siteURL = import.meta.env.FULL_URL;
+let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["provider-pages"]}/${slug}`;
+
+const seo = {
+  pageTitle: page?.attributes?.seo?.metaTitle,
+  metaDescription: page?.attributes?.seo?.metaDescription,
+  url: canonical,
+};
+---
+
+<MainLayout seoData={seo}>
+  <Breadcrumb
+    breadcrumbs={[
+      { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
+    ]}
+    breadcrumbKey="providersBreadcrumbs"
+  />
+  <div class="featured-background pb-5">
+    <IntroBlock
+      data={page?.attributes?.IntroductionWithImage}
+      timeDate={page?.attributes?.dateCreated}
+      authorData={page?.attributes?.author}
+    />
+
+    <div class="d-flex flex-wrap">
+      <SlotProviderGames slug={slug} />
+    </div>
+  </div>
+  <div class="relative xl:container px-2 mt-5">
+    <div class="flex flex-col md:flex-row gap-x-8">
+      <div class="order-last md:order-first mt-5 md:mt-0">
+        {
+          page?.attributes?.content1 && (
+            <div class="content-1">
+              <ContentBlock pageContent={page?.attributes?.content1} />
+            </div>
+          )
+        }
+
+        {
+          page?.attributes?.content2 && (
+            <div class="content-2">
+              <ContentBlock pageContent={page?.attributes?.content2} />
+            </div>
+          )
+        }
+
+        {
+          page?.attributes?.relatedCasinos?.data.length > 0 && (
+            <CasinoComparison
+              data={page?.attributes?.relatedCasinos?.data.slice(0, 3)}
+            />
+          )
+        }
+
+        {
+          page?.attributes?.content3 && (
+            <div class="content-3">
+              <ContentBlock pageContent={page?.attributes?.content3} />
+            </div>
+          )
+        }
+
+        {
+          page?.attributes?.faqs.length > 0 && (
+            <div class="content mt-4">
+              <h2 class="mb-4">{translationStore.faq}</h2>
+
+              {page?.attributes?.faqs.map((faq: {data: Faqs} ) => (
+                <FaqsComponent data={faq} />
+              ))}
+            </div>
+          )
+        }
+      </div>
+      <div class="basis-[315px] shrink-0 order-first order-last">
+        <CasinoSideBar />
+      </div>
+    </div>
+  </div>
+</MainLayout>

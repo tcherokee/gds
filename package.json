@@ -36,7 +36,6 @@
     "nanostores": "^0.9.5",
     "prettier-plugin-astro": "^0.12.2",
     "qs": "^6.11.2",
-    "splendid-ui": "^0.10.5",
     "svelte": "^4.2.8",
     "svelte-file-dropzone": "^2.0.4",
     "svoast": "^2.4.4",

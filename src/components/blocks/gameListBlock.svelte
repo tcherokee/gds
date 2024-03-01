@@ -24,6 +24,7 @@
 
   export let data: CustomGameList;
   export let author: string = '';
+  export let page = 1;
 
   // Get provider slugs
   const providerSlugs = data.gameProviders.map(
@@ -41,6 +42,7 @@
   gameVariables.setKey("providers", providerSlugs);
   gameVariables.setKey("categories", categorySlugs);
   gameVariables.setKey('author', author);
+  gameVariables.setKey('page', page);
 
   // Create QS String from the updated variables
   const query = qs.stringify(gamesQs($gameVariables), {
@@ -90,9 +92,9 @@
   <div class="flex flex-col align-center relative xl:container px-2 pb-5">
     <MediaQuery query="(max-width: 768px)" let:matches>
       {#if matches}
-        <MobileGameFilter showGameFilterPanel={data.showGameFilterPanel} />
+        <MobileGameFilter {page}/>
       {:else}
-        <DesktopGameFilter showGameFilterPanel={data.showGameFilterPanel} />
+        <DesktopGameFilter {page} showGameFilterPanel={data.showGameFilterPanel} />
       {/if}
     </MediaQuery>
     <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">

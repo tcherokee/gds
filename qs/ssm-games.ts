@@ -1,16 +1,5 @@
-export const gamesQs = (
-  slug: string = "",
-  sort: string = "",
-  page: number = 1
-) => ({
-  fields: [
-    "title",
-    "slug",
-    "ratingAvg",
-    "ratingCount",
-    "publishedAt",
-    "showGameFilterPanel",
-  ],
+export const gamesQs = (slug: string = "", sort: string = "", page: number = 1) => ({
+  fields: ["title", "slug", "ratingAvg", "ratingCount", "publishedAt"],
   populate: {
     provider: {
       fields: ["title", "slug"],
@@ -29,7 +18,7 @@ export const gamesQs = (
   },
   pagination: {
     page: page || 1,
-    pageSize: 18,
+    pageSize: 36,
     withCount: true,
   },
   filters: {
