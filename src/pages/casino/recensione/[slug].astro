@@ -751,7 +751,8 @@ let seo = {
           <ImageCarousel data={page?.attributes.blocks[0]} client:visible />
 
           <div class="row qc">
-            <div class="" set:html={page?.attributes?.introduction} />
+            <!-- <div class="" set:html={page?.attributes?.introduction} /> -->
+             <ContentBlock pageContent={page?.attributes?.introduction} />
           </div>
 
           {
