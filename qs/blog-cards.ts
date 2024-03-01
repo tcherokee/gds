@@ -1,4 +1,7 @@
-export const blogcardQs = (pageSize: number | undefined) => ({
+export const blogcardQs = (
+  pageSize: number | undefined,
+  page: number | undefined
+) => ({
   fields: [
     "title",
     "slug",
@@ -25,7 +28,7 @@ export const blogcardQs = (pageSize: number | undefined) => ({
   },
   sort: ["createdAt:desc"],
   pagination: {
-    page: 1,
+    page: page,
     pageSize: pageSize,
   },
 });
