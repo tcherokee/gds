@@ -294,7 +294,7 @@
 						<span class="isolate w-full inline-flex rounded-md shadow-sm">
 							<button
 								type="button"
-								class="relative peer w-full h-11 rounded-l-[4px]  bg-white/[.7] border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-xs open:rounded-b-none"
+								class="!bg-filter-alternate-toggle relative peer w-full h-11 rounded-l-[4px]  bg-white/[.7] border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-xs open:rounded-b-none"
                                 {...(toggles.sort ? { open:'' } : {})}
                                 on:click={() => handleToggle('sort')}
 							>
