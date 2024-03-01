@@ -32,7 +32,7 @@ export const getStaticPaths = (async () => {
 
 	 let prerenderPath: any[] = [];
 
-    for (let i = 1; i < blogCards.meta.pagination.pageCount; i++) {
+    for (let i = 1; i <= blogCards.meta.pagination.pageCount; i++) {
         const slug = `p${i}`;
         const query = qs.stringify(blogcardQs(12, i), { encodeValuesOnly: true});
         const blogs = await fetchApi<any>({
