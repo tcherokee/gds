@@ -10,7 +10,7 @@ import type { BlogList } from "../../../interfaces/blog"
 import BlogListBlock from '../../components/blocks/blogListBlock.astro';
 import Pagination from '../../components/helpers/pagination.astro';
 
-const query = qs.stringify(blogcardQs(12), {encodeValuesOnly: true})
+const query = qs.stringify(blogcardQs(12, 1), {encodeValuesOnly: true})
 const metaQuery = qs.stringify(blogmetaQs(), {encodeValuesOnly: true})
 
 const blogCards = await fetchApi<BlogList>({
