@@ -123,7 +123,8 @@ const __blocks = page?.attributes?.blocks
                 </div>
                 <div class="intro-content">
                     <h1 class="text-blue-700 !mt-0">{page?.attributes?.heading}</h1>
-                    <Fragment set:html={page?.attributes?.introduction}></Fragment>
+                    <!-- <Fragment set:html={page?.attributes?.introduction}></Fragment> -->
+					<ContentBlock pageContent={page?.attributes?.introduction} />
                 </div>
 
                 {page?.attributes?.howTo &&
