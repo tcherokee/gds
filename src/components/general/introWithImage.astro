@@ -21,8 +21,7 @@ import HeaderAuthor from "../helpers/headerAuthor.astro"
 
 <div class="intro-content">
   <div
-    class="relative grid grid-cols-12 gap-1 pb-5 pt-0 px-2 lg:pt-10 xl:container {!hasSiblings &&
-			'md:pb-[120px]'}"
+    class:list={['relative grid grid-cols-12 gap-1 pb-5 pt-0 px-2 lg:pt-10 xl:container', {'pt-5': !data?.image?.data?.attributes?.url}]}
   >
     <div
       class="stars relative order-2 col-span-12 lg:order-1 lg:col-span-7 lg:only-of-type:col-span-12 lg:z-20"

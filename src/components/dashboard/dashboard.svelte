@@ -23,6 +23,7 @@
   } from "../../../stores/authStore";
   import type { TDashboardGame } from "../../../interfaces/games";
   import type { TranslationData } from "../../../interfaces/common/types";
+  import type { TUser } from "../../../interfaces/auth";
   // import { user } from '$lib/stores/auth'
   // export let data: LayoutData
   let favouriteGames: TDashboardGame[] = [];
@@ -38,6 +39,7 @@
   }
 
   export let translations: TranslationData;
+  let dashboardUser: TUser;
 
   const fetchData = async (endpoint: string) => {
     const res = await fetch(`${endpoint}`);
@@ -60,6 +62,12 @@
     weeklyPickedGames.set([...pickOfTheWeekGames]);
     userMostPlayedGames.set([...mostPlayedGames]);
   });
+
+  $: {
+    if ($user) {
+      dashboardUser = {...$user};
+    }
+  }
 </script>
 
 <div class="">
@@ -72,7 +80,7 @@
       {#if $user?.cover_image?.url}
         <img
           class="w-full h-full object-cover rounded-t-xl"
-          src={$user?.cover_image?.url}
+          src={$user?.cover_image?.url ?? dashboardUser?.cover_image.url}
           alt={$user?.firstName + " cover image"}
         />
       {/if}
@@ -88,7 +96,7 @@
             {:else}
               <img
                 class="w-full h-full object-cover rounded-full"
-                src={$user?.photo?.url}
+                src={$user?.photo?.url ?? dashboardUser?.photo.url}
                 alt={$user?.firstName + " avatar"}
               />
             {/if}
@@ -96,8 +104,8 @@
           <div class="justify-between w-full md:flex">
             <div class="mb-4 md:mb-0 text-center md:text-left">
               <div class="text-2xl tracking-[0.96px] text-white font-lato">
-                {$user?.firstName}
-                {$user?.lastName}
+                {$user?.firstName ?? dashboardUser?.firstName}
+                {$user?.lastName ?? dashboardUser?.lastName}
               </div>
               <div class="min-h-[40px] max-w-[320px] text-sm text-white">
                 {$user?.bio ? $user?.bio : ""}
@@ -172,7 +180,7 @@
                   type="button"
                   classes="register-btn flex w-full justify-center items-center px-3 py-[7px]"
                 >
-                  VIEW ALL
+                  {translations.viewAll}
                 </Link>
               </div>
             {/if}
@@ -221,7 +229,7 @@
                   href="/dashboard/favourite-games/"
                   classes="register-btn flex w-full justify-center items-center px-3 py-[7px]"
                 >
-                  VIEW ALL
+                  {translations.viewAll}
                 </Link>
               </div>
             {/if}
@@ -264,7 +272,7 @@
                   href="/dashboard/favourite-games/"
                   classes="register-btn flex w-full justify-center items-center px-3 py-[7px] cursor-pointer"
                 >
-                  VIEW ALL
+                  {translations.viewAll}
                 </Link>
               </div>
             {/if}

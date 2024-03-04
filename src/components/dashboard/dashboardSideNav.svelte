@@ -6,11 +6,13 @@
   import SignoutSvg from "~icons/kensho-dashboard-icons/signout";
   import type { TranslationData } from "../../../interfaces/common/types";
   import DashboardNav from "./dashboardNav.svelte";
+  import type { TUser } from "../../../interfaces/auth";
 
   let activeRoute = "home";
   export let translations: TranslationData;
   export let pageUrl: string;
   export let slotMachineURL: string;
+  let dashboardUser: TUser;
 
   const fetchData = async (endpoint: string) => {
 		const res = await fetch(`${endpoint}`)
@@ -41,6 +43,7 @@
       return;
     }
 
+    dashboardUser = {...userProfile};
     user.set({ ...userProfile });
     readMessages.set(readMessageList)
     messages.set(userMessages)
@@ -52,13 +55,11 @@
       method: "POST",
       body: JSON.stringify({}),
     });
-    location.reload();
+    user.set(null);
+    readMessages.set([]);
+    messages.set([]);
 
-    setTimeout(() => {
-      user.set(null);
-      readMessages.set([]);
-      messages.set([]);
-    }, 1000);
+    location.reload();
   };
 </script>
 
@@ -81,18 +82,18 @@
             {:else}
               <img
                 class="w-full h-full object-cover rounded-full"
-                src={$user?.photo.url}
+                src={$user?.photo.url ?? dashboardUser?.photo.url}
                 alt={$user?.firstName + " avatar"}
               />
             {/if}
           </div>
           <div>
             <div class="text-sm text-white line-clamp-1 font-semibold">
-              {$user?.firstName}
-              {$user?.lastName}
+              {$user?.firstName ?? dashboardUser?.firstName}
+              {$user?.lastName ?? dashboardUser?.lastName}
             </div>
             <div class="text-sm line-clamp-1 text-blue-100">
-              {$user?.email}
+              {$user?.email ?? dashboardUser?.email}
             </div>
           </div>
         </div>
