@@ -22,11 +22,15 @@
     if (favouritedGame) {
       isFavourited = true;
     } else {
-      const userFavouritedGame = $userFavouriteGames.find(
-        ({ game }) => game.id === gameId
-      );
-      if (userFavouritedGame) {
-        isFavourited = true;
+      if ($userFavouriteGames?.length) {
+        const userFavouritedGame = $userFavouriteGames.find(
+          ({ game }) => game.id === gameId
+        );
+        if (userFavouritedGame) {
+          isFavourited = true;
+        }
+      } else {
+        isFavourited = false;
       }
     }
   }

@@ -61,7 +61,7 @@
 
 <div class="">
   <div class="text-xl text-white font-bold font-lato mb-[14px]">
-    Favourite games
+    {translations.favouriteGame}
   </div>
   {#if userFavouriteGamesLoader}
     <div class="py-10 flex justify-center">
@@ -86,7 +86,7 @@
           {#if isSyncingGames}
             <span class="custom-spinner mr-2" aria-hidden="true"></span>
           {/if}
-          <span>{isSyncingGames ? "Syncing games..." : "Sync games"}</span
+          <span>{isSyncingGames ? "Syncing games..." : translations.syncGames}</span
           ></button
         >
       </div>
