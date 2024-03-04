@@ -49,16 +49,16 @@ const seo = {
 <MainLayout seoData={seo}>
     <div class="featured-background">
         <div class="intro-content">
-            <div class="xl:container py-20">
+            <div class="relative px-2 py-20 xl:container xl:px-0">
                 <Fragment set:html={authorIndex.attributes?.authorPage?.content1} />
             </div>
         </div>
     </div>
-    <div class="xl:container py-5">
+    <div class="py-5 xl:container xl:px-0">
         <Fragment set:html={authorIndex.attributes?.authorPage?.content2} />
     </div>
 
-    <div class="xl:container py-5 grid grid-cols-4 gap-4 group author-index">
+    <div class="relative px-2 py-5 grid gap-4 group author-index grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:container xl:px-0 xl:grid-cols-4">
         {
             authors.map(author => (
                 <AuthorCard data={author} isFlat={true} authorIndex={true} />
@@ -66,7 +66,7 @@ const seo = {
         }
     </div>
 
-    <div class="xl:container py-5">
+    <div class="px-2 py-5 xl:container xl:px-0">
         <Fragment set:html={authorIndex.attributes?.authorPage?.content3} />
     </div>
 </MainLayout>
