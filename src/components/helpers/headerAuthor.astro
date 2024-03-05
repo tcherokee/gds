@@ -1,8 +1,13 @@
-<!-- ---
+---
 
 const { author } = Astro.props;
+import { urlTranslate } from "../../../utils/data-store.util";
 import TransformImage from "./images.astro";
 import Link from "./link.astro";
+
+const siteID = import.meta.env.SITE_ID
+const siteURL = import.meta.env.FULL_URL
+const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['author-page']}/${author?.data?.attributes?.firstName?.toLowerCase()}.${author?.data?.attributes?.lastName?.toLowerCase()}` 
 
 ---
 
@@ -11,19 +16,18 @@ import Link from "./link.astro";
 >
   <span class="block">-</span>
   <span class="block">Scritto da</span>
-
   <Link
-    href="/{author?.data?.attributes?.firstName?.toLowerCase()}.{author?.data?.attributes?.lastName?.toLowerCase()}"
+    href={authorLink}
   >
     <div class="flex gap-2 items-center hover:underline">
       <div class="w-[20px] h-[20px] border border-white rounded-full">
         <TransformImage
-          imageUrl={author?.data?.attributes?.photo?.data?.attributes.url}
+          src={author?.data?.attributes?.photo?.data?.attributes.url}
           imageWidth={20}
           imageHeight={20}
-          imageClass="providerImage rounded-full"
-          imageAlt="{author?.data?.attributes?.firstName} {author?.data?.attributes
-                        ?.lastName} photo"
+          classes="providerImage rounded-full"
+          alt={author?.data?.attributes?.firstName+' '+author?.data?.attributes
+                        ?.lastName+' photo'}
           imageResponsive={false}
         />
       </div>
@@ -33,4 +37,4 @@ import Link from "./link.astro";
       </div>
     </div>
   </Link>
-</div> -->
+</div>
