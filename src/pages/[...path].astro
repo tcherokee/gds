@@ -123,6 +123,8 @@ const seo = {
             return (
               <Component
                 data={page.attributes.blocks[i]}
+                timeDate={page?.attributes?.updatedAt}
+						    authorData={page?.attributes?.author}
                 {...(page?.attributes?.blocks[i]?.__component ===
                 "casinos.casino-list"
                   ? { isCustom: true, isTop: true }
@@ -175,6 +177,8 @@ const seo = {
                 return (
                   <Component
                     data={page.attributes.blocks[i]}
+                    timeDate={page?.attributes?.updatedAt}
+						        authorData={page?.attributes?.author}
                     {...(page?.attributes?.blocks[i]?.__component ===
                     "shared.quicklinks"
                       ? { block: page.attributes.blocks }

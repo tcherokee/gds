@@ -86,7 +86,7 @@ const layoutData = await fetchApi<any>({
 
 const siteID = import.meta.env.SITE_ID
 const siteURL = import.meta.env.FULL_URL
-const canonical =  isPaginated ? `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-index']}` 
+const canonical =  isPaginated ? `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-index']}/${slug}` 
 					: `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']}/${page?.attributes?.slug}`
 
 //set page seo data
