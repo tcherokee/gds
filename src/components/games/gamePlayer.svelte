@@ -93,10 +93,6 @@
     hoverEl = document.getElementById(elementID);
     hoverEl.classList.add("hidden");
   };
-
-  onMount(async () => {
-	// console.log(data);
-  });
 </script>
 
 <div class="flex flex-col justify-center rounded-t-lg -mx-3 md:mx-0">

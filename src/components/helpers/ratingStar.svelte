@@ -41,7 +41,6 @@
         { method: "PUT" }
       );
       const resData = await res.json()
-      console.log(resData);
 
       if (res.status !== 200) {
         return;
