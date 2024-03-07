@@ -1,8 +1,7 @@
 ---
-
 export const prerender = true;
 
-import { Link } from "astro-link"
+import { Link } from "astro-link";
 import type { GetStaticPaths } from "astro";
 import qs from "qs";
 import MainLayout from "../../../layouts/MainLayout.astro";
@@ -10,7 +9,7 @@ import { urlTranslate } from "../../../../utils/data-store.util";
 import fetchApi from "../../../../lib/strapi";
 import { casinopageQs } from "../../../../qs/casinopage";
 import type { Casinopage } from "../../../../interfaces/casinopage";
-import { gamesQs } from "../../../../qs/games"
+import { gamesQs } from "../../../../qs/games";
 import type { Gamepage } from "../../../../interfaces/game-page";
 
 import TimeDate from "../../../components/helpers/timeDate.astro";
@@ -36,8 +35,9 @@ import CasinoComparison from "../../../components/casino/casinoComparison.astro"
 import Faqs from "../../../components/general/faqs.astro";
 import ImageCarousel from "../../../components/general/imageCarousel.svelte";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
-import AuthorCard from '../../../components/general/authorCard.astro';
-import GameListBlock from '../../../components/blocks/gameListBlock.astro';
+import AuthorCard from "../../../components/general/authorCard.astro";
+import GameListBlock from "../../../components/blocks/gameListBlock.astro";
+import type { TranslationData } from "../../../../interfaces/common/types";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -62,25 +62,29 @@ const { slug } = Astro.params; //get the slug from the page url
 
 //get games 10 games for this casino providers
 const providerSlugs = new Array();
-page?.attributes?.providers?.data.map((provider:any) => {
+page?.attributes?.providers?.data.map((provider: any) => {
   providerSlugs.push(provider?.attributes?.slug);
 });
 
-const query = qs.stringify(gamesQs({limit:10,
-  sort:"ratingAvg:desc",
-  page:1,
-  providers:providerSlugs,
-  categories:[],
-  author:''}), 
-  {encodeValuesOnly: true});
+const query = qs.stringify(
+  gamesQs({
+    limit: 10,
+    sort: "ratingAvg:desc",
+    page: 1,
+    providers: providerSlugs,
+    categories: [],
+    author: "",
+  }),
+  { encodeValuesOnly: true }
+);
 
-	const games = await fetchApi<Gamepage[]>({
-		endpoint: 'games',
-		wrappedByKey: 'data',
-		query: `?${query}`
-	});
+const games = await fetchApi<Gamepage[]>({
+  endpoint: "games",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
 
-  const translationStore: any = get(getTranslations);
+const translationStore: TranslationData = get(getTranslations);
 
 const termsAndConditions = `${page?.attributes?.termsAndConditions?.copy}`;
 const termsAndConditionsCleaned = termsAndConditions.replace(
@@ -104,27 +108,36 @@ let canonical: string = `${import.meta.env.FULL_URL}${
 }/${slug}`;
 
 // Approved Author
-const approvedAuthorFirstName = page?.attributes?.testimonial?.approvedBy?.data?.attributes?.firstName?.toLowerCase();
-const approvedAuthorLastName = page?.attributes?.testimonial?.approvedBy?.data?.attributes?.lastName?.toLowerCase();
-const approvedAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['author-page']}/${approvedAuthorFirstName}.${approvedAuthorLastName}/`;
+const approvedAuthorFirstName =
+  page?.attributes?.testimonial?.approvedBy?.data?.attributes?.firstName?.toLowerCase();
+const approvedAuthorLastName =
+  page?.attributes?.testimonial?.approvedBy?.data?.attributes?.lastName?.toLowerCase();
+const approvedAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${approvedAuthorFirstName}.${approvedAuthorLastName}/`;
 
-// Review Author 
-const reviewAuthorFirstName = page?.attributes?.author?.data?.attributes?.firstName ?.toLowerCase();
-const reviewAuthorLastName = page?.attributes?.author?.data?.attributes?.lastName ?.toLowerCase();
-const reviewAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['author-page']}/${reviewAuthorFirstName}.${reviewAuthorLastName}/`;
+// Review Author
+const reviewAuthorFirstName =
+  page?.attributes?.author?.data?.attributes?.firstName?.toLowerCase();
+const reviewAuthorLastName =
+  page?.attributes?.author?.data?.attributes?.lastName?.toLowerCase();
+const reviewAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${reviewAuthorFirstName}.${reviewAuthorLastName}/`;
 
 let seo = {
   pageTitle: page?.attributes?.seo?.metaTitle,
   metaDescription: page?.attributes?.seo?.metaDescription,
   url: canonical,
 };
-
 ---
+
 <MainLayout seoData={seo}>
-  <Breadcrumb breadcrumbs={[{
-    breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: null,
-  }]} breadcrumbKey="casinoBreadcrumbs" />
+  <Breadcrumb
+    breadcrumbs={[
+      {
+        breadCrumbText: page?.attributes?.title,
+        breadCrumbUrl: null,
+      },
+    ]}
+    breadcrumbKey="casinoBreadcrumbs"
+  />
   <div class="casino-page">
     <div class="iframe-bkg curve rounded-b-3xl pb-3">
       <div class="section-wrapper">
@@ -159,12 +172,13 @@ let seo = {
               </Link>
             </div>
             <div class="mt-2 flex items-center justify-center">
-              <RatingStar 
+              <RatingStar
                 avgRating={page?.attributes?.ratingAvg}
                 ratingClasses="flex-col"
                 ratingCount={page.attributes.ratingCount}
-                itemId={page.id+''}
-                ratingType={'casinos'}
+                itemId={page.id + ""}
+                ratingType={"casinos"}
+                translations={translationStore}
                 client:load
               />
               <!-- <ReadOnlyRatings
@@ -189,9 +203,9 @@ let seo = {
                     externalInNewTab={true}
                     class="text-decoration-underline text-blue-300"
                     href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
-				  >
-				  	{page?.attributes?.casinoBonus?.bonusLabel}
-				  </Link>
+                  >
+                    {page?.attributes?.casinoBonus?.bonusLabel}
+                  </Link>
                 </div>
               </div>
               <table class="casino-details-box">
@@ -301,9 +315,9 @@ let seo = {
                 class="btn btn-misc block w-full uppercase"
                 externalInNewTab={true}
                 href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
-			  >
+              >
                 {translationStore.accessWebsite}
-			  </Link>
+              </Link>
             </div>
             <Collapse
               id="termsConditions"
@@ -506,14 +520,14 @@ let seo = {
                             <div class="approval-author-details">
                               <span>{translationStore.reviewedBy}</span>
                               <span class="">
-                                <Link
-                                  href={reviewAuthorPageURL}
-								>
-                                  {page?.attributes?.author?.data
-                                    ?.attributes?.firstName +
-                                    " " +
+                                <Link href={reviewAuthorPageURL}>
+                                  {
                                     page?.attributes?.author?.data?.attributes
-                                      ?.lastName}
+                                      ?.firstName +
+                                      " " +
+                                      page?.attributes?.author?.data?.attributes
+                                        ?.lastName
+                                  }
                                 </Link>
                               </span>
                               <span
@@ -542,14 +556,14 @@ let seo = {
                             <div class="approval-author-details">
                               <span>{translationStore.approvedBy}</span>
                               <span class="">
-                                <Link
-                                  href={approvedAuthorPageURL}
-                                >
-								{page?.attributes?.testimonial?.approvedBy?.data
-                                    ?.attributes?.firstName +
-                                    " " +
-                                    page?.attributes?.testimonial?.approvedBy?.data?.attributes
-                                      ?.lastName}
+                                <Link href={approvedAuthorPageURL}>
+                                  {
+                                    page?.attributes?.testimonial?.approvedBy
+                                      ?.data?.attributes?.firstName +
+                                      " " +
+                                      page?.attributes?.testimonial?.approvedBy
+                                        ?.data?.attributes?.lastName
+                                  }
                                 </Link>
                               </span>
                               <span
@@ -738,11 +752,10 @@ let seo = {
             class="btn btn-misc block w-full uppercase"
             externalInNewTab={true}
             href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
-		  >
+          >
             {translationStore.accessWebsite}
-		  </Link>
+          </Link>
         </div>
-
       </div>
       <div class="grid md:grid-cols-4 gap-8">
         <div class="col-span-1 md:col-span-3">
@@ -752,14 +765,10 @@ let seo = {
 
           <div class="row qc">
             <!-- <div class="" set:html={page?.attributes?.introduction} /> -->
-             <ContentBlock pageContent={page?.attributes?.introduction} />
+            <ContentBlock pageContent={page?.attributes?.introduction} />
           </div>
 
-          {
-            page?.attributes?.howTo && (
-              <h2>{page?.attributes?.howTo.title}</h2>
-            )
-          }
+          {page?.attributes?.howTo && <h2>{page?.attributes?.howTo.title}</h2>}
 
           {
             page?.attributes?.howTo &&
@@ -794,8 +803,8 @@ let seo = {
           {
             games.length > 0 && (
               <div class="p-2 backdrop-blur-[6px] shadow-[0px_0px_12px_rgba(63,230,252,0.6)] bg-[rgba(255,255,255,0.3)] border border-[rgba(255,255,255,0.3)] rounded-lg">
-               <GameListBlock data={games} />
-            </div>
+                <GameListBlock data={games} />
+              </div>
             )
           }
 
@@ -828,9 +837,7 @@ let seo = {
           }
 
           <div class="">
-            <CasinoComparison
-              data={page?.attributes?.casinoComparison.data}
-            />
+            <CasinoComparison data={page?.attributes?.casinoComparison.data} />
           </div>
           {
             page?.attributes?.faqs && (
@@ -848,7 +855,7 @@ let seo = {
             )
           }
 
-          <AuthorCard data={page.attributes.author}/>
+          <AuthorCard data={page.attributes.author} />
         </div>
 
         <div class="col-span-1 hidden md:block">
@@ -870,12 +877,13 @@ let seo = {
               </Link>
             </div>
             <div class="mt-2 flex items-center justify-center">
-              <RatingStar 
+              <RatingStar
                 avgRating={page?.attributes?.ratingAvg}
                 ratingClasses="flex-col"
                 ratingCount={page.attributes.ratingCount}
-                itemId={page.id+''}
-                ratingType={'casinos'}
+                itemId={page.id + ""}
+                ratingType={"casinos"}
+                translations={translationStore}
                 client:load
               />
               <!-- <ReadOnlyRatings
@@ -900,9 +908,9 @@ let seo = {
                     externalInNewTab={true}
                     class="text-decoration-underline text-blue-300"
                     href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
-				  >
+                  >
                     {page?.attributes?.casinoBonus?.bonusLabel}
-				  </Link>
+                  </Link>
                 </div>
               </div>
               <table class="casino-details-box">
@@ -1009,12 +1017,12 @@ let seo = {
             </div>
             <div class="mb-5">
               <Link
-			  	href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
+                href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
                 class="btn btn-misc block w-full uppercase"
                 externalInNewTab={true}
-			  >
+              >
                 {translationStore.accessWebsite}
-			  </Link>
+              </Link>
             </div>
             <Collapse
               id="termsConditions-2"

@@ -157,7 +157,7 @@
 
 {#if showGameFilterPanel}
     <!-- Provider Filters Section -->
-    <div class="mb-4">
+    <div class="mb-4 hidden md:block">
         <div class="flex justify-between bg-filter-provider-header-bkg rounded-t-md p-2.5">
             <h4 class="text-sm font-bold text-filter-provider-header-text capitalize !m-0">
                 {$getTranslations.mostLovedProviders}
@@ -200,7 +200,7 @@
     <!-- End of Provider Filters Section -->
 
     <!-- Game Filters Section -->
-    <div class="w-full mx-auto text-center z-20 mb-5">
+    <div class="w-full mx-auto text-center z-20 mb-5 hidden md:block">
 		<section
 			aria-labelledby="filter-heading"
 			class="!py-2.5 glowy-bkg shadow-none"
