@@ -26,11 +26,9 @@ export const getStaticPaths = (async () => {
         isPaginated: true,
         query: `?${query1}`
     })
-
-	console.log('blogCardsssss', blogCards);
 	
 
-	 let prerenderPath: any[] = [];
+	let prerenderPath: any[] = [];
 
     for (let i = 1; i <= blogCards.meta.pagination.pageCount; i++) {
         const slug = `p${i}`;
@@ -40,8 +38,6 @@ export const getStaticPaths = (async () => {
             isPaginated: true,
             query: `?${query}`,
         });
-
-        console.log('blogssssss', blogs);
         
 
         prerenderPath.push({
@@ -65,7 +61,7 @@ export const getStaticPaths = (async () => {
             props: { page: b, isPaginated: false },
         });
 	}
-	
+
 	return prerenderPath
 
 }) satisfies GetStaticPaths;
