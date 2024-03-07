@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getTranslations } from "../../../stores/addTranslations.ts";
+  import type { TranslationData } from "../../../interfaces/common/types.ts";
   import { ratings } from "../../../stores/ratings";
 
   export let avgRating: number;
@@ -7,6 +7,7 @@
   export let ratingCount = 0;
   export let itemId = "";
   export let ratingType: 'games' | 'casinos';
+  export let translations: TranslationData;
 
   let starRating: HTMLInputElement;
   let disabled = false;
@@ -111,9 +112,9 @@
       <span
         class="flex items-center justify-center text-center rating-text text-[14px] mt-2"
       >
-        <span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {$getTranslations.from}
+        <span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {translations.from}
         {ratingCount}
-        {$getTranslations.votes}
+        {translations.votes}
       </span>
     {:else}
       <span
