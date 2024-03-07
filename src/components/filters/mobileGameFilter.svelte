@@ -4,7 +4,7 @@
     import { get } from 'svelte/store';
 
     // Types
-    import type { Toggles, GameFilters, BonusLabels } from '../../../interfaces/common/types';
+    import type { Toggles, GameFilters, BonusLabels, TranslationData } from '../../../interfaces/common/types';
 
     // Import QS Function
     import { gamesQs } from '../../../qs/games';
@@ -24,7 +24,7 @@
     export let page = 1;
 
     //get translation context
-    const translationStore:any = get(getTranslations);
+    const translationStore:TranslationData = get(getTranslations);
 
 	// Valid Keys for the Casino Filters Array to validate and squash typescript errors
     const validKeys: (keyof GameFilters)[] = ["limit", "sort", "page", "providers", "categories"];
@@ -145,7 +145,7 @@
 
 </script>
 
-<div class="text-black relative mb-10 z-20">
+<div class="text-black relative mb-10 z-20 flex flex-col">
     <!-- Search Section -->
     <div
         class="glowy-bkg shadow-none flex gap-2 p-2.5 mb-3 relative z-50"
@@ -155,7 +155,7 @@
                 type="text"
                 id="searchInput"
                 class="text-xs w-full h-11 uppercase rounded-[4px] peer/input border border-background-900 bg-white/[.7] focus:rounded-b-none"
-                placeholder="{$getTranslations.search}"
+                placeholder="{translationStore.search}"
                 bind:this={searchInput}
                 bind:value={searchInputValue}
                 on:focus|once={loadSearch}
@@ -213,7 +213,7 @@
                         class="relative peer w-full h-11 rounded-l-[4px] bg-filter-alternate-toggle border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-xs open:rounded-b-none text-xs"
                         {...(toggleSort ? { open:'' } : {})}
                     >
-                        {$gameVariables.sort ? getSortLabelByValue($gameVariables.sort) : $getTranslations.sortFilterH6 }
+                        {$gameVariables.sort ? getSortLabelByValue($gameVariables.sort) : translations.sortFilterH6 }
                     </label>
                     <button
                         type="button"

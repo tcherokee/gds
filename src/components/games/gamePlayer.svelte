@@ -2,6 +2,7 @@
   export let data: any;
   export let gamePageURL: string;
   export let layout: any;
+  export let translations: TranslationData;
 
   // Svelte Stuff
   import { onMount } from "svelte";
@@ -23,6 +24,7 @@
   import Close from "~icons/kensho-icons/xmark";
   import Info from "~icons/kensho-icons/info-no-circle";
   import RatingStar from "../helpers/ratingStar.svelte";
+  import type { TranslationData } from "../../../interfaces/common/types";
 
   let fullscreen: boolean = false;
   let startGame: boolean = false;
@@ -202,6 +204,7 @@
             ratingCount={data?.attributes?.ratingCount}
             itemId={data?.id + ""}
             ratingType={"games"}
+            {translations}
           />
           <!-- <ReadOnlyRatings
             avgRating={data?.attributes?.ratingAvg}
@@ -216,7 +219,7 @@
           <Link
             href={`${casinoProviderPageURL}/`}
             classes="btn btn-misc btn-real-money w-32 md:w-[200px] mr-3 uppercase"
-            >{$getTranslations.playRealBtn}</Link
+            >{translations.playRealBtn}</Link
           >
           <div class="buttons">
             <button

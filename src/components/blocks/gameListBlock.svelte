@@ -20,7 +20,7 @@
 
   // Types
   import type { TUserGame } from "../../../interfaces/games.ts";
-  import type { CustomGameList } from "../../../interfaces/common/types.ts";
+  import type { CustomGameList, TranslationData } from "../../../interfaces/common/types.ts";
 
   export let data: CustomGameList;
   export let author: string = '';
