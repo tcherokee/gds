@@ -10,6 +10,9 @@
     import Heart from "~icons/kensho-icons/heart"
     import Xmark from "~icons/kensho-icons/xmark"
 
+	// Stores
+	import { user } from "../../../stores/authStore.ts";
+
     let favsChecked: boolean = false
 
     const closeFavs = () => favsChecked = false
@@ -46,7 +49,7 @@
 					class="pointer-events-auto w-screen max-w-md transform transition ease-in-out duration-500 sm:duration-700 translate-x-full open:translate-x-0"
 					{...(favsChecked ? { open:'' } : {})}
 				>
-					<div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+					<div class="flex h-full flex-col overflow-y-scroll z-50 bg-white pt-6 shadow-xl">
 						<div class="px-4 sm:px-6">
 							<div class="flex items-start justify-between">
 								<h2 class="text-lg font-medium text-gray-900" id="slide-over-title">
@@ -110,6 +113,19 @@
 								</div>
 							{/each}
 						</div>
+						{#if !$user}
+							<div class="py-6 space-y-3 px-4 sm:px-6 bg-white sticky bottom-0">
+								<p class="text-center text-sm text-blue-500 !mb-0">
+									{$getTranslations.favouriteSignUp}
+								</p>
+								<Link
+									href={"/authentication/register/"}
+									classes="block text-base text-center min-h-[44px] rounded-md btn-secondary px-3 py-2.5 text-sm font-semibold"
+									>
+									{$getTranslations.signUp}
+								</Link>
+							</div>
+						{/if}
 					</div>
 				</div>
 			</div>
