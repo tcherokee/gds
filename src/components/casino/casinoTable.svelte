@@ -147,7 +147,7 @@
       <div>
         <div class="table-wrapper bg-grey-100 rounded-[6px] overflow-hidden">
           <table
-            class="w-full overflow-hidden rounded-[6px] mb-[12px] border-spacing-0 border-collapse"
+            class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse"
           >
             <thead
               class="hidden border-l-[12px] border-r-[12px] border-l-casino-table-header-bkg border-r-casino-table-header-bkg md:table-row-group"
