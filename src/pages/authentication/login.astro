@@ -1,6 +1,5 @@
 ---
-
-import { Link } from "astro-link"
+import { Link } from "astro-link";
 // Types
 import type { TranslationData } from "../../../interfaces/common/types";
 
@@ -12,7 +11,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
 import LoginForm from "../../components/auth/loginForm.svelte";
 
 // Set Up Translation Store
-const translationStore: TranslationData = getTranslations.get()
+const translationStore: TranslationData = getTranslations.get();
 
 // TODO
 let seo = {
@@ -46,7 +45,7 @@ let seo = {
           class="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
         >
           {translationStore.signUp}
-      </Link>
+        </Link>
       </p>
     </div>
   </div>
