@@ -48,6 +48,10 @@ const COLORS = {
     100: "#E9E5D1",
     200: "#E9E9D1",
   },
+  green: {
+    100: "#022915",
+    200: "#009848",
+  },
   accent: {
     1: "#ffd976",
     50: "#ffbb38",
@@ -128,8 +132,8 @@ module.exports = {
       "btn-back-to-top": COLORS.purple[500],
       // Custom Theme Colors
       // Extras
-      "background-top-gradient": COLORS.beige[200],
-      "background-bottom-gradient": COLORS.beige[100],
+      "background-top-gradient": COLORS.green[200],
+      "background-bottom-gradient": COLORS.green[100],
       "background-back-curve": COLORS.background[900],
       // Breadcrumb
       "breadcrumb-bkg": "#0c482c",

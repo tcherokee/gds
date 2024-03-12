@@ -10,11 +10,9 @@ import { layoutQs, menuQs } from "../../qs/layout.ts";
 // Helpers
 import fetchApi from "../../lib/strapi";
 import GoogleAnalytics from "../components/helpers/googleAnalytics.astro";
-import { loadCssFont } from "../../lib/loadCssFont";
 
 //Styles
 import "../styles/app.postcss";
-await loadCssFont();
 
 //Types and TypeGuards
 import type { LayoutData } from "../../interfaces/layout";
@@ -29,6 +27,8 @@ import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
 import CookiesConsent from "../components/general/cookiesConsent.svelte";
+
+const siteID = `${import.meta.env.SITE_ID}`;
 
 // Setting up the queries in array for use in the promise all map
 const queries = {
@@ -91,6 +91,8 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
 const favicon = `https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.env.SITE_ID}.png`;
 
 const { seoData } = Astro.props;
+
+
 ---
 
 <!doctype html>
@@ -104,6 +106,89 @@ const { seoData } = Astro.props;
     {seoData?.author && <meta name="author" content={seoData?.author} />}
     <link rel="icon" type="image/svg+xml" href={favicon} />
     <meta name="generator" content={Astro.generator} />
+    { siteID === 'gds' ? 
+      <style>
+       @font-face {
+      font-family: "Lato";
+      font-weight: 700;
+      src: url("/it/fonts/Lato/Lato-Bold.ttf") format("truetype");
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto";
+      font-weight: 400;
+      src: url("/it/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto";
+      font-weight: 400;
+      font-style: italic;
+      src: url("/it/fonts/Roboto/Roboto-Italic.ttf") format("truetype");
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto";
+      font-weight: 700;
+      src: url("/it/fonts/Roboto/Roboto-Bold.ttf") format("truetype");
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto-fallback";
+      size-adjust: 100.06%;
+      ascent-override: 93%;
+      src: local("Arial");
+    }
+    @font-face {
+      font-family: "Lato-fallback";
+      size-adjust: 97.38%;
+      ascent-override: 101%;
+      src: local("Arial");
+    }
+    </style>
+    :
+
+    <style>
+       @font-face {
+      font-family: "Lato";
+      font-weight: 700;
+      src: url("fonts/Lato/Lato-Bold.ttf") format("truetype");
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto";
+      font-weight: 400;
+      src: url("/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto";
+      font-weight: 400;
+      font-style: italic;
+      src: url("/fonts/Roboto/Roboto-Italic.ttf") format("truetype");
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto";
+      font-weight: 700;
+      src: url("/fonts/Roboto/Roboto-Bold.ttf") format("truetype");
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto-fallback";
+      size-adjust: 100.06%;
+      ascent-override: 93%;
+      src: local("Arial");
+    }
+    @font-face {
+      font-family: "Lato-fallback";
+      size-adjust: 97.38%;
+      ascent-override: 101%;
+      src: local("Arial");
+    }
+    </style>
+    }
+    
     <title>{seoData.pageTitle}</title>
     <Tooltips placement="auto" />
     <GoogleAnalytics />
