@@ -60,7 +60,7 @@ export type ProviderAttribute = {
 };
 
 export type TProviderAttributesOnly = IDAttribute & {
-  attributes: ProviderAttribute
+  attributes: ProviderAttribute;
 };
 
 export type ProviderData = {
@@ -77,8 +77,8 @@ export type GameProvider = {
 
 export type CategoryAttributes = {
   title?: string;
-  slug: string
-}
+  slug: string;
+};
 
 export type Category = {
   id: number;
@@ -90,7 +90,7 @@ export type CategoryData = {
     id?: number;
     attributes: CategoryAttributes;
   };
-}
+};
 
 export type GameCategory = {
   id?: number;
@@ -264,7 +264,7 @@ export type IntroductionWithImage = {
   introduction: string;
   heading: string;
   image: ImageInfo;
-}
+};
 
 export type IntroductionWithImageBlock = BlockBase & {
   introduction: string;
@@ -300,10 +300,10 @@ export type CasinoComparisonBlock = BlockBase & {
 };
 
 export type CasinoListData = {
-    id: number;
-    casino: {
-        data: CasinoData[];
-    };
+  id: number;
+  casino: {
+    data: CasinoData[];
+  };
 };
 
 export type Faqs = {
@@ -361,7 +361,7 @@ export type CasinoListBlock = BlockBase & {
   casinosList: CasinoListData[];
 };
 
-export type TGameListBlock = BlockBase & CustomGameList
+export type TGameListBlock = BlockBase & CustomGameList;
 
 export type Block =
   | IntroductionWithImageBlock
@@ -471,18 +471,18 @@ export type GameFilters = {
 };
 
 export type GameFiltersQuery = {
-    provider?: string[],
-    categories?: string[]
-}
+  provider?: string[];
+  categories?: string[];
+};
 
 export type BonusLabelItem = {
   label: string;
   value: string;
-}
+};
 
 export type BonusLabels = {
   [key: string]: BonusLabelItem;
-}
+};
 
 export type CasinoBlock = {
   id: number;
@@ -491,7 +491,7 @@ export type CasinoBlock = {
   casinos: {
     data: [Casino];
   };
-}
+};
 
 export type ProsConsBlock = {
   heading: string;
@@ -519,7 +519,7 @@ export type ProsConsBlock = {
       };
     };
   };
-}
+};
 
 export type Toggles = {
   [key: string]: boolean;
