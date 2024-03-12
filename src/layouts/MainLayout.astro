@@ -10,11 +10,9 @@ import { layoutQs, menuQs } from "../../qs/layout.ts";
 // Helpers
 import fetchApi from "../../lib/strapi";
 import GoogleAnalytics from "../components/helpers/googleAnalytics.astro";
-import { loadCssFont } from "../../lib/loadCssFont";
 
 //Styles
 import "../styles/app.postcss";
-await loadCssFont();
 
 //Types and TypeGuards
 import type { LayoutData } from "../../interfaces/layout";
