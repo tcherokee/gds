@@ -188,7 +188,7 @@ module.exports = {
       "rating-locked-fill": COLORS.danger,
 
       // Navs
-      "navbar-bkg": "#147346",
+      "navbar-bkg": COLORS.green[300],
       "navbar-text": COLORS.white,
       "subNavbar-bkg": "#034325",
       "subNavbar-text": COLORS.white,
