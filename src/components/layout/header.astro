@@ -4,7 +4,7 @@
 import { Link } from 'astro-link'
 
 // Helpers
-import { Image } from "astro:assets";
+import Images from '../helpers/images.astro';
 
 // Components
 import Navigation from "../navigation/navigation.svelte";
@@ -22,8 +22,14 @@ const { mainNavigation, logo, subNavigation } = Astro.props;
     class="absolute left-1/2 -translate-x-2/4 lg:translate-x-0 lg:relative lg:left-auto flex lg:flex-1"
   >
     <Link href="/">
-      <span class="sr-only">Giochi Di Slots</span>
-      <Image src={logo} height="50" width="120" alt="logo" />
+      <span class="sr-only">{import.meta.env.SITE_NAME}</span>
+	  <Images
+			src={logo?.data?.attributes?.url}
+			alt=`${import.meta.env.SITE_NAME} Logo`
+			originalHeight={logo?.data?.attributes?.height}
+			originalWidth={logo?.data?.attributes?.width}
+			imageHeight={50}
+			imageWidth={0} />
     </Link>
   </div>
   <Navigation mainNavigation={mainNavigation} client:load />
