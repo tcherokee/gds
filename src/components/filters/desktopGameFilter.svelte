@@ -152,6 +152,9 @@
 		searchClient.helper.setQuery(searchInputValue)
 		searchClient.helper.search()
 	}
+
+    const siteID = import.meta.env.PUBLIC_SITE_ID;
+    const softwareListURL = urlTranslate[siteID as keyof typeof urlTranslate]["software-page"]+"/"
     
 </script>
 
@@ -162,7 +165,7 @@
             <h4 class="text-sm font-bold text-filter-provider-header-text capitalize !m-0">
                 {$getTranslations.mostLovedProviders}
             </h4>
-            <Link href="/"
+            <Link href={softwareListURL}
                 ><span class="text-sm font-bold text-filter-provider-header-text uppercase"
                     >{$getTranslations.seeAllProviders}</span
                 ></Link
