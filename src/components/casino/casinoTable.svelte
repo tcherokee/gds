@@ -145,7 +145,7 @@
         </div>
       </div>
       <div>
-        <div class="table-wrapper bg-grey-100 rounded-[6px] overflow-hidden">
+        <div class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden">
           <table
             class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse"
           >
@@ -175,7 +175,7 @@
               {#if ($casinos.data?.data ?? customCasinos).length > 0}
                 {#each showLoadMore ? ($casinos.data?.data ?? customCasinos).slice(0, currentCasinosLength) : $casinos.data?.data ?? customCasinos as casino, i}
                   <tr
-                    class="flex flex-wrap md:table-row border-[12px] border-grey-100 bg-white"
+                    class="flex flex-wrap md:table-row border-[12px] border-casino-table-tr-border bg-white"
                   >
                     <td
                       class="casino-logo w-1/2 md:w-auto relative overflow-hidden"
@@ -258,7 +258,7 @@
                         </div>
                         <Link
                           href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
-                          classes="flex underline text-center"
+                          classes="flex underline text-center  font-lato"
                           type="external"
                           rel="sponsored"
                         >
@@ -320,7 +320,7 @@
                         {#if noDepositBonus(casino)?.bonus}
                           <Link
                             href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
-                            classes="flex underline text-center"
+                            classes="flex underline text-center font-lato"
                             type="external"
                             rel="sponsored"
                           >

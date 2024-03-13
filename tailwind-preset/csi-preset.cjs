@@ -51,6 +51,7 @@ const COLORS = {
   green: {
     100: "#022915",
     200: "#009848",
+    300: "#147346",
   },
   accent: {
     1: "#ffd976",
@@ -108,6 +109,11 @@ module.exports = {
         500: COLORS.background[500],
         700: COLORS.background[700],
         900: COLORS.background[900],
+      },
+      green: {
+        100: COLORS.green[100],
+        200: COLORS.green[200],
+        300: COLORS.green[300],
       },
       beige: {
         100: COLORS.beige[100],
@@ -231,11 +237,13 @@ module.exports = {
       "silver-tag-b-gradient": COLORS.grey[300],
       "bronze-tag-t-gradient": COLORS.accent[800],
       "bronze-tag-b-gradient": COLORS.accent[900],
-      "casino-table-header-bkg": COLORS.purple[900],
+      "casino-table-header-bkg": COLORS.green[300],
       "casino-table-header-text": COLORS.white,
       "casino-table-text": COLORS.blue[900],
       "casino-table-row-bkg": COLORS.white,
       "no-deposit-gradient": COLORS.blue[100],
+      "casino-table-bkg": COLORS.beige[200],
+      "casino-table-tr-border": COLORS.beige[200],
 
       // Providers
       "providers-img-border": "",
