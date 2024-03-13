@@ -236,7 +236,7 @@ let seo = {
                         {
                           page?.attributes?.bonusSection?.cashBack &&
                           page?.attributes?.bonusSection?.bonusAmount
-                            ? "+ <br />"
+                            ? <br />
                             : ""
                         }
                         {
@@ -589,7 +589,7 @@ let seo = {
                     </div>
 
                     <blockquote class="testimonial">
-                      <i>"{testimonialCleaned}"</i>
+                      <i>"<Fragment set:html={testimonialCleaned} />"</i>
                     </blockquote>
                   </div>
                 </div>
@@ -1062,6 +1062,10 @@ let seo = {
 			padding: 10px 0px;
 		}
 	}
+
+  h1 {
+    @apply text-xl leading-[26px] md:text-3xl lg:text-4xl text-white;
+  }
 
 	h1,
 	h5 {
