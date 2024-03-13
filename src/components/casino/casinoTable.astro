@@ -28,7 +28,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 
 ---
 
-<div class="table-wrapper bg-grey-100 rounded-[6px] overflow-hidden">
+<div class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden">
 	<table class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse">
 		{
             <>
@@ -44,7 +44,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                 <tbody class="text-casino-table-text">
                     { 
                         casinos && casinos.map((casino: CasinoData | AuthorCasinoAttributes, i: number) => (
-                            <tr class="flex flex-wrap md:table-row border-[12px] border-grey-100 bg-white">
+                            <tr class="flex flex-wrap md:table-row border-[12px] border-casino-table-tr-border bg-white">
                                 <td class="casino-logo w-1/2 md:w-auto relative overflow-hidden">
                                     {
                                         ((casino as CasinoData)?.attributes?.Badges ?? (casino as AuthorCasinoAttributes)?.Badges) 
@@ -93,7 +93,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         </div>
                                         <Link
                                             href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}`}
-                                            classes="flex underline text-center"
+                                            classes="flex underline text-center font-lato"
                                             type="external"
                                             rel="sponsored"
                                         >
@@ -129,7 +129,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                             noDepositBonus(casino)?.bonus ?
                                             <Link
                                                 href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}`}
-                                                classes="flex underline text-center"
+                                                classes="flex underline text-center font-lato"
                                                 type="external"
                                                 rel="sponsored"
                                             >

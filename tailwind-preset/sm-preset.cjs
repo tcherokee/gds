@@ -228,6 +228,8 @@ module.exports = {
       "casino-table-text": COLORS.blue[900],
       "casino-table-row-bkg": COLORS.white,
       "no-deposit-gradient": COLORS.blue[100],
+      "casino-table-bkg": COLORS.grey[100],
+      "casino-table-tr-border": COLORS.grey[100],
 
       // Providers
       "providers-img-border": "",
