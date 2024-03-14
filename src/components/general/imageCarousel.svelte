@@ -6,7 +6,7 @@
 	let imageArray = data?.image?.data
 	let imageArrayCount = imageArray?.length
 	let currentSlideIndex: any = 0
-	let imagePerSlide = 3
+	let imagePerSlide = 2
 
 	for (let i = 0; i < imageArrayCount; i += imagePerSlide) {
 		const chunk = data?.image?.data.slice(i, i + imagePerSlide)
@@ -39,13 +39,13 @@
 					id={'item' + (index + 1)}
 					class={'carousel-item w-full ' + (currentSlideIndex === index ? 'silideIn' : 'hidden')}
 				>
-					<div class="grid gap-2 grid-cols-3">
+					<div class="grid gap-2 grid-cols-2">
 						{#each slideImg as img}
 							<div class="relative h-full w-full">
 								<TransformImage
 									imageUrl={img?.attributes?.url}
-									imageWidth={400}
-									imageHeight={400}
+									imageWidth={700}
+									imageHeight={350}
 									imageClass="img-fluid w-full rounded-lg"
 									imageAlt={img?.attributes?.alternativeText}
 								/>

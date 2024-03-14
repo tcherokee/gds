@@ -28,6 +28,12 @@ export const mapBlocksToDynamicComponents = (
             name: "gameListBlock",
             extension: "astro",
           };
+        case "homepage.home-providers":
+          return {
+            location: "blocks",
+            name: "providerListBlock",
+            extension: "astro",
+          };
         case "games.new-and-loved-slots":
           return {
             location: "games",
