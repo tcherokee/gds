@@ -120,7 +120,7 @@
         class="btn self-center mt-5 btn-secondary min-w-[300px] md:min-w-[500px]"
         on:click={loadMoreGames}
       >
-        {$getTranslations.loadMore}
+        {$getTranslations.loadMore.toUpperCase()}
       </button>
     {/if}
   </div>
