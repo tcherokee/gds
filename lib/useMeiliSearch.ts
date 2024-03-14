@@ -54,7 +54,7 @@ function setupMeilisearch(
         item(hit, { html, components }) {
           const siteURL = import.meta.env.PUBLIC_FULL_URL;
           const siteID = import.meta.env.PUBLIC_SITE_ID;
-          return html`<a class="col-span-1 flex rounded-md shadow-sm" href=${siteURL}/${
+          return html`<a class="col-span-1 flex rounded-md shadow-sm" href=${siteURL}${
             urlTranslate[siteID as keyof typeof urlTranslate]["game-pages"]
           }/${hit.slug}/ data-sveltekit-reload>
 							<div class="flex justify-items-start overflow-hidden w-16 flex-shrink-0 items-center justify-center rounded-l-md border-grey-300 border-l border-t border-b">
