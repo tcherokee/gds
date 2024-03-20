@@ -13,6 +13,7 @@
   export let pageUrl: string;
   export let slotMachineURL: string;
   let dashboardUser: TUser;
+  const publicUrl = `${import.meta.env.PUBLIC_FULL_URL}${import.meta.env.PUBLIC_SITE_ID === "gds" ? '/it' : ''}`;
 
   const fetchData = async (endpoint: string) => {
 		const res = await fetch(`${endpoint}`)
@@ -26,9 +27,9 @@
   onMount(async () => {
     slotMachineUrl.set(slotMachineURL);
     const authEndpoints = [
-		`${import.meta.env.BASE_URL}api/dashboard/user/`,
-		`${import.meta.env.BASE_URL}api/dashboard/messages/`,
-		`${import.meta.env.BASE_URL}api/dashboard/message-action/`
+		`${publicUrl}/api/dashboard/user/`,
+		`${publicUrl}/api/dashboard/messages/`,
+		`${publicUrl}/api/dashboard/message-action/`
 	]
 	const [
 		userProfile,
@@ -51,7 +52,7 @@
   });
 
   const logoutHandler = async () => {
-    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/logout/`, {
+    const response = await fetch(`${publicUrl}/api/auth/logout/`, {
       method: "POST",
       body: JSON.stringify({}),
     });

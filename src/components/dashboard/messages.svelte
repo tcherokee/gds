@@ -13,10 +13,11 @@
 
   let userMessages: TUserMessage[] = [];
   let userMessagesLoader = true;
+  const publicUrl = `${import.meta.env.PUBLIC_FULL_URL}${import.meta.env.PUBLIC_SITE_ID === "gds" ? '/it' : ''}`;
 
   onMount(async () => {
     userMessagesLoader = true;
-    const res = await fetch(`${import.meta.env.BASE_URL}api/dashboard/messages/`);
+    const res = await fetch(`${publicUrl}/api/dashboard/messages/`);
     if (res.ok) {
       userMessages = await res.json();
     }
@@ -34,7 +35,7 @@
 
   const deleteMessageHandler = async (message: any) => {
     deleteMessageLoader[message.id] = true;
-    const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/message-action/`, {
+    const response = await fetch(`${publicUrl}/api/dashboard/message-action/`, {
       method: "POST",
       body: JSON.stringify({
         message_id: message.id,
@@ -55,7 +56,7 @@
 
   const readMessageHandler = async (message_id: number) => {
     if (!$readMessages.includes(message_id)) {
-      const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/message-action/`, {
+      const response = await fetch(`${publicUrl}/api/dashboard/message-action/`, {
         method: "POST",
         body: JSON.stringify({
           message_id,
