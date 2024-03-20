@@ -9,9 +9,10 @@
   export let translations: TranslationData;
   export let pageUrl: string;
   export let source: "SIDE" | "FOOTER";
+  const publicUrl = `${import.meta.env.PUBLIC_FULL_URL}${import.meta.env.PUBLIC_SITE_ID === "gds" ? '/it' : ''}`;
 
   const logoutHandler = async () => {
-    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/logout/`, {
+    const response = await fetch(`${publicUrl}/api/auth/logout/`, {
       method: "POST",
       body: JSON.stringify({}),
     });
@@ -26,9 +27,9 @@
 
   $: {
     const splittedUrlPathname = pageUrl.split("/");
-    const lengthCheck = import.meta.env.BASE_URL ? 4 : 2;
+    const lengthCheck = publicUrl ? 4 : 2;
     activeRoute =
-      splittedUrlPathname.length > lengthCheck ? splittedUrlPathname[import.meta.env.BASE_URL ? 3 : 2] : "home";
+      splittedUrlPathname.length > lengthCheck ? splittedUrlPathname[publicUrl ? 3 : 2] : "home";
   }
 </script>
 
