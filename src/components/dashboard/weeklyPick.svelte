@@ -9,10 +9,11 @@
 
   let weeklyGames: TDashboardGame[] = [];
   let weeklyPickedLoader = true;
+  const publicUrl = `${import.meta.env.PUBLIC_FULL_URL}${import.meta.env.PUBLIC_SITE_ID === "gds" ? '/it' : ''}`;
 
   onMount(async () => {
     weeklyPickedLoader = true;
-    const res = await fetch(`${import.meta.env.BASE_URL}api/dashboard/weekly-pick-games/`);
+    const res = await fetch(`${publicUrl}/api/dashboard/weekly-pick-games/`);
     if (res.ok) {
       weeklyGames = await res.json();
     }

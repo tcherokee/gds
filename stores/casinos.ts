@@ -67,26 +67,34 @@ export const alphabeticProviders = computed(providers, (providersArr) => {
   const { data  } = providersArr as TFetchProviders
 
   if (data) {
-    const grouped = (data?.data).reduce((acc: Record<string, TAlphabetProviders[]>, item: TProviderAttributesOnly) => {
-      // Extract required information
-      const label = item.attributes.title || '';
-      const value = item.attributes.slug || '';
-      const image = item.attributes.images?.data.attributes.url || '';
+    console.log("PROVIDERS_DATA", data.data);
+    const grouped = (data?.data).reduce(
+      (
+        acc: Record<string, TAlphabetProviders[]>,
+        item: TProviderAttributesOnly
+      ) => {
+        console.log(item.attributes.images?.data);
+        // Extract required information
+        const label = item.attributes.title || "";
+        const value = item.attributes.slug || "";
+        const image = item.attributes.images?.data?.attributes.url || "";
 
-      // Get the first letter of the label
-      const firstLetter = label[0].toUpperCase();
+        // Get the first letter of the label
+        const firstLetter = label[0].toUpperCase();
 
-      // Create a new group if it doesn't exist
-      if (!acc[firstLetter]) {
-        acc[firstLetter] = []
-      }
+        // Create a new group if it doesn't exist
+        if (!acc[firstLetter]) {
+          acc[firstLetter] = [];
+        }
 
-      // Push the item to the corresponding group
-      acc[firstLetter].push({ label, value, image });
+        // Push the item to the corresponding group
+        acc[firstLetter].push({ label, value, image });
 
-      return acc;
-    }, {} as Record<string, TAlphabetProviders[] >);
-    
+        return acc;
+      },
+      {} as Record<string, TAlphabetProviders[]>
+    );
+    console.log(grouped);
   
     // Sort Array
     const sorted = Object.keys(grouped)

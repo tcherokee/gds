@@ -5,11 +5,12 @@
   let email: string = "";
   let isResetLinkSent = false;
   let loader = false;
+  const publicUrl = `${import.meta.env.PUBLIC_FULL_URL}${import.meta.env.PUBLIC_SITE_ID === "gds" ? '/it' : ''}`;
   
   export let translations: {[key: string]: string}
   const forgotPasswordHandler = async () => {
     loader = true;
-    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/forgot-password/`, {
+    const response = await fetch(`${publicUrl}/api/auth/forgot-password/`, {
       method: "POST",
       body: JSON.stringify({ email }),
     });
