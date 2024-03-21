@@ -11,11 +11,11 @@
 
   let mostPlayedGames: TDashboardGame[] = [];
   let mostPlayedGamesLoader = true;
-  const publicUrl = `${import.meta.env.PUBLIC_FULL_URL}${import.meta.env.PUBLIC_SITE_ID === "gds" ? '/it' : ''}`;
+  
 
   onMount(async () => {
     mostPlayedGamesLoader = true;
-    const res = await fetch(`${publicUrl}api/dashboard/most-played-games/`);
+    const res = await fetch(`${import.meta.env.PUBLIC_FULL_URL}api/dashboard/most-played-games/`);
     if (res.ok) {
       mostPlayedGames = await res.json();
     }

@@ -40,7 +40,7 @@
 
   export let translations: TranslationData;
   let dashboardUser: TUser;
-  const publicUrl = `${import.meta.env.PUBLIC_FULL_URL}${import.meta.env.PUBLIC_SITE_ID === "gds" ? '/it' : ''}`;
+  
 
   const fetchData = async (endpoint: string) => {
     const res = await fetch(`${endpoint}`);
@@ -52,9 +52,9 @@
   };
   onMount(async () => {
     const authEndpoints = [
-      `${publicUrl}/api/dashboard/user-games/`,
-      `${publicUrl}/api/dashboard/most-played-games/`,
-      `${publicUrl}/api/dashboard/weekly-pick-games/`,
+      `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user-games/`,
+      `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/most-played-games/`,
+      `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/weekly-pick-games/`,
     ];
     const [userGames, mostPlayedGames, pickOfTheWeekGames] = await Promise.all(
       authEndpoints.map((endpoint) => fetchData(endpoint))
