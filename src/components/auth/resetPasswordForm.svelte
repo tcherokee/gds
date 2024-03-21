@@ -9,7 +9,7 @@
   let password = "";
   let passwordConfirmation = "";
   let loader = false;
-  const publicUrl = `${import.meta.env.PUBLIC_FULL_URL}${import.meta.env.PUBLIC_SITE_ID === "gds" ? '/it' : ''}`;
+  
 
   export let translations: { [key: string]: string };
 
@@ -24,7 +24,7 @@
       password,
       passwordConfirmation,
     };
-    const response = await fetch(`${publicUrl}/api/auth/reset-password/`, {
+    const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/auth/reset-password/`, {
       method: "POST",
       body: JSON.stringify(resetPasswordPayload),
     });

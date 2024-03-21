@@ -9,10 +9,10 @@
   export let translations: TranslationData;
   export let pageUrl: string;
   export let source: "SIDE" | "FOOTER";
-  const publicUrl = `${import.meta.env.PUBLIC_FULL_URL}${import.meta.env.PUBLIC_SITE_ID === "gds" ? '/it' : ''}`;
+  
 
   const logoutHandler = async () => {
-    const response = await fetch(`${publicUrl}/api/auth/logout/`, {
+    const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/auth/logout/`, {
       method: "POST",
       body: JSON.stringify({}),
     });
