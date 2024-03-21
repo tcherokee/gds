@@ -9,7 +9,6 @@ import { layoutQs, menuQs } from "../../qs/layout.ts";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
-import GoogleAnalytics from "../components/helpers/googleAnalytics.astro";
 
 //Styles
 import "../styles/app.postcss";
@@ -192,7 +191,6 @@ const { seoData } = Astro.props;
     
     <title>{seoData.pageTitle}</title>
     <Tooltips placement="auto" />
-    <GoogleAnalytics />
   </head>
   <body>
     <main>

@@ -8,7 +8,6 @@ import { layoutQs, menuQs } from "../../qs/layout.ts";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
-import GoogleAnalytics from "../components/helpers/googleAnalytics.astro"
 
 //Styles
 import "../styles/app.postcss";
@@ -109,7 +108,6 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
     <meta name="generator" content={Astro.generator} />
     <title>User Dashboard</title>
     <Tooltips />
-    <GoogleAnalytics />
 
   </head>
   <body class="h-screen overflow-hidden overflow-y-auto">
