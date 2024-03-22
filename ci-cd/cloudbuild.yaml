@@ -37,7 +37,7 @@ steps:
         '--build-arg',
         'PUBLIC_FULL_URL=${_PUBLIC_FULL_URL}',
         '--build-arg',
-        'PROD=${_PROD}',
+        'IS_PROD=${_IS_PROD}',
         '--build-arg',
         'SITE_NAME=${_SITE_NAME}',
         '--build-arg',
@@ -103,7 +103,7 @@ steps:
       - '--set-env-vars'
       - 'PUBLIC_FULL_URL=${_PUBLIC_FULL_URL}'
       - '--set-env-vars'
-      - 'PROD=${_PROD}'
+      - 'IS_PROD=${_IS_PROD}'
       - '--set-env-vars'
       - 'SITE_NAME=${_SITE_NAME}'
       - '--set-env-vars'
@@ -133,7 +133,7 @@ substitutions:
   _PUBLIC_ROOT_DOMAIN: ''
   _PUBLIC_FULL_URL: ''
   _SITE_NAME: ''
-  _PROD: 'false'
+  _IS_PROD: 'false'
   _MATOMO_SITE_ID: ''
 
 timeout: 2700s

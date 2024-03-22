@@ -18,7 +18,7 @@ export default defineConfig({
     svelte(),
     sitemap(),
     matomo({
-      enabled: import.meta.env.PROD, // Only load in production
+      enabled: import.meta.env.IS_PROD === "true", // Only load in production
       host: "https://analytics.kenshomedia.com/",
       setCookieDomain: "*.kenshomedia.com",
       trackerUrl: "js/", // defaults to matomo.php
