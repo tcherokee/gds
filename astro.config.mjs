@@ -10,6 +10,8 @@ import matomo from "astro-matomo";
 
 dotenv.config();
 
+console.log("enabled", process.env.IS_PROD === "true", process.env.IS_PROD);
+
 // https://astro.build/config
 export default defineConfig({
   site: process.env.PUBLIC_FULL_URL,
@@ -18,12 +20,12 @@ export default defineConfig({
     svelte(),
     sitemap(),
     matomo({
-      enabled: import.meta.env.IS_PROD === "true", // Only load in production
+      enabled: process.env.IS_PROD === "true", // Only load in production
       host: "https://analytics.kenshomedia.com/",
       setCookieDomain: "*.kenshomedia.com",
       trackerUrl: "js/", // defaults to matomo.php
       srcUrl: "js/", // defaults to matomo.js
-      siteId: import.meta.env.MATOMO_SITE_ID,
+      siteId: process.env.MATOMO_SITE_ID,
       heartBeatTimer: 5,
       disableCookies: true,
       debug: false,
