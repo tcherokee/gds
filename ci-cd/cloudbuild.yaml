@@ -37,9 +37,11 @@ steps:
         '--build-arg',
         'PUBLIC_FULL_URL=${_PUBLIC_FULL_URL}',
         '--build-arg',
-        'NODE_ENV=${_NODE_ENV}',
+        'PROD=${_PROD}',
         '--build-arg',
         'SITE_NAME=${_SITE_NAME}',
+        '--build-arg',
+        'MATOMO_SITE_ID=${_MATOMO_SITE_ID}',
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '.'
@@ -101,9 +103,11 @@ steps:
       - '--set-env-vars'
       - 'PUBLIC_FULL_URL=${_PUBLIC_FULL_URL}'
       - '--set-env-vars'
-      - 'NODE_ENV=${_NODE_ENV}'
+      - 'PROD=${_PROD}'
       - '--set-env-vars'
       - 'SITE_NAME=${_SITE_NAME}'
+      - '--set-env-vars'
+      - 'MATOMO_SITE_ID=${_MATOMO_SITE_ID}'
 
 substitutions:
   _OUTPUT_DIST_PATH: '/'
@@ -129,6 +133,7 @@ substitutions:
   _PUBLIC_ROOT_DOMAIN: ''
   _PUBLIC_FULL_URL: ''
   _SITE_NAME: ''
-  _NODE_ENV: 'development'
+  _PROD: false
+  _MATOMO_SITE_ID: ''
 
 timeout: 2700s
