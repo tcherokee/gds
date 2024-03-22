@@ -133,7 +133,7 @@ substitutions:
   _PUBLIC_ROOT_DOMAIN: ''
   _PUBLIC_FULL_URL: ''
   _SITE_NAME: ''
-  _PROD: false
+  _PROD: 'false'
   _MATOMO_SITE_ID: ''
 
 timeout: 2700s
