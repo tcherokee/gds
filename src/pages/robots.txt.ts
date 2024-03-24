@@ -39,7 +39,7 @@ const customURLS = () => {
 const robotsTxt = `
 User-agent: *
 ${rootURL().trim()}
-${import.meta.env.NODE_ENV === 'production' ? customURLS()?.trim() : ''}
+${import.meta.env.IS_PROD === "true" ? customURLS()?.trim() : ""}
 
 Sitemap: ${new URL("sitemap-index.xml", import.meta.env.SITE).href}
 `.trim();
