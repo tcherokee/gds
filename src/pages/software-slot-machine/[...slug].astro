@@ -93,7 +93,9 @@ const seo = {
   url: canonical,
 };
 ---
-
+<script define:vars={{page}}>
+  console.log('Slug Page',page);
+</script>
 <MainLayout seoData={seo}>
   <Breadcrumb
     breadcrumbs={[
