@@ -67,13 +67,11 @@ export const alphabeticProviders = computed(providers, (providersArr) => {
   const { data  } = providersArr as TFetchProviders
 
   if (data) {
-    console.log("PROVIDERS_DATA", data.data);
     const grouped = (data?.data).reduce(
       (
         acc: Record<string, TAlphabetProviders[]>,
         item: TProviderAttributesOnly
       ) => {
-        console.log(item.attributes.images?.data);
         // Extract required information
         const label = item.attributes.title || "";
         const value = item.attributes.slug || "";
@@ -94,8 +92,7 @@ export const alphabeticProviders = computed(providers, (providersArr) => {
       },
       {} as Record<string, TAlphabetProviders[]>
     );
-    console.log(grouped);
-  
+
     // Sort Array
     const sorted = Object.keys(grouped)
       .sort()
@@ -103,8 +100,8 @@ export const alphabeticProviders = computed(providers, (providersArr) => {
         letter,
         grouped[letter].sort((a, b) => a.label.localeCompare(b.label)),
       ]);
-    
-    return sorted
+
+    return sorted;
   }
   
 });

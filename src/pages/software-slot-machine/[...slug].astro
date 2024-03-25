@@ -57,7 +57,12 @@ export const getStaticPaths = (async () => {
       params: { slug },
       props: { page: slotProviders[i] },
     });
-    if (games && games.meta?.pagination) {
+
+    if (
+      games &&
+      games.meta?.pagination &&
+      games.meta?.pagination.pagezcount > 1
+    ) {
       for (let p = 1; p <= games.meta?.pagination?.pageCount; p++) {
         prerenderPath.push({
           params: { slug: `${slug}/p${p}` },
@@ -66,7 +71,7 @@ export const getStaticPaths = (async () => {
       }
     }
   }
-  
+
   return prerenderPath;
 
   //   return slotProviders.map((page) => {
@@ -93,9 +98,7 @@ const seo = {
   url: canonical,
 };
 ---
-<script define:vars={{page}}>
-  console.log('Slug Page',page);
-</script>
+
 <MainLayout seoData={seo}>
   <Breadcrumb
     breadcrumbs={[
@@ -154,7 +157,7 @@ const seo = {
             <div class="content mt-4">
               <h2 class="mb-4">{translationStore.faq}</h2>
 
-              {page?.attributes?.faqs.map((faq: {data: Faqs} ) => (
+              {page?.attributes?.faqs.map((faq: { data: Faqs }) => (
                 <FaqsComponent data={faq} />
               ))}
             </div>
