@@ -61,7 +61,7 @@ export const getStaticPaths = (async () => {
     if (
       games &&
       games.meta?.pagination &&
-      games.meta?.pagination.pagezcount > 1
+      games.meta?.pagination.pageCount > 1
     ) {
       for (let p = 1; p <= games.meta?.pagination?.pageCount; p++) {
         prerenderPath.push({
