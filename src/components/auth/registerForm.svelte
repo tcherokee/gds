@@ -14,6 +14,7 @@
   let isRegistrationSuccessfull = false;
   let registrationLoader = false;
   let recaptchaToken = "";
+  
 
   export let translations: {[key: string]: string}
 
@@ -37,7 +38,7 @@
       recaptchaToken,
     };
     const response = await fetch(
-      `${import.meta.env.BASE_URL}api/auth/register/`,
+      `${import.meta.env.PUBLIC_FULL_URL}/api/auth/register/`,
       {
         method: "POST",
         body: JSON.stringify(loginPayload),

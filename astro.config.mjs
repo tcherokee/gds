@@ -6,8 +6,11 @@ import node from "@astrojs/node";
 import Icons from "unplugin-icons/vite";
 import { FileSystemIconLoader } from "unplugin-icons/loaders";
 import sitemap from "@astrojs/sitemap";
-import partytown from "@astrojs/partytown";
+import matomo from "astro-matomo";
+
 dotenv.config();
+
+console.log("enabled", process.env.IS_PROD === "true", process.env.IS_PROD);
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,10 +19,16 @@ export default defineConfig({
     tailwind(),
     svelte(),
     sitemap(),
-    partytown({
-      config: {
-        forward: ["dataLayer.push", "gtag"],
-      },
+    matomo({
+      enabled: process.env.IS_PROD === "true", // Only load in production
+      host: "https://analytics.kenshomedia.com/",
+      setCookieDomain: "*.kenshomedia.com",
+      trackerUrl: "js/", // defaults to matomo.php
+      srcUrl: "js/", // defaults to matomo.js
+      siteId: process.env.MATOMO_SITE_ID,
+      heartBeatTimer: 5,
+      disableCookies: true,
+      debug: false,
     }),
   ],
   base: process.env.PUBLIC_SITE_ID === "gds" ? "/it" : "",

@@ -16,10 +16,11 @@
 
   export let translations: TranslationData;
   let userFavouriteGamesLoader = true;
+  
 
   const gameSyncHandler = async () => {
     isSyncingGames = true;
-    const response = await fetch(`${import.meta.env.BASE_URL}api/dashboard/user-games-add/`, {
+    const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user-games-add/`, {
       method: "POST",
       body: JSON.stringify({
         games: [...gamesNotOnUserAccount.map((game) => game.id)],
@@ -35,7 +36,7 @@
 
   onMount(async () => {
     userFavouriteGamesLoader = true;
-    const res = await fetch(`${import.meta.env.BASE_URL}api/dashboard/user-games/`);
+    const res = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user-games/`);
     userFavouriteGamesLoader = false;
 
     const response = await res.json();

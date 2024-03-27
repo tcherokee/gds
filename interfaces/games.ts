@@ -83,3 +83,12 @@ export type TUserGameProvider = {
   slug: string;
   title: string;
 };
+
+export type TGameVariables = {
+  limit: number;
+  sort: string;
+  page: number;
+  providers: string[];
+  categories: string[];
+  author: string;
+};

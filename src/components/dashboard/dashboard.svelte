@@ -40,6 +40,7 @@
 
   export let translations: TranslationData;
   let dashboardUser: TUser;
+  
 
   const fetchData = async (endpoint: string) => {
     const res = await fetch(`${endpoint}`);
@@ -51,9 +52,9 @@
   };
   onMount(async () => {
     const authEndpoints = [
-      `${import.meta.env.BASE_URL}api/dashboard/user-games/`,
-      `${import.meta.env.BASE_URL}api/dashboard/most-played-games/`,
-      `${import.meta.env.BASE_URL}api/dashboard/weekly-pick-games/`,
+      `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user-games/`,
+      `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/most-played-games/`,
+      `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/weekly-pick-games/`,
     ];
     const [userGames, mostPlayedGames, pickOfTheWeekGames] = await Promise.all(
       authEndpoints.map((endpoint) => fetchData(endpoint))

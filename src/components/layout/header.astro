@@ -1,18 +1,16 @@
 ---
-
 // First & Third Party Plugins
-import { Link } from 'astro-link'
+import { Link } from "astro-link";
 
 // Helpers
-import Images from '../helpers/images.astro';
+import Images from "../helpers/images.astro";
 import { Image } from "astro:assets";
 
 // Components
 import Navigation from "../navigation/navigation.svelte";
-import type { MenuItem } from '../../../interfaces/menu';
+import type { MenuItem } from "../../../interfaces/menu";
 
 const { mainNavigation, logo, subNavigation } = Astro.props;
-	
 ---
 
 <nav
@@ -24,32 +22,41 @@ const { mainNavigation, logo, subNavigation } = Astro.props;
   >
     <Link href="/">
       <span class="sr-only">{import.meta.env.SITE_NAME}</span>
-	  <Images
-			src={logo?.data?.attributes?.url}
-			alt=`${import.meta.env.SITE_NAME} Logo`
-			originalHeight={logo?.data?.attributes?.height}
-			originalWidth={logo?.data?.attributes?.width}
-			imageHeight={50}
-			imageWidth={0} />
+      <Images
+        classes={import.meta.env.SITE_ID === "csi" ? "w-[130px] md:w-fit" : ""}
+        src={logo?.data?.attributes?.url}
+        alt=`${import.meta.env.SITE_NAME} Logo`
+        originalHeight={logo?.data?.attributes?.height}
+        originalWidth={logo?.data?.attributes?.width}
+        imageHeight={50}
+        imageWidth={0}
+      />
     </Link>
   </div>
   <Navigation mainNavigation={mainNavigation} client:load />
 </nav>
 
-{subNavigation.length > 0 &&
-	<nav class="lg:hidden flex lg:space-x-8 lg:py-2 h-[36px] justify-center bg-subNavbar-bkg" aria-label="Global">
-		{subNavigation.map((nav:MenuItem, i:number) => (
-			<Link href={nav?.attributes?.url}
-				class="bg-gray-900 text-navbar-text uppercase rounded-md py-2 px-3 inline-flex items-center text-sm font-medium gap-2"
-				aria-current="page">
-				<Image
-					src={`${nav.attributes.images.data?.attributes.url}`}
-					width={i === 0 ? 19 : 15}
-					height={15}
-					alt={nav?.attributes?.title+"  image"}
-				/>
-				{nav?.attributes?.title}
-			</Link>
-    ))}
-	</nav>
+{
+  subNavigation.length > 0 && (
+    <nav
+      class="lg:hidden flex lg:space-x-8 lg:py-2 h-[36px] justify-center bg-subNavbar-bkg"
+      aria-label="Global"
+    >
+      {subNavigation.map((nav: MenuItem, i: number) => (
+        <Link
+          href={nav?.attributes?.url}
+          class="bg-gray-900 text-navbar-text uppercase rounded-md py-2 px-3 inline-flex items-center text-xs font-medium gap-2"
+          aria-current="page"
+        >
+          <Image
+            src={`${nav.attributes.images.data?.attributes.url}`}
+            width={i === 0 ? 19 : 15}
+            height={15}
+            alt={nav?.attributes?.title + "  image"}
+          />
+          {nav?.attributes?.title}
+        </Link>
+      ))}
+    </nav>
+  )
 }

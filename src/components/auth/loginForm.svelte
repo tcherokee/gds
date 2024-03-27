@@ -13,6 +13,7 @@
   // Recaptcha
   let error = "";
   let recaptchaToken = "";
+  
 
   const validateLoginForm = () => {
     if (!email || !password) {
@@ -30,7 +31,7 @@
       recaptchaToken,
     };
 
-    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/login/`, {
+    const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/auth/login/`, {
       method: "POST",
       body: JSON.stringify(loginPayload),
     });

@@ -111,6 +111,7 @@ let seo = {
 							}
 							{...(homepage?.attributes?.blocks[i]?.__component === 'homepage.home-casino-list' ? { isTop: true } : {})}
 							timeDate={homepage.attributes.updatedAt}
+							isHomePage={true}
 						/>
 		))
 		}
@@ -125,7 +126,8 @@ let seo = {
 								: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
 								? homepageBlogs : homepage.attributes.blocks[i]
 							}
-							timeDate={homepage.attributes.updatedAt}/>
+							timeDate={homepage.attributes.updatedAt}
+							isHomePage={true}/>
 		))
 		}
 	</div>

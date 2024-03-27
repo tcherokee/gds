@@ -18,7 +18,7 @@ export const gamesQs = (slug: string = "", sort: string = "", page: number = 1) 
   },
   pagination: {
     page: page || 1,
-    pageSize: 36,
+    pageSize: 18,
     withCount: true,
   },
   filters: {

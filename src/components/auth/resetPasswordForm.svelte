@@ -9,6 +9,7 @@
   let password = "";
   let passwordConfirmation = "";
   let loader = false;
+  
 
   export let translations: { [key: string]: string };
 
@@ -23,7 +24,7 @@
       password,
       passwordConfirmation,
     };
-    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/reset-password/`, {
+    const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/auth/reset-password/`, {
       method: "POST",
       body: JSON.stringify(resetPasswordPayload),
     });

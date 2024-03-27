@@ -2,10 +2,15 @@ import instantsearch from "instantsearch.js";
 import type { TSearchGame } from "../interfaces/search";
 import { searchBox, hits, configure } from "instantsearch.js/es/widgets";
 import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
+import { urlTranslate } from "../utils/data-store.util";
 
 // Define common setup for Meilisearch to reduce redundancy
-function setupMeilisearch(noResults: any, indexName: string, containerId: string, resultsId: string) {
-  
+function setupMeilisearch(
+  noResults: any,
+  indexName: string,
+  containerId: string,
+  resultsId: string
+) {
   return instantsearch({
     indexName: indexName,
     searchClient: instantMeiliSearch(
@@ -13,7 +18,7 @@ function setupMeilisearch(noResults: any, indexName: string, containerId: string
       import.meta.env.PUBLIC_MEILISEARCH_SEARCH_KEY,
       {
         placeholderSearch: false,
-      },
+      }
     ).searchClient,
   }).addWidgets([
     searchBox({
@@ -47,7 +52,11 @@ function setupMeilisearch(noResults: any, indexName: string, containerId: string
       templates: {
         // Template literals could be extracted to a function to avoid redundancy
         item(hit, { html, components }) {
-          return html`<a class="col-span-1 flex rounded-md shadow-sm" href=/it/slot-machines/${hit.slug}/ data-sveltekit-reload>
+          const siteURL = import.meta.env.PUBLIC_FULL_URL;
+          const siteID = import.meta.env.PUBLIC_SITE_ID;
+          return html`<a class="col-span-1 flex rounded-md shadow-sm" href=${siteURL}${
+            urlTranslate[siteID as keyof typeof urlTranslate]["game-pages"]
+          }/${hit.slug}/ data-sveltekit-reload>
 							<div class="flex justify-items-start overflow-hidden w-16 flex-shrink-0 items-center justify-center rounded-l-md border-grey-300 border-l border-t border-b">
 								<img src=${hit.logo} class=""/>
 							</div>
@@ -99,7 +108,7 @@ export const useMeilisearch = (noResults: any) => {
     noResults,
     import.meta.env.PUBLIC_MEILISEARCH_INDEX_NAME,
     "#searchBox",
-    "#results",
+    "#results"
   );
   search.start();
   return { search };
@@ -110,7 +119,7 @@ export const useMeilisearchMain = (noResults: any) => {
     noResults,
     import.meta.env.PUBLIC_MEILISEARCH_INDEX_NAME,
     "#searchInput",
-    "#hits",
+    "#hits"
   );
   searchMain.start();
   return { searchMain };

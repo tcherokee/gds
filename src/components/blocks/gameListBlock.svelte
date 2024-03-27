@@ -92,9 +92,9 @@
   <div class="flex flex-col align-center relative xl:container px-2 pb-5">
     <MediaQuery query="(max-width: 768px)" let:matches>
       {#if matches}
-        <MobileGameFilter {page}/>
+      <MobileGameFilter {page}/>
       {:else}
-        <DesktopGameFilter {page} showGameFilterPanel={data.showGameFilterPanel} />
+      <DesktopGameFilter {page} showGameFilterPanel={data.showGameFilterPanel} />
       {/if}
     </MediaQuery>
     <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
@@ -120,7 +120,7 @@
         class="btn self-center mt-5 btn-secondary min-w-[300px] md:min-w-[500px]"
         on:click={loadMoreGames}
       >
-        {$getTranslations.loadMore}
+        {$getTranslations.loadMore.toUpperCase()}
       </button>
     {/if}
   </div>

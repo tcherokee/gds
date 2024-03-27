@@ -13,6 +13,7 @@
   let disabled = false;
   let userRating = 0;
   let ratingValuePercent = `${(avgRating * 100) / 5}%`;
+  
   $: {
     const isRated = $ratings.find(
       (elem) => elem.id === +itemId && elem.type === ratingType
@@ -37,7 +38,7 @@
 
     try {
       const res = await fetch(
-        `${import.meta.env.BASE_URL}/api/ratings/?` +
+        `${import.meta.env.PUBLIC_FULL_URL}/api/ratings/?` +
           new URLSearchParams(ratingVariables),
         { method: "PUT" }
       );

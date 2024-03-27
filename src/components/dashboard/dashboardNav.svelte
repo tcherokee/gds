@@ -9,9 +9,10 @@
   export let translations: TranslationData;
   export let pageUrl: string;
   export let source: "SIDE" | "FOOTER";
+  
 
   const logoutHandler = async () => {
-    const response = await fetch(`${import.meta.env.BASE_URL}api/auth/logout/`, {
+    const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/auth/logout/`, {
       method: "POST",
       body: JSON.stringify({}),
     });
