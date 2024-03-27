@@ -47,9 +47,13 @@
     const sortKeys = $sortGames ? Object.keys($sortGames) : [];
 
     // Function to update games when a provider is clicked
-    const handleClick = (provider) => {
+    const handleClick = (provider: string) => {
+        let newProvider: string[] = [];
+        if (!($gameVariables.providers as string[]).includes(provider)) {
+            newProvider = [provider];
+        }
         // Set Store Provider Variable Key
-        gameVariables.setKey('providers', [provider])
+        gameVariables.setKey('providers', newProvider)
         gameVariables.setKey('page', 1);
 
         // Create QS String from the updated variables

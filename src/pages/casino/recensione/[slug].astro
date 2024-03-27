@@ -68,7 +68,7 @@ page?.attributes?.providers?.data.map((provider: any) => {
 
 const query = qs.stringify(
   gamesQs({
-    limit: 10,
+    limit: 12,
     sort: "ratingAvg:desc",
     page: 1,
     providers: providerSlugs,
@@ -235,9 +235,11 @@ let seo = {
                         }
                         {
                           page?.attributes?.bonusSection?.cashBack &&
-                          page?.attributes?.bonusSection?.bonusAmount
-                            ? <br />
-                            : ""
+                          page?.attributes?.bonusSection?.bonusAmount ? (
+                            <br />
+                          ) : (
+                            ""
+                          )
                         }
                         {
                           page?.attributes?.bonusSection?.cashBack
@@ -940,9 +942,11 @@ let seo = {
                         }
                         {
                           page?.attributes?.bonusSection?.cashBack &&
-                          page?.attributes?.bonusSection?.bonusAmount
-                            ? <br />
-                            : ""
+                          page?.attributes?.bonusSection?.bonusAmount ? (
+                            <br />
+                          ) : (
+                            ""
+                          )
                         }
                         {
                           page?.attributes?.bonusSection?.cashBack

@@ -1,8 +1,7 @@
 import qs from 'qs'
 import { atom, map, computed, allTasks, task, onMount } from "nanostores";
 import { createFetcherStore } from "./fetcher";
-import type { Game } from "../interfaces/games";
-
+import type { Game, TGameVariables } from "../interfaces/games";
 
 const opts = {
   headers: {
@@ -12,13 +11,13 @@ const opts = {
   },
 };
 
-export const gameVariables = map({
+export const gameVariables = map<TGameVariables>({
   limit: 1000,
   sort: "ratingAvg:desc",
   page: 1,
   providers: [],
   categories: [],
-  author: ''
+  author: "",
 });
 
 export const gamesQsStore = atom<string | undefined>(undefined);
