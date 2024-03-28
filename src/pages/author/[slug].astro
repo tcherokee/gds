@@ -101,7 +101,9 @@ const truncatedBlogObj = page.blogs.map(item => {
 });
 
 ---
-
+<script define:vars={{page}}>
+    console.log("author page", page);
+</script>
 <MainLayout seoData={seo}>
     <div class="featured-no-curve pt-5">
         <div class="section-wrapper glass-wrapper ">
