@@ -21,9 +21,15 @@ const { data } = Astro.props
                         alt={data?.image?.data?.attributes?.alt}
                     />
                 </div>
-                <div class="flex flex-col md:col-span-3 justify-center">
+                <div class="flex flex-col md:col-span-3 justify-center iwc-anchor">
                     <h2 class="capitalize mb-4 mt-4 md:mt-0 text-blue-700 text-base md:text-[32px] md:leading-[38px]">{data.title}</h2>
                     <Fragment set:html={data.content} />
                 </div>
     }
 </div>
+<style lang="scss">
+:global(.iwc-anchor a) {
+    color: blue;
+    text-decoration: underline;
+}
+</style>
