@@ -1,4 +1,4 @@
-import type { AuthorBlogAttributes } from "./blog"
+import type { AuthorBlogAttributes } from "./blog";
 import type { AuthorGameAttributes } from "./games";
 import type { Seo, AuthorCasinoAttributes } from "./common/types";
 
@@ -41,7 +41,8 @@ export type TAuthor = {
   blogs: AuthorBlogAttributes[];
   games: AuthorGameAttributes[];
   casinos: AuthorCasinoAttributes[];
-  seo: Seo
+  seo: Seo;
+  bio: string;
 };
 
 export type TAuthorIndex = {
