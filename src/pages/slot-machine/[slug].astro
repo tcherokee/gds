@@ -1,58 +1,57 @@
 ---
-
 export const prerender = true;
 
 // First Party and Third Party Plugins
-import qs from 'qs'
+import qs from "qs";
 
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
-import type { TranslationData } from '../../../interfaces/common/types';
-import type { CategoryPageItem } from "../../../interfaces/category-page"
+import type { TranslationData } from "../../../interfaces/common/types";
+import type { CategoryPageItem } from "../../../interfaces/category-page";
 
 // Layouts
-import MainLayout from "../../layouts/MainLayout.astro"
+import MainLayout from "../../layouts/MainLayout.astro";
 
 // Stores
-import { getTranslations } from '../../../stores/addTranslations';
+import { getTranslations } from "../../../stores/addTranslations";
 
 // Queries
 import { categoryPagesQs } from "../../../qs/categoryPages";
 
 // Components
-import IntroWithImage from '../../components/general/introWithImage.astro';
-import GameListBlock from '../../components/blocks/gameListBlock.svelte';
-import ContentBlock from '../../components/blocks/contentBlock.astro';
-import FaqListBlock from '../../components/blocks/faqListBlock.astro';
-import CasinoSidebar from '../../components/casino/casinoSidebar.astro';
+import IntroWithImage from "../../components/general/introWithImage.astro";
+import GameListBlock from "../../components/blocks/gameListBlock.svelte";
+import ContentBlock from "../../components/blocks/contentBlock.astro";
+import FaqListBlock from "../../components/blocks/faqListBlock.astro";
+import CasinoSidebar from "../../components/casino/casinoSidebar.astro";
 
 // Helpers
-import fetchApi from "../../../lib/strapi"
-import { urlTranslate } from '../../../utils/data-store.util';
-import Breadcrumbs from '../../components/layout/breadcrumbs.astro';
+import fetchApi from "../../../lib/strapi";
+import { urlTranslate } from "../../../utils/data-store.util";
+import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
+import Quicklinks from "../../components/helpers/quicklinks.astro";
 
 export const getStaticPaths = (async () => {
+  // Import the QS Query string for custom slugs and prepare it for the API fetch
+  const query = qs.stringify(categoryPagesQs(), { encodeValuesOnly: true });
 
-    // Import the QS Query string for custom slugs and prepare it for the API fetch
-    const query = qs.stringify(categoryPagesQs(), {encodeValuesOnly: true})
-    
-    // Request to the Fetch Function to get the custom page slugs from the API
-    const categoryPage = await fetchApi<CategoryPageItem[]>({
-        endpoint: 'slot-categories',
-        wrappedByKey: 'data',
-        query: `?${query}`
-    })
+  // Request to the Fetch Function to get the custom page slugs from the API
+  const categoryPage = await fetchApi<CategoryPageItem[]>({
+    endpoint: "slot-categories",
+    wrappedByKey: "data",
+    query: `?${query}`,
+  });
 
-    return categoryPage.map((page) => {
-        return {
-            params: {slug: page?.attributes?.slug},
-            props: { page }
-        }
-    });
+  return categoryPage.map((page) => {
+    return {
+      params: { slug: page?.attributes?.slug },
+      props: { page },
+    };
+  });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props
-const { slug } = Astro.params
+const { page } = Astro.props;
+const { slug } = Astro.params;
 
 const translationStore: TranslationData = getTranslations.get();
 
@@ -61,79 +60,89 @@ const SITE_ID = import.meta.env.SITE_ID;
 
 // Create block variable for GameList Component
 const introBlock = {
-    heading: page?.attributes?.IntroductionWithImage?.heading,
-    introduction: page?.attributes?.IntroductionWithImage?.introduction,
-    image: page?.attributes?.IntroductionWithImage?.image
-}
+  heading: page?.attributes?.IntroductionWithImage?.heading,
+  introduction: page?.attributes?.IntroductionWithImage?.introduction,
+  image: page?.attributes?.IntroductionWithImage?.image,
+};
 
 const gameBlock = {
-    numberOfGames: 18,
-    sortBy: "Most Popular",
-    showGameFilterPanel: true,
-    showGameMoreButton: true,
-    gameCategories: [
-        {
-            slotCategories: {
-                data: {
-                    attributes: {
-                        slug: slug
-                    }
-                }
-            }
-        }
-    ],
-    gameProviders: []
-    
-}
+  numberOfGames: 18,
+  sortBy: "Most Popular",
+  showGameFilterPanel: true,
+  showGameMoreButton: true,
+  gameCategories: [
+    {
+      slotCategories: {
+        data: {
+          attributes: {
+            slug: slug,
+          },
+        },
+      },
+    },
+  ],
+  gameProviders: [],
+};
 
 // SEO Object
 const seo = {
-    pageTitle: page?.attributes?.seo?.metaTitle,
-    metaDescription: page?.attributes?.seo?.metaDescription,
-    url: `${import.meta.env.FULL_URL}${urlTranslate[SITE_ID as keyof typeof urlTranslate]['category-pages']}/${slug}`
-}
-
+  pageTitle: page?.attributes?.seo?.metaTitle,
+  metaDescription: page?.attributes?.seo?.metaDescription,
+  url: `${import.meta.env.FULL_URL}${urlTranslate[SITE_ID as keyof typeof urlTranslate]["category-pages"]}/${slug}`,
+};
 ---
 
 <MainLayout seoData={seo}>
-    <Breadcrumbs breadcrumbs={[{breadCrumbText: page?.attributes?.title, breadCrumbUrl: null}]} breadcrumbKey="categoriesBreadcrumbs"/>
-    <div class="featured-background">
-        <IntroWithImage
-            data={introBlock}
-            timeDate={page?.attributes?.updatedAt}
-            authorData={undefined}
-        />
+  <Breadcrumbs
+    breadcrumbs={[
+      { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
+    ]}
+    breadcrumbKey="categoriesBreadcrumbs"
+  />
+  <div class="featured-background">
+    <IntroWithImage
+      data={introBlock}
+      timeDate={page?.attributes?.updatedAt}
+      authorData={undefined}
+    />
 
-        <GameListBlock data={gameBlock} client:load/>
-    </div>
-    <div class="relative xl:container px-2">
-        <div class="flex flex-col gap-x-8 mt-10 md:flex-row">
-            <div class="slot-machine-content order-last md:order-first">
-                {page?.attributes?.content1 &&
-                    <ContentBlock pageContent={page?.attributes?.content1} />
-                }
-                {page?.attributes?.content2 &&
-                    <ContentBlock pageContent={page?.attributes?.content2} />
-                }
+    <GameListBlock data={gameBlock} client:load />
+  </div>
+  <div class="relative xl:container px-2">
+    <div class="flex flex-col gap-x-8 mt-10 md:flex-row">
+      <div class="slot-machine-content order-last md:order-first">
+        <Quicklinks data={page} />
+        {
+          page?.attributes?.content1 && (
+            <ContentBlock pageContent={page?.attributes?.content1} />
+          )
+        }
+        {
+          page?.attributes?.content2 && (
+            <ContentBlock pageContent={page?.attributes?.content2} />
+          )
+        }
 
-                {page?.attributes?.content3 &&
-                    <ContentBlock pageContent={page?.attributes?.content3} />
-                }
-                {page?.attributes?.faqs.length > 0 &&
-                    <div class="content">
-                        <h2 class="mb-4">{translationStore.faq}</h2>
+        {
+          page?.attributes?.content3 && (
+            <ContentBlock pageContent={page?.attributes?.content3} />
+          )
+        }
+        {
+          page?.attributes?.faqs.length > 0 && (
+            <div class="content">
+              <h2 class="mb-4">{translationStore.faq}</h2>
 
-                        {
-                            page?.attributes?.faqs.map(faq => (
-                                <FaqListBlock data={faq} />
-                            ))
-                        }
-                    </div>
-                }
+              {page?.attributes?.faqs.map((faq) => (
+                <FaqListBlock data={faq} />
+              ))}
             </div>
-            <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-                <CasinoSidebar />
-            </div>
-        </div>
+          )
+        }
+      </div>
+      <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
+        <CasinoSidebar />
+      </div>
     </div>
+  </div>
 </MainLayout>
