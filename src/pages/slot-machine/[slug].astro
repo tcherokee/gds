@@ -6,7 +6,10 @@ import qs from "qs";
 
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
-import type { TranslationData } from "../../../interfaces/common/types";
+import type {
+  GameFilters,
+  TranslationData,
+} from "../../../interfaces/common/types";
 import type { CategoryPageItem } from "../../../interfaces/category-page";
 
 // Layouts
@@ -30,6 +33,8 @@ import fetchApi from "../../../lib/strapi";
 import { urlTranslate } from "../../../utils/data-store.util";
 import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
 import Quicklinks from "../../components/helpers/quicklinks.astro";
+import { gamesQs } from "../../../qs/games";
+import GameCard from "../../components/games/gameCard.astro";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -42,15 +47,58 @@ export const getStaticPaths = (async () => {
     query: `?${query}`,
   });
 
-  return categoryPage.map((page) => {
-    return {
-      params: { slug: page?.attributes?.slug },
-      props: { page },
+  // // Get Category Slugs
+  // const categorySlugs = data?.gameCategories.map(
+  //   (game: any) => game.slotCategories.data.attributes.slug
+  // );
+  let gamesQueryObj: GameFilters = {
+    limit: 18,
+    sort: "views:desc",
+    page: 1,
+    providers: [],
+    categories: [],
+    author: "",
+  };
+
+  // const slotCategoriesGames = await fetchApi<any[]>({
+  //   endpoint: "slot-providers",
+  //   wrappedByKey: "data",
+  //   query: `?${gamesQuery}`,
+  // });
+  let prerenderPath: any[] = [];
+
+  for (let i = 0; i < categoryPage.length; i++) {
+    const slug = categoryPage[i]?.attributes?.slug;
+    gamesQueryObj = {
+      ...gamesQueryObj,
+      categories: [slug],
     };
-  });
+    const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
+      encodeValuesOnly: true,
+    });
+
+    const slotCategoriesGames = await fetchApi<any[]>({
+      endpoint: "games",
+      wrappedByKey: "data",
+      query: `?${gamesQuery}`,
+    });
+
+    prerenderPath.push({
+      params: { slug },
+      props: { page: categoryPage[i], games: slotCategoriesGames },
+    });
+  }
+
+  return prerenderPath;
+  // return categoryPage.map((page) => {
+  //   return {
+  //     params: { slug: page?.attributes?.slug },
+  //     props: { page },
+  //   };
+  // });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
+const { page, games } = Astro.props;
 const { slug } = Astro.params;
 
 const translationStore: TranslationData = getTranslations.get();
@@ -83,6 +131,7 @@ const gameBlock = {
   ],
   gameProviders: [],
 };
+const siteID = `${import.meta.env.SITE_ID}`;
 
 // SEO Object
 const seo = {
@@ -105,8 +154,24 @@ const seo = {
       timeDate={page?.attributes?.updatedAt}
       authorData={undefined}
     />
-
-    <GameListBlock data={gameBlock} client:load />
+    {siteID !== "sm" && <GameListBlock data={gameBlock} client:load />}
+    {
+      siteID === "sm" && (
+        <>
+          <div>
+            <div class="relative xl:container px-2 pb-5">
+              <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
+                {games.map((game) => (
+                  <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
+                    <GameCard {game} translations={translationStore} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    }
   </div>
   <div class="relative xl:container px-2">
     <div class="flex flex-col gap-x-8 mt-10 md:flex-row">
