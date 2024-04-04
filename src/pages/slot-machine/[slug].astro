@@ -7,6 +7,7 @@ import qs from "qs";
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
 import type {
+  Faqs,
   GameFilters,
   TranslationData,
 } from "../../../interfaces/common/types";
@@ -24,6 +25,7 @@ import { categoryPagesQs } from "../../../qs/categoryPages";
 // Components
 import IntroWithImage from "../../components/general/introWithImage.astro";
 import GameListBlock from "../../components/blocks/gameListBlock.svelte";
+import AstroGameListBlock from "../../components/blocks/gameListBlock.astro";
 import ContentBlock from "../../components/blocks/contentBlock.astro";
 import FaqListBlock from "../../components/blocks/faqListBlock.astro";
 import CasinoSidebar from "../../components/casino/casinoSidebar.astro";
@@ -155,23 +157,7 @@ const seo = {
       authorData={undefined}
     />
     {siteID !== "sm" && <GameListBlock data={gameBlock} client:load />}
-    {
-      siteID === "sm" && (
-        <>
-          <div>
-            <div class="relative xl:container px-2 pb-5">
-              <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
-                {games.map((game) => (
-                  <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
-                    <GameCard {game} translations={translationStore} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
-      )
-    }
+    {siteID === "sm" && <AstroGameListBlock data={games} />}
   </div>
   <div class="relative xl:container px-2">
     <div class="flex flex-col gap-x-8 mt-10 md:flex-row">
@@ -198,7 +184,7 @@ const seo = {
             <div class="content">
               <h2 class="mb-4">{translationStore.faq}</h2>
 
-              {page?.attributes?.faqs.map((faq) => (
+              {page?.attributes?.faqs.map((faq: Faqs) => (
                 <FaqListBlock data={faq} />
               ))}
             </div>
