@@ -1,0 +1,48 @@
+---
+// Import Types
+import type { TranslationData } from "../../../interfaces/common/types.ts"
+import { getTranslations } from "../../../stores/addTranslations.ts"
+const translationStore: TranslationData = getTranslations.get()
+---
+
+<div
+  class="bg-newsletter-bkg text-footer-text mt-5 content-auto -mb-5 py-20"
+  aria-labelledby="footer-heading"
+>
+    <div class="mx-auto xl:container px-2 py-0">
+        <div class="flex justify-between items-center">
+            <div>
+                <h4>Sign up for our newsletter</h4>
+                <p>Be the first to know about releases and industry news and insights.</p>
+            </div>
+            <div class="w-1/3">
+                <form class="flex items-center justify-between gap-2">
+                     <div class="w-full">
+                        <input
+                        id="email-address"
+                        class="w-full py-2.5 px-[14px] text-base text-[#000] rounded border border-[rgba(255,255,255,0.30)] focus:border-misc focus:shadow-none"
+                        name="email"
+                        type="email"
+                        autocomplete="email"
+                        required
+                        placeholder={translationStore.enterEmail}
+                        />
+                    </div>
+                     <div class="1/4">
+                        <button type="button"
+                        class="flex w-full justify-center items-center rounded-md btn-misc px-3 py-2.5 text-sm font-semibold text-white"
+                        >Subscribe</button>
+                    </div>
+                </form>
+                <div class="text-[14px]">We care about your data in our <a href="#" class="underline">privacy policy.</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style lang="postcss" is:global>
+    h4 {
+        color: white;
+        margin-bottom: 8px;
+    }
+</style>
