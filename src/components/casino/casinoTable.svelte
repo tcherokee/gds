@@ -266,9 +266,6 @@
                         </Link>
                         <span
                           class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                          title={casino?.attributes?.bonusSection
-                            ?.termsConditions}
-                          data-tooltip-placement="auto"
                         >
                           {$getTranslations.wageringRequirement}
                           <CircleInfo
@@ -328,8 +325,6 @@
                           </Link>
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                            title={noDepositBonus(casino)?.terms}
-                            data-tooltip-placement="auto"
                           >
                             {$getTranslations.wageringRequirement}
                             <CircleInfo
@@ -397,8 +392,6 @@
                           {/if}
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                            title={casino?.attributes?.termsAndConditions?.copy}
-                            data-tooltip-placement="auto"
                           >
                             {$getTranslations.termsConditions}
                             <CircleInfo
@@ -418,7 +411,7 @@
                               class="flex items-center justify-between text-sm text-grey-500 group"
                               tabindex="0"
                             >
-                              {$getTranslations.wageringRequirement}
+                              {$getTranslations.termsConditions}
                               <Angle
                                 class="fill-grey-500 group-open:rotate-180"
                                 height="20px"
