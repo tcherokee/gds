@@ -99,7 +99,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         >
                                              <Fragment set:html={welcomeBonus(casino)} />
                                         </Link>
-                                        <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={(casino as CasinoData)?.attributes?.bonusSection?.termsConditions ?? (casino as AuthorCasinoAttributes)?.bonusSection?.termsConditions} data-tooltip-placement="auto">
+                                        <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
                                             {translationStore.wageringRequirement} 
                                             <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                         </span>
@@ -135,7 +135,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                             >
                                                 <Fragment set:html={noDepositBonus(casino)?.bonus} />
                                             </Link>
-                                            <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casino)?.terms} data-tooltip-placement="auto">
+                                            <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
                                                 {translationStore.wageringRequirement} 
                                                 <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                             </span>
@@ -169,14 +169,14 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                     text={((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) ? ((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) : translationStore.visitSite}
                                                 />
 										    }
-                                            <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]" title={(casino as CasinoData)?.attributes?.termsAndConditions?.copy ?? (casino as AuthorCasinoAttributes)?.termsAndConditions?.copy} data-tooltip-placement="auto">
+                                            <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
                                                 {translationStore.termsConditions} 
                                                 <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                             </span>
                                             <div class="wrap-collabsible w-full md:hidden mt-2">
                                                 <input id={`bonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                 <label for={`bonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
-                                                    {translationStore.wageringRequirement}
+                                                    {translationStore.termsConditions}
                                                     <Icon name="angle" class="fill-grey-500 group-open:rotate-180" height="20px" width="18px"/>
                                                 </label>
                                                 <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">

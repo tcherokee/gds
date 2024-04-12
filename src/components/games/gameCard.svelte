@@ -23,6 +23,7 @@
     urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"] +
     "/" +
     game?.provider?.slug;
+  const diffInDays = dayjs().diff(game?.publishedAt, "day") <= 14;
 
 </script>
 
@@ -46,14 +47,14 @@
       class={`${
         game?.ratingAvg > 4.5
           ? "hot-slot"
-          : dayjs().diff(game?.publishedAt, "day") <= 14
+          : diffInDays
             ? "new-slot"
             : ""
       } text-[10px] leading-[16px] m-2 text-white font-bold w-fit px-[6px] pt-[1px] uppercase rounded-[40px] -tracking-[0.2px]`}
     >
       {game?.ratingAvg > 4.5
         ? "hot slot"
-        : dayjs().diff(game?.publishedAt, "day") <= 14
+        : diffInDays
           ? "new slot"
           : ""}
     </div>
@@ -75,9 +76,9 @@
       <div
         class="flex justify-between items-center mb-[2px] transition-transform duration-[0.3s] translate-y-[20px] sm:group-hover:translate-y-0"
       >
-        <h4 class="text-white text-sm font-bold !m-0">
+        <div class="text-white text-sm font-bold !m-0">
           <Link href={`${gameURL}/`}>{game?.title}</Link>
-        </h4>
+        </div>
         <AddToFav game={game} classes="w-4 h-[14px]" />
       </div>
       <div
