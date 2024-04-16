@@ -19,12 +19,13 @@
   import MediaQuery from "../helpers/mediaQuery.svelte";
 
   // Types
-  import type { TUserGame } from "../../../interfaces/games.ts";
+  import type { Game, TUserGame } from "../../../interfaces/games.ts";
   import type { CustomGameList, TranslationData } from "../../../interfaces/common/types.ts";
 
   export let data: CustomGameList;
   export let author: string = '';
   export let page = 1;
+  export let initialGames: TUserGame[] = [];
 
   // Get provider slugs
   const providerSlugs = data.gameProviders.map(
@@ -105,13 +106,21 @@
           </div>
         {/each}
       {:else}
-        {#each {length: data.numberOfGames} as _}
-          <div class={`w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6`}>
-            <aside
-              class="relative cursor-pointer rounded-lg aspect-[235/244] w-full bg-misc/20 transition-shadow duration-[0.3s] sm:cursor-auto"
-            />
-          </div>  
-        {/each}
+          {#if initialGames.length}
+            {#each initialGames as game}
+              <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
+                <GameCard game={game} translations={$getTranslations} />
+              </div>
+            {/each}
+          {:else}
+            {#each {length: data.numberOfGames} as _}
+              <div class={`w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6`}>
+                <aside
+                  class="relative cursor-pointer rounded-lg aspect-[235/244] w-full bg-misc/20 transition-shadow duration-[0.3s] sm:cursor-auto"
+                />
+              </div>  
+            {/each}
+          {/if}
       {/if}
     </div>
     <!-- Load More Button -->
