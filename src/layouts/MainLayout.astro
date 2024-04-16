@@ -95,7 +95,7 @@ const { seoData } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="it">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={seoData.metaDescription} />
@@ -190,7 +190,8 @@ const { seoData } = Astro.props;
     }
     
     <title>{seoData.pageTitle}</title>
-    <Tooltips placement="auto" />
+    <ViewTransitions />
+    <!-- <Tooltips placement="auto" /> -->
   </head>
   <body>
     <main>

@@ -1,0 +1,74 @@
+---
+import type {
+  TProviderAttributesOnly,
+  TranslationData,
+} from "../../../interfaces/common/types";
+import fetchApi from "../../../lib/strapi";
+import Images from "../helpers/images.astro";
+import Link from "../helpers/link.astro";
+import { urlTranslate } from "../../../utils/data-store.util";
+
+// Stores
+import { getTranslations } from "../../../stores/addTranslations";
+
+const translationStore: TranslationData = getTranslations.get();
+const gameProviders = await fetchApi<{
+  id: number;
+  attributes: {
+    filterProviders: {
+      data: TProviderAttributesOnly[];
+    };
+  };
+}>({
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
+});
+const siteID = import.meta.env.PUBLIC_SITE_ID;
+const softwareListURL =
+  urlTranslate[siteID as keyof typeof urlTranslate]["software-page"] + "/";
+---
+
+<script define:vars={{ gameProviders }}>
+  console.log("GAME_PROVIDERS", gameProviders);
+</script>
+<div class="relative xl:container px-2 pb-5">
+  <div
+    class="flex justify-between bg-filter-provider-header-bkg rounded-t-md p-2.5"
+  >
+    <h4
+      class="text-sm font-bold text-filter-provider-header-text capitalize !m-0"
+    >
+      {translationStore.mostLovedProviders}
+    </h4>
+    <Link href={softwareListURL}>
+      <span class="text-sm font-bold text-filter-provider-header-text uppercase"
+        >{translationStore.seeAllProviders}</span
+      >
+    </Link>
+  </div>
+  <div
+    class="glowy-bkg shadow-none rounded-t-none flex overflow-x-auto gap-3 p-2.5"
+  >
+    {
+      gameProviders.attributes.filterProviders.data.map((provider) => (
+        <a
+          class="max-w-[83px] min-w-[80px] rounded-md {$gameVariables?.providers.length === 1 && $gameVariables?.providers.indexOf(
+                    icon?.attributes?.slug
+                ) > -1
+                    ? 'border-[2px] border-accent-500'
+                    : ''}"
+          href={"/software-slot-machine/" + provider?.attributes?.slug + "/"}
+        >
+          <Images
+            src={provider?.attributes?.images?.data?.attributes?.url}
+            imageWidth={83}
+            imageHeight={40}
+            classes="rounded-md drop-shadow-md"
+            imageAlt={provider?.attributes?.slug}
+          />
+        </a>
+      ))
+    }
+  </div>
+</div>
