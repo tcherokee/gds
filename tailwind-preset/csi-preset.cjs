@@ -221,7 +221,7 @@ module.exports = {
       "btn-misc-hover-text": COLORS.white,
 
       // Blogs
-      "blog-list-bkg": COLORS.background[1],
+      "blog-list-bkg": COLORS.beige[200],
       "blog-content-bkg": COLORS.white,
       "blog-meta": "#6c757d",
       "blog-card-date-bkg": COLORS.primary,
