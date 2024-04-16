@@ -25,6 +25,7 @@ import {
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
+import Newsletter from "../components/layout/newsletter.astro";
 import CookiesConsent from "../components/general/cookiesConsent.svelte";
 
 const siteID = `${import.meta.env.SITE_ID}`;
@@ -209,6 +210,7 @@ const { seoData } = Astro.props;
       </header>
       <slot />
     </main>
+    <Newsletter />
     <Footer
       footerContent={layout?.attributes?.footerContent}
       footerImages={layout?.attributes?.footerImages}

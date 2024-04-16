@@ -9,7 +9,6 @@ import { blogcardQs } from "../../../qs/blog-cards"
 import type { BlogList } from "../../../interfaces/blog"
 import BlogListBlock from '../../components/blocks/blogListBlock_.astro';
 import Pagination from '../../components/helpers/pagination.astro';
-import Newsletter from "../../components/layout/newsletter.astro";
 
 const query = qs.stringify(blogcardQs(12, 1), {encodeValuesOnly: true})
 const metaQuery = qs.stringify(blogmetaQs(), {encodeValuesOnly: true})
@@ -53,5 +52,4 @@ let seo = {
             path={urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']} />
         </div>
     </div>
-    <Newsletter />
 </MainLayout>
