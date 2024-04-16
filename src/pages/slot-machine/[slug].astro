@@ -37,6 +37,9 @@ import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
 import Quicklinks from "../../components/helpers/quicklinks.astro";
 import { gamesQs } from "../../../qs/games";
 import GameProviders from "../../components/general/gameProviders.astro";
+import DesktopSlotCategoryFilter from "../../components/filters/desktopSlotCategoryFilter.astro";
+import GameListBlockV2 from "../../components/blocks/gameListBlockV2.astro";
+import type { TUser } from "../../../interfaces/auth";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -85,9 +88,27 @@ export const getStaticPaths = (async () => {
       query: `?${gamesQuery}`,
     });
 
+    const modifiedGames: TUser[] = slotCategoriesGames.map((elem) => {
+      return {
+        id: elem.id,
+        ...elem.attributes,
+        images: {
+          url: elem.attributes.images.data.attributes.url,
+        },
+        provider: {
+          slug: elem.attributes.provider.data.attributes.slug,
+          title: elem.attributes.provider.data.attributes.title,
+        },
+      };
+    });
+
     prerenderPath.push({
       params: { slug },
-      props: { page: categoryPage[i], games: slotCategoriesGames },
+      props: {
+        page: categoryPage[i],
+        games: slotCategoriesGames,
+        modifiedGames,
+      },
     });
   }
 
@@ -100,7 +121,7 @@ export const getStaticPaths = (async () => {
   // });
 }) satisfies GetStaticPaths;
 
-const { page, games } = Astro.props;
+const { page, games, modifiedGames } = Astro.props;
 const { slug } = Astro.params;
 
 const translationStore: TranslationData = getTranslations.get();
@@ -156,15 +177,7 @@ const seo = {
       timeDate={page?.attributes?.updatedAt}
       authorData={undefined}
     />
-    {siteID !== "sm" && <GameListBlock data={gameBlock} client:load />}
-    {
-      siteID === "sm" && (
-        <div class="pb-6">
-          <GameProviders />
-          <AstroGameListBlock data={games} />
-        </div>
-      )
-    }
+    <GameListBlock data={gameBlock} initialGames={modifiedGames} client:load />
   </div>
   <div class="relative xl:container px-2">
     <div class="flex flex-col gap-x-8 mt-10 md:flex-row">
@@ -203,4 +216,5 @@ const seo = {
       </div>
     </div>
   </div>
-</MainLayout>
+</MainLayout>;
+

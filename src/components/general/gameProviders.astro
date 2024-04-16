@@ -5,11 +5,11 @@ import type {
 } from "../../../interfaces/common/types";
 import fetchApi from "../../../lib/strapi";
 import Images from "../helpers/images.astro";
+import Link from "../helpers/link.astro";
+import { urlTranslate } from "../../../utils/data-store.util";
 
 // Stores
 import { getTranslations } from "../../../stores/addTranslations";
-import Link from "../helpers/link.astro";
-import { urlTranslate } from "../../../utils/data-store.util";
 
 const translationStore: TranslationData = getTranslations.get();
 const gameProviders = await fetchApi<{

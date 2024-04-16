@@ -1,0 +1,132 @@
+---
+import type {
+  CategoryAttributes,
+  TranslationData,
+} from "../../../interfaces/common/types";
+import fetchApi from "../../../lib/strapi";
+
+// Stores
+import { getTranslations } from "../../../stores/addTranslations";
+
+const translationStore: TranslationData = getTranslations.get();
+const slotCategories = await fetchApi<
+  {
+    id: number;
+    attributes: CategoryAttributes;
+  }[]
+>({
+  endpoint: "slot-categories",
+  wrappedByKey: "data",
+  query: `?fields[0]=id&fields[1]=slug&pagination[page]=1&pagination[pageSize]=1000&sort[0]=listSortOrder%3Aasc&fields[2]=title`,
+});
+---
+
+<div
+  class="flex basis-full items-center gap-2 justify-between bg-transparent p-0 basis-2/5"
+>
+  <div class="relative basis-1/2 flex items-baseline">
+    <div class="w-full inline-flex rounded-md shadow-sm">
+      <div
+        class="group relative p-2.5 rounded-[4px] border-background-900 bg-white/[.7] border w-full h-11 flex justify-between items-center open:rounded-b-none {$gameVariables.categories.length > 0 ? '!bg-filter-alternate-toggle' : ''}"
+        aria-expanded="false"
+        id="slot-category-filter"
+        role="button"
+        tabindex="-1"
+      >
+        <!-- <span class="uppercase text-xs pointer-events-none">
+                                    {$gameVariables.categories.length > 0 ? $gameVariables.categories[0] : $getTranslations.categories}
+                                </span>
+                                {#if $gameVariables.categories.length > 0}
+                                    <button type="button" on:click={(e) => clearFilterOptions(e, 'categories', [])}>
+                                        <Xmark class="h-6 w-6" />
+                                    </button>
+                                {:else}
+                                    <Angle class="rotate-180 group-open:rotate-0"/>
+                                {/if} -->
+      </div>
+    </div>
+    <ul
+      class="absolute invisible max-h-[350px] top-11 overflow-y-auto transform opacity-0 scale-95 left-0 z-40 w-full origin-top-left rounded-b-md bg-white/[.9] border-background-900 border border-t-0 py-2 shadow-2xl open:transform open:opacity-100 open:scale-100 open:visible"
+      id="slot-category-list"
+    >
+      {
+        slotCategories.map((category) => (
+          <li class="flex flex-col gap-y-2 py-1 px-2" role="none">
+            <button
+              class="p-2 text-sm uppercase font-medium text-left rounded-md hover:bg-blue-500 hover:text-white data-active:bg-blue-500 data-active:text-white"
+              role="menuitem"
+              tabindex="-1"
+              id="mobile-menu-item-0"
+            >
+              {category.attributes.title}
+            </button>
+          </li>
+        ))
+      }
+      <!-- {#if $categoriesFilters.data}
+                                    {#each $categoriesFilters.data.data as cat}
+                                        <button
+                                            class="p-2 text-sm uppercase font-medium text-left rounded-md hover:bg-blue-500 hover:text-white data-active:bg-blue-500 data-active:text-white"
+                                            role="menuitem"
+                                            tabindex="-1"
+                                            id="mobile-menu-item-0"
+                                            on:click={() => handleFilterChange('categories', [cat.attributes.slug])}
+                                        >
+                                            {cat.attributes.title}
+                                        </button>
+                                    {/each}
+                                {/if} -->
+    </ul>
+  </div>
+
+  <div class="basis-1/2 relative inline-block text-left">
+    <div class="isolate w-full rounded-md shadow-sm">
+      <button
+        type="button"
+        class="!bg-filter-alternate-toggle relative peer w-full h-11 rounded-l-[4px] bg-white/[.7] border-background-900 border flex items-center gap-x-1.5 rounded-md p-2.5 uppercase text-xs open:rounded-b-none"
+      >
+        <!-- {$gameVariables.sort ? getSortLabelByValue($gameVariables.sort) : $getTranslations.sortFilterH6} -->
+      </button>
+    </div>
+
+    <div
+      class="absolute invisible h-max overflow-y-auto transform opacity-0 scale-95 w-full right-0 origin-top-right rounded-b-md bg-white/[.9] shadow-2xl border-background-900 border border-t-0 open:transform open:opacity-100 open:scale-100 open:visible"
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby="mobile-menu-button"
+      tabindex="-1"
+    >
+      <!-- <div class="flex flex-col gap-y-2 py-1 px-2" role="none"> -->
+      <!-- {#each sortKeys as key}
+									<button
+										class="p-2 text-sm uppercase font-medium text-left rounded-md hover:bg-blue-500 hover:text-white data-active:bg-blue-500 data-active:text-white"
+										role="menuitem"
+										tabindex="-1"
+										id="sort-keys"
+									>
+										{($sortGames[key]?.label)}
+									</button>
+								{/each} -->
+      <!-- </div> -->
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ slotCategories }}>
+  const slotCategoryFilterElem = document.getElementById(
+    "slot-category-filter"
+  );
+  const slotCategoryListElem = document.getElementById("slot-category-list");
+  slotCategoryFilterElem.addEventListener("click", () => {
+    const slotCategoryFilterElemIsOpen =
+      slotCategoryFilterElem.hasAttribute("open");
+    console.log(slotCategoryFilterElemIsOpen);
+    if (slotCategoryFilterElemIsOpen) {
+      slotCategoryFilterElem.removeAttribute("open");
+      slotCategoryListElem.removeAttribute("open");
+    } else {
+      slotCategoryFilterElem.setAttribute("open", "");
+      slotCategoryListElem.setAttribute("open", "");
+    }
+  });
+</script>
