@@ -221,6 +221,7 @@ module.exports = {
       "btn-misc-hover-text": COLORS.white,
 
       // Blogs
+      "blog-list-bkg": COLORS.beige[200],
       "blog-content-bkg": COLORS.white,
       "blog-meta": "#6c757d",
       "blog-card-date-bkg": COLORS.primary,
@@ -229,6 +230,7 @@ module.exports = {
       "blog-card-hover-shadow": "rgba(0, 0, 0, 0.3)",
       "blog-card-figure-bkg": COLORS.black,
       "blog-content-header-anchor": COLORS.primary,
+      "newsletter-bkg": "#0c482c",
 
       // Casino Table
       "gold-tag-t-gradient": COLORS.accent[1],

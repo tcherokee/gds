@@ -1,0 +1,73 @@
+---
+
+import type { Blog } from "../../../interfaces/blog.js"
+import Link from "../helpers/link.astro"
+import BlogCard from "../blogs/blogCard_.astro"
+
+const { data, blogLink = '', blogText = '', singleBlogPage = false } = Astro.props
+
+const truncateAndCleanContent = (blogData: Blog[]): Blog[] => {
+    return blogData.map(item => {
+        if (item.attributes && item.attributes.content1) {
+            // Remove HTML tags
+            const plainText = item.attributes.content1.replace(/<[^>]*>/g, '');
+
+            // Split into words and truncate to 25 words
+            const words = plainText.split(/\s+/).slice(0, 25).join(' ');
+
+            // Update the content1 field
+            item.attributes.content1 = words;
+        }
+		else if (item.attributes && item.attributes.title) {
+            // Split the title into words and truncate to 10 words
+            const truncatedTitle = item.attributes.title.split(/\s+/).slice(0, 10).join(' ');
+
+            // Update the title field
+            item.attributes.title = truncatedTitle;
+        }
+        return item;
+    });
+}
+
+const truncatedData = truncateAndCleanContent(data as Blog[])
+
+---
+
+<div>
+	<div class="blog-container">
+		<div class={singleBlogPage ? "flex flex-col" : "grid grid-cols-1 md:grid-cols-3"}>
+			<BlogCard data={truncatedData} />
+		</div>
+		{
+			blogLink.length > 0 &&
+			<div class="grid gap-2 justify-center mt-3">
+				<Link href={`${blogLink}/`} class="btn btn-secondary blog-btn" text={blogText} />
+			</div>
+		}
+	</div>
+</div>
+
+<style lang="postcss">
+	.blog-container {
+		:global(.blog-wrapper) {
+			margin-right: 15px;
+			margin-bottom: 10px;
+		}
+	}
+
+	.blog-wrap {
+		display: flex;
+	}
+
+	@media (max-width: 650px) {
+		.blog-wrap {
+			flex-direction: column;
+		}
+	}
+
+	:global(.blog-btn) {
+		width: fit-content;
+		padding: 10px;
+		text-transform: uppercase;
+	}
+</style>
