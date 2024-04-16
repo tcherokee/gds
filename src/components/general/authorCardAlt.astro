@@ -3,15 +3,15 @@
 import Icon from "astro-icon"
 
 // Types
-import type { TranslationData } from "../../../interfaces/common/types.ts"
-import { urlTranslate } from '../../../utils/data-store.util'
+import type { TranslationData } from "../../../interfaces/common/types.js"
+import { urlTranslate } from '../../../utils/data-store.util.js'
 
 //Helpers
 import Images from "../helpers/images.astro";
 import Link from "../helpers/link.astro";
 
 // Stores
-import { getTranslations } from "../../../stores/addTranslations.ts"
+import { getTranslations } from "../../../stores/addTranslations.js"
 
 // Get Astro Data from Props
 const { data, isFlat = false, authorIndex = false } = Astro.props
@@ -33,9 +33,9 @@ const siteID = import.meta.env.SITE_ID
 
 ---
 
-<div class="bg-author-wrapper-bkg m-0 rounded-lg p-3 mb-6 md:mb-0">
-	<div class="flex flex-col md:flex-row items-center md:items-start w-full group-[.author-index]:flex-col group-[.author-index]:items-center">
-		<div class="mb-5 flex flex-col gap-2  shrink-0">
+<div class="text-white m-0 rounded-lg p-3 mb-6 md:mb-0">
+	<div class="flex flex-col md:flex-row w-full group-[.author-index]:flex-col group-[.author-index]:items-center">
+		<div class="mb-5 flex flex-col gap-2 shrink-0 order-last md:order-first">
 			<figure class="author-image rounded-lg overflow-hidden">
 				<Images
 					src={isFlat ? photo?.url : photo?.data?.attributes?.url}
@@ -46,96 +46,86 @@ const siteID = import.meta.env.SITE_ID
 				/>
 			</figure>
 			{
-				!authorIndex &&
-				<div class="flex items-center justify-center gap-1 md:justify-normal">
+				<div class="flex md:items-center gap-1">
 					{
 						twitterLink && 
 							<Link href={`${twitterLink}/`} > 
-								<Icon name="twitter" height="25px" />
+								<Icon name="x-icon" height="25px" />
 							</Link>
 					}
 					{
 						facebookLink && 
 							<Link href={`${facebookLink}/`} > 
-								<Icon name="facebook" height="25px" class="fill-facebook" />
+								<Icon name="fb-icon" height="25px" class="fill-facebook" />
 							</Link>
 					}
 					{
 						linkedInLink && 
 							<Link href={`${linkedInLink}/`} > 
-								<Icon name="linkedIn" height="25px" class="fill-linkedin" />
+								<Icon name="linkedin-icon" height="25px" class="fill-linkedin" />
 							</Link>
 					}
 				</div>
 			}
 	</div>
 
-	<div class="ml-5">
-		<h4 class="flex !mt-0 !text-[18px] md:!text-[20px] justify-center my-4 md:justify-normal md:mb-1 group-[.author-index]:justify-center">
-			<Link href={`${urlTranslate[siteID as keyof typeof urlTranslate]['author-page']}/${lcFirstName}.${lcLastName}/`}>
-				{`${firstName} ${lastName}`}
-			</Link>
+	<div class="md:ml-5">
+		<h4 class="flex text-white !mt-0 !text-[18px] md:!text-[20px] my-4 md:justify-normal md:mb-1 group-[.author-index]:justify-center">
+			{`${firstName} ${lastName}`}
 		</h4>
-		<div class="flex md:mr-10 justify-center md:justify-start gap-2 flex-wrap mb-4">
+		
+		<div class="text-[#CED4DA]">
+			<Fragment set:html={ authorIndex ? contentSplit : content1} />
+		</div>
+		<div class="flex md:mr-10 justify-start gap-2 flex-wrap mb-4">
 			{
 				jobTitle &&
-				<div class="bg-grey-300 text-black text-sm flex gap-1 w-fit py-1 px-3 rounded">
+				<div class="bio-box">
 					<span class="block">{translationStore.authorTitle}:</span>
 					<span class="block">{jobTitle}</span>
 				</div>
 			}
 			{
 				experience &&
-				<div class="bg-grey-300 text-black text-sm flex gap-1 w-fit  py-1 px-3 rounded">
+				<div class="bio-box">
 					<span class="block">{translationStore.authorExperience}:</span>
 					<span class="block">{experience}</span>
 				</div>
 			}
 			{
 				areaOfWork &&
-				<div class="bg-grey-300 text-black text-sm flex gap-1 w-fit  py-1 px-3 rounded">
+				<div class="bio-box">
 					<span class="block">{translationStore.authorAreaWork}:</span>
 					<span class="block">{areaOfWork}</span>
 				</div>
 			}
 			{
 				specialization &&
-				<div class="bg-grey-300 text-black text-sm flex gap-1 w-fit  py-1 px-3 rounded">
+				<div class="bio-box">
 					<span class="block">{translationStore.authorSpecialization}:</span>
 					<span class="block">{specialization}</span>
 				</div>
 			}
 		</div>
-		<div class="">
-			<Fragment set:html={ authorIndex ? contentSplit : content1} />
-		</div>
-		{
-				authorIndex &&
-				<div class="flex items-center justify-center gap-1 mb-5">
-					{
-						twitterLink && 
-							<Link href={`${twitterLink}/`} > 
-								<Icon name="twitter" height="25px" />
-							</Link>
-					}
-					{
-						facebookLink && 
-							<Link href={`${facebookLink}/`} > 
-								<Icon name="facebook" height="25px" class="fill-facebook" />
-							</Link>
-					}
-					{
-						linkedInLink && 
-							<Link href={`${linkedInLink}/`} > 
-								<Icon name="linkedIn" height="25px" class="fill-linkedin" />
-							</Link>
-					}
-				</div>
-			}
 	</div>
 </div>
 
 <style is:global lang="postcss">
+	.bio-box {
+		border-radius: 6px;
+		border: 1px solid var(--Effects-blur-stroke, rgba(255, 255, 255, 0.30));
+		background: var(--Effects-blur-fill, rgba(255, 255, 255, 0.36));
+		backdrop-filter: blur(6px);
+		display: flex;
+		height: 32px;
+		padding: 4px 8px;
+		align-items: center;
+		gap: 8px;
+		font-size: 14px;
+		font-style: normal;
+		line-height: 18px;
+		color: #ffffff;
+	}
 	h1, h2, h3, h4 {
 		margin-bottom: 10px;
 	}
