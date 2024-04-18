@@ -40,6 +40,7 @@ import GameProviders from "../../components/general/gameProviders.astro";
 import DesktopSlotCategoryFilter from "../../components/filters/desktopSlotCategoryFilter.astro";
 import GameListBlockV2 from "../../components/blocks/gameListBlockV2.astro";
 import type { TUser } from "../../../interfaces/auth";
+import type { TUserGame } from "../../../interfaces/games";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -88,7 +89,7 @@ export const getStaticPaths = (async () => {
       query: `?${gamesQuery}`,
     });
 
-    const modifiedGames: TUser[] = slotCategoriesGames.map((elem) => {
+    const modifiedGames: TUserGame[] = slotCategoriesGames.map((elem) => {
       return {
         id: elem.id,
         ...elem.attributes,
