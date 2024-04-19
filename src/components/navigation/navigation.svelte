@@ -165,9 +165,9 @@
       <Search />
     </div>
   {:else}
-    <div class="flex items-center lg:gap-x-2">
+    <ul class="flex items-center lg:gap-x-2">
       {#each mainNavigation as nav}
-        <div class="relative group">
+        <li class="relative group">
           {#if nav?.attributes?.children?.data?.length > 0}
             <button
               type="button"
@@ -189,11 +189,11 @@
           {/if}
 
           {#if nav?.attributes?.children?.data?.length > 0}
-            <div
+            <ul
               class="absolute top-full w-max z-40 overflow-hidden rounded-b rounded-tr invisible transition ease-out translate-y-1 duration-200 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 group-hover:transition group-hover:ease-in group-hover:duration-150 group-hover:visible"
               style="display"
             >
-              <div class="relative grid gap-4 bg-nav-hover-bkg px-4 py-4">
+              <li class="relative grid gap-4 bg-nav-hover-bkg px-4 py-4">
                 {#each nav?.attributes?.children?.data as child}
                   <Link
                     href={`${child?.attributes?.url}/`}
@@ -202,12 +202,12 @@
                     {child?.attributes?.title}
                   </Link>
                 {/each}
-              </div>
-            </div>
+              </li>
+            </ul>
           {/if}
-        </div>
+        </li>
       {/each}
-    </div>
+    </ul>
 
     <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
       <Favourite />
