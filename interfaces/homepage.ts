@@ -6,9 +6,9 @@ export type Homepage = {
 };
 
 type Attributes = {
-    title: string;
-    heading: string | null;
-    updatedAt: string;
-    blocks: Block[];
-    seo: Seo;
+  title: string;
+  heading: string | null;
+  updatedAt: string;
+  blocks: Block[];
+  seo: Seo;
 };

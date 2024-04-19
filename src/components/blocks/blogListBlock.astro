@@ -1,6 +1,6 @@
 ---
 
-import type { Blog } from "../../../interfaces/blog.ts"
+import type { Blog } from "../../../interfaces/blog.js"
 import Link from "../helpers/link.astro"
 import BlogCard from "../blogs/blogCard.astro"
 
@@ -49,7 +49,7 @@ const truncatedData = truncateAndCleanContent(data as Blog[])
 
 <style lang="postcss">
 	.blog-container {
-		:global(.blog-card) {
+		:global(.blog-wrapper) {
 			margin-right: 15px;
 			margin-bottom: 10px;
 		}

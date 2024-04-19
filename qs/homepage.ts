@@ -50,6 +50,19 @@ export const homepageQs = () => ({
             },
           },
         },
+        homeTestimonies: {
+          fields: ["title", "testimony", "testifierName", "testifierTitle"],
+          populate: {
+            provider: {
+              fields: ["title", "slug"],
+              populate: {
+                images: {
+                  fields: ["url"],
+                },
+              },
+            },
+          },
+        },
         providersList: {
           populate: {
             images: {

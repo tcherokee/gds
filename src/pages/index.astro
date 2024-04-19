@@ -9,6 +9,7 @@ import type { Homepage } from "../../interfaces/homepage.ts"
 import type { Block, BlogBlockTypes, HomeGameListBlock } from "../../interfaces/common/types.ts"
 import type { Game } from "../../interfaces/games.ts"
 import type { Blog } from "../../interfaces/blog.ts"
+// import type { ProviderTestimony } from "../components/blocks/providerTestimonyBlock.astro"
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -96,7 +97,9 @@ let seo = {
 }
 
 ---
-
+<script define:vars={{homepage}}>
+	console.log("homepage", homepage)
+</script>
 <MainLayout seoData={seo}>
 	<Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 	<div class="featured-background pb-[50px]">
@@ -130,5 +133,7 @@ let seo = {
 							isHomePage={true}/>
 		))
 		}
+
+
 	</div>
 </MainLayout>

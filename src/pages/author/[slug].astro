@@ -24,10 +24,10 @@ import { getTranslations } from '../../../stores/addTranslations';
 import MainLayout from "../../layouts/MainLayout.astro"
 
 // Components
-import AuthorCard from "../../components/general/authorCard.astro"
+import AuthorCard from "../../components/general/authorCardAlt.astro"
 import GameListBlock from "../../components/blocks/gameListBlock.svelte";
 import BlogCard from "../../components/blogs/blogCard.astro"
-import BlogListBlock from "../../components/blocks/blogListBlock.svelte"
+import BlogListBlock from "../../components/blocks/blogListBlock_.svelte"
 import CasinoTable from "../../components/casino/casinoTable.astro";
 
 export const getStaticPaths = (async () => {
@@ -101,32 +101,30 @@ const truncatedBlogObj = page.blogs.map(item => {
 });
 
 ---
-<script define:vars={{page}}>
-    console.log("author page", page);
-</script>
 <MainLayout seoData={seo}>
-    <div class="featured-no-curve pt-5">
-        <div class="section-wrapper glass-wrapper ">
-            <div>
+    <div class="relative after:content-[''] bg-blog-list-bkg">
+        <div class="w-full pt-5 px-3 author-upper-section pb-[65px]">
+            <div class="xl:container">
                 <div>
                     <AuthorCard  data={page} isFlat={true} />
                 </div>
-            </div>
-
-            {
-                page.games.length > 0 &&
-                <div class="mt-5">
-                    <div class="mb-5">
-                        <h2>Ultimi giochi recensiti dall'autore</h2>
+    
+                {
+                    page.games.length > 0 &&
+                    <div class="mt-[80px]">
+                        <h2 class="text-white">Ultimi giochi recensiti dall'autore</h2>
                     </div>
-                    <GameListBlock data={gameBlockObj} author={page.slug} client:load />
-                </div>
-            }
-
-            {
+                    <div class="mt-5 glass-wrapper">
+                        <GameListBlock data={gameBlockObj} author={page.slug} client:load />
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="relative xl:container px-2 pb-5">
+          {
                 page?.blogs.length > 0 &&
-                <div class="mt-5">
-                    <div class="mb-5">
+                <div>
+                    <div class="mt-[60px] md:mt-[80px] mb-[40px] md:mb-[65px]">
                         <h2>Articoli recenti dell'autore</h2>
                     </div>
                     <div class="grid md:grid-cols-3 gap-3 md:gap-8">
@@ -149,3 +147,9 @@ const truncatedBlogObj = page.blogs.map(item => {
         </div>
     </div>
 </MainLayout>
+
+<style lang="scss">
+    .author-upper-section {
+		background: var(--Gradients-BG-Blue, linear-gradient(180deg, theme('colors.background-top-gradient') 0%, theme('colors.background-bottom-gradient') 100%));
+	}
+</style>
