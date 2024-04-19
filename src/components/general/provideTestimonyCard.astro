@@ -1,0 +1,31 @@
+---
+import type { ProviderTestimony } from "../../../interfaces/common/types"
+import Images from '../../components/helpers/images.astro';
+
+const { testimony, count } = Astro.props
+---
+<script define:vars={{testimony, count}}>
+	console.log("Testimony Card",testimony, count)
+</script>
+
+<div class="testimony-wrapper flex flex-col">
+    <div class="title text-xl font-bold mb-3">{testimony?.title}</div>
+    <div class="testimony text-lg mb-8">{testimony.testimony}</div>
+    <div class="flex gap-2">
+        <div class="provider-img">
+            <Images
+            src={testimony?.provider?.data?.attributes?.images?.data?.attributes.url}
+            imageWidth={116}
+            imageHeight={40}
+            classes="providerImage rounded border-[1px] border-[#3FE6FC]"
+            alt={testimony?.provider?.data?.attributes?.title+' photo'}
+            />
+        </div>
+        <div class="flex flex-col text-sm">
+            <div>{testimony.testifierName}</div>
+            <div>{testimony.testifierTitle}</div>
+        </div>
+    </div>
+</div>
+
+

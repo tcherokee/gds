@@ -16,6 +16,12 @@ export const mapBlocksToDynamicComponents = (
             name: "introWithImage",
             extension: "astro",
           };
+        case "homepage.home-testimonies":
+          return {
+            location: "blocks",
+            name: "providerTestimonyBlock",
+            extension: "astro",
+          };
         case "homepage.home-blog-list":
           return {
             location: "blocks",

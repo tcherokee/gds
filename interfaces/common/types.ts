@@ -70,6 +70,14 @@ export type ProviderData = {
   };
 };
 
+export type ProviderTestimony = {
+  title: string;
+  testimony: string;
+  testifierName: string;
+  testifierTitle: string;
+  providers: ProviderData;
+};
+
 export type GameProvider = {
   id?: number;
   slotProvider: ProviderData;

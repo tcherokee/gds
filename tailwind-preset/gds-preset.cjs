@@ -1,5 +1,5 @@
 const COLORS = {
-  bodybg: "#E0E3E6",
+  bodybg: "#DCE9F3",
   bodyText: "#475059",
   white: "#fff",
   black: "#000000",
