@@ -6,8 +6,8 @@ import qs from "qs";
 
 // Types
 import type { GetStaticPaths } from "astro";
-import type { Slotprovider } from "../../../interfaces/slot-provider";
 import type { Faqs, TranslationData } from "../../../interfaces/common/types";
+import type { Slotprovider } from "../../../interfaces/slot-provider";
 
 // Stores
 import { getTranslations } from "../../../stores/addTranslations";
@@ -16,18 +16,18 @@ import { getTranslations } from "../../../stores/addTranslations";
 import { gamesQs, slotProvidersQs } from "../../../qs/ssm-games";
 
 // Helpers
-import { urlTranslate } from "../../../utils/data-store.util";
 import fetchApi from "../../../lib/strapi";
+import { urlTranslate } from "../../../utils/data-store.util";
 
 // Components
-import MainLayout from "../../layouts/MainLayout.astro";
-import Breadcrumb from "../../components/layout/breadcrumbs.astro";
-import IntroBlock from "../../components/general/introWithImage.astro";
-import SlotProviderGames from "../../components/games/slotProviderGames.astro";
 import ContentBlock from "../../components/blocks/contentBlock.astro";
-import CasinoSideBar from "../../components/casino/casinoSidebar.astro";
 import CasinoComparison from "../../components/casino/casinoComparison.astro";
+import CasinoSideBar from "../../components/casino/casinoSidebar.astro";
+import SlotProviderGames from "../../components/games/slotProviderGames.astro";
 import FaqsComponent from "../../components/general/faqs.astro";
+import IntroBlock from "../../components/general/introWithImage.astro";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch

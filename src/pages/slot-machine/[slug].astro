@@ -107,7 +107,6 @@ export const getStaticPaths = (async () => {
       params: { slug },
       props: {
         page: categoryPage[i],
-        games: slotCategoriesGames,
         modifiedGames,
       },
     });
@@ -122,7 +121,7 @@ export const getStaticPaths = (async () => {
   // });
 }) satisfies GetStaticPaths;
 
-const { page, games, modifiedGames } = Astro.props;
+const { page, modifiedGames } = Astro.props;
 const { slug } = Astro.params;
 
 const translationStore: TranslationData = getTranslations.get();
