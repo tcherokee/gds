@@ -103,6 +103,8 @@ const { seoData } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="canonical" href={`${seoData.url}/`} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
     {seoData?.author && <meta name="author" content={seoData?.author} />}
     <link rel="icon" type="image/svg+xml" href={favicon} />
     <meta name="generator" content={Astro.generator} />

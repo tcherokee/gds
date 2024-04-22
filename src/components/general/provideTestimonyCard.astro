@@ -21,9 +21,9 @@ const { testimony, count } = Astro.props
             alt={testimony?.provider?.data?.attributes?.title+' photo'}
             />
         </div>
-        <div class="flex flex-col text-sm">
-            <div>{testimony.testifierName}</div>
-            <div>{testimony.testifierTitle}</div>
+       <div class="text-left flex flex-col text-sm text-[#7C838D]">
+            <div class="font-normal">{testimony.testifierName}</div>
+            <div class="font-bold">{testimony.testifierTitle}</div>
         </div>
     </div>
 </div>
