@@ -5,6 +5,7 @@ import fetchApi from "../../../lib/strapi";
 import { gamesQs } from "../../../qs/ssm-games";
 import GameListBlock from "../../components/blocks/gameListBlock.svelte";
 import Pagination from "../../components/helpers/pagination.astro";
+import type { TUserGame } from "../../../interfaces/games";
 
 const { slug } = Astro.props;
 const newSlug = slug.includes("/") ? slug.split("/")[0] : slug;
@@ -18,6 +19,24 @@ const games = await fetchApi<any>({
   isPaginated: true,
   query: `?${query}`,
 });
+let initialGames: TUserGame[] = [];
+
+if (games) {
+  initialGames = games.data.map((elem: any) => {
+    return {
+      id: elem.id,
+      ...elem.attributes,
+      images: {
+        url: elem.attributes.images.data?.attributes.url ?? "",
+      },
+      provider: {
+        slug: elem.attributes.provider.data.attributes.slug,
+        title: elem.attributes.provider.data.attributes.title,
+      },
+    };
+  });
+}
+console.log("INIT_GAMES:", initialGames);
 
 let siteID = import.meta.env.SITE_ID;
 
@@ -41,7 +60,7 @@ const gameBlock = {
 };
 ---
 
-<GameListBlock data={gameBlock} {page} client:load />
+<GameListBlock data={gameBlock} {page} {initialGames} client:load />
 
 <Pagination
   currPage={games?.meta?.pagination?.page}
