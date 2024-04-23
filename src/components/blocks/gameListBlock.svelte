@@ -1,55 +1,57 @@
 <script lang="ts">
   // First and Third Party Components
   import qs from "qs";
-  import Lazyload from "vanilla-lazyload"
-  import { onMount } from "svelte";
-
   // Stores
-  import { sortOptions } from "../../../stores/sortFilters.ts";
-  import { gameVariables, games, gamesQsStore } from "../../../stores/games.ts";
   import { getTranslations } from "../../../stores/addTranslations.ts";
-
+  import { gameVariables, games, gamesQsStore } from "../../../stores/games.ts";
+  import { sortOptions } from "../../../stores/sortFilters.ts";
   // Components
-  import GameCard from "../games/gameCard.svelte";
   import DesktopGameFilter from "../filters/desktopGameFilter.svelte";
   import MobileGameFilter from "../filters/mobileGameFilter.svelte";
-
+  import GameCard from "../games/gameCard.svelte";
   // Helpers
   import { gamesQs } from "../../../qs/games.ts";
   import MediaQuery from "../helpers/mediaQuery.svelte";
-
   // Types
-  import type { Game, TUserGame } from "../../../interfaces/games.ts";
-  import type { CustomGameList, TranslationData } from "../../../interfaces/common/types.ts";
+  import type {
+    CustomGameList,
+    TProviderAttributesOnly,
+  } from "../../../interfaces/common/types.ts";
+  import type {
+    TUserGame,
+    TUserGameProvider,
+  } from "../../../interfaces/games.ts";
 
   export let data: CustomGameList;
-  export let author: string = '';
+  export let author: string = "";
   export let page = 1;
   export let initialGames: TUserGame[] = [];
+  export let gameProviders: TProviderAttributesOnly[] = [];
+  export let slotCategories: TUserGameProvider[] = [];
 
   // Get provider slugs
   const providerSlugs = data.gameProviders.map(
-    (game:any) => game.slotProvider.data.attributes.slug
+    (game: any) => game.slotProvider.data.attributes.slug
   );
 
   // Get Category Slugs
   const categorySlugs = data?.gameCategories.map(
-    (game:any) => game.slotCategories.data.attributes.slug
-  )
+    (game: any) => game.slotCategories.data.attributes.slug
+  );
 
   // Set Game Variables for API Call
   gameVariables.setKey("limit", data.numberOfGames);
   gameVariables.setKey("sort", $sortOptions[data.sortBy] || "ratingAvg:desc");
   gameVariables.setKey("providers", providerSlugs);
   gameVariables.setKey("categories", categorySlugs);
-  gameVariables.setKey('author', author);
-  gameVariables.setKey('page', page);
+  gameVariables.setKey("author", author);
+  gameVariables.setKey("page", page);
 
   // Create QS String from the updated variables
-  const query = qs.stringify(gamesQs($gameVariables), {
-    encodeValuesOnly: true,
-  });
-  gamesQsStore.set(`?${query}`);
+  // const query = qs.stringify(gamesQs($gameVariables), {
+  //   encodeValuesOnly: true,
+  // });
+  // gamesQsStore.set(`?${query}`);
 
   const loadMoreGames = () => {
     gameVariables.setKey("limit", $gameVariables.limit + data.numberOfGames);
@@ -64,63 +66,67 @@
 
   $: {
     if (!$games.loading) {
-      genericGame = $games?.data?.data?.map((game) => {
-        const newGame: TUserGame = {
-          id: game.id,
-          slug: game.attributes.slug,
-          title: game.attributes.title,
-          publishedAt: game.attributes.publishedAt,
-          ratingAvg: game.attributes.ratingAvg,
-          images: {
-            url: game.attributes.images.data.attributes.url,
-          },
-          provider: {
-            slug: game.attributes.provider.data.attributes.slug as string,
-            title: game.attributes.provider.data.attributes.title as string,
-          },
-          categories: game.attributes.categories.data.map((category) => {
-            return { title: category.attributes.title as string };
-          }) ?? [],
-        };
-        return newGame
-      }) ?? [];
+      genericGame =
+        $games?.data?.data?.map((game) => {
+          const newGame: TUserGame = {
+            id: game.id,
+            slug: game.attributes.slug,
+            title: game.attributes.title,
+            publishedAt: game.attributes.publishedAt,
+            ratingAvg: game.attributes.ratingAvg,
+            images: {
+              url: game.attributes.images.data.attributes.url,
+            },
+            provider: {
+              slug: game.attributes.provider.data.attributes.slug as string,
+              title: game.attributes.provider.data.attributes.title as string,
+            },
+            categories:
+              game.attributes.categories.data.map((category) => {
+                return { title: category.attributes.title as string };
+              }) ?? [],
+          };
+          return newGame;
+        }) ?? [];
     }
   }
-  
 </script>
 
 <div>
   <div class="flex flex-col align-center relative xl:container px-2 pb-5">
     <MediaQuery query="(max-width: 768px)" let:matches>
       {#if matches}
-      <MobileGameFilter {page}/>
+        <MobileGameFilter {page} />
       {:else}
-      <DesktopGameFilter {page} showGameFilterPanel={data.showGameFilterPanel} />
+        <DesktopGameFilter
+          {page}
+          showGameFilterPanel={data.showGameFilterPanel}
+          {gameProviders}
+          {slotCategories}
+        />
       {/if}
     </MediaQuery>
     <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
-      {#if !$games.loading}
+      {#if initialGames.length && !genericGame.length}
+        {#each initialGames as game}
+          <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
+            <GameCard {game} translations={$getTranslations} />
+          </div>
+        {/each}
+      {:else if !$games.loading}
         {#each genericGame as game}
           <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
-            <GameCard game={game} translations={$getTranslations} />
+            <GameCard {game} translations={$getTranslations} />
           </div>
         {/each}
       {:else}
-          {#if initialGames.length}
-            {#each initialGames as game}
-              <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
-                <GameCard game={game} translations={$getTranslations} />
-              </div>
-            {/each}
-          {:else}
-            {#each {length: data.numberOfGames} as _}
-              <div class={`w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6`}>
-                <aside
-                  class="relative cursor-pointer rounded-lg aspect-[235/244] w-full bg-misc/20 transition-shadow duration-[0.3s] sm:cursor-auto"
-                />
-              </div>  
-            {/each}
-          {/if}
+        {#each { length: data.numberOfGames } as _}
+          <div class={`w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6`}>
+            <aside
+              class="relative cursor-pointer rounded-lg aspect-[235/244] w-full bg-misc/20 transition-shadow duration-[0.3s] sm:cursor-auto"
+            />
+          </div>
+        {/each}
       {/if}
     </div>
     <!-- Load More Button -->

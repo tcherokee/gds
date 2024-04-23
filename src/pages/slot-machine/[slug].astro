@@ -6,12 +6,13 @@ import qs from "qs";
 
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
+import type { CategoryPageItem } from "../../../interfaces/category-page";
 import type {
   Faqs,
   GameFilters,
+  TProviderAttributesOnly,
   TranslationData,
 } from "../../../interfaces/common/types";
-import type { CategoryPageItem } from "../../../interfaces/category-page";
 
 // Layouts
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -23,24 +24,19 @@ import { getTranslations } from "../../../stores/addTranslations";
 import { categoryPagesQs } from "../../../qs/categoryPages";
 
 // Components
-import IntroWithImage from "../../components/general/introWithImage.astro";
-import GameListBlock from "../../components/blocks/gameListBlock.svelte";
-import AstroGameListBlock from "../../components/blocks/gameListBlock.astro";
 import ContentBlock from "../../components/blocks/contentBlock.astro";
 import FaqListBlock from "../../components/blocks/faqListBlock.astro";
+import GameListBlock from "../../components/blocks/gameListBlock.svelte";
 import CasinoSidebar from "../../components/casino/casinoSidebar.astro";
+import IntroWithImage from "../../components/general/introWithImage.astro";
 
 // Helpers
+import type { TUserGame, TUserGameProvider } from "../../../interfaces/games";
 import fetchApi from "../../../lib/strapi";
-import { urlTranslate } from "../../../utils/data-store.util";
-import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
-import Quicklinks from "../../components/helpers/quicklinks.astro";
 import { gamesQs } from "../../../qs/games";
-import GameProviders from "../../components/general/gameProviders.astro";
-import DesktopSlotCategoryFilter from "../../components/filters/desktopSlotCategoryFilter.astro";
-import GameListBlockV2 from "../../components/blocks/gameListBlockV2.astro";
-import type { TUser } from "../../../interfaces/auth";
-import type { TUserGame } from "../../../interfaces/games";
+import { urlTranslate } from "../../../utils/data-store.util";
+import Quicklinks from "../../components/helpers/quicklinks.astro";
+import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -57,6 +53,21 @@ export const getStaticPaths = (async () => {
   // const categorySlugs = data?.gameCategories.map(
   //   (game: any) => game.slotCategories.data.attributes.slug
   // );
+
+  // Fetch Game Providers Filter
+  const gameProviders = await fetchApi<{
+    id: number;
+    attributes: {
+      filterProviders: {
+        data: TProviderAttributesOnly[];
+      };
+    };
+  }>({
+    endpoint: "layout",
+    wrappedByKey: "data",
+    query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
+  });
+
   let gamesQueryObj: GameFilters = {
     limit: 18,
     sort: "views:desc",
@@ -65,6 +76,8 @@ export const getStaticPaths = (async () => {
     categories: [],
     author: "",
   };
+
+  let slotCategories: TUserGameProvider[] = [];
 
   // const slotCategoriesGames = await fetchApi<any[]>({
   //   endpoint: "slot-providers",
@@ -75,6 +88,7 @@ export const getStaticPaths = (async () => {
 
   for (let i = 0; i < categoryPage.length; i++) {
     const slug = categoryPage[i]?.attributes?.slug;
+    slotCategories.push({ title: categoryPage[i]?.attributes?.slug, slug });
     gamesQueryObj = {
       ...gamesQueryObj,
       categories: [slug],
@@ -108,6 +122,10 @@ export const getStaticPaths = (async () => {
       props: {
         page: categoryPage[i],
         modifiedGames,
+        gameProviders: gameProviders.attributes.filterProviders
+          ? gameProviders.attributes.filterProviders.data
+          : [],
+        slotCategories,
       },
     });
   }
@@ -121,7 +139,7 @@ export const getStaticPaths = (async () => {
   // });
 }) satisfies GetStaticPaths;
 
-const { page, modifiedGames } = Astro.props;
+const { page, modifiedGames, gameProviders, slotCategories } = Astro.props;
 const { slug } = Astro.params;
 
 const translationStore: TranslationData = getTranslations.get();
@@ -177,7 +195,13 @@ const seo = {
       timeDate={page?.attributes?.updatedAt}
       authorData={undefined}
     />
-    <GameListBlock data={gameBlock} initialGames={modifiedGames} client:load />
+    <GameListBlock
+      data={gameBlock}
+      initialGames={modifiedGames}
+      {gameProviders}
+      {slotCategories}
+      client:load
+    />
   </div>
   <div class="relative xl:container px-2">
     <div class="flex flex-col gap-x-8 mt-10 md:flex-row">
