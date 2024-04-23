@@ -2,12 +2,8 @@
 import type { ProviderTestimony } from "../../../interfaces/common/types"
 import Images from '../../components/helpers/images.astro';
 
-const { testimony, count } = Astro.props
+const { testimony } = Astro.props
 ---
-<script define:vars={{testimony, count}}>
-	console.log("Testimony Card",testimony, count)
-</script>
-
 <div class="testimony-wrapper flex flex-col">
     <div class="title text-xl font-bold mb-3">{testimony?.title}</div>
     <div class="testimony text-lg mb-8">{testimony.testimony}</div>
