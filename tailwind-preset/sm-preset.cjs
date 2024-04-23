@@ -289,6 +289,9 @@ module.exports = {
       "menu-link-text": COLORS.blue[100],
       "menu-link-text-active": COLORS.white,
       "menu-link-bg-active": COLORS.blue[300],
+
+      // Testimony box
+      "testimony-box-shadow": COLORS.purple[700],
     },
     backgroundImage: {
       "featured-curve": `url('/src/assets/curve.svg'),
