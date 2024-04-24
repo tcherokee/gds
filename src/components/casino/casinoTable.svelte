@@ -274,7 +274,7 @@
                             class="fill-text-grey-500 ml-1"
                           />
                         </span>
-                        <div class="wrap-collabsible w-full md:hidden mt-2">
+                        <!-- <div class="wrap-collabsible w-full md:hidden mt-2">
                           <input
                             id={`welcomeBonus${i}`}
                             class="toggle hidden peer"
@@ -300,7 +300,7 @@
                                 ?.termsConditions}
                             </div>
                           </div>
-                        </div>
+                        </div> -->
                       </div>
                     </td>
                     <td
@@ -333,7 +333,7 @@
                               class="fill-text-grey-500 ml-1"
                             />
                           </span>
-                          <div class="wrap-collabsible w-full md:hidden mt-2">
+                          <!-- <div class="wrap-collabsible w-full md:hidden mt-2">
                             <input
                               id={`noDepositBonus${i}`}
                               class="toggle hidden peer"
@@ -358,7 +358,7 @@
                                 {@html noDepositBonus(casino)?.terms}
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         {:else}
                           <span> - </span>
                         {/if}
@@ -400,7 +400,7 @@
                               class="fill-text-grey-500 ml-1"
                             />
                           </span>
-                          <div class="wrap-collabsible w-full md:hidden mt-2">
+                          <!-- <div class="wrap-collabsible w-full md:hidden mt-2">
                             <input
                               id={`bonus${i}`}
                               class="toggle hidden peer"
@@ -422,10 +422,10 @@
                               class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max"
                             >
                               <div class="content-inner text-grey-500 mt-4">
-                                {casino?.attributes?.termsAndConditions?.copy}
+                                {@html casino?.attributes?.termsAndConditions?.copy}
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
                       </div>
                     </td>

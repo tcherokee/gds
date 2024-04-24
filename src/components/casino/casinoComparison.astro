@@ -97,12 +97,12 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                             href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored"
                             set:html={welcomeBonus(casinoData)}>
                         </Link>
-                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                        <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                        {/* <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span> */}
+                        {/* <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
                             <div slot="content" class="content-inner text-grey-500 mt-4">
                                 <Fragment set:html={casinoData?.attributes.bonusSection?.termsConditions} />
                             </div>
-                        </Collapse>
+                        </Collapse> */}
                     </div>
                     <div class="flex flex-col border-t border-grey-300 bg-gradient-to-r from-no-deposit-gradient/20 via-white/30 via-[percentage:30%_70%] to-no-deposit-gradient/20 items-center justify-center h-full px-3 py-6">
                         <div class="text-[#7C838D] text-center text-sm leading-[18px] font-bold">
@@ -111,12 +111,12 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         <Link href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored">
                             <Fragment set:html={noDepositBonus(casinoData)?.bonus} />
                         </Link>
-                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casinoData)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                        <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                        {/* <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casinoData)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span> */}
+                        {/* <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
                             <div class="content-inner text-grey-500 mt-4">
                                 <Fragment set:html={noDepositBonus(casinoData)?.terms} />
                             </div>
-                        </Collapse>
+                        </Collapse> */}
                     </div>
                     <div class="flex flex-col border-t border-grey-300 bg-white items-center justify-center h-full px-3 py-6">
                         <div class="h-full w-full flex flex-col justify-end items-center sm:justify-center">
@@ -131,12 +131,12 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                                     {casinoData?.attributes.casinoBonus?.bonusCode ?casinoData?.attributes?.casinoBonus?.bonusCode : translationStore.visitSite}
                                 </Link>
                             }
-                            <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.termsAndConditions?.copy} data-tooltip-placement="left">{translationStore.termsConditions} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                            <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                            {/* <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.termsAndConditions?.copy} data-tooltip-placement="left">{translationStore.termsConditions} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span> */}
+                            {/* <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
                                 <div class="content-inner text-grey-500 mt-4">
                                     <Fragment set:html={casinoData?.attributes.termsAndConditions?.copy} />
                                 </div>
-                            </Collapse>
+                            </Collapse> */}
                         </div> 
                     </div>
                 </div>

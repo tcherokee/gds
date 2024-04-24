@@ -1,84 +1,114 @@
 ---
-
 // First or Third Party Plugins
-import { Link } from 'astro-link'
-import Icon from 'astro-icon'
-import dayjs from 'dayjs'
-import advancedFormat from 'dayjs/plugin/advancedFormat'
-import 'dayjs/locale/it'
+import { Link } from "astro-link";
+import Icon from "astro-icon";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import "dayjs/locale/it";
 
 // Import Types
-import type { TranslationData } from "../../../interfaces/common/types.js"
-import { getTranslations } from "../../../stores/addTranslations.js"
+import type { TranslationData } from "../../../interfaces/common/types.js";
+import { getTranslations } from "../../../stores/addTranslations.js";
 
 // Types
-import type { Blog, AuthorBlogAttributes } from "../../../interfaces/blog.js"
+import type { Blog, AuthorBlogAttributes } from "../../../interfaces/blog.js";
 
 // Helpers
-import Image from "../helpers/images.astro"
+import Image from "../helpers/images.astro";
 
-dayjs.extend(advancedFormat)
-dayjs.locale(import.meta.env.LANG)
+dayjs.extend(advancedFormat);
+dayjs.locale(import.meta.env.LANG);
 
-const { data } = Astro.props
+const { data } = Astro.props;
 
-const translationStore: TranslationData = getTranslations.get()
-
+const translationStore: TranslationData = getTranslations.get();
 ---
-{
-	data.map((blog: Blog | AuthorBlogAttributes) => (
-		<div class="blog-wrapper mb-[20px]">
-			<div class="blog-card p-0">
-				<div class="img-container">
-					<figure>
-						<Image
-							classes="blog-image"
-							src ={(blog as Blog)?.attributes?.images?.data?.attributes?.url ?? (blog as AuthorBlogAttributes)?.images?.url}
-							alt={(blog as Blog)?.attributes?.title ?? (blog as AuthorBlogAttributes)?.title}
-							imageWidth={430}
-							imageHeight={380}
-						/>
-					</figure>
-					<div class="overlay flex flex-col text-[14px]">
-						<div class="blog-author-name">
-							<Link href={`/author/${(blog as Blog)?.attributes?.author?.data?.attributes?.firstName.toLowerCase() ?? (blog as AuthorBlogAttributes)?.author?.firstName.toLowerCase()}.${(blog as Blog)?.attributes?.author?.data?.attributes?.lastName.toLowerCase() ??  (blog as AuthorBlogAttributes)?.author?.lastName.toLowerCase()}/`}>
-								{((blog as Blog)?.attributes?.author?.data?.attributes?.firstName ?? (blog as AuthorBlogAttributes)?.author?.firstName) +" "+ ((blog as Blog)?.attributes?.author?.data?.attributes?.lastName ?? (blog as AuthorBlogAttributes)?.author?.lastName)}
-							</Link>
-						</div>
-						<div class="flex justify-between items-center">
-							<div class="flex items-center">
-								<div class="blog-category text-[10px] mr-2 text-white font-bold rounded-[40px]">
-									Category
-								</div>
-								<div>
-									5 mins read
-								</div>
-							</div>
-							<div>
-								{dayjs((blog as Blog)?.attributes?.createdAt ?? (blog as AuthorBlogAttributes)?.createdAt ).format('D')+" "}
-								{dayjs((blog as Blog)?.attributes?.createdAt ?? (blog as AuthorBlogAttributes)?.createdAt ).format('MMM')+", "}
-								{dayjs((blog as Blog)?.attributes?.createdAt ?? (blog as AuthorBlogAttributes)?.createdAt ).format('YYYY')}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="blog-content flex flex-col px-3">
-				<h4 class="line-clamp-2 mt-3">
-					<Link href={`/blog/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}>{(blog as Blog)?.attributes?.title ?? (blog as AuthorBlogAttributes)?.title}</Link>
-				</h4>
-				<div class="mt-3">
-					<p class="line-clamp-3">{(blog as Blog)?.attributes?.content1 ?? (blog as AuthorBlogAttributes)?.content1}</p>
-				</div>
 
-				<div class="mb-3 text-[#01579B]">
-					<Link href={`/blog_/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}>
-						{translationStore.readMore} >
-					</Link>
-				</div>
-			</div>
-		</div>
-		))
+{
+  data.map((blog: Blog | AuthorBlogAttributes) => (
+    <div class="blog-wrapper mb-[20px]">
+      <div class="blog-card p-0">
+        <div class="img-container">
+          <figure>
+            <Image
+              classes="blog-image"
+              src={
+                (blog as Blog)?.attributes?.images?.data?.attributes?.url ??
+                (blog as AuthorBlogAttributes)?.images?.url
+              }
+              alt={
+                (blog as Blog)?.attributes?.title ??
+                (blog as AuthorBlogAttributes)?.title
+              }
+              imageWidth={430}
+              imageHeight={380}
+            />
+          </figure>
+          <div class="overlay flex flex-col text-[14px]">
+            <div class="blog-author-name">
+              <Link
+                href={`/author/${(blog as Blog)?.attributes?.author?.data?.attributes?.firstName.toLowerCase() ?? (blog as AuthorBlogAttributes)?.author?.firstName.toLowerCase()}.${(blog as Blog)?.attributes?.author?.data?.attributes?.lastName.toLowerCase() ?? (blog as AuthorBlogAttributes)?.author?.lastName.toLowerCase()}/`}
+              >
+                {((blog as Blog)?.attributes?.author?.data?.attributes
+                  ?.firstName ??
+                  (blog as AuthorBlogAttributes)?.author?.firstName) +
+                  " " +
+                  ((blog as Blog)?.attributes?.author?.data?.attributes
+                    ?.lastName ??
+                    (blog as AuthorBlogAttributes)?.author?.lastName)}
+              </Link>
+            </div>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <div class="blog-category text-[10px] mr-2 text-white font-bold rounded-[40px]">
+                  Generale
+                </div>
+                <div>Tempo lettura 5 min</div>
+              </div>
+              <div>
+                {dayjs(
+                  (blog as Blog)?.attributes?.createdAt ??
+                    (blog as AuthorBlogAttributes)?.createdAt
+                ).format("D") + " "}
+                {dayjs(
+                  (blog as Blog)?.attributes?.createdAt ??
+                    (blog as AuthorBlogAttributes)?.createdAt
+                ).format("MMM") + ", "}
+                {dayjs(
+                  (blog as Blog)?.attributes?.createdAt ??
+                    (blog as AuthorBlogAttributes)?.createdAt
+                ).format("YYYY")}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="blog-content flex flex-col px-3">
+        <h4 class="line-clamp-2 mt-3">
+          <Link
+            href={`/blog/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}
+          >
+            {(blog as Blog)?.attributes?.title ??
+              (blog as AuthorBlogAttributes)?.title}
+          </Link>
+        </h4>
+        <div class="mt-3">
+          <p class="line-clamp-3">
+            {(blog as Blog)?.attributes?.content1 ??
+              (blog as AuthorBlogAttributes)?.content1}
+          </p>
+        </div>
+
+        <div class="mb-3 text-[#01579B]">
+          <Link
+            href={`/blog_/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}
+          >
+            {translationStore.readMore} >
+          </Link>
+        </div>
+      </div>
+    </div>
+  ))
 }
 
 <!-- <h4>

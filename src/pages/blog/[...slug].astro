@@ -1,108 +1,110 @@
 ---
 export const prerender = true;
 import type { GetStaticPaths } from "astro";
-import qs from 'qs'
+import qs from "qs";
 
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import "dayjs/locale/it";
 
-import fetchApi from '../../../lib/strapi';
-import MainLayout from '../../layouts/MainLayout.astro';
-import { urlTranslate } from '../../../utils/data-store.util'
-import {blogpageQs} from "../../../qs/blog-page"
-import { blogmetaQs } from "../../../qs/blog-meta"
-import type { Blog, BlogList } from "../../../interfaces/blog"
-import { blogcardQs } from "../../../qs/blog-cards"
-import BlogListBlock from '../../components/blocks/blogListBlock.astro';
-import BlogCard from '../../components/blogs/blogCard.astro';
-import Images from '../../components/helpers/images.astro';
-import TimeDate from '../../components/helpers/timeDate.astro';
-import AuthorCard from '../../components/general/authorCard.astro';
-import Pagination from '../../components/helpers/pagination.astro';
+import fetchApi from "../../../lib/strapi";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { urlTranslate } from "../../../utils/data-store.util";
+import { blogpageQs } from "../../../qs/blog-page";
+import { blogmetaQs } from "../../../qs/blog-meta";
+import type { Blog, BlogList } from "../../../interfaces/blog";
+import { blogcardQs } from "../../../qs/blog-cards";
+import BlogListBlock from "../../components/blocks/blogListBlock.astro";
+import BlogCard from "../../components/blogs/blogCard.astro";
+import Images from "../../components/helpers/images.astro";
+import TimeDate from "../../components/helpers/timeDate.astro";
+import AuthorCard from "../../components/general/authorCard.astro";
+import Pagination from "../../components/helpers/pagination.astro";
 import Link from "../../components/helpers/link.astro";
 
-
 export const getStaticPaths = (async () => {
+  const query1 = qs.stringify(blogcardQs(12, 1), { encodeValuesOnly: true });
 
-	const query1 = qs.stringify(blogcardQs(12, 1), {encodeValuesOnly: true})
+  const blogCards = await fetchApi<BlogList>({
+    endpoint: "blogs",
+    isPaginated: true,
+    query: `?${query1}`,
+  });
 
-    const blogCards = await fetchApi<BlogList>({
-        endpoint: 'blogs',
-        isPaginated: true,
-        query: `?${query1}`
-    })
-	
+  let prerenderPath: any[] = [];
 
-	let prerenderPath: any[] = [];
+  for (let i = 1; i <= blogCards.meta.pagination.pageCount; i++) {
+    const slug = `p${i}`;
+    const query = qs.stringify(blogcardQs(12, i), { encodeValuesOnly: true });
+    const blogs = await fetchApi<any>({
+      endpoint: "blogs",
+      isPaginated: true,
+      query: `?${query}`,
+    });
 
-    for (let i = 1; i <= blogCards.meta.pagination.pageCount; i++) {
-        const slug = `p${i}`;
-        const query = qs.stringify(blogcardQs(12, i), { encodeValuesOnly: true});
-        const blogs = await fetchApi<any>({
-            endpoint: "blogs",
-            isPaginated: true,
-            query: `?${query}`,
-        });
-        
+    prerenderPath.push({
+      params: { slug },
+      props: { page: blogs, isPaginated: true },
+    });
+  }
 
-        prerenderPath.push({
-            params: { slug },
-            props: { page: blogs, isPaginated: true },
-        });
-    }
+  // Import the QS Query string for custom slugs and prepare it for the API fetch
+  const query = qs.stringify(blogpageQs(), { encodeValuesOnly: true });
+  // Request to the Fetch Function to get page data from API
+  const blog = await fetchApi<Blog[]>({
+    endpoint: "blogs",
+    wrappedByKey: "data",
+    query: `?${query}`,
+  });
 
-    // Import the QS Query string for custom slugs and prepare it for the API fetch
-    const query = qs.stringify(blogpageQs(), {encodeValuesOnly: true})
-    // Request to the Fetch Function to get page data from API
-    const blog = await fetchApi<Blog[]>({
-		endpoint: 'blogs',
-		wrappedByKey: 'data',
-		query: `?${query}`
-	})
+  for (const b of blog) {
+    prerenderPath.push({
+      params: { slug: b?.attributes?.slug },
+      props: { page: b, isPaginated: false },
+    });
+  }
 
-	for (const b of blog) {
-		 prerenderPath.push({
-            params: { slug: b?.attributes?.slug },
-            props: { page: b, isPaginated: false },
-        });
-	}
-
-	return prerenderPath
-
+  return prerenderPath;
 }) satisfies GetStaticPaths;
 
-const { page, isPaginated } = Astro.props
+const { page, isPaginated } = Astro.props;
 const { slug } = Astro.params; //get the slug from the page url
 
 // get blog cards for side menu
-const blogCardquery = qs.stringify(blogcardQs(3, 1), {encodeValuesOnly: true})
+const blogCardquery = qs.stringify(blogcardQs(3, 1), {
+  encodeValuesOnly: true,
+});
 const blogCards = await fetchApi<BlogList>({
-	endpoint: 'blogs',
-    wrappedByKey: 'data',
-    query: `?${blogCardquery}`
-})
+  endpoint: "blogs",
+  wrappedByKey: "data",
+  query: `?${blogCardquery}`,
+});
 
-const metaQuery = qs.stringify(blogmetaQs(), {encodeValuesOnly: true})
+const metaQuery = qs.stringify(blogmetaQs(), { encodeValuesOnly: true });
 const layoutData = await fetchApi<any>({
-	endpoint: 'layout',
-    wrappedByKey: 'data',
-    query: `?${metaQuery}`
-})
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?${metaQuery}`,
+});
 
-const siteID = import.meta.env.SITE_ID
-const siteURL = import.meta.env.FULL_URL
-const canonical =  isPaginated ? `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-index']}/${slug}` 
-					: `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']}/${page?.attributes?.slug}`
+const siteID = import.meta.env.SITE_ID;
+const siteURL = import.meta.env.FULL_URL;
+const canonical = isPaginated
+  ? `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["blog-index"]}/${slug}`
+  : `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]}/${page?.attributes?.slug}`;
 
 //set page seo data
 let seo = {
-    pageTitle: page?.attributes?.seo?.metaTitle ?? layoutData?.attributes?.blogMeta?.blogTitle,
-    metaDescription: page?.attributes?.seo?.metaDescription ?? layoutData?.attributes?.blogMeta?.blogDescription,
-    url: canonical
-}
+  pageTitle:
+    page?.attributes?.seo?.metaTitle ??
+    layoutData?.attributes?.blogMeta?.blogTitle,
+  metaDescription:
+    page?.attributes?.seo?.metaDescription ??
+    layoutData?.attributes?.blogMeta?.blogDescription,
+  url: canonical,
+};
 
-const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['author-page']}/${page?.attributes?.author?.data?.attributes?.firstName?.toLowerCase()}.${page?.attributes?.author?.data?.attributes?.lastName?.toLowerCase()}` 
+const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${page?.attributes?.author?.data?.attributes?.firstName?.toLowerCase()}.${page?.attributes?.author?.data?.attributes?.lastName?.toLowerCase()}`;
 
 dayjs.extend(advancedFormat);
 dayjs.locale(import.meta.env.LANG);
@@ -111,141 +113,160 @@ const formattedDate = dayjs(page?.attributes?.createdAt).format("D MMM YYYY");
 ---
 
 <MainLayout seoData={seo}>
-	{ isPaginated ?
-		<div class="curve mb-5">
-			<div class="xl:container px-2 pb-5 pt-4">
-				<BlogListBlock data={page.data} />
-		
-				<Pagination 
-				currPage={page?.meta?.pagination?.page} 
-				pageCount={page?.meta?.pagination?.pageCount} 
-				path={urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']} />
-			</div>
-		</div>
-	:
-		<div class="relative after:content-[''] bg-blog-list-bkg">
-			<div class="blog-title-section flex justify-center pt-[66px] md:pt-24 pb-[66px] md:pb-48">
-				<div class="w-full px-2 md:px-0 md:w-4/6 flex flex-col items-center justify-center text-center text-white">
-					<div class="blog-category w-fit text-[10px] mb-3 text-white font-bold rounded-[40px]">
-						Category
-					</div>
-					<h1>
-						{page?.attributes?.title}
-					</h1>
-					<div class="pt-6 pb-10">
-						How did we change? What do we eat? How do we prefer to spend our money? 
-						What do we like? These are the main questions that the Coop Report 2016, 
-						presented on 8 September, prepared by the Ancc-Coop Studies Office (National 
-						Association of Consumer Cooperatives) in collaboration with Ref.
-					</div>
-					<div class="flex justify-center">
-						<div class="flex items-center gap-2 sub-header text-[0.6875em] italic capitalize">
-							<div class="flex gap-2 items-center">
-								<Link href={authorLink} >
-									<div class="w-[40px] h-[40px] border border-white rounded-full">
-										<Images
-										src={page?.attributes?.author?.data?.attributes?.photo?.data?.attributes.url}
-										imageWidth={40}
-										imageHeight={40}
-										classes="providerImage rounded-full"
-										alt={page?.attributes?.author?.data?.attributes?.firstName+' '+page?.attributes?.author?.data?.attributes
-														?.lastName+' photo'}
-										imageResponsive={false}
-										/>
-									</div>
-								</Link>
-								<div class="flex flex-col justify-center text-start">
-									<Link href={authorLink} >
-										<div class="cursor-pointer hover:underline">
-											{page?.attributes?.author?.data?.attributes?.firstName}
-											{page?.attributes?.author?.data?.attributes?.lastName}
-										</div>
-									</Link>
-									<div>{formattedDate}</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="relative xl:container px-2 pb-5">
-				<div class="flex justify-center md:-mx-3 [&>*]:px-3">
-					<div class="w-full md:w-4/6">
-						<div class="mb-5 -mt-[33px] md:-mt-24">
-							<Images
-								src={page?.attributes?.images?.data?.attributes?.url}
-								alt={page?.attributes?.title}
-								imageWidth={820}
-								imageHeight={550}
-							/>
-						</div>
-						<div class="blog-content">
-							<Fragment set:html={page?.attributes?.content1} />
-						</div>
-						{page?.attributes?.author?.data &&
-							<div class="mt-10 mb-10 md:mb-0">
-								<AuthorCard data={page?.attributes?.author} />
-							</div>
-						}
-					</div>
-					
-				</div>
-			</div>
-		</div>
-	}
+  {
+    isPaginated ? (
+      <div class="curve mb-5">
+        <div class="xl:container px-2 pb-5 pt-4">
+          <BlogListBlock data={page.data} />
+
+          <Pagination
+            currPage={page?.meta?.pagination?.page}
+            pageCount={page?.meta?.pagination?.pageCount}
+            path={
+              urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]
+            }
+          />
+        </div>
+      </div>
+    ) : (
+      <div class="relative after:content-[''] bg-blog-list-bkg">
+        <div class="blog-title-section flex justify-center pt-[66px] md:pt-24 pb-[66px] md:pb-48">
+          <div class="w-full px-2 md:px-0 md:w-4/6 flex flex-col items-center justify-center text-center text-white">
+            <div class="blog-category w-fit text-[10px] mb-3 text-white font-bold rounded-[40px]">
+              Generale
+            </div>
+            <h1>{page?.attributes?.title}</h1>
+            <div class="pt-6 pb-10">
+              How did we change? What do we eat? How do we prefer to spend our
+              money? What do we like? These are the main questions that the Coop
+              Report 2016, presented on 8 September, prepared by the Ancc-Coop
+              Studies Office (National Association of Consumer Cooperatives) in
+              collaboration with Ref.
+            </div>
+            <div class="flex justify-center">
+              <div class="flex items-center gap-2 sub-header text-[0.6875em] italic capitalize">
+                <div class="flex gap-2 items-center">
+                  <Link href={authorLink}>
+                    <div class="w-[40px] h-[40px] border border-white rounded-full">
+                      <Images
+                        src={
+                          page?.attributes?.author?.data?.attributes?.photo
+                            ?.data?.attributes.url
+                        }
+                        imageWidth={40}
+                        imageHeight={40}
+                        classes="providerImage rounded-full"
+                        alt={
+                          page?.attributes?.author?.data?.attributes
+                            ?.firstName +
+                          " " +
+                          page?.attributes?.author?.data?.attributes?.lastName +
+                          " photo"
+                        }
+                        imageResponsive={false}
+                      />
+                    </div>
+                  </Link>
+                  <div class="flex flex-col justify-center text-start">
+                    <Link href={authorLink}>
+                      <div class="cursor-pointer hover:underline">
+                        {page?.attributes?.author?.data?.attributes?.firstName}
+                        {page?.attributes?.author?.data?.attributes?.lastName}
+                      </div>
+                    </Link>
+                    <div>{formattedDate}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="relative xl:container px-2 pb-5">
+          <div class="flex justify-center md:-mx-3 [&>*]:px-3">
+            <div class="w-full md:w-4/6">
+              <div class="mb-5 -mt-[33px] md:-mt-24">
+                <Images
+                  src={page?.attributes?.images?.data?.attributes?.url}
+                  alt={page?.attributes?.title}
+                  imageWidth={820}
+                  imageHeight={550}
+                />
+              </div>
+              <div class="blog-content">
+                <Fragment set:html={page?.attributes?.content1} />
+              </div>
+              {page?.attributes?.author?.data && (
+                <div class="mt-10 mb-10 md:mb-0">
+                  <AuthorCard data={page?.attributes?.author} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 </MainLayout>
 
 <style lang="scss">
-	:global(figure.center-image) {
-		@apply flex justify-center;
-	}
-	.blog-title-section {
-		background: var(--Gradients-BG-Blue, linear-gradient(180deg, theme('colors.background-top-gradient') 0%, theme('colors.background-bottom-gradient') 100%));
-		// background: linear-gradient(to top, theme('colors.background-bottom-gradient'), theme('colors.background-top-gradient') 300px, theme('colors.body-bg') 900px, theme('colors.body-bg'));
-	}
-	.blog-category {
-		background: linear-gradient(180deg, #3fe6fc 0%, #00bcd4 100%);
-		box-shadow: 0px 2px 8px rgba(0, 188, 212, 0.4);
-		padding: 1px 6px;
-	}
-	:global(.blog-content) {
-		img {
-			@apply w-full;
-		}
-		:global(a) {
-			@apply text-quicklinks-btn-color;
-		}
-		:global(h1),
-		:global(h2),
-		:global(h3),
-		:global(h4),
-		:global(h5),
-		:global(h6) {
-			@apply mb-4 mt-10;
-		}
+  :global(figure.center-image) {
+    @apply flex justify-center;
+  }
+  .blog-title-section {
+    background: var(
+      --Gradients-BG-Blue,
+      linear-gradient(
+        180deg,
+        theme("colors.background-top-gradient") 0%,
+        theme("colors.background-bottom-gradient") 100%
+      )
+    );
+    // background: linear-gradient(to top, theme('colors.background-bottom-gradient'), theme('colors.background-top-gradient') 300px, theme('colors.body-bg') 900px, theme('colors.body-bg'));
+  }
+  .blog-category {
+    background: linear-gradient(180deg, #3fe6fc 0%, #00bcd4 100%);
+    box-shadow: 0px 2px 8px rgba(0, 188, 212, 0.4);
+    padding: 1px 6px;
+  }
+  :global(.blog-content) {
+    img {
+      @apply w-full;
+    }
+    :global(a) {
+      @apply text-quicklinks-btn-color;
+    }
+    :global(h1),
+    :global(h2),
+    :global(h3),
+    :global(h4),
+    :global(h5),
+    :global(h6) {
+      @apply mb-4 mt-10;
+    }
 
-		:global(ul),
-		:global(ol) {
-			@apply ml-[35px];
-			list-style-image: none;
-		}
-		:global(li) {
-			@apply relative list-none;
-			&:not(:last-child) {
-				@apply mb-4;
-			}
-		}
-		:global(li::before) {
-			@apply absolute -left-5 w-[14px] h-[14px] top-[50%];
-			content: '';
-			background: url('../../assets/circle-chevron-right.svg') no-repeat center center/cover;
-			transform: translate(0, -50%);
-		}
-	}
+    :global(ul),
+    :global(ol) {
+      @apply ml-[35px];
+      list-style-image: none;
+    }
+    :global(li) {
+      @apply relative list-none;
+      &:not(:last-child) {
+        @apply mb-4;
+      }
+    }
+    :global(li::before) {
+      @apply absolute -left-5 w-[14px] h-[14px] top-[50%];
+      content: "";
+      background: url("../../assets/circle-chevron-right.svg") no-repeat center
+        center/cover;
+      transform: translate(0, -50%);
+    }
+  }
 
-	:global(.sidebar) {
-		:global(.blog-card) {
-			@apply mb-[10px];
-		}
-	}
+  :global(.sidebar) {
+    :global(.blog-card) {
+      @apply mb-[10px];
+    }
+  }
 </style>

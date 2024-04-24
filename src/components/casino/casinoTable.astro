@@ -103,7 +103,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                             {translationStore.wageringRequirement} 
                                             <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                         </span>
-                                        <div class="wrap-collabsible w-full md:hidden mt-2">
+                                        {/* <div class="wrap-collabsible w-full md:hidden mt-2">
                                             <input id={`welcomeBonus${i}`} class="toggle hidden peer" type="checkbox" />
                                             <label for={`welcomeBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
                                                 {translationStore.wageringRequirement}
@@ -114,7 +114,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                     <Fragment set:html={(casino as CasinoData)?.attributes?.bonusSection?.termsConditions ?? (casino as AuthorCasinoAttributes)?.bonusSection?.termsConditions} />
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> */}
                                             
                                     </div>
                                 </td>
@@ -134,23 +134,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                 rel="sponsored"
                                             >
                                                 <Fragment set:html={noDepositBonus(casino)?.bonus} />
-                                            </Link>
-                                            <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
-                                                {translationStore.wageringRequirement} 
-                                                <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
-                                            </span>
-                                            <div class="wrap-collabsible w-full md:hidden mt-2">
-                                                <input id={`noDepositBonus${i}`} class="toggle hidden peer" type="checkbox" />
-                                                <label for={`noDepositBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open" tabindex="0">
-                                                    {translationStore.wageringRequirement}
-                                                    <Icon name="angle" class="fill-grey-500 group-[.open]:rotate-180" height="20px" width="18px"/>
-                                                </label>
-                                                <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
-                                                    <div class="content-inner text-grey-500 mt-4">
-                                                        <Fragment set:html={noDepositBonus(casino)?.terms} />
-                                                    </div>
-                                                </div>
-                                            </div> :
+                                            </Link> :
                                             <span> - </span>
                                         }
                                     </div>
@@ -173,7 +157,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                 {translationStore.termsConditions} 
                                                 <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                             </span>
-                                            <div class="wrap-collabsible w-full md:hidden mt-2">
+                                            {/* <div class="wrap-collabsible w-full md:hidden mt-2">
                                                 <input id={`bonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                 <label for={`bonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
                                                     {translationStore.termsConditions}
@@ -184,7 +168,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                         <Fragment set:html={(casino as CasinoData)?.attributes?.termsAndConditions?.copy ?? (casino as AuthorCasinoAttributes)?.termsAndConditions?.copy} />
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                 </td>
