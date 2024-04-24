@@ -1,0 +1,15 @@
+---
+
+import Link from "../helpers/link.astro"
+
+const { data } = Astro.props
+
+---
+<script define:vars={{data}}>
+	console.log("Featured Providers", data?.homeFeaturedProviders?.providers)
+</script>
+
+<div class="flex flex-col justify-center items-center gap-3 w-full">
+    <div class="text-white text-2xl">{data?.title}</div>
+    <div>Providers Here</div>
+</div>
