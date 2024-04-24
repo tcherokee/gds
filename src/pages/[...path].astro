@@ -26,7 +26,9 @@ import type {
   CasinoListBlock,
   TGameListBlock,
   TranslationData,
-  TCasinoLiveVideo
+  TCasinoLiveVideo,
+  GameFilters,
+  CustomGameList,
 } from "../../interfaces/common/types.ts";
 
 // Import Svelte Components
@@ -39,12 +41,23 @@ import MainLayout from "../layouts/MainLayout.astro";
 import CasinoSidebar from "../components/casino/casinoSidebar.astro";
 import AuthorCard from "../components/general/authorCard.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
+import type { TUserGame } from "../../interfaces/games";
 
 const translationStore: TranslationData = getTranslations.get();
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
   const query = qs.stringify(customPageQs(), { encodeValuesOnly: true });
+
+  let gamesQueryObj: GameFilters = {
+    limit: 18,
+    sort: "views:desc",
+    page: 1,
+    providers: [],
+    categories: [],
+    author: "",
+  };
+  let prerenderPath: any[] = [];
 
   // Request to the Fetch Function to get the custom page slugs from the API
   const customPage = await fetchApi<CustomPageItem[]>({
@@ -53,15 +66,63 @@ export const getStaticPaths = (async () => {
     query: `?${query}`,
   });
 
-  return customPage.map((page) => {
-    return {
-      params: { path: page?.attributes?.urlPath },
-      props: { page },
-    };
-  });
+  for (let i = 0; i < customPage.length; i++) {
+    const page = customPage[i];
+    const path = page.attributes?.urlPath;
+    const gameQuery = page.attributes.blocks.find(
+      (block) => block.__component === "games.games-carousel"
+    ) as CustomGameList;
+    let initialGames: TUserGame[] = [];
+
+    if (gameQuery) {
+      gamesQueryObj = {
+        ...gamesQueryObj,
+        limit: gameQuery.numberOfGames,
+        sort: sortOptions.get()[gameQuery.sortBy],
+      };
+      const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
+        encodeValuesOnly: true,
+      });
+      const customPageGames = await fetchApi<any[]>({
+        endpoint: "games",
+        wrappedByKey: "data",
+        query: `?${gamesQuery}`,
+      });
+
+      initialGames = customPageGames.map((elem) => {
+        return {
+          id: elem.id,
+          ...elem.attributes,
+          images: {
+            url: elem.attributes.images.data.attributes.url,
+          },
+          provider: {
+            slug: elem.attributes.provider.data.attributes.slug,
+            title: elem.attributes.provider.data.attributes.title,
+          },
+        };
+      });
+    }
+
+    prerenderPath.push({
+      params: { path },
+      props: {
+        page,
+        initialGames,
+      },
+    });
+  }
+
+  return prerenderPath;
+  // return customPage.map((page) => {
+  //   return {
+  //     params: { path: page?.attributes?.urlPath },
+  //     props: { page },
+  //   };
+  // });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
+const { page, initialGames } = Astro.props;
 const { path } = Astro.params;
 
 // Games Variables
@@ -96,7 +157,7 @@ const loopCounter = getLoopCounter(page?.attributes?.blocks);
 
 // Get the index of the first occurrence of the FAQ
 const faqIndex = page?.attributes?.blocks.findIndex(
-  (block) => block.__component === "shared.faqs"
+  (block: Block) => block.__component === "shared.faqs"
 );
 
 // First mapping components so I can check them against the svelte extentsion
@@ -112,6 +173,7 @@ const seo = {
   url: `${import.meta.env.FULL_URL}/${path}`,
 };
 ---
+
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
   <div class="featured-background">
@@ -123,7 +185,7 @@ const seo = {
               <Component
                 data={page.attributes.blocks[i]}
                 timeDate={page?.attributes?.updatedAt}
-						    authorData={page?.attributes?.author}
+                authorData={page?.attributes?.author}
                 {...(page?.attributes?.blocks[i]?.__component ===
                 "casinos.casino-list"
                   ? { isCustom: true, isTop: true }
@@ -146,6 +208,7 @@ const seo = {
                 return (
                   <GameListBlock
                     data={page.attributes.blocks[i] as TGameListBlock}
+                    {initialGames}
                     client:load
                   />
                 );
@@ -154,7 +217,10 @@ const seo = {
                 return (
                   <CasinoLiveVideo
                     translations={translationStore}
-                    playbackUrl={(page?.attributes?.blocks[i] as TCasinoLiveVideo).playbackUrl}
+                    playbackUrl={
+                      (page?.attributes?.blocks[i] as TCasinoLiveVideo)
+                        .playbackUrl
+                    }
                     client:load
                   />
                 );
@@ -177,7 +243,7 @@ const seo = {
                   <Component
                     data={page.attributes.blocks[i]}
                     timeDate={page?.attributes?.updatedAt}
-						        authorData={page?.attributes?.author}
+                    authorData={page?.attributes?.author}
                     {...(page?.attributes?.blocks[i]?.__component ===
                     "shared.quicklinks"
                       ? { block: page.attributes.blocks }
@@ -207,6 +273,7 @@ const seo = {
                     return (
                       <GameListBlock
                         data={page.attributes.blocks[i] as TGameListBlock}
+                        {initialGames}
                         client:load
                       />
                     );
@@ -215,7 +282,10 @@ const seo = {
                     return (
                       <CasinoLiveVideo
                         translations={translationStore}
-                        playbackUrl={(page?.attributes?.blocks[i] as TCasinoLiveVideo).playbackUrl}
+                        playbackUrl={
+                          (page?.attributes?.blocks[i] as TCasinoLiveVideo)
+                            .playbackUrl
+                        }
                         client:load
                       />
                     );

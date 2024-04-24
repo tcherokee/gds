@@ -20,9 +20,9 @@ const { data } = Astro.props
 	<!-- Flickity HTML init -->
 	<div class="gap-8 gallery js-flickity" data-flickity-options='{ "wrapAround": true}'>
 		{
-			data?.homeTestimonies.map((testimony: ProviderData) =>  ( 
+			data?.homeTestimonies.map((testimony: ProviderData) =>  (
 				<div class="gallery-cell">
-					<TestimonyCard testimony={testimony} /> 
+					<TestimonyCard testimony={testimony} />
 				</div>
 			))
 		}
