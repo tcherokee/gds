@@ -1,5 +1,4 @@
 ---
-
 export const prerender = true;
 
 // First and Third Party Plugins
@@ -7,7 +6,10 @@ import qs from "qs";
 
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
-import type { TranslationData } from '../../../interfaces/common/types';
+import type {
+GameFilters,
+TranslationData,
+} from "../../../interfaces/common/types";
 import type { TAuthor } from "../../../interfaces/users";
 
 // Queries
@@ -15,20 +17,21 @@ import { authorPageQs } from "../../../qs/author";
 
 // Helpers
 import fetchApi from "../../../lib/strapi";
-import { urlTranslate } from '../../../utils/data-store.util';
+import { urlTranslate } from "../../../utils/data-store.util";
 
 // Stores
-import { getTranslations } from '../../../stores/addTranslations';
+import { getTranslations } from "../../../stores/addTranslations";
 
 // Layouts
-import MainLayout from "../../layouts/MainLayout.astro"
+import MainLayout from "../../layouts/MainLayout.astro";
 
 // Components
-import AuthorCard from "../../components/general/authorCardAlt.astro"
+import type { TUserGame } from "../../../interfaces/games";
+import { gamesQs } from "../../../qs/games";
 import GameListBlock from "../../components/blocks/gameListBlock.svelte";
-import BlogCard from "../../components/blogs/blogCard.astro"
-import BlogListBlock from "../../components/blocks/blogListBlock_.svelte"
+import BlogCard from "../../components/blogs/blogCard.astro";
 import CasinoTable from "../../components/casino/casinoTable.astro";
+import AuthorCard from "../../components/general/authorCardAlt.astro";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -40,18 +43,70 @@ export const getStaticPaths = (async () => {
     wrappedByKey: "",
     query: `?${query}`,
   });
+  let gamesQueryObj: GameFilters = {
+    limit: 18,
+    sort: "createdAt:desc",
+    page: 1,
+    providers: [],
+    categories: [],
+    author: "",
+  };
 
-  return authorPage.map((page) => {
-    return {
+  let prerenderPath: any[] = [];
+  for (let i = 0; i < authorPage.length; i++) {
+    const page = authorPage[i];
+    gamesQueryObj = {
+      ...gamesQueryObj,
+      author: page.slug,
+    };
+    const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
+      encodeValuesOnly: true,
+    });
+
+    const authorGames = await fetchApi<any[]>({
+      endpoint: "games",
+      wrappedByKey: "data",
+      query: `?${gamesQuery}`,
+    });
+
+    const initialGames: TUserGame[] = authorGames.map((elem) => {
+      return {
+        id: elem.id,
+        ...elem.attributes,
+        images: {
+          url: elem.attributes.images.data.attributes.url,
+        },
+        provider: {
+          slug: elem.attributes.provider.data.attributes.slug,
+          title: elem.attributes.provider.data.attributes.title,
+        },
+      };
+    });
+
+    prerenderPath.push({
       params: {
         slug: `${page?.firstName.toLowerCase()}.${page?.lastName.toLowerCase()}`,
       },
-      props: { page },
-    };
-  });
+      props: {
+        page,
+        initialGames,
+      },
+    });
+  }
+
+  return prerenderPath;
+
+  //   return authorPage.map(async (page) => {
+  //     return {
+  //       params: {
+  //         slug: `${page?.firstName.toLowerCase()}.${page?.lastName.toLowerCase()}`,
+  //       },
+  //       props: { page },
+  //     };
+  //   });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
+const { page, initialGames } = Astro.props;
 const { slug } = Astro.params;
 
 const translationStore: TranslationData = getTranslations.get();
@@ -61,45 +116,43 @@ const SITE_ID = import.meta.env.SITE_ID;
 
 // Create SEO Object
 const seo = {
-    pageTitle: `${page.firstName} ${page.firstName}`,
-    metaDescription: page?.content1,
-    url: `${import.meta.env.FULL_URL}${urlTranslate[SITE_ID as keyof typeof urlTranslate]['author-page']}/${slug}`
-}
+  pageTitle: `${page.firstName} ${page.firstName}`,
+  metaDescription: page?.content1,
+  url: `${import.meta.env.FULL_URL}${urlTranslate[SITE_ID as keyof typeof urlTranslate]["author-page"]}/${slug}`,
+};
 
 // Create Game Variables Object
 
 const gameBlockObj = {
-    __component: 'games.games-carousel',
+  __component: "games.games-carousel",
   numberOfGames: 18,
-  sortBy: 'Newest',
+  sortBy: "Newest",
   showGameFilterPanel: false,
   showGameMoreButton: true,
   gameProviders: [],
-  gameCategories: []
-}
+  gameCategories: [],
+};
 
 // Truncate and Clean Blog Object
-const truncatedBlogObj = page.blogs.map(item => {
-    if (item && item.content1) {
-        // Remove HTML tags
-        const plainText = item.content1.replace(/<[^>]*>/g, '');
+const truncatedBlogObj = page.blogs.map((item) => {
+  if (item && item.content1) {
+    // Remove HTML tags
+    const plainText = item.content1.replace(/<[^>]*>/g, "");
 
-        // Split into words and truncate to 25 words
-        const words = plainText.split(/\s+/).slice(0, 25).join(' ');
+    // Split into words and truncate to 25 words
+    const words = plainText.split(/\s+/).slice(0, 25).join(" ");
 
-        // Update the content1 field
-        item.content1 = words;
-    }
-    else if (item && item.title) {
-        // Split the title into words and truncate to 10 words
-        const truncatedTitle = item.title.split(/\s+/).slice(0, 10).join(' ');
+    // Update the content1 field
+    item.content1 = words;
+  } else if (item && item.title) {
+    // Split the title into words and truncate to 10 words
+    const truncatedTitle = item.title.split(/\s+/).slice(0, 10).join(" ");
 
-        // Update the title field
-        item.title = truncatedTitle;
-    }
-    return item;
+    // Update the title field
+    item.title = truncatedTitle;
+  }
+  return item;
 });
-
 ---
 <MainLayout seoData={seo}>
     <div class="relative after:content-[''] bg-blog-list-bkg">
@@ -145,6 +198,47 @@ const truncatedBlogObj = page.blogs.map(item => {
                 </div>
             }
         </div>
+      </div>
+
+      {
+        page.games.length > 0 && (
+          <div class="mt-5">
+            <div class="mb-5">
+              <h2>Ultimi giochi recensiti dall'autore</h2>
+            </div>
+            <GameListBlock
+              data={gameBlockObj}
+              {initialGames}
+              author={page.slug}
+              client:load
+            />
+          </div>
+        )
+      }
+
+      {
+        page?.blogs.length > 0 && (
+          <div class="mt-5">
+            <div class="mb-5">
+              <h2>Articoli recenti dell'autore</h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-3 md:gap-8">
+              <BlogCard data={truncatedBlogObj} />
+            </div>
+          </div>
+        )
+      }
+
+      {
+        page?.casinos.length > 0 && (
+          <div class="mt-5">
+            <h2>Casino recensiti dall'autore</h2>
+            <div class="mb-5">
+              <CasinoTable casinos={page?.casinos} />
+            </div>
+          </div>
+        )
+      }
     </div>
 </MainLayout>
 
