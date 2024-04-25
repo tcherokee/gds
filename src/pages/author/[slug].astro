@@ -7,8 +7,8 @@ import qs from "qs";
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
 import type {
-GameFilters,
-TranslationData,
+  GameFilters,
+  TranslationData,
 } from "../../../interfaces/common/types";
 import type { TAuthor } from "../../../interfaces/users";
 
@@ -134,7 +134,7 @@ const gameBlockObj = {
 };
 
 // Truncate and Clean Blog Object
-const truncatedBlogObj = page.blogs.map((item) => {
+const truncatedBlogObj = page.blogs.map((item: any) => {
   if (item && item.content1) {
     // Remove HTML tags
     const plainText = item.content1.replace(/<[^>]*>/g, "");
@@ -154,72 +154,38 @@ const truncatedBlogObj = page.blogs.map((item) => {
   return item;
 });
 ---
+
 <MainLayout seoData={seo}>
-    <div class="relative after:content-[''] bg-blog-list-bkg">
-        <div class="w-full pt-5 px-3 author-upper-section pb-[65px]">
-            <div class="xl:container">
-                <div>
-                    <AuthorCard  data={page} isFlat={true} />
-                </div>
-    
-                {
-                    page.games.length > 0 &&
-                    <div class="mt-[80px]">
-                        <h2 class="text-white">Ultimi giochi recensiti dall'autore</h2>
-                    </div>
-                    <div class="mt-5 glass-wrapper">
-                        <GameListBlock data={gameBlockObj} author={page.slug} client:load />
-                    </div>
-                }
-            </div>
+  <div class="relative after:content-[''] bg-blog-list-bkg">
+    <div class="w-full pt-5 px-3 author-upper-section pb-[65px]">
+      <div class="xl:container">
+        <div>
+          <AuthorCard data={page} isFlat={true} />
         </div>
-        <div class="relative xl:container px-2 pb-5">
-          {
-                page?.blogs.length > 0 &&
-                <div>
-                    <div class="mt-[60px] md:mt-[80px] mb-[40px] md:mb-[65px]">
-                        <h2>Articoli recenti dell'autore</h2>
-                    </div>
-                    <div class="grid md:grid-cols-3 gap-3 md:gap-8">
-                        <BlogCard data={truncatedBlogObj} />
-                    </div>
-                </div>
-            }
 
-            {
-                page?.casinos.length > 0 &&
-                <div class="mt-5">
-                    <h2>Casino recensiti dall'autore</h2>
-                    <div class="mb-5">
-                        <CasinoTable
-                            casinos={page?.casinos}
-                        />
-                    </div>
-                </div>
-            }
-        </div>
+        {
+          page.games.length > 0 && (
+            <>
+              <div class="mt-[80px]">
+                <h2 class="text-white">Ultimi giochi recensiti dall'autore</h2>
+              </div>
+              <div class="mt-5 glass-wrapper">
+                <GameListBlock
+                  data={gameBlockObj}
+                  author={page.slug}
+                  client:load
+                />
+              </div>
+            </>
+          )
+        }
       </div>
-
-      {
-        page.games.length > 0 && (
-          <div class="mt-5">
-            <div class="mb-5">
-              <h2>Ultimi giochi recensiti dall'autore</h2>
-            </div>
-            <GameListBlock
-              data={gameBlockObj}
-              {initialGames}
-              author={page.slug}
-              client:load
-            />
-          </div>
-        )
-      }
-
+    </div>
+    <div class="relative xl:container px-2 pb-5">
       {
         page?.blogs.length > 0 && (
-          <div class="mt-5">
-            <div class="mb-5">
+          <div>
+            <div class="mt-[60px] md:mt-[80px] mb-[40px] md:mb-[65px]">
               <h2>Articoli recenti dell'autore</h2>
             </div>
             <div class="grid md:grid-cols-3 gap-3 md:gap-8">
@@ -240,10 +206,58 @@ const truncatedBlogObj = page.blogs.map((item) => {
         )
       }
     </div>
+  </div>
+
+  {
+    page.games.length > 0 && (
+      <div class="mt-5">
+        <div class="mb-5">
+          <h2>Ultimi giochi recensiti dall'autore</h2>
+        </div>
+        <GameListBlock
+          data={gameBlockObj}
+          {initialGames}
+          author={page.slug}
+          client:load
+        />
+      </div>
+    )
+  }
+
+  {
+    page?.blogs.length > 0 && (
+      <div class="mt-5">
+        <div class="mb-5">
+          <h2>Articoli recenti dell'autore</h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-3 md:gap-8">
+          <BlogCard data={truncatedBlogObj} />
+        </div>
+      </div>
+    )
+  }
+
+  {
+    page?.casinos.length > 0 && (
+      <div class="mt-5">
+        <h2>Casino recensiti dall'autore</h2>
+        <div class="mb-5">
+          <CasinoTable casinos={page?.casinos} />
+        </div>
+      </div>
+    )
+  }
 </MainLayout>
 
 <style lang="scss">
-    .author-upper-section {
-		background: var(--Gradients-BG-Blue, linear-gradient(180deg, theme('colors.background-top-gradient') 0%, theme('colors.background-bottom-gradient') 100%));
-	}
+  .author-upper-section {
+    background: var(
+      --Gradients-BG-Blue,
+      linear-gradient(
+        180deg,
+        theme("colors.background-top-gradient") 0%,
+        theme("colors.background-bottom-gradient") 100%
+      )
+    );
+  }
 </style>
