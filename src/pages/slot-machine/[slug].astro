@@ -38,6 +38,20 @@ import { urlTranslate } from "../../../utils/data-store.util";
 import Quicklinks from "../../components/helpers/quicklinks.astro";
 import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
 
+// Fetch Game Providers Filter
+const gameProviders = await fetchApi<{
+  id: number;
+  attributes: {
+    filterProviders: {
+      data: TProviderAttributesOnly[];
+    };
+  };
+}>({
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
+});
+
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
   const query = qs.stringify(categoryPagesQs(), { encodeValuesOnly: true });
@@ -54,20 +68,6 @@ export const getStaticPaths = (async () => {
   //   (game: any) => game.slotCategories.data.attributes.slug
   // );
 
-  // Fetch Game Providers Filter
-  const gameProviders = await fetchApi<{
-    id: number;
-    attributes: {
-      filterProviders: {
-        data: TProviderAttributesOnly[];
-      };
-    };
-  }>({
-    endpoint: "layout",
-    wrappedByKey: "data",
-    query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
-  });
-
   let gamesQueryObj: GameFilters = {
     limit: 18,
     sort: "views:desc",
@@ -79,11 +79,6 @@ export const getStaticPaths = (async () => {
 
   let slotCategories: TUserGameProvider[] = [];
 
-  // const slotCategoriesGames = await fetchApi<any[]>({
-  //   endpoint: "slot-providers",
-  //   wrappedByKey: "data",
-  //   query: `?${gamesQuery}`,
-  // });
   let prerenderPath: any[] = [];
 
   for (let i = 0; i < categoryPage.length; i++) {
@@ -122,9 +117,6 @@ export const getStaticPaths = (async () => {
       props: {
         page: categoryPage[i],
         modifiedGames,
-        gameProviders: gameProviders.attributes.filterProviders
-          ? gameProviders.attributes.filterProviders.data
-          : [],
         slotCategories,
       },
     });
@@ -139,7 +131,7 @@ export const getStaticPaths = (async () => {
   // });
 }) satisfies GetStaticPaths;
 
-const { page, modifiedGames, gameProviders, slotCategories } = Astro.props;
+const { page, modifiedGames, slotCategories } = Astro.props;
 const { slug } = Astro.params;
 
 const translationStore: TranslationData = getTranslations.get();
@@ -198,7 +190,9 @@ const seo = {
     <GameListBlock
       data={gameBlock}
       initialGames={modifiedGames}
-      {gameProviders}
+      gameProviders={gameProviders.attributes.filterProviders
+        ? gameProviders.attributes.filterProviders.data
+        : []}
       {slotCategories}
       client:load
     />

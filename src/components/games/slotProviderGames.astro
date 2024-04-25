@@ -8,22 +8,9 @@ import Pagination from "../../components/helpers/pagination.astro";
 import type { TUserGame } from "../../../interfaces/games";
 import type { TProviderAttributesOnly } from "../../../interfaces/common/types";
 
-const { slug } = Astro.props;
+const { slug, slotCategories, gameProviders } = Astro.props;
 const newSlug = slug.includes("/") ? slug.split("/")[0] : slug;
 const page = slug.includes("/") ? slug.split("/")[1].split("p")[1] : 1;
-
-const gameProviders = await fetchApi<{
-  id: number;
-  attributes: {
-    filterProviders: {
-      data: TProviderAttributesOnly[];
-    };
-  };
-}>({
-  endpoint: "layout",
-  wrappedByKey: "data",
-  query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
-});
 
 const query = qs.stringify(gamesQs(newSlug, "views:desc", page), {
   encodeValuesOnly: true,
@@ -77,9 +64,8 @@ const gameBlock = {
   data={gameBlock}
   {page}
   {initialGames}
-  gameProviders={gameProviders.attributes.filterProviders
-    ? gameProviders.attributes.filterProviders.data
-    : []}
+  {gameProviders}
+  {slotCategories}
   client:load
 />
 
