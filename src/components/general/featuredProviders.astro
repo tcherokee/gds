@@ -1,6 +1,7 @@
 ---
 
 import Link from "../helpers/link.astro"
+import Images from "../../components/helpers/images.astro";
 
 const { data } = Astro.props
 
@@ -9,7 +10,22 @@ const { data } = Astro.props
 	console.log("Featured Providers", data?.homeFeaturedProviders?.providers)
 </script>
 
-<div class="flex flex-col justify-center items-center gap-3 w-full">
+<div class="flex flex-col justify-center items-center gap-10 xl:container">
     <div class="text-white text-2xl">{data?.title}</div>
-    <div>Providers Here</div>
+     <div class="flex gap-5 justify-between w-full">
+        {
+			data?.homeFeaturedProviders?.providers?.data.map((item: any) =>  (
+				 <div class="provider-img">
+                    <Images
+                    src={item?.attributes?.images?.data?.attributes.url}
+                    imageWidth={116}
+                    imageHeight={40}
+                    classes="providerImage rounded border-[1px] border-[#3FE6FC]"
+                    alt={item?.attributes?.title+' photo'}
+                    />
+                </div>
+			))
+		}
+       
+    </div>
 </div>

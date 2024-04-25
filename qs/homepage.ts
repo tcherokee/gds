@@ -64,17 +64,13 @@ export const homepageQs = () => ({
           },
         },
         homeFeaturedProviders: {
+          fields: ["title"],
           populate: {
-            images: {
-              fields: ["url"],
-            },
             providers: {
+              fields: ["title", "slug"],
               populate: {
-                fields: ["title", "slug"],
-                populate: {
-                  images: {
-                    fields: ["url"],
-                  },
+                images: {
+                  fields: ["url"],
                 },
               },
             },

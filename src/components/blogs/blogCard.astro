@@ -48,11 +48,13 @@ const translationStore: TranslationData = getTranslations.get()
 						<div class="flex justify-between items-center">
 							<div class="flex items-center">
 								<div class="blog-category text-[10px] mr-2 text-white font-bold rounded-[40px]">
-									Category
+									{(blog as Blog)?.attributes?.blogCategory?.data?.attributes?.blogCategory || "Generale"}
 								</div>
-								<div>
-									5 mins read
-								</div>
+								{ (blog as Blog)?.attributes?.minutesRead &&
+									<div>
+										{(blog as Blog)?.attributes?.minutesRead + " mins read"} 
+									</div>
+								}
 							</div>
 							<div>
 								{dayjs((blog as Blog)?.attributes?.createdAt ?? (blog as AuthorBlogAttributes)?.createdAt ).format('D')+" "}
