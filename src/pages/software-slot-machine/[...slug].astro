@@ -6,7 +6,11 @@ import qs from "qs";
 
 // Types
 import type { GetStaticPaths } from "astro";
-import type { Faqs, TranslationData } from "../../../interfaces/common/types";
+import type {
+  Faqs,
+  TProviderAttributesOnly,
+  TranslationData,
+} from "../../../interfaces/common/types";
 import type { Slotprovider } from "../../../interfaces/slot-provider";
 
 // Stores
@@ -28,6 +32,44 @@ import FaqsComponent from "../../components/general/faqs.astro";
 import IntroBlock from "../../components/general/introWithImage.astro";
 import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
+import type { TUserGameProvider } from "../../../interfaces/games";
+
+// Fetch Slot Categories Filter
+const slotCategoriesResponse = await fetchApi<
+  {
+    id: number;
+    attributes: TUserGameProvider;
+  }[]
+>({
+  endpoint: "slot-categories",
+  wrappedByKey: "data",
+  query: `?fields[0]=id&fields[1]=slug&pagination[page]=1&pagination[pageSize]=1000&sort[0]=listSortOrder%3Aasc&fields[2]=title`,
+});
+let slotCategories: TUserGameProvider[] = [];
+
+if (slotCategoriesResponse.length) {
+  slotCategoriesResponse.map(
+    (category: { id: number; attributes: TUserGameProvider }) => {
+      slotCategories.push({
+        title: category.attributes.title,
+        slug: category.attributes.slug,
+      });
+    }
+  );
+}
+
+const gameProviders = await fetchApi<{
+  id: number;
+  attributes: {
+    filterProviders: {
+      data: TProviderAttributesOnly[];
+    };
+  };
+}>({
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
+});
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -114,7 +156,13 @@ const seo = {
     />
 
     <div class="d-flex flex-wrap">
-      <SlotProviderGames slug={slug} />
+      <SlotProviderGames
+        slug={slug}
+        {slotCategories}
+        gameProviders={gameProviders.attributes.filterProviders
+          ? gameProviders.attributes.filterProviders.data
+          : []}
+      />
     </div>
   </div>
   <div class="relative xl:container px-2 mt-5">

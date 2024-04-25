@@ -6,8 +6,9 @@ import { gamesQs } from "../../../qs/ssm-games";
 import GameListBlock from "../../components/blocks/gameListBlock.svelte";
 import Pagination from "../../components/helpers/pagination.astro";
 import type { TUserGame } from "../../../interfaces/games";
+import type { TProviderAttributesOnly } from "../../../interfaces/common/types";
 
-const { slug } = Astro.props;
+const { slug, slotCategories, gameProviders } = Astro.props;
 const newSlug = slug.includes("/") ? slug.split("/")[0] : slug;
 const page = slug.includes("/") ? slug.split("/")[1].split("p")[1] : 1;
 
@@ -59,7 +60,14 @@ const gameBlock = {
 };
 ---
 
-<GameListBlock data={gameBlock} {page} {initialGames} client:load />
+<GameListBlock
+  data={gameBlock}
+  {page}
+  {initialGames}
+  {gameProviders}
+  {slotCategories}
+  client:load
+/>
 
 <Pagination
   currPage={games?.meta?.pagination?.page}
