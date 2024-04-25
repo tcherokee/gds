@@ -108,8 +108,12 @@ dayjs.extend(advancedFormat);
 dayjs.locale(import.meta.env.LANG);
 
 const formattedDate = dayjs(page?.attributes?.createdAt).format("D MMM YYYY");
----
 
+const blogBriefAlternative = page?.attributes?.content1.replace(/(<([^>]+)>)/gi, "").substring(0,300);
+---
+<script define:vars={{page}}>
+	console.log("Blog", page)
+</script>
 <MainLayout seoData={seo}>
 	{ isPaginated ?
 		<div class="curve mb-5">
@@ -127,16 +131,13 @@ const formattedDate = dayjs(page?.attributes?.createdAt).format("D MMM YYYY");
 			<div class="blog-title-section flex justify-center pt-[66px] md:pt-24 pb-[66px] md:pb-48">
 				<div class="w-full px-2 md:px-0 md:w-4/6 flex flex-col items-center justify-center text-center text-white">
 					<div class="blog-category w-fit text-[10px] mb-3 text-white font-bold rounded-[40px]">
-						Category
+						{page?.attributes?.blogCategory?.data?.attributes?.blogCategory || "Generale"}
 					</div>
 					<h1>
 						{page?.attributes?.title}
 					</h1>
-					<div class="pt-6 pb-10">
-						How did we change? What do we eat? How do we prefer to spend our money? 
-						What do we like? These are the main questions that the Coop Report 2016, 
-						presented on 8 September, prepared by the Ancc-Coop Studies Office (National 
-						Association of Consumer Cooperatives) in collaboration with Ref.
+					<div class="pt-6 pb-10 line-clamp-2">
+						{page?.attributes?.blogBrief || blogBriefAlternative}
 					</div>
 					<div class="flex justify-center">
 						<div class="flex items-center gap-2 sub-header text-[0.6875em] italic capitalize">

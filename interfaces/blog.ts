@@ -18,12 +18,22 @@ export type Blog = {
 export type BlogAttributes = {
   title: string;
   slug: string;
+  blogBrief: string;
   createdAt: string;
   updatedAt: string;
   content1: string;
   publishedAt: string;
+  minutesRead: string;
   images: {
     data: ImageData;
+  };
+  blogCategory: {
+    data: {
+      attributes: {
+        blogCategory: string;
+        slug: string;
+      };
+    };
   };
   author: {
     data: Author;
