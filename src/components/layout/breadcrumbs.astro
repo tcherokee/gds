@@ -1,12 +1,7 @@
 ---
-import qs from "qs";
-
 // Helpers
-import fetchApi from "../../../lib/strapi";
 
 // QS Query String
-import type { LayoutData } from "../../../interfaces/layout";
-import { layoutQs } from "../../../qs/layout";
 import { getBreadcrumbs } from "../../../stores/breadcrumbs";
 
 const { breadcrumbs, breadcrumbKey } = Astro.props;
@@ -33,12 +28,13 @@ if (breadcrumbKey && breadcrumStore[breadcrumbKey]) {
   pageBreadcrumbs.unshift(...breadcrumStore[breadcrumbKey]);
 }
 if (breadcrumbKey && !breadcrumbs.length && !breadcrumStore[breadcrumbKey]) {
-  pageBreadcrumbs = [{
-    breadCrumbText: 'HOME',
-    breadCrumbUrl: null
-  }];
+  pageBreadcrumbs = [
+    {
+      breadCrumbText: "HOME",
+      breadCrumbUrl: null,
+    },
+  ];
 }
-
 ---
 
 <div class="custom-breadcrumbs bg-breadcrumb-bkg">

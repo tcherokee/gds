@@ -1,88 +1,121 @@
 ---
-
-import qs from 'qs';
+import qs from "qs";
 
 // Helpers
-import fetchApi from '../../../lib/strapi';
-import { urlTranslate } from '../../../utils/data-store.util';
+import fetchApi from "../../../lib/strapi";
+import { urlTranslate } from "../../../utils/data-store.util";
 import Images from "../helpers/images.astro";
 
 // QS Query String
 import { customPageLayoutAddOnsQs } from "../../../qs/customPages";
 
 // Types
-import type { CasinoData, TranslationData } from "../../../interfaces/common/types.ts";
-import type { LayoutData } from '../../../interfaces/layout';
-import { getTranslations } from "../../../stores/addTranslations.ts";
+import type { LayoutData } from "../../../interfaces/layout";
 
 // Components
-import { Link } from "astro-link"
+import { Link } from "astro-link";
 
-const translationStore: TranslationData = getTranslations.get()
+const { translationStore } = Astro.props;
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
-const query = qs.stringify(customPageLayoutAddOnsQs(), {encodeValuesOnly: true})
+const query = qs.stringify(customPageLayoutAddOnsQs(), {
+  encodeValuesOnly: true,
+});
 
 // Request to the Fetch Function to get the custom page slugs from the API
 const layout = await fetchApi<LayoutData>({
-    endpoint: 'layout',
-    wrappedByKey: 'data',
-    query: `?${query}`
-})
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
 
-const {attributes: {most_loved_casinos, no_deposit_casinos, free_spin_casinos}} = layout
+const {
+  attributes: { most_loved_casinos, no_deposit_casinos, free_spin_casinos },
+} = layout;
 
 // created a casino array so I only need to write the HTML once.
 const casinoArray = [
-    {casino: most_loved_casinos, title: translationStore.bestWelcomeBonus, bonus: 'bonusSection' }, 
-    {casino: no_deposit_casinos, title: translationStore.bestNoDepositBonus, bonus: 'noDepositSection'}, 
-    {casino: free_spin_casinos, title: translationStore.bestFreeSpins, bonus: 'freeSpinsSection'}
-]
+  {
+    casino: most_loved_casinos,
+    title: translationStore?.bestWelcomeBonus,
+    bonus: "bonusSection",
+  },
+  {
+    casino: no_deposit_casinos,
+    title: translationStore?.bestNoDepositBonus,
+    bonus: "noDepositSection",
+  },
+  {
+    casino: free_spin_casinos,
+    title: translationStore?.bestFreeSpins,
+    bonus: "freeSpinsSection",
+  },
+];
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 ---
 
 <div class="sticky top-2">
-
-    {
-        casinoArray.map (casinoObj => (
-            casinoObj.casino.data.length > 0
-            && (
-                <div class="side-casino-table">
-                    <div class="rounded-t-[6px] py-[11px] px-3 bg-casino-table-header-bkg text-white text-[19px] leading-[24px] font-bold">
-                        {casinoObj.title}
-                    </div>
-                    <table class="border-separate border-spacing-[11px] rounded-b-[6px]">
-                        <tbody>
-                            {casinoObj.casino.data.map(casino => (
-                                <tr class="*:border-b *:border-b-black *:p-0 *:last:border-0">
-                                    <td>
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center pb-3">
-                                                <Images
-                                                    alt="Test"
-                                                    imageWidth={50}
-                                                    imageHeight={50}
-                                                    src={casino?.attributes?.logoIcon?.data?.attributes?.url}
-                                                    classes="rounded-[4px] mr-[10px]"
-                                                />
-                                                <div class="">
-                                                    <div class="line-clamp-1">{casino?.attributes?.title}</div>
-                                                    <div>{casino?.attributes?.[casinoObj.bonus]?.bonusAmount}{casinoObj.bonus !== 'freeSpinsSection' ? '€' : ''}</div>
-                                                </div>
-                                            </div>
-                                            <Link
-                                                class="btn btn-misc uppercase text-white !text-[14px] px-[22.5px] w-fit h-[37px]"
-                                                href={urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+casino.attributes?.slug+"/"}>
-                                                {translationStore.review}
-                                            </Link>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )
-        ))
-    }
+  {
+    casinoArray.map(
+      (casinoObj) =>
+        casinoObj.casino.data.length > 0 && (
+          <div class="side-casino-table">
+            <div class="rounded-t-[6px] py-[11px] px-3 bg-casino-table-header-bkg text-white text-[19px] leading-[24px] font-bold">
+              {casinoObj.title}
+            </div>
+            <table class="border-separate border-spacing-[11px] rounded-b-[6px]">
+              <tbody>
+                {casinoObj.casino.data.map((casino) => (
+                  <tr class="*:border-b *:border-b-black *:p-0 *:last:border-0">
+                    <td>
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center pb-3">
+                          <Images
+                            alt="Test"
+                            imageWidth={50}
+                            imageHeight={50}
+                            src={
+                              casino?.attributes?.logoIcon?.data?.attributes
+                                ?.url
+                            }
+                            classes="rounded-[4px] mr-[10px]"
+                          />
+                          <div class="">
+                            <div class="line-clamp-1">
+                              {casino?.attributes?.title}
+                            </div>
+                            <div>
+                              {
+                                casino?.attributes?.[casinoObj.bonus]
+                                  ?.bonusAmount
+                              }
+                              {casinoObj.bonus !== "freeSpinsSection"
+                                ? "€"
+                                : ""}
+                            </div>
+                          </div>
+                        </div>
+                        <Link
+                          class="btn btn-misc uppercase text-white !text-[14px] px-[22.5px] w-fit h-[37px]"
+                          href={
+                            urlTranslate[
+                              PUBLIC_SITE_ID as keyof typeof urlTranslate
+                            ]["casino-pages"] +
+                            "/" +
+                            casino.attributes?.slug +
+                            "/"
+                          }
+                        >
+                          {translationStore?.review}
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+    )
+  }
 </div>

@@ -1,20 +1,22 @@
 ---
 export const prerender = true;
 import type { GetStaticPaths } from "astro";
-import qs from 'qs'
+import qs from 'qs';
+import type { Blog, BlogList } from "../../../interfaces/blog";
 import fetchApi from '../../../lib/strapi';
-import MainLayout from '../../layouts/MainLayout.astro';
-import { urlTranslate } from '../../../utils/data-store.util'
-import {blogpageQs} from "../../../qs/blog-page"
-import { blogmetaQs } from "../../../qs/blog-meta"
-import type { Blog, BlogList } from "../../../interfaces/blog"
-import { blogcardQs } from "../../../qs/blog-cards"
+import { blogcardQs } from "../../../qs/blog-cards";
+import { blogmetaQs } from "../../../qs/blog-meta";
+import { blogpageQs } from "../../../qs/blog-page";
+import { getTranslations } from "../../../utils/api-requests";
+import { urlTranslate } from '../../../utils/data-store.util';
 import BlogListBlock from '../../components/blocks/blogListBlock.astro';
-import BlogCard from '../../components/blogs/blogCard.astro';
-import Images from '../../components/helpers/images.astro';
-import TimeDate from '../../components/helpers/timeDate.astro';
 import AuthorCard from '../../components/general/authorCard.astro';
+import Images from '../../components/helpers/images.astro';
 import Pagination from '../../components/helpers/pagination.astro';
+import TimeDate from '../../components/helpers/timeDate.astro';
+import MainLayout from '../../layouts/MainLayout.astro';
+
+const translationStore = await getTranslations();
 
 
 export const getStaticPaths = (async () => {
@@ -107,7 +109,8 @@ let seo = {
 				<Pagination 
 				currPage={page?.meta?.pagination?.page} 
 				pageCount={page?.meta?.pagination?.pageCount} 
-				path={urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']} />
+				path={urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']}
+				{translationStore} />
 			</div>
 		</div>
 	:

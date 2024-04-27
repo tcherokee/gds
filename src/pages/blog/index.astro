@@ -1,55 +1,57 @@
 ---
+import qs from "qs";
+import fetchApi from "../../../lib/strapi";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { urlTranslate } from "../../../utils/data-store.util";
+import { blogmetaQs } from "../../../qs/blog-meta";
+import { blogcardQs } from "../../../qs/blog-cards";
+import type { BlogList } from "../../../interfaces/blog";
+import BlogListBlock from "../../components/blocks/blogListBlock.astro";
+import Pagination from "../../components/helpers/pagination.astro";
+import { getTranslations } from "../../../utils/api-requests";
 
-import qs from 'qs'
-import fetchApi from '../../../lib/strapi';
-import MainLayout from '../../layouts/MainLayout.astro';
-import { urlTranslate } from '../../../utils/data-store.util'
-import { blogmetaQs } from "../../../qs/blog-meta"
-import { blogcardQs } from "../../../qs/blog-cards"
-import type { BlogList } from "../../../interfaces/blog"
-import BlogListBlock from '../../components/blocks/blogListBlock.astro';
-import Pagination from '../../components/helpers/pagination.astro';
+const translationStore = await getTranslations();
 
-const query = qs.stringify(blogcardQs(12, 1), {encodeValuesOnly: true})
-const metaQuery = qs.stringify(blogmetaQs(), {encodeValuesOnly: true})
+const query = qs.stringify(blogcardQs(12, 1), { encodeValuesOnly: true });
+const metaQuery = qs.stringify(blogmetaQs(), { encodeValuesOnly: true });
 
 const blogCards = await fetchApi<BlogList>({
-	endpoint: 'blogs',
-    isPaginated: true,
-    query: `?${query}`
-})
+  endpoint: "blogs",
+  isPaginated: true,
+  query: `?${query}`,
+});
 
 const layoutData = await fetchApi<any>({
-	endpoint: 'layout',
-    wrappedByKey: 'data',
-    query: `?${metaQuery}`
-})
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?${metaQuery}`,
+});
 
-let siteID = import.meta.env.SITE_ID
-let siteURL = import.meta.env.FULL_URL
-let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]['blog-index']}`
+let siteID = import.meta.env.SITE_ID;
+let siteURL = import.meta.env.FULL_URL;
+let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["blog-index"]}`;
 
 //set page seo data
 let seo = {
-    pageTitle: layoutData?.attributes?.blogMeta?.blogTitle,
-    metaDescription: layoutData?.attributes?.blogMeta?.blogDescription,
-    url: canonical
-}
-
+  pageTitle: layoutData?.attributes?.blogMeta?.blogTitle,
+  metaDescription: layoutData?.attributes?.blogMeta?.blogDescription,
+  url: canonical,
+};
 ---
 
 <MainLayout seoData={seo}>
-    <div class="curve mb-5">
-        <div class="xl:container px-2 pb-5 pt-4">
+  <div class="curve mb-5">
+    <div class="xl:container px-2 pb-5 pt-4">
+      <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-5"> -->
+      <BlogListBlock data={blogCards.data} />
+      <!-- </div> -->
 
-            <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-5"> -->
-                <BlogListBlock data={blogCards.data} />
-            <!-- </div> -->
-        
-            <Pagination 
-            currPage={blogCards?.meta?.pagination?.page} 
-            pageCount={blogCards?.meta?.pagination?.pageCount} 
-            path={urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']} />
-        </div>
+      <Pagination
+        currPage={blogCards?.meta?.pagination?.page}
+        pageCount={blogCards?.meta?.pagination?.pageCount}
+        path={urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]}
+        {translationStore}
+      />
     </div>
+  </div>
 </MainLayout>

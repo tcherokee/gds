@@ -1,17 +1,10 @@
 ---
 // Types
-import type {
-  Faqs,
-  TranslationData,
-} from "../../../interfaces/common/types.ts";
 
 // Stores
-import { getTranslations } from "../../../stores/addTranslations.ts";
 
 // Components
 import Collapse from "../helpers/collapse.astro";
-
-const translationStore: TranslationData = getTranslations.get();
 
 const { data } = Astro.props;
 ---

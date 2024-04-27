@@ -1,17 +1,15 @@
 ---
 
-import dayjs from 'dayjs'
 import Icon from 'astro-icon'
-import type { CasinoData, AuthorCasinoAttributes } from "../../../interfaces/common/types"
-import type { TranslationData } from "../../../interfaces/common/types.ts"
-import { getTranslations } from "../../../stores/addTranslations.ts"
-import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
+import dayjs from 'dayjs'
+import type { AuthorCasinoAttributes, CasinoData } from "../../../interfaces/common/types"
+import { noDepositBonus, welcomeBonus } from '../../../lib/casinoBonusLayout'
 import { urlTranslate } from '../../../utils/data-store.util'
 
 // Components
+import Images from '../helpers/images.astro'
 import Link from "../helpers/link.astro"
 import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
-import Images from '../helpers/images.astro'
 
 // Tailwind Gradient Object for Dynamic Classes
 const badgesOptions = ([
@@ -20,9 +18,8 @@ const badgesOptions = ([
     "bg-gradient-to-b from-bronze-tag-t-gradient to-bronze-tag-b-gradient",
 ])
 
-const translationStore: TranslationData = getTranslations.get()
 
-const { casinos } = Astro.props
+const { casinos, translationStore } = Astro.props
 
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 
@@ -34,11 +31,11 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
             <>
                 <thead class="hidden border-l-[12px] border-r-[12px] border-l-casino-table-header-bkg border-r-casino-table-header-bkg md:table-row-group">
                     <tr class="border-b-[12px] border-b-grey-100">
-                        <th scope="col" class="px-3">{translationStore.casinoTableHeadingCasinos}</th>
-                        <th scope="col" class="px-3">{translationStore.casinoTableHeadingRating}</th>
-                        <th scope="col" class="px-3">{translationStore.casinoTableHeadingBonus}</th>
-                        <th scope="col" class="px-3">{translationStore.withoutDeposit}</th>
-                        <th scope="col" class="px-3">{translationStore.casinoTableHeadinRegister}</th>
+                        <th scope="col" class="px-3">{translationStore?.casinoTableHeadingCasinos}</th>
+                        <th scope="col" class="px-3">{translationStore?.casinoTableHeadingRating}</th>
+                        <th scope="col" class="px-3">{translationStore?.casinoTableHeadingBonus}</th>
+                        <th scope="col" class="px-3">{translationStore?.withoutDeposit}</th>
+                        <th scope="col" class="px-3">{translationStore?.casinoTableHeadinRegister}</th>
                     </tr>
                 </thead>
                 <tbody class="text-casino-table-text">
@@ -48,9 +45,9 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                 <td class="casino-logo w-1/2 md:w-auto relative overflow-hidden">
                                     {
                                         ((casino as CasinoData)?.attributes?.Badges ?? (casino as AuthorCasinoAttributes)?.Badges) 
-                                        ? <span class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore.exclusive}</span>
+                                        ? <span class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.exclusive}</span>
                                         : ((casino as CasinoData)?.attributes?.publishedAt ?? (casino as AuthorCasinoAttributes)?.publishedAt) && dayjs().diff(((casino as CasinoData)?.attributes?.publishedAt ?? (casino as AuthorCasinoAttributes)?.publishedAt), 'day') <= 14 
-                                        ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore.newCasino}</span>
+                                        ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.newCasino}</span>
                                         :<></>
                                     }
                                     <div class:list={["h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative", i === 0 ? 'casino-logo__first' : i === 1 ? 'casino-logo__second' : i === 2 ? 'casino-logo__third' : '']}>
@@ -78,7 +75,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                 href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+ ((casino as CasinoData)?.attributes?.slug || (casino as AuthorCasinoAttributes)?.slug)}/`}
                                             >
                                                 <span class="hidden sm:inline-flex sm:pr-1">{(casino as CasinoData)?.attributes?.title ?? (casino as AuthorCasinoAttributes)?.title}</span>
-                                                <span class="underline">{translationStore.review}</span>
+                                                <span class="underline">{translationStore?.review}</span>
                                             </Link>
                                             <Icon name="arrow-right" class="w-[14px]" />
                                         </div>
@@ -89,7 +86,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         <div
                                             class="text-[#7C838D] text-center text-sm leading-[18px] font-bold mb-2 md:hidden"
                                         >
-                                            {translationStore.casinoTableHeadingBonus}
+                                            {translationStore?.casinoTableHeadingBonus}
                                         </div>
                                         <Link
                                             href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}`}
@@ -97,16 +94,16 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                             type="external"
                                             rel="sponsored"
                                         >
-                                             <Fragment set:html={welcomeBonus(casino)} />
+                                             <Fragment set:html={welcomeBonus(casino, translationStore?.reloadBonus)} />
                                         </Link>
                                         <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
-                                            {translationStore.wageringRequirement} 
+                                            {translationStore?.wageringRequirement} 
                                             <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                         </span>
                                         <div class="wrap-collabsible w-full md:hidden mt-2">
                                             <input id={`welcomeBonus${i}`} class="toggle hidden peer" type="checkbox" />
                                             <label for={`welcomeBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
-                                                {translationStore.wageringRequirement}
+                                                {translationStore?.wageringRequirement}
                                                 <Icon name="angle" class="fill-grey-500 group-open:rotate-180" height="20px" width="18px"/>
                                             </label>
                                             <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
@@ -123,31 +120,48 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         <div
                                             class="text-[#7C838D] text-center text-sm leading-[18px] font-bold mb-2 md:hidden"
                                         >
-                                            {translationStore.withoutDeposit}
+                                            {translationStore?.withoutDeposit}
                                         </div>
                                         {
-                                            noDepositBonus(casino)?.bonus ?
+                                            noDepositBonus(casino, {
+                                                withoutDeposit: translationStore?.withoutDeposit,
+                                                freeSpins: translationStore?.freeSpins
+                                            })?.bonus ?
                                             <Link
                                                 href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}`}
                                                 classes="flex underline text-center font-lato"
                                                 type="external"
                                                 rel="sponsored"
                                             >
-                                                <Fragment set:html={noDepositBonus(casino)?.bonus} />
+                                                <Fragment
+                                                    set:html={noDepositBonus(
+                                                        casino,
+                                                        {
+                                                            withoutDeposit: translationStore?.withoutDeposit,
+                                                            freeSpins: translationStore?.freeSpins
+                                                        }
+                                                    )?.bonus} />
                                             </Link>
                                             <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
-                                                {translationStore.wageringRequirement} 
+                                                {translationStore?.wageringRequirement} 
                                                 <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                             </span>
                                             <div class="wrap-collabsible w-full md:hidden mt-2">
                                                 <input id={`noDepositBonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                 <label for={`noDepositBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open" tabindex="0">
-                                                    {translationStore.wageringRequirement}
+                                                    {translationStore?.wageringRequirement}
                                                     <Icon name="angle" class="fill-grey-500 group-[.open]:rotate-180" height="20px" width="18px"/>
                                                 </label>
                                                 <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
                                                     <div class="content-inner text-grey-500 mt-4">
-                                                        <Fragment set:html={noDepositBonus(casino)?.terms} />
+                                                        <Fragment
+                                                            set:html={noDepositBonus(
+                                                                casino,
+                                                                {
+                                                                    withoutDeposit: translationStore?.withoutDeposit,
+                                                                    freeSpins: translationStore?.freeSpins
+                                                                }
+                                                            )?.terms} />
                                                     </div>
                                                 </div>
                                             </div> :
@@ -159,24 +173,24 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                 <td class="w-full !border-l-0 md:w-auto">
                                     <div class="h-full py-3 bg-white rounded-tr-none rounded-br-lg rounded-bl-lg md:rounded-tr-lg md:rounded-bl-none">
                                         <div class="h-full px-3 flex flex-col justify-end items-center sm:justify-center">
-                                            {((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) && <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{translationStore.bonusCode}</div>}
+                                            {((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) && <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{translationStore?.bonusCode}</div>}
                                             {((casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl )&&
                                                 <Link
                                                     href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}`}
                                                     classes="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
                                                     type="external"
                                                     rel="sponsored"
-                                                    text={((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) ? ((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) : translationStore.visitSite}
+                                                    text={((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) ? ((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) : translationStore?.visitSite}
                                                 />
 										    }
                                             <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
-                                                {translationStore.termsConditions} 
+                                                {translationStore?.termsConditions} 
                                                 <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                             </span>
                                             <div class="wrap-collabsible w-full md:hidden mt-2">
                                                 <input id={`bonus${i}`} class="toggle hidden peer" type="checkbox" />
                                                 <label for={`bonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
-                                                    {translationStore.termsConditions}
+                                                    {translationStore?.termsConditions}
                                                     <Icon name="angle" class="fill-grey-500 group-open:rotate-180" height="20px" width="18px"/>
                                                 </label>
                                                 <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">

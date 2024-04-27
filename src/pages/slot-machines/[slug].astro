@@ -2,102 +2,113 @@
 export const prerender = true;
 
 // First and Third Party Plugins
-import qs from 'qs'
+import qs from "qs";
 
 // Types
 import type { GetStaticPaths } from "astro";
-import type { Gamepage } from "../../../interfaces/game-page"
-import type { LayoutData } from '../../../interfaces/layout';
-import type { TranslationData } from '../../../interfaces/common/types';
+import type { Gamepage } from "../../../interfaces/game-page";
+import type { LayoutData } from "../../../interfaces/layout";
+import type { TranslationData } from "../../../interfaces/common/types";
 
 // Helpers
-import { urlTranslate, GameInfoHeader } from '../../../utils/data-store.util'
-import fetchApi from '../../../lib/strapi';
-
-// Stores
-import { getTranslations } from '../../../stores/addTranslations';
+import { urlTranslate, GameInfoHeader } from "../../../utils/data-store.util";
+import fetchApi from "../../../lib/strapi";
 
 // Queries
-import { gamepageQs } from "../../../qs/game-page"
-import { customPageLayoutAddOnsQs } from "../../../qs/customPages"
+import { gamepageQs } from "../../../qs/game-page";
+import { customPageLayoutAddOnsQs } from "../../../qs/customPages";
 
 // Components
-import MainLayout from '../../layouts/MainLayout.astro';
-import Breadcrumb from '../../components/layout/breadcrumbs.astro'
-import RelatedCasino from '../../components/games/relatedCasino.astro';
-import ProviderGames from '../../components/games/providerGames.astro';
-import HowTo from '../../components/general/howTo.astro';
-import ContentBlock from '../../components/blocks/contentBlock.astro';
-import ProsCons from '../../components/general/proCons.astro'
-import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
-import ImageCarousel from '../../components/general/imageCarousel.svelte';
-import FaqListBlock from '../../components/blocks/faqListBlock.astro';
-import GamePlayer from '../../components/games/gamePlayer.svelte'
-import QuickLinks from '../../components/helpers/quicklinks.astro'
-import AuthorCard from '../../components/general/authorCard.astro';
+import MainLayout from "../../layouts/MainLayout.astro";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+import RelatedCasino from "../../components/games/relatedCasino.astro";
+import ProviderGames from "../../components/games/providerGames.astro";
+import HowTo from "../../components/general/howTo.astro";
+import ContentBlock from "../../components/blocks/contentBlock.astro";
+import ProsCons from "../../components/general/proCons.astro";
+import CasinoSideBar from "../../components/casino/casinoSidebar.astro";
+import ImageCarousel from "../../components/general/imageCarousel.svelte";
+import FaqListBlock from "../../components/blocks/faqListBlock.astro";
+import GamePlayer from "../../components/games/gamePlayer.svelte";
+import QuickLinks from "../../components/helpers/quicklinks.astro";
+import AuthorCard from "../../components/general/authorCard.astro";
+import { getTranslations } from "../../../utils/api-requests";
 
 // Set Up Translation Store
-const translationStore: TranslationData = getTranslations.get()
-
+const translationStore = await getTranslations();
 
 export const getStaticPaths = (async () => {
-    const query = qs.stringify(gamepageQs(), {encodeValuesOnly: true});
-	const gamePage = await fetchApi<Gamepage[]>({
-		endpoint: 'games',
-		wrappedByKey: 'data',
-		query: `?${query}`
-	});
+  const query = qs.stringify(gamepageQs(), { encodeValuesOnly: true });
+  const gamePage = await fetchApi<Gamepage[]>({
+    endpoint: "games",
+    wrappedByKey: "data",
+    query: `?${query}`,
+  });
 
-    return gamePage.map((page) => {
-        return {
-            params: {slug: page?.attributes?.slug},
-            props: { page }
-        }
-    });
+  return gamePage.map((page) => {
+    return {
+      params: { slug: page?.attributes?.slug },
+      props: { page },
+    };
+  });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props
+const { page } = Astro.props;
 const { slug } = Astro.params; //get the slug from the page url
 
-
 // Import the QS Query string for custom slugs and prepare it for the API fetch
-const layoutQuery = qs.stringify(customPageLayoutAddOnsQs(), {encodeValuesOnly: true})
+const layoutQuery = qs.stringify(customPageLayoutAddOnsQs(), {
+  encodeValuesOnly: true,
+});
 
 // Request to the Fetch Function to get the custom page slugs from the API
 const layout = await fetchApi<LayoutData>({
-    endpoint: 'layout',
-    wrappedByKey: 'data',
-    query: `?${layoutQuery}`
-})
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?${layoutQuery}`,
+});
 
 //generate page url
-const siteID = import.meta.env.SITE_ID
-const siteURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['game-pages']}/${slug}`;
+const siteID = import.meta.env.SITE_ID;
+const siteURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["game-pages"]}/${slug}`;
 
 //set page seo data
 let seo = {
-    pageTitle: page?.attributes?.seo?.metaTitle,
-    metaDescription: page?.attributes?.seo?.metaDescription,
-    url: siteURL
-}
+  pageTitle: page?.attributes?.seo?.metaTitle,
+  metaDescription: page?.attributes?.seo?.metaDescription,
+  url: siteURL,
+};
 
 //list componets on page
-const __blocks = page?.attributes?.blocks
+const __blocks = page?.attributes?.blocks;
 ---
 
 <MainLayout seoData={seo}>
-     <Breadcrumb breadcrumbs={[{ breadCrumbText: page?.attributes?.title, breadCrumbUrl: null }]} breadcrumbKey="gamesBreadcrumbs" />
+  <Breadcrumb
+    breadcrumbs={[
+      { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
+    ]}
+    breadcrumbKey="gamesBreadcrumbs"
+  />
 
-     <div class="curve rounded-b-3xl pb-3">
-        <div class="section-wrapper relative">
-            <GamePlayer data={page} gamePageURL={siteURL} {layout} translations={translationStore} client:load />
-            <div class="mt-6 md:mt-8">
-                <h2 class="text-white !m-0">{translationStore.gamePageRelatedGamesH2}</h2>
-                <div class="mt-4 glass-wrapper">
-					<!-- <GameListBlock data={limitGames} /> -->
-					<ProviderGames slug={page?.attributes?.slug} />
-				</div>
-                <!-- {gamesData?.length > $GamesStore?.length &&
+  <div class="curve rounded-b-3xl pb-3">
+    <div class="section-wrapper relative">
+      <GamePlayer
+        data={page}
+        gamePageURL={siteURL}
+        {layout}
+        translations={translationStore ?? {}}
+        client:load
+      />
+      <div class="mt-6 md:mt-8">
+        <h2 class="text-white !m-0">
+          {translationStore?.gamePageRelatedGamesH2}
+        </h2>
+        <div class="mt-4 glass-wrapper">
+          <!-- <GameListBlock data={limitGames} /> -->
+          <ProviderGames slug={page?.attributes?.slug} {translationStore} />
+        </div>
+        <!-- {gamesData?.length > $GamesStore?.length &&
 					<div class="flex justify-center mt-10">
 						<button
 							on:click={loadMoreGames}
@@ -106,436 +117,458 @@ const __blocks = page?.attributes?.blocks
 						>
 					</div>
 				} -->
-            </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-full xl:container px-2">
+    <div class="mb-10">
+      <h2 class="mt-8 mb-4 md:mt-16">
+        {translationStore?.gamePageRelatedCasinoH2}
+      </h2>
+      <RelatedCasino slug={page?.attributes?.slug} {translationStore} />
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-x-8">
+      <div class="order-last md:order-first mt-5 md:mt-0">
+        <div class="quicklinks mb-5">
+          <QuickLinks data={page} />
         </div>
-     </div>
-
-     <div class="w-full xl:container px-2">
-        <div class="mb-10">
-			<h2 class="mt-8 mb-4 md:mt-16">{translationStore.gamePageRelatedCasinoH2}</h2>
-			<RelatedCasino slug={page?.attributes?.slug}/>
-		</div>
-
-        <div class="flex flex-col md:flex-row gap-x-8">
-            <div class="order-last md:order-first mt-5 md:mt-0">
-                <div class="quicklinks mb-5">
-                    <QuickLinks data={page} />
-                </div>
-                <div class="intro-content">
-                    <h1 class="text-blue-700 !mt-0">{page?.attributes?.heading}</h1>
-                    <!-- <Fragment set:html={page?.attributes?.introduction}></Fragment> -->
-					<ContentBlock pageContent={page?.attributes?.introduction} />
-                </div>
-
-                {page?.attributes?.howTo &&
-					<div class="howto-content">
-						<h2>{page?.attributes?.howTo.title}</h2>
-						{page?.attributes?.howTo?.howToGroup.map((howTo:any, i:number) => 
-							<HowTo
-								count={i + 1}
-								howToWidth={howTo?.image?.data?.attributes?.width}
-								howToHeight={howTo?.image?.data?.attributes?.height}
-								howToImage={howTo?.image?.data?.attributes?.url}
-								howToCopy={howTo.copy}
-								howToHeading={howTo.heading}
-							/>
-						)}
-					</div>
-				}
-
-                { page?.attributes?.gameInfoTable &&
-					<div class="info-table-content">
-						<h2 class="mb-[15px]">{translationStore.gameInfoTableH2}</h2>
-						<figure class="table">
-							<table class="inner-content-table table table-primary">
-								<thead class="">
-									<tr>
-										{Object.values(GameInfoHeader).map(key =>
-											key === 'rtp' ?
-                                            <th class="uppercase">{key}</th> : 
-                                            <th class="capitalize">{key}</th>
-											
-										)}
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										{Object.keys(GameInfoHeader).map(key =>
-											<td>{page?.attributes?.gameInfoTable[key]}</td>
-										)}
-									</tr>
-								</tbody>
-							</table>
-						</figure>
-					</div>
-				}
-
-                {page?.attributes?.content1 &&
-					<div class="game-content">
-						<div>
-							<ContentBlock pageContent={page?.attributes?.content1} />
-						</div>
-					</div>
-				}
-
-                {page?.attributes?.proscons &&
-					<div class="procon-content">
-						<div>
-							<ProsCons
-								pros={page?.attributes?.proscons?.pros}
-								cons={page?.attributes?.proscons?.cons}
-								heading={page?.attributes?.proscons?.heading}
-								prosImage={page?.attributes?.proscons?.proImage}
-								consImage={page?.attributes?.proscons?.conImage}
-							/>
-						</div>
-					</div>
-				}
-
-                <!-- Start Blocks components -->
-
-                { 
-                    //Image carousel block
-                    __blocks.map((block, i) => (
-                    (block.__component === 'shared.image-carousel') &&
-                        <ImageCarousel data={page?.attributes.blocks[i]} client:visible  /> 
-                    ))
-                }
-
-				 <!-- End page Blocks -->
-
-                 { page?.attributes?.faqs.length > 0 && 
-					<div class="faq-content">
-						<h2 class="mb-4">{translationStore.faq}</h2>
-						<div>
-							{page?.attributes?.faqs.map((faq:any) => <FaqListBlock data={faq} /> )}
-						</div>
-					</div>
-				}
-
-				<AuthorCard data={page.attributes.author}/>
-            </div>
-            <div class="basis-[315px] shrink-0 order-first order-last">
-                <CasinoSideBar />
-            </div>
+        <div class="intro-content">
+          <h1 class="text-blue-700 !mt-0">{page?.attributes?.heading}</h1>
+          <!-- <Fragment set:html={page?.attributes?.introduction}></Fragment> -->
+          <ContentBlock pageContent={page?.attributes?.introduction} />
         </div>
-     </div>
 
+        {
+          page?.attributes?.howTo && (
+            <div class="howto-content">
+              <h2>{page?.attributes?.howTo.title}</h2>
+              {page?.attributes?.howTo?.howToGroup.map(
+                (howTo: any, i: number) => (
+                  <HowTo
+                    count={i + 1}
+                    howToWidth={howTo?.image?.data?.attributes?.width}
+                    howToHeight={howTo?.image?.data?.attributes?.height}
+                    howToImage={howTo?.image?.data?.attributes?.url}
+                    howToCopy={howTo.copy}
+                    howToHeading={howTo.heading}
+                  />
+                )
+              )}
+            </div>
+          )
+        }
+
+        {
+          page?.attributes?.gameInfoTable && (
+            <div class="info-table-content">
+              <h2 class="mb-[15px]">{translationStore?.gameInfoTableH2}</h2>
+              <figure class="table">
+                <table class="inner-content-table table table-primary">
+                  <thead class="">
+                    <tr>
+                      {Object.values(GameInfoHeader).map((key) =>
+                        key === "rtp" ? (
+                          <th class="uppercase">{key}</th>
+                        ) : (
+                          <th class="capitalize">{key}</th>
+                        )
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      {Object.keys(GameInfoHeader).map((key) => (
+                        <td>{page?.attributes?.gameInfoTable[key]}</td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </figure>
+            </div>
+          )
+        }
+
+        {
+          page?.attributes?.content1 && (
+            <div class="game-content">
+              <div>
+                <ContentBlock pageContent={page?.attributes?.content1} />
+              </div>
+            </div>
+          )
+        }
+
+        {
+          page?.attributes?.proscons && (
+            <div class="procon-content">
+              <div>
+                <ProsCons
+                  pros={page?.attributes?.proscons?.pros}
+                  cons={page?.attributes?.proscons?.cons}
+                  heading={page?.attributes?.proscons?.heading}
+                  prosImage={page?.attributes?.proscons?.proImage}
+                  consImage={page?.attributes?.proscons?.conImage}
+                />
+              </div>
+            </div>
+          )
+        }
+
+        <!-- Start Blocks components -->
+
+        {
+          //Image carousel block
+          __blocks.map(
+            (block, i) =>
+              block.__component === "shared.image-carousel" && (
+                <ImageCarousel
+                  data={page?.attributes.blocks[i]}
+                  client:visible
+                />
+              )
+          )
+        }
+
+        <!-- End page Blocks -->
+
+        {
+          page?.attributes?.faqs.length > 0 && (
+            <div class="faq-content">
+              <h2 class="mb-4">{translationStore?.faq}</h2>
+              <div>
+                {page?.attributes?.faqs.map((faq: any) => (
+                  <FaqListBlock data={faq} {translationStore} />
+                ))}
+              </div>
+            </div>
+          )
+        }
+
+        <AuthorCard data={page.attributes.author} {translationStore} />
+      </div>
+      <div class="basis-[315px] shrink-0 order-first order-last">
+        <CasinoSideBar {translationStore} />
+      </div>
+    </div>
+  </div>
 </MainLayout>
 
 <style lang="scss">
-	h1 {
-		text-shadow: none;
-	}
-	.game-section {
-		@apply flex flex-col justify-center rounded-t-lg -mx-3 md:mx-0;
-	}
+  h1 {
+    text-shadow: none;
+  }
+  .game-section {
+    @apply flex flex-col justify-center rounded-t-lg -mx-3 md:mx-0;
+  }
 
-	.player-control-tooltip {
-		@apply hidden text-sm z-20 -mt-20 w-fit absolute transition duration-150 ease-in-out left-0 ml-8 shadow-lg bg-white p-4 rounded;
-	}
-	.game-player-fullscreen {
-		@apply h-full w-full fixed left-0 top-0 flex justify-center bg-black z-[999];
+  .player-control-tooltip {
+    @apply hidden text-sm z-20 -mt-20 w-fit absolute transition duration-150 ease-in-out left-0 ml-8 shadow-lg bg-white p-4 rounded;
+  }
+  .game-player-fullscreen {
+    @apply h-full w-full fixed left-0 top-0 flex justify-center bg-black z-[999];
 
-		.float-close-btn {
-			display: flex;
-			flex-direction: column;
-			margin-left: auto;
-			position: absolute;
-			top: 0px;
-			z-index: 999;
-			margin: 20px;
-			right: 0px;
-			border-radius: 10px;
-			height: 40px;
-			overflow: hidden;
+    .float-close-btn {
+      display: flex;
+      flex-direction: column;
+      margin-left: auto;
+      position: absolute;
+      top: 0px;
+      z-index: 999;
+      margin: 20px;
+      right: 0px;
+      border-radius: 10px;
+      height: 40px;
+      overflow: hidden;
 
-			&:hover {
-				height: max-content;
-			}
+      &:hover {
+        height: max-content;
+      }
 
-			.buttons {
-				display: flex;
-				flex-direction: column;
-				padding: 10px;
+      .buttons {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
 
-				.btn {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					border-radius: 50%;
-					width: 30px;
-					height: 30px;
-					padding: 0;
-					background: theme('colors.gameplayer-meta-btn-bkg');
-					border: 1px solid theme('colors.gameplayer-meta-btn-border');
-					margin-bottom: 5px;
+        .btn {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          padding: 0;
+          background: theme("colors.gameplayer-meta-btn-bkg");
+          border: 1px solid theme("colors.gameplayer-meta-btn-border");
+          margin-bottom: 5px;
 
-					&:last-child {
-						margin-right: 0;
-					}
+          &:last-child {
+            margin-right: 0;
+          }
 
-					&.heart {
-						:global(svg) {
-							fill: transparent;
-						}
+          &.heart {
+            :global(svg) {
+              fill: transparent;
+            }
 
-						&.filled {
-							:global(svg) {
-								fill: theme('colors.filled-fav');
-							}
-						}
-					}
+            &.filled {
+              :global(svg) {
+                fill: theme("colors.filled-fav");
+              }
+            }
+          }
 
-					&.report-issue {
-						background: theme('colors.gameplayer-report-issue-bkg');
-						border-color: theme('colors.gameplayer-report-issue-bdr');
+          &.report-issue {
+            background: theme("colors.gameplayer-report-issue-bkg");
+            border-color: theme("colors.gameplayer-report-issue-bdr");
 
-						:global(svg) {
-							fill: theme('colors.gameplayer-report-issue-fill');
-						}
-					}
+            :global(svg) {
+              fill: theme("colors.gameplayer-report-issue-fill");
+            }
+          }
 
-					&.close {
-						display: none;
-					}
-				}
-			}
-		}
-	}
-	.game-player {
-		@apply md:px-3 md:h-[700px] rounded-lg flex flex-col items-center justify-center bg-black aspect-video;
-		display: flex;
-		background: theme('colors.black');
-		border-radius: 4px;
-		overflow: hidden;
-		position: static;
-	}
+          &.close {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  .game-player {
+    @apply md:px-3 md:h-[700px] rounded-lg flex flex-col items-center justify-center bg-black aspect-video;
+    display: flex;
+    background: theme("colors.black");
+    border-radius: 4px;
+    overflow: hidden;
+    position: static;
+  }
 
-	.float-close-btn {
-		display: none;
-	}
-	.start-game-overlay {
-		display: flex;
-		flex-direction: column;
-		background: theme('colors.black');
-		align-items: center;
-		justify-content: center;
-		top: 0px;
-		bottom: 0px;
-		left: 0px;
-		right: 0px;
-		padding: 10px;
+  .float-close-btn {
+    display: none;
+  }
+  .start-game-overlay {
+    display: flex;
+    flex-direction: column;
+    background: theme("colors.black");
+    align-items: center;
+    justify-content: center;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 10px;
 
-		:global(img) {
-			display: none;
-			border-radius: 4px;
-			overflow: hidden;
+    :global(img) {
+      display: none;
+      border-radius: 4px;
+      overflow: hidden;
 
-			@media (min-width: theme('screens.sm')) {
-				display: block;
-			}
-		}
+      @media (min-width: theme("screens.sm")) {
+        display: block;
+      }
+    }
 
-		.game-title {
-			color: theme('colors.white');
-			font-size: 14px;
-			text-transform: uppercase;
-		}
+    .game-title {
+      color: theme("colors.white");
+      font-size: 14px;
+      text-transform: uppercase;
+    }
 
-		.age-warning {
-			color: theme('colors.white');
-			font-size: 11px;
-			border: 1px solid theme('colors.danger');
-			border-radius: 4px;
-			padding: 5px;
-			text-align: center;
-		}
-	}
+    .age-warning {
+      color: theme("colors.white");
+      font-size: 11px;
+      border: 1px solid theme("colors.danger");
+      border-radius: 4px;
+      padding: 5px;
+      text-align: center;
+    }
+  }
 
-	.iframe-wrapper {
-		display: flex;
-		width: 100%;
-		height: 100%;
-	}
+  .iframe-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
 
-	.provider-game-title {
-		display: flex;
-		align-items: center;
+  .provider-game-title {
+    display: flex;
+    align-items: center;
 
-		h2 {
-			color: theme('colors.black');
-			font-size: 16px;
-			margin: 0px !important;
-		}
+    h2 {
+      color: theme("colors.black");
+      font-size: 16px;
+      margin: 0px !important;
+    }
 
-		:global(img) {
-			border-radius: 4px;
-		}
-	}
+    :global(img) {
+      border-radius: 4px;
+    }
+  }
 
-	.buttons {
-		display: flex;
-		.btn {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			border-radius: 5px;
-			width: 30px;
-			height: 30px;
-			padding: 0;
-			background: theme('colors.grey[300]');
-			border: 1px solid theme('colors.grey[500]');
+  .buttons {
+    display: flex;
+    .btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background: theme("colors.grey[300]");
+      border: 1px solid theme("colors.grey[500]");
 
-			&.heart {
-				:global(svg) {
-					fill: transparent;
-				}
+      &.heart {
+        :global(svg) {
+          fill: transparent;
+        }
 
-				&.filled {
-					:global(svg) {
-						fill: theme('colors.filled-fav');
-					}
-				}
-			}
+        &.filled {
+          :global(svg) {
+            fill: theme("colors.filled-fav");
+          }
+        }
+      }
 
-			&.report-issue {
-				background: theme('colors.gameplayer-report-issue-bkg');
-				border-color: theme('colors.gameplayer-report-issue-bdr');
+      &.report-issue {
+        background: theme("colors.gameplayer-report-issue-bkg");
+        border-color: theme("colors.gameplayer-report-issue-bdr");
 
-				:global(svg) {
-					fill: theme('colors.gameplayer-report-issue-fill');
-				}
-			}
-			&.close {
-				display: none;
-			}
+        :global(svg) {
+          fill: theme("colors.gameplayer-report-issue-fill");
+        }
+      }
+      &.close {
+        display: none;
+      }
 
-			&.info {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				width: 30px;
-				height: 30px;
-				padding: 0;
-				background: theme('colors.grey[300]');
-				border: 1px solid theme('colors.grey[500]');
-				margin-right: auto;
-			}
-		}
-	}
+      &.info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        background: theme("colors.grey[300]");
+        border: 1px solid theme("colors.grey[500]");
+        margin-right: auto;
+      }
+    }
+  }
 
-	.player-controls {
-		h2 {
-			font-size: 16px;
-		}
+  .player-controls {
+    h2 {
+      font-size: 16px;
+    }
 
-		:global(img) {
-			display: none;
-			border-radius: 4px;
+    :global(img) {
+      display: none;
+      border-radius: 4px;
 
-			@media (min-width: theme('screens.sm')) {
-				display: block;
-			}
-		}
-	}
+      @media (min-width: theme("screens.sm")) {
+        display: block;
+      }
+    }
+  }
 
-	.game-content {
-		:global(.thumbnails) {
-			list-style: none;
-			margin: 0;
-			padding: 0;
+  .game-content {
+    :global(.thumbnails) {
+      list-style: none;
+      margin: 0;
+      padding: 0;
 
-			:global(.span2) {
-				display: none;
-			}
-		}
+      :global(.span2) {
+        display: none;
+      }
+    }
 
-		:global(h2 + ul > img) {
-			display: none;
-		}
-	}
+    :global(h2 + ul > img) {
+      display: none;
+    }
+  }
 
-	.faq-content {
-		margin-top: 14px;
-	}
+  .faq-content {
+    margin-top: 14px;
+  }
 
-	.author-content {
-		margin-top: 30px;
-	}
+  .author-content {
+    margin-top: 30px;
+  }
 
-	.info-table-content {
-		@apply w-full border-0 shadow-none;
+  .info-table-content {
+    @apply w-full border-0 shadow-none;
 
-		.table-primary {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			grid-template-areas: 'head body';
-			border-radius: 4px;
-			overflow: hidden;
-			margin: 0;
+    .table-primary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-areas: "head body";
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0;
 
-			@media (min-width: theme('screens.lg')) {
-				display: table;
-			}
+      @media (min-width: theme("screens.lg")) {
+        display: table;
+      }
 
-			thead {
-				grid-area: head;
+      thead {
+        grid-area: head;
 
-				td {
-					background: theme('colors.gamepage-info-table-header-bkg');
-					color: theme('colors.gamepage-info-table-header-text');
-					text-transform: uppercase;
-					text-align: center;
-				}
+        td {
+          background: theme("colors.gamepage-info-table-header-bkg");
+          color: theme("colors.gamepage-info-table-header-text");
+          text-transform: uppercase;
+          text-align: center;
+        }
 
-				th {
-					text-align: center;
-					padding-top: 10px;
-					padding-bottom: 10px;
-				}
-			}
+        th {
+          text-align: center;
+          padding-top: 10px;
+          padding-bottom: 10px;
+        }
+      }
 
-			tbody {
-				grid-area: body;
+      tbody {
+        grid-area: body;
 
-				td {
-					text-align: center;
-					&:last-child {
-						@apply border-l-0;
-					}
-				}
-			}
+        td {
+          text-align: center;
+          &:last-child {
+            @apply border-l-0;
+          }
+        }
+      }
 
-			tr {
-				display: flex;
-				flex-direction: column;
-				border: 1px #fff;
+      tr {
+        display: flex;
+        flex-direction: column;
+        border: 1px #fff;
 
-				@media (min-width: theme('screens.lg')) {
-					display: table-row;
-				}
-			}
+        @media (min-width: theme("screens.lg")) {
+          display: table-row;
+        }
+      }
 
-			td {
-				min-height: 42px;
-				border-bottom: 1px solid theme('colors.grey[100]');
-			}
+      td {
+        min-height: 42px;
+        border-bottom: 1px solid theme("colors.grey[100]");
+      }
 
-			th {
-				min-height: 42px;
-				border-bottom: 1px solid #fff;
-				border-bottom: 1px solid theme('colors.grey[100]');
-			}
-		}
-	}
+      th {
+        min-height: 42px;
+        border-bottom: 1px solid #fff;
+        border-bottom: 1px solid theme("colors.grey[100]");
+      }
+    }
+  }
 
-	:global(h1),
-	:global(h2),
-	:global(h3),
-	:global(h4),
-	:global(h5),
-	:global(h6) {
-		@apply mt-10 mb-4;
-	}
-</style>
+  :global(h1),
+  :global(h2),
+  :global(h3),
+  :global(h4),
+  :global(h5),
+  :global(h6) {
+    @apply mt-10 mb-4;
+  }
+</style>} />
+

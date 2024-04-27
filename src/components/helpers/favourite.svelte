@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { GameAttributes } from "../../../interfaces/games";
-  import { getTranslations } from "../../../stores/addTranslations";
+  // import { getTranslations } from "../../../stores/addTranslations";
   import { favourite } from "../../../stores/favouriteStore";
   import TransformImage from "../helpers/images.svelte";
   import Link from "./link.svelte";
@@ -11,7 +11,9 @@
 
   // Stores
   import { user } from "../../../stores/authStore.ts";
+  import type { TranslationData } from "../../../interfaces/common/types.ts";
 
+  export let translationStore: TranslationData = {};
   let favsChecked: boolean = false;
 
   const closeFavs = () => (favsChecked = false);
@@ -71,7 +73,7 @@
                   class="text-lg font-medium text-gray-900"
                   id="slide-over-title"
                 >
-                  {$getTranslations.favorite}
+                  {translationStore?.favorite}
               </div>
                 <div class="ml-3 flex h-7 items-center">
                   <button
@@ -142,20 +144,20 @@
             {#if !$user}
               <div class="py-6 space-y-3 px-4 sm:px-6 bg-white sticky bottom-0">
                 <p class="text-center text-sm text-blue-500 !mb-0 px-6">
-                  {$getTranslations.favouriteSignUp1}
+                  {translationStore?.favouriteSignUp1}
                   <Link
                     href={"/authentication/login/"}
                     class="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
                   >
-                    {$getTranslations.favouriteSignUp2}
+                    {translationStore?.favouriteSignUp2}
                   </Link>
-                  {$getTranslations.favouriteSignUp3}
+                  {translationStore?.favouriteSignUp3}
                 </p>
                 <Link
                   href={"/authentication/register/"}
                   classes="block text-base text-center min-h-[44px] rounded-md btn-secondary px-3 py-2.5 text-sm font-semibold"
                 >
-                  {$getTranslations.signUp}
+                  {translationStore?.signUp}
                 </Link>
               </div>
             {/if}

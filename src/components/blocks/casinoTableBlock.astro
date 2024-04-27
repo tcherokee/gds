@@ -1,53 +1,54 @@
 ---
+// First and Third Party Plugins
+import { Link } from "astro-link";
+import type { CasinoBlock } from "../../../interfaces/common/types.ts";
+import CasinoTable from "../casino/casinoTable.astro";
 
-	// First and Third Party Plugins
-	import { Link } from "astro-link"
-    import type { TranslationData, CasinoBlock } from "../../../interfaces/common/types.ts"
-    import { getTranslations } from "../../../stores/addTranslations.ts"
-    import CasinoTable from "../casino/casinoTable.astro";
+const {
+  block,
+  isHomepage = false,
+  customCasinos = new Array(),
+  authorCasinos = new Array(),
+  customPage = false,
+  translationStore,
+} = Astro.props;
 
-    const {
-        block,
-        isHomepage =  false, 
-        customCasinos = new Array(), 
-        authorCasinos = new Array(), 
-        customPage = false 
-    } = Astro.props;
+let customPageCasinos: CasinoBlock | undefined;
+let regularCasinos: CasinoBlock | undefined;
 
-    let customPageCasinos: CasinoBlock | undefined;
-	let regularCasinos: CasinoBlock | undefined;
+if (customPage === true && authorCasinos.length < 1) {
+  customPageCasinos =
+    customCasinos && customCasinos.length > 0
+      ? customCasinos
+      : block && block?.casinosList
+        ? block?.casinosList.map((casino: any) => casino?.casino?.data)
+        : [];
+} else {
+  regularCasinos = block?.casinos?.data;
+}
 
-    const translationStore: TranslationData = getTranslations.get()
-
-	if (customPage === true && authorCasinos.length < 1) {
-		customPageCasinos =
-			customCasinos && customCasinos.length > 0
-				? customCasinos
-				: block && block?.casinosList
-				? block?.casinosList.map((casino:any) => casino?.casino?.data)
-				: []
-	} else {
-		regularCasinos = block?.casinos?.data
-	}
-
-	// showCasinoFilterPanel = isHomepage ? false : block.showCasinoFilters;
-	const casinos = customPage ? customPageCasinos : regularCasinos
-
+// showCasinoFilterPanel = isHomepage ? false : block.showCasinoFilters;
+const casinos = customPage ? customPageCasinos : regularCasinos;
 ---
 
 <div>
-	<div class="relative xl:container px-2 pb-5">
-		<div class="mb-5 pt-2.5">
-			<div class="">
-				<CasinoTable casinos={casinos} />
-				{isHomepage &&
-					<div class="flex justify-center mt-[25px]">
-						<Link href={`${block?.link.url}/`} class="btn btn-secondary casino-table-btn p-2.5">
-                            {block?.link.label}
-                        </Link>
-					</div>
-				}
-			</div>
-		</div>
-	</div>
+  <div class="relative xl:container px-2 pb-5">
+    <div class="mb-5 pt-2.5">
+      <div class="">
+        <CasinoTable casinos={casinos} {translationStore} />
+        {
+          isHomepage && (
+            <div class="flex justify-center mt-[25px]">
+              <Link
+                href={`${block?.link.url}/`}
+                class="btn btn-secondary casino-table-btn p-2.5"
+              >
+                {block?.link.label}
+              </Link>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
 </div>

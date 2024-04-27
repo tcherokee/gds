@@ -3,35 +3,32 @@
   import qs from "qs";
 
   // Stores
-  import { getTranslations } from "../../../stores/addTranslations";
+  // import { getTranslations } from "../../../stores/addTranslations";
+  import { sortGames } from "../../../stores/filters";
   import {
     gameVariables,
-    providersFilters,
-    gamesQsStore,
-    categoriesFilters,
+    gamesQsStore
   } from "../../../stores/games";
-  import { sortGames } from "../../../stores/filters";
-
-  // Qeury Strings
+// Qeury Strings
   import { gamesQs } from "../../../qs/games";
 
   // Helpers
   import { urlTranslate } from "../../../utils/data-store.util";
   import Image from "../helpers/images.svelte";
   import Link from "../helpers/link.svelte";
-
-  // Images
-  import Xmark from "~icons/kensho-icons/xmark";
+// Images
   import Angle from "~icons/kensho-icons/angle";
-  import SortDesc from "~icons/kensho-icons/sort-desc";
   import SortAsc from "~icons/kensho-icons/sort-asc";
-
-  // Types
+  import SortDesc from "~icons/kensho-icons/sort-desc";
+  import Xmark from "~icons/kensho-icons/xmark";
+// Types
   import type {
-    Toggles,
     GameFilters,
-    BonusLabels,
     TProviderAttributesOnly,
+    Toggles,
+
+    TranslationData
+
   } from "../../../interfaces/common/types";
   import type { TUserGameProvider } from "../../../interfaces/games";
 
@@ -39,6 +36,7 @@
   export let page = 1;
   export let gameProviders: TProviderAttributesOnly[];
   export let slotCategories: TUserGameProvider[] = [];
+  export let translations: TranslationData = {};
 
   // Variables
   let searchInput: HTMLElement;
@@ -209,12 +207,12 @@
       <h4
         class="text-sm font-bold text-filter-provider-header-text capitalize !m-0"
       >
-        {$getTranslations.mostLovedProviders}
+        {translations?.mostLovedProviders}
       </h4>
       <Link href={softwareListURL}
         ><span
           class="text-sm font-bold text-filter-provider-header-text uppercase"
-          >{$getTranslations.seeAllProviders}</span
+          >{translations?.seeAllProviders}</span
         ></Link
       >
     </div>
@@ -285,7 +283,7 @@
               type="text"
               id="searchInput"
               class="text-xs w-full h-11 uppercase rounded-[4px] peer/input border border-background-900 bg-white/[.7] focus:rounded-b-none"
-              placeholder={$getTranslations.search}
+              placeholder={translations?.search}
               bind:this={searchInput}
               bind:value={searchInputValue}
               on:focus|once={loadSearch}
@@ -334,7 +332,7 @@
                 <span class="uppercase text-xs pointer-events-none">
                   {$gameVariables.categories.length > 0
                     ? $gameVariables.categories[0]
-                    : $getTranslations.categories}
+                    : translations?.categories}
                 </span>
                 {#if $gameVariables.categories.length > 0}
                   <button
@@ -381,7 +379,7 @@
               >
                 {$gameVariables.sort
                   ? getSortLabelByValue($gameVariables.sort)
-                  : $getTranslations.sortFilterH6}
+                  : translations?.sortFilterH6}
               </button>
               <button
                 type="button"

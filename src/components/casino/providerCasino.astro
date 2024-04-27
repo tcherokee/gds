@@ -1,29 +1,32 @@
 ---
-import qs from 'qs'
-import fetchApi from '../../../lib/strapi';
-import { providercasinoQs } from "../../../qs/provider-casino"
-import CasinoTableBlock from "../../components/blocks/casinoTableBlock.astro"
-import type { Casinoprovider } from "../../../interfaces/casino-provider"
+import qs from "qs";
+import fetchApi from "../../../lib/strapi";
+import { providercasinoQs } from "../../../qs/provider-casino";
+import CasinoTableBlock from "../../components/blocks/casinoTableBlock.astro";
+import type { Casinoprovider } from "../../../interfaces/casino-provider";
 
-const { slug } = Astro.props
+const { slug, translationStore } = Astro.props;
 
-const query = qs.stringify(providercasinoQs(slug), {encodeValuesOnly: true});
- 
+const query = qs.stringify(providercasinoQs(slug), { encodeValuesOnly: true });
+
 const casinoProvider = await fetchApi<Casinoprovider[]>({
-    endpoint: 'casino-providers',
-    wrappedByKey: 'data',
-    query: `?${query}`
+  endpoint: "casino-providers",
+  wrappedByKey: "data",
+  query: `?${query}`,
 });
 
 const block = {
-    showCasinoFilters: false
-}
+  showCasinoFilters: false,
+};
 ---
 
- {casinoProvider[0]?.attributes?.casinoLists.data &&
+{
+  casinoProvider[0]?.attributes?.casinoLists.data && (
     <CasinoTableBlock
-        customCasinos={casinoProvider[0]?.attributes?.casinoLists?.data}
-        customPage={true}
-        {block}
+      customCasinos={casinoProvider[0]?.attributes?.casinoLists?.data}
+      customPage={true}
+      {block}
+      {translationStore}
     />
+  )
 }

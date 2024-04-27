@@ -6,10 +6,7 @@ import qs from "qs";
 
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
-import type {
-  GameFilters,
-  TranslationData,
-} from "../../../interfaces/common/types";
+import type { GameFilters } from "../../../interfaces/common/types";
 import type { TAuthor } from "../../../interfaces/users";
 
 // Queries
@@ -18,20 +15,20 @@ import { authorPageQs } from "../../../qs/author";
 // Helpers
 import fetchApi from "../../../lib/strapi";
 import { urlTranslate } from "../../../utils/data-store.util";
+import { getTranslations } from "../../../utils/api-requests";
 
-// Stores
-import { getTranslations } from "../../../stores/addTranslations";
+const translationStore = await getTranslations();
 
 // Layouts
 import MainLayout from "../../layouts/MainLayout.astro";
 
 // Components
+import type { TUserGame } from "../../../interfaces/games";
+import { gamesQs } from "../../../qs/games";
 import GameListBlock from "../../components/blocks/gameListBlock.svelte";
 import BlogCard from "../../components/blogs/blogCard.astro";
 import CasinoTable from "../../components/casino/casinoTable.astro";
 import AuthorCard from "../../components/general/authorCard.astro";
-import { gamesQs } from "../../../qs/games";
-import type { TUserGame } from "../../../interfaces/games";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -109,8 +106,6 @@ export const getStaticPaths = (async () => {
 const { page, initialGames } = Astro.props;
 const { slug } = Astro.params;
 
-const translationStore: TranslationData = getTranslations.get();
-
 // Setting SITE ID
 const SITE_ID = import.meta.env.SITE_ID;
 
@@ -134,7 +129,7 @@ const gameBlockObj = {
 };
 
 // Truncate and Clean Blog Object
-const truncatedBlogObj = page.blogs.map((item) => {
+const truncatedBlogObj = page.blogs.map((item: any) => {
   if (item && item.content1) {
     // Remove HTML tags
     const plainText = item.content1.replace(/<[^>]*>/g, "");
@@ -163,7 +158,7 @@ const truncatedBlogObj = page.blogs.map((item) => {
     <div class="section-wrapper glass-wrapper">
       <div>
         <div>
-          <AuthorCard data={page} isFlat={true} />
+          <AuthorCard data={page} isFlat={true} {translationStore} />
         </div>
       </div>
 
@@ -177,6 +172,7 @@ const truncatedBlogObj = page.blogs.map((item) => {
               data={gameBlockObj}
               {initialGames}
               author={page.slug}
+              translations={translationStore}
               client:load
             />
           </div>

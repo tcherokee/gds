@@ -9,12 +9,10 @@ import type { GetStaticPaths } from "astro";
 import type {
   Faqs,
   TProviderAttributesOnly,
-  TranslationData,
 } from "../../../interfaces/common/types";
 import type { Slotprovider } from "../../../interfaces/slot-provider";
 
 // Stores
-import { getTranslations } from "../../../stores/addTranslations";
 
 // Queries
 import { gamesQs, slotProvidersQs } from "../../../qs/ssm-games";
@@ -24,6 +22,7 @@ import fetchApi from "../../../lib/strapi";
 import { urlTranslate } from "../../../utils/data-store.util";
 
 // Components
+import type { TUserGameProvider } from "../../../interfaces/games";
 import ContentBlock from "../../components/blocks/contentBlock.astro";
 import CasinoComparison from "../../components/casino/casinoComparison.astro";
 import CasinoSideBar from "../../components/casino/casinoSidebar.astro";
@@ -32,8 +31,10 @@ import FaqsComponent from "../../components/general/faqs.astro";
 import IntroBlock from "../../components/general/introWithImage.astro";
 import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
-import type { TUserGameProvider } from "../../../interfaces/games";
 
+import { getTranslations } from "../../../utils/api-requests";
+
+const translationStore = await getTranslations();
 // Fetch Slot Categories Filter
 const slotCategoriesResponse = await fetchApi<
   {
@@ -125,7 +126,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 // Set Up Translation Store
-const translationStore: TranslationData = getTranslations.get();
+// const translationStore: TranslationData = getTranslations.get();
 
 const { page } = Astro.props;
 const { slug } = Astro.params;
@@ -153,6 +154,7 @@ const seo = {
       data={page?.attributes?.IntroductionWithImage}
       timeDate={page?.attributes?.dateCreated}
       authorData={page?.attributes?.author}
+      {translationStore}
     />
 
     <div class="d-flex flex-wrap">
@@ -162,6 +164,7 @@ const seo = {
         gameProviders={gameProviders.attributes.filterProviders
           ? gameProviders.attributes.filterProviders.data
           : []}
+        {translationStore}
       />
     </div>
   </div>
@@ -188,6 +191,7 @@ const seo = {
           page?.attributes?.relatedCasinos?.data.length > 0 && (
             <CasinoComparison
               data={page?.attributes?.relatedCasinos?.data.slice(0, 3)}
+              {translationStore}
             />
           )
         }
@@ -203,7 +207,7 @@ const seo = {
         {
           page?.attributes?.faqs.length > 0 && (
             <div class="content mt-4">
-              <h2 class="mb-4">{translationStore.faq}</h2>
+              <h2 class="mb-4">{translationStore?.faq}</h2>
 
               {page?.attributes?.faqs.map((faq: { data: Faqs }) => (
                 <FaqsComponent data={faq} />
@@ -213,7 +217,7 @@ const seo = {
         }
       </div>
       <div class="basis-[315px] shrink-0 order-first order-last">
-        <CasinoSideBar />
+        <CasinoSideBar {translationStore} />
       </div>
     </div>
   </div>
