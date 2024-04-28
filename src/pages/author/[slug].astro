@@ -6,10 +6,7 @@ import qs from "qs";
 
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
-import type {
-  GameFilters,
-  TranslationData,
-} from "../../../interfaces/common/types";
+import type { GameFilters } from "../../../interfaces/common/types";
 import type { TAuthor } from "../../../interfaces/users";
 
 // Queries
@@ -18,9 +15,9 @@ import { authorPageQs } from "../../../qs/author";
 // Helpers
 import fetchApi from "../../../lib/strapi";
 import { urlTranslate } from "../../../utils/data-store.util";
+import { getTranslations } from "../../../utils/api-requests";
 
-// Stores
-import { getTranslations } from "../../../stores/addTranslations";
+const translationStore = await getTranslations();
 
 // Layouts
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -109,8 +106,6 @@ export const getStaticPaths = (async () => {
 const { page, initialGames } = Astro.props;
 const { slug } = Astro.params;
 
-const translationStore: TranslationData = getTranslations.get();
-
 // Setting SITE ID
 const SITE_ID = import.meta.env.SITE_ID;
 
@@ -160,7 +155,7 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
     <div class="w-full pt-5 px-3 author-upper-section pb-[65px]">
       <div class="xl:container">
         <div>
-          <AuthorCard data={page} isFlat={true} />
+          <AuthorCard data={page} isFlat={true} {translationStore} />
         </div>
 
         {
@@ -180,8 +175,24 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
           )
         }
       </div>
-    </div>
-    <div class="relative xl:container px-2 pb-5">
+
+      {
+        page.games.length > 0 && (
+          <div class="mt-5">
+            <div class="mb-5">
+              <h2>Ultimi giochi recensiti dall'autore</h2>
+            </div>
+            <GameListBlock
+              data={gameBlockObj}
+              {initialGames}
+              author={page.slug}
+              translations={translationStore}
+              client:load
+            />
+          </div>
+        )
+      }
+
       {
         page?.blogs.length > 0 && (
           <div>
@@ -189,7 +200,7 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
               <h2>Articoli recenti dell'autore</h2>
             </div>
             <div class="grid md:grid-cols-3 gap-3 md:gap-8">
-              <BlogCard data={truncatedBlogObj} />
+              <BlogCard data={truncatedBlogObj} {translationStore} />
             </div>
           </div>
         )

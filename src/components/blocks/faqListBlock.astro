@@ -1,16 +1,13 @@
 ---
-
 import Faqs from "../general/faqs.astro";
 
-import type { TranslationData } from "../../../interfaces/common/types.ts"
-import { getTranslations } from "../../../stores/addTranslations.ts"
+import type { TranslationData } from "../../../interfaces/common/types.ts";
+// import { getTranslations } from "../../../stores/addTranslations.ts";
 
-const translationStore: TranslationData = getTranslations.get()
+// const translationStore: TranslationData = getTranslations.get()
 
-const { data, firstFaq = false } = Astro.props
+const { data, translationStore, firstFaq = false } = Astro.props;
 ---
 
-{ 
-    firstFaq && <h2 class="mb-4">{translationStore.faq}</h2>
-}
-    <Faqs data={data} />
+{firstFaq && <h2 class="mb-4">{translationStore?.faq}</h2>}
+<Faqs data={data} />

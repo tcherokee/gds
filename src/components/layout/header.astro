@@ -10,7 +10,7 @@ import { Image } from "astro:assets";
 import Navigation from "../navigation/navigation.svelte";
 import type { MenuItem } from "../../../interfaces/menu";
 
-const { mainNavigation, logo, subNavigation } = Astro.props;
+const { mainNavigation, logo, subNavigation, translationStore } = Astro.props;
 ---
 
 <nav
@@ -33,7 +33,7 @@ const { mainNavigation, logo, subNavigation } = Astro.props;
       />
     </Link>
   </div>
-  <Navigation mainNavigation={mainNavigation} client:load />
+  <Navigation mainNavigation={mainNavigation} {translationStore} client:load />
 </nav>
 
 {

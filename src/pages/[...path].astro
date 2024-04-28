@@ -3,48 +3,50 @@ export const prerender = true;
 import qs from "qs";
 
 // Stores
+// import { getTranslations } from "../../stores/addTranslations";
 import { sortOptions } from "../../stores/sortFilters";
-import { getTranslations } from "../../stores/addTranslations";
 
 // Helpers
-import fetchApi from "../../lib/strapi";
 import {
   loadComponents,
   mapBlocksToDynamicComponents,
 } from "../../lib/loadBlockComponents";
-import { urlTranslate } from "../../utils/data-store.util";
+import fetchApi from "../../lib/strapi";
 
 // Query Strings
 import { customPageQs } from "../../qs/customPages";
 import { gamesQs } from "../../qs/games.ts";
 
+import { getTranslations as translationResponse } from "../../utils/api-requests";
+
 //types and typeguards
 import type { GetStaticPaths } from "astro";
-import type { CustomPageItem } from "../../interfaces/custom-pages";
 import type {
   Block,
   CasinoListBlock,
-  TGameListBlock,
-  TranslationData,
-  TCasinoLiveVideo,
-  GameFilters,
   CustomGameList,
+  GameFilters,
+  TCasinoLiveVideo,
+  TGameListBlock,
   TProviderAttributesOnly,
+  TranslationData,
 } from "../../interfaces/common/types.ts";
+import type { CustomPageItem } from "../../interfaces/custom-pages";
 
 // Import Svelte Components
-import CasinoTable from "../components/casino/casinoTable.svelte";
 import GameListBlock from "../components/blocks/gameListBlock.svelte";
+import CasinoTable from "../components/casino/casinoTable.svelte";
 import CasinoLiveVideo from "../components/general/casinoLiveVideo.svelte";
 
 // Astro Layouts & Components
-import MainLayout from "../layouts/MainLayout.astro";
+import type { TUserGame, TUserGameProvider } from "../../interfaces/games";
 import CasinoSidebar from "../components/casino/casinoSidebar.astro";
 import AuthorCard from "../components/general/authorCard.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
-import type { TUserGame, TUserGameProvider } from "../../interfaces/games";
+import MainLayout from "../layouts/MainLayout.astro";
 
-const translationStore: TranslationData = getTranslations.get();
+// const translationStore: TranslationData = getTranslations.get();
+const translationStore = await translationResponse();
 
 // Fetch Slot Categories Filter
 const slotCategoriesResponse = await fetchApi<
@@ -229,6 +231,7 @@ const seo = {
                 "casinos.casino-list"
                   ? { isCustom: true, isTop: true }
                   : {})}
+                {translationStore}
               />
             );
           } else {
@@ -254,6 +257,7 @@ const seo = {
                         : []
                     }
                     {slotCategories}
+                    translations={translationStore}
                     client:load
                   />
                 );
@@ -300,6 +304,7 @@ const seo = {
                       "casinos.casinos-comparison"
                       ? { isCustom: true }
                       : {})}
+                    {translationStore}
                   />
                 );
               } else {
@@ -325,6 +330,7 @@ const seo = {
                             : []
                         }
                         {slotCategories}
+                        translations={translationStore}
                         client:load
                       />
                     );
@@ -347,10 +353,10 @@ const seo = {
           })
         }
 
-        <AuthorCard data={page.attributes.author} />
+        <AuthorCard data={page.attributes.author} {translationStore} />
       </div>
       <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-        <CasinoSidebar />
+        <CasinoSidebar {translationStore} />
       </div>
     </div>
   </div>

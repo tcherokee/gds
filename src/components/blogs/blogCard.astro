@@ -6,10 +6,6 @@ import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import "dayjs/locale/it";
 
-// Import Types
-import type { TranslationData } from "../../../interfaces/common/types.js";
-import { getTranslations } from "../../../stores/addTranslations.js";
-
 // Types
 import type { Blog, AuthorBlogAttributes } from "../../../interfaces/blog.js";
 
@@ -19,9 +15,7 @@ import Image from "../helpers/images.astro";
 dayjs.extend(advancedFormat);
 dayjs.locale(import.meta.env.LANG);
 
-const { data } = Astro.props;
-
-const translationStore: TranslationData = getTranslations.get();
+const { data, translationStore } = Astro.props;
 ---
 
 {
@@ -103,7 +97,7 @@ const translationStore: TranslationData = getTranslations.get();
           <Link
             href={`/blog_/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}
           >
-            {translationStore.readMore} >
+            {translationStore?.readMore} >
           </Link>
         </div>
       </div>

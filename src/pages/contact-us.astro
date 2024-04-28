@@ -2,17 +2,13 @@
 export const prerender = true;
 
 // Types
-import type { TranslationData } from "../../interfaces/common/types";
-
-// Stores
-import { getTranslations } from "../../stores/addTranslations";
 
 // Components
-import MainLayout from "../layouts/MainLayout.astro";
+import { getTranslations } from "../../utils/api-requests";
 import ContactUsPage from "../components/contact-us/contactUs.svelte";
+import MainLayout from "../layouts/MainLayout.astro";
 
-// Set Up Translation Store
-const translationStore: TranslationData = getTranslations.get()
+const translationStore = await getTranslations();
 
 // TODO
 let seo = {
@@ -23,5 +19,5 @@ let seo = {
 ---
 
 <MainLayout seoData={seo}>
-  <ContactUsPage translations={translationStore} client:load />
+  <ContactUsPage translations={translationStore ?? {}} client:load />
 </MainLayout>

@@ -8,7 +8,7 @@ import Pagination from "../../components/helpers/pagination.astro";
 import type { TUserGame } from "../../../interfaces/games";
 import type { TProviderAttributesOnly } from "../../../interfaces/common/types";
 
-const { slug, slotCategories, gameProviders } = Astro.props;
+const { slug, slotCategories, gameProviders, translationStore } = Astro.props;
 const newSlug = slug.includes("/") ? slug.split("/")[0] : slug;
 const page = slug.includes("/") ? slug.split("/")[1].split("p")[1] : 1;
 
@@ -66,6 +66,7 @@ const gameBlock = {
   {initialGames}
   {gameProviders}
   {slotCategories}
+  translations={translationStore}
   client:load
 />
 
@@ -73,4 +74,5 @@ const gameBlock = {
   currPage={games?.meta?.pagination?.page}
   pageCount={games?.meta?.pagination?.pageCount}
   path=`${urlTranslate[siteID as keyof typeof urlTranslate]['provider-pages']}/${newSlug}`
+  {translationStore}
 />

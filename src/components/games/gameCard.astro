@@ -8,14 +8,14 @@ import { Link } from "astro-link";
 import type { TranslationData } from "../../../interfaces/common/types.ts";
 
 // Helpers
-import { getTranslations } from "../../../stores/addTranslations.ts";
+// import { getTranslations } from "../../../stores/addTranslations.ts";
 import Image from "../helpers/images.astro";
 import AddToFav from "../helpers/addToFavs.svelte";
 import { urlTranslate } from "../../../utils/data-store.util";
 
-const { game } = Astro.props;
+const { game, translationStore } = Astro.props;
 
-const translationStore: TranslationData = getTranslations.get();
+// const translationStore: TranslationData = getTranslations.get();
 
 let siteID = import.meta.env.SITE_ID;
 let gameURL =
@@ -70,13 +70,13 @@ const diffInDays =
         href={`${gameURL}/`}
         class="btn btn-secondary uppercase text-white w-[130px] mb-3"
       >
-        {translationStore.playFunBtn}
+        {translationStore?.playFunBtn}
       </Link>
       <Link
         href={`${provideURL}/`}
         class="btn btn-misc uppercase text-white w-[130px]"
       >
-        {translationStore.playRealBtn}
+        {translationStore?.playRealBtn}
       </Link>
     </div>
     <div
@@ -85,12 +85,17 @@ const diffInDays =
       <div
         class="flex justify-between items-center mb-[2px] transition-transform duration-[0.3s] translate-y-[20px] sm:group-hover:translate-y-0"
       >
-        <div class="text-white text-sm font-bold !m-0">
+        <div class="text-white text-sm font-bold !m-0 line-clamp-1">
           <Link href={`/${gameURL}/`}>
             {game?.attributes?.title ?? game.title}
           </Link>
         </div>
-        <AddToFav game={game} classes="w-4 h-[14px]" client:visible />
+        <AddToFav
+          game={game}
+          classes="w-4 h-[14px]"
+          translations={translationStore}
+          client:visible
+        />
       </div>
       <div
         class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100"

@@ -21,6 +21,9 @@ import TimeDate from "../../components/helpers/timeDate.astro";
 import AuthorCard from "../../components/general/authorCard.astro";
 import Pagination from "../../components/helpers/pagination.astro";
 import Link from "../../components/helpers/link.astro";
+import { getTranslations } from "../../../utils/api-requests";
+
+const translationStore = await getTranslations();
 
 export const getStaticPaths = (async () => {
   const query1 = qs.stringify(blogcardQs(12, 1), { encodeValuesOnly: true });
@@ -117,7 +120,7 @@ const formattedDate = dayjs(page?.attributes?.createdAt).format("D MMM YYYY");
     isPaginated ? (
       <div class="curve mb-5">
         <div class="xl:container px-2 pb-5 pt-4">
-          <BlogListBlock data={page.data} />
+          <BlogListBlock data={page.data} {translationStore} />
 
           <Pagination
             currPage={page?.meta?.pagination?.page}

@@ -1,91 +1,119 @@
 ---
+import { Link } from "astro-link";
+import type { FooterImage } from "../../../interfaces/layout.ts";
+import type { MenuItem } from "../../../interfaces/menu.ts";
+import Image from "../helpers/images.astro";
 
-import { Link } from 'astro-link'
-import type { MenuItem } from "../../../interfaces/menu.ts"
-import type { FooterImage } from "../../../interfaces/layout.ts"
-import Image from "../helpers/images.astro"
-import Images from '../helpers/images.svelte'
-
-const { footerContent, footerImages, footerNavigation, footerNavigations} = Astro.props
-
+const { footerContent, footerImages, footerNavigation, footerNavigations } =
+  Astro.props;
 ---
 
 <footer
   class="bg-footer-bkg pt-4 text-footer-text mt-5 content-auto"
   aria-labelledby="footer-heading"
 >
-    <div class="mx-auto xl:container px-2 py-0">
-        {footerNavigations.length > 0 && (
-            <div class="flex flex-wrap mb-6">
-                {
-                    footerNavigations.map((nav: MenuItem) => (
-                        <div class="w-1/2 md:w-1/4">
-                            <Link href={`${nav.attributes.url}/`} class="underline mb-3 uppercase font-semibold block text-sm text-footer-quicklink-text">
-                                {nav.attributes.title}
-                            </Link>
-                            <ul>
-                                {nav.attributes.children.data.length > 0 && (
-                                    <>
-                                        {
-                                            nav.attributes.children.data.map((child) => (
-                                                <li>
-                                                    <Link href={`${child.attributes.url}/`} class="text-sm text-footer-quicklink-text">
-                                                        {child.attributes.title} 
-                                                    </Link>
-                                                </li>
-                                            ))
-                                        }
-                                    </>
-                                )}
-                            </ul>
-                        </div>
-                    ))
-                }
-            </div>
-        )}
-
-        <div class="about-site place-items-start text-left !text-footer-text">
-            <Fragment set:html={footerContent} />
-        </div>
-
-        <div class="mt-10 mb-4 flex flex-wrap gap-y-5 justify-center space-x-10 md:justify-end">
-            {
-                footerImages.length > 0 && (
-                    footerImages.map((img: FooterImage) => (
-                        img?.imageLink ?
-                        <Link href={`${img.imageLink}/`}>
-                            <Image src={img?.image?.data?.attributes?.url} originalHeight={img?.image?.data?.attributes?.height} originalWidth={img?.image?.data?.attributes?.width} imageHeight={40} imageWidth={0} classes="gambling-logos" alt={`${img.imageName} logo`} />
+  <div class="mx-auto xl:container px-2 py-0">
+    {
+      footerNavigations.length > 0 && (
+        <div class="flex flex-wrap mb-6">
+          {footerNavigations.map((nav: MenuItem) => (
+            <div class="w-1/2 md:w-1/4">
+              <Link
+                href={`${nav.attributes.url}/`}
+                class="underline mb-3 uppercase font-semibold block text-sm text-footer-quicklink-text"
+              >
+                {nav.attributes.title}
+              </Link>
+              <ul>
+                {nav.attributes.children.data.length > 0 && (
+                  <>
+                    {nav.attributes.children.data.map((child) => (
+                      <li>
+                        <Link
+                          href={`${child.attributes.url}/`}
+                          class="text-sm text-footer-quicklink-text"
+                        >
+                          {child.attributes.title}
                         </Link>
-                        : <Image src={img?.image?.data?.attributes?.url} imageHeight={40} originalHeight={img?.image?.data?.attributes?.height} originalWidth={img?.image?.data?.attributes?.width} imageWidth={0} classes="gambling-logos" alt={`${img?.imageName} logo`} />
-                    ))
-                )
-            }
-        </div>
-        <div class="pt-6 pb-4 md:flex md:items-center md:justify-between">
-            <div class="flex flex-wrap justify-center mb-6 md:mb-0 md:justify-end space-x-6 md:order-2">
-                {
-                    footerNavigation.length > 0 && (
-                        footerNavigation.map((nav: MenuItem) => (
-                            <Link href={`${nav.attributes.url}/`} class="text-right text-sm text-footer-quicklink-text">
-                                {nav.attributes.title}
-                            </Link>
-                        ))
-                    )
-                }
+                      </li>
+                    ))}
+                  </>
+                )}
+              </ul>
             </div>
-            <p class="flex m-0 justify-center text-center md:text-left text-sm text-gray-500">
-                &copy; 2011-<span class="currYear mr-1"></span> {import.meta.env.FULL_URL} | Tutti i Diritti Riservati
-            </p>
+          ))}
         </div>
+      )
+    }
+
+    <div class="about-site place-items-start text-left !text-footer-text">
+      <Fragment set:html={footerContent} />
     </div>
+
+    <div
+      class="mt-10 mb-4 flex flex-wrap gap-y-5 justify-center space-x-10 md:justify-end"
+    >
+      {
+        footerImages.length > 0 &&
+          footerImages.map((img: FooterImage) =>
+            img?.imageLink ? (
+              <Link href={`${img.imageLink}/`}>
+                <Image
+                  src={img?.image?.data?.attributes?.url}
+                  originalHeight={img?.image?.data?.attributes?.height}
+                  originalWidth={img?.image?.data?.attributes?.width}
+                  imageHeight={40}
+                  imageWidth={0}
+                  classes="gambling-logos"
+                  alt={`${img.imageName} logo`}
+                />
+              </Link>
+            ) : (
+              <Image
+                src={img?.image?.data?.attributes?.url}
+                imageHeight={40}
+                originalHeight={img?.image?.data?.attributes?.height}
+                originalWidth={img?.image?.data?.attributes?.width}
+                imageWidth={0}
+                classes="gambling-logos"
+                alt={`${img?.imageName} logo`}
+              />
+            )
+          )
+      }
+    </div>
+    <div class="pt-6 pb-4 md:flex md:items-center md:justify-between">
+      <div
+        class="flex flex-wrap justify-center mb-6 md:mb-0 md:justify-end space-x-6 md:order-2"
+      >
+        {
+          footerNavigation.length > 0 &&
+            footerNavigation.map((nav: MenuItem) => (
+              <Link
+                href={`${nav.attributes.url}/`}
+                class="text-right text-sm text-footer-quicklink-text"
+              >
+                {nav.attributes.title}
+              </Link>
+            ))
+        }
+      </div>
+      <p
+        class="flex m-0 justify-center text-center md:text-left text-sm text-gray-500"
+      >
+        &copy; 2011-<span class="currYear mr-1"></span>
+        {import.meta.env.FULL_URL} | Tutti i Diritti Riservati
+      </p>
+    </div>
+  </div>
 </footer>
 
 <script lang="ts">
-    const currYearEle = document.querySelector(".currYear")
+  const currYearEle = document.querySelector(".currYear");
 
-    if (currYearEle) {
-        currYearEle.textContent = new Date().getFullYear().toString()
-    }
+  if (currYearEle) {
+    currYearEle.textContent = new Date().getFullYear().toString();
+  }
 </script>
 
 <style lang="postcss" is:global>

@@ -27,8 +27,11 @@ import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
 import Newsletter from "../components/layout/newsletter.astro";
 import CookiesConsent from "../components/general/cookiesConsent.svelte";
+import { getTranslations } from "../../utils/api-requests";
 
 const siteID = `${import.meta.env.SITE_ID}`;
+
+const translationStore = await getTranslations();
 
 // Setting up the queries in array for use in the promise all map
 const queries = {
@@ -94,7 +97,6 @@ const { seoData } = Astro.props;
 
 
 ---
-
 <!doctype html>
 <html lang="it">
   <head>
@@ -206,6 +208,7 @@ const { seoData } = Astro.props;
           mainNavigation={processedMenus?.mainnavigation}
           subNavigation={processedMenus?.subnavigation}
           logo={layout?.attributes?.Logo}
+          {translationStore}
         />
       </header>
       <slot />
