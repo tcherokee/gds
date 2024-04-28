@@ -33,7 +33,7 @@ export const welcomeBonus = (
 // Function to extract the appropriate No Deposit Bonus Amounts for the Casino Table
 export const noDepositBonus = (
   casino: CasinoData | AuthorCasinoAttributes,
-  translations: TranslationData
+  translations: TranslationData = {}
 ) => {
   const { noDepositSection, freeSpinsSection } =
     ((casino as CasinoData)?.attributes ??

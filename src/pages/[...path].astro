@@ -242,6 +242,7 @@ const seo = {
                     initialCasinos={
                       page.attributes.blocks[i] as CasinoListBlock
                     }
+                    translations={translationStore ?? {}}
                     client:load
                   />
                 );
@@ -315,6 +316,7 @@ const seo = {
                         initialCasinos={
                           page.attributes.blocks[i] as CasinoListBlock
                         }
+                        translations={translationStore ?? {}}
                         client:load
                       />
                     );

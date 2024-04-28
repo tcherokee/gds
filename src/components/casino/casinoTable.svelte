@@ -2,49 +2,42 @@
   // Import First Party and Third Party Plugins
   import dayjs from "dayjs";
   import qs from "qs";
-
   // Import Types
   import type {
-    Block,
-    CasinoListData,
     BonusSectionOnly,
-    CasinoListBlock,
     CasinoData,
-    CasinoAttributes,
+    CasinoListBlock,
+    CasinoListData,
+    TranslationData,
   } from "../../../interfaces/common/types";
-
   // Import Stores
   import { getTranslations } from "../../../stores/addTranslations";
   import {
-    casinos,
+    bonusAmount,
     casinoQsStore,
     casinoVariables,
-    bonusAmount,
+    casinos,
     wageringReqAmount,
   } from "../../../stores/casinos";
   import { bonusLabels } from "../../../stores/filters";
-
   // Import Components
   import DesktopCasinoFilter from "../filters/desktopCasinoFilter.svelte";
   import MobileCasinoFilter from "../filters/mobileCasinoFilter.svelte";
-
   // Import Helpers
-  import Image from "../helpers/images.svelte";
-  import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
-  import { welcomeBonus, noDepositBonus } from "../../../lib/casinoBonusLayout";
-  import MediaQuery from "../helpers/mediaQuery.svelte";
-  import Link from "../helpers/link.svelte";
+  import { noDepositBonus, welcomeBonus } from "../../../lib/casinoBonusLayout";
   import { sortOptions } from "../../../stores/sortFilters";
-
+  import Image from "../helpers/images.svelte";
+  import Link from "../helpers/link.svelte";
+  import MediaQuery from "../helpers/mediaQuery.svelte";
+  import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
   // Images
   import ArrowRight from "~icons/kensho-icons/arrow-right";
-  import Angle from "~icons/kensho-icons/angle";
   import CircleInfo from "~icons/kensho-icons/circle-info";
-
   // Query String
   import { casinosQs } from "../../../qs/casinos";
 
   export let initialCasinos: CasinoListBlock;
+  export let translations: TranslationData;
 
   const {
     showLoadMore,
@@ -145,7 +138,9 @@
         </div>
       </div>
       <div>
-        <div class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden">
+        <div
+          class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden"
+        >
           <table
             class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse"
           >
@@ -192,7 +187,14 @@
                         >
                       {/if}
                       <div
-                        class="h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative {i === 0 ? 'casino-logo__first' : i === 1 ? 'casino-logo__second' : i === 2 ? 'casino-logo__third' : ''}"
+                        class="h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative {i ===
+                        0
+                          ? 'casino-logo__first'
+                          : i === 1
+                            ? 'casino-logo__second'
+                            : i === 2
+                              ? 'casino-logo__third'
+                              : ''}"
                       >
                         {#if i <= 2}
                           <span
@@ -262,7 +264,7 @@
                           type="external"
                           rel="sponsored"
                         >
-                          {@html welcomeBonus(casino)}
+                          {@html welcomeBonus(casino, translations?.reloadBonus)}
                         </Link>
                         <span
                           class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
@@ -321,7 +323,10 @@
                             type="external"
                             rel="sponsored"
                           >
-                            {@html noDepositBonus(casino)?.bonus}
+                            {@html noDepositBonus(casino, {
+                              withoutDeposit: translations?.withoutDeposit,
+                              freeSpins: translations?.freeSpins,
+                            })?.bonus}
                           </Link>
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
