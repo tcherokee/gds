@@ -11,14 +11,12 @@ import type {
   Faqs,
   GameFilters,
   TProviderAttributesOnly,
-  TranslationData,
 } from "../../../interfaces/common/types";
 
 // Layouts
 import MainLayout from "../../layouts/MainLayout.astro";
 
 // Stores
-import { getTranslations } from "../../../stores/addTranslations";
 
 // Queries
 import { categoryPagesQs } from "../../../qs/categoryPages";
@@ -38,9 +36,13 @@ import { urlTranslate } from "../../../utils/data-store.util";
 import Quicklinks from "../../components/helpers/quicklinks.astro";
 import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
 
-import { getTranslations as translationResponse } from "../../../utils/api-requests";
+import {
+  slotProviders as slotProvidersResponse,
+  getTranslations as translationResponse,
+} from "../../../utils/api-requests";
 
 const translationStore = await translationResponse();
+const slotProviders = await slotProvidersResponse();
 // Fetch Game Providers Filter
 const gameProviders = await fetchApi<{
   id: number;
@@ -199,6 +201,7 @@ const seo = {
         : []}
       {slotCategories}
       translations={translationStore}
+      {slotProviders}
       client:load
     />
   </div>

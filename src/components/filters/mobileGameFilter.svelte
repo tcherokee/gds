@@ -1,28 +1,25 @@
 <script lang="ts">
     // Import First or Third Party Plugins
-	import qs from 'qs'
-    import { get } from 'svelte/store';
-
-    // Types
-    import type { Toggles, GameFilters, BonusLabels, TranslationData } from '../../../interfaces/common/types';
-
+	import qs from 'qs';
+// Types
+    import type { GameFilters, TranslationData } from '../../../interfaces/common/types';
     // Import QS Function
     import { gamesQs } from '../../../qs/games';
 
     // Import Images
-    import Xmark from "~icons/kensho-icons/xmark"
-	import SortDesc from "~icons/kensho-icons/sort-desc"
-	import SortAsc from "~icons/kensho-icons/sort-asc"
-	import Sliders from "~icons/kensho-icons/sliders"
+    import Sliders from "~icons/kensho-icons/sliders";
+    import SortAsc from "~icons/kensho-icons/sort-asc";
+    import SortDesc from "~icons/kensho-icons/sort-desc";
+    import Xmark from "~icons/kensho-icons/xmark";
 
-    // Import Stores
-    // import { getTranslations } from '../../../stores/addTranslations';
-    import { sortGames } from "../../../stores/filters"
-    import { alphabeticProviders} from "../../../stores/casinos"
-    import { gameVariables, providersFilters, gamesQsStore, categoriesFilters } from "../../../stores/games";
+    import { alphabeticProviders } from "../../../stores/casinos";
+    import { sortGames } from "../../../stores/filters";
+    import { categoriesFilters, gameVariables, gamesQsStore } from "../../../stores/games";
+  import type { TUserGameProvider } from '../../../interfaces/games';
 
     export let page = 1;
     export let translationStore: TranslationData = {}
+    export let slotCategories: TUserGameProvider[] = [];
 
     //get translation context
     // const translationStore:TranslationData = get(getTranslations);
@@ -295,24 +292,22 @@
                             <span class="font-medium text-gray-900">{translationStore?.categories}</span>
                         </h3>
                         <div class="flex flex-wrap px-6 gap-2">
-                            {#if $categoriesFilters.data}
-                                {#each $categoriesFilters.data.data as cat}
-                                    <div class="flex">
-                                        <input
-                                            type="checkbox"
-                                            id={cat.attributes.slug}
-                                            bind:group={mobileVariables.categories}
-                                            value={cat.attributes.slug}
-                                            class="peer hidden"
-                                        />
-                                        <label
-                                            for={cat.attributes.slug}
-                                            class="select-none relative text-[10px] uppercase cursor-pointer rounded-full border border-transparent bg-white gradient-box py-1 px-2.5 font-bold transition-colors duration-200 ease-in-out peer-checked:catpill"
-                                            >{cat.attributes.title}</label
-                                        >
-                                    </div>
-                                {/each}
-                            {/if}
+                            {#each slotCategories as cat}
+                                <div class="flex">
+                                    <input
+                                        type="checkbox"
+                                        id={cat.slug}
+                                        bind:group={mobileVariables.categories}
+                                        value={cat.slug}
+                                        class="peer hidden"
+                                    />
+                                    <label
+                                        for={cat.slug}
+                                        class="select-none relative text-[10px] uppercase cursor-pointer rounded-full border border-transparent bg-white gradient-box py-1 px-2.5 font-bold transition-colors duration-200 ease-in-out peer-checked:catpill"
+                                        >{cat.title}</label
+                                    >
+                                </div>
+                            {/each}
                         </div>
                     </div>
 

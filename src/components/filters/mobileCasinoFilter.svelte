@@ -1,27 +1,21 @@
 <script lang="ts">
+    export let translationStore: TranslationData = {};
     // Import First or Third Party Plugins
-	import qs from 'qs'
-    import { get } from 'svelte/store';
-
-    // Import Types
-    import type { CasinoFilters, BonusLabels } from '../../../interfaces/common/types';
-
+	import qs from 'qs';
+// Import Types
+    import type { BonusLabels, CasinoFilters, TranslationData } from '../../../interfaces/common/types';
     // Import QS Function
-    import { casinosQs } from "../../../qs/casinos"
-
+    import { casinosQs } from "../../../qs/casinos";
     // Import Images
-    import Xmark from "~icons/kensho-icons/xmark"
-	import SortDesc from "~icons/kensho-icons/sort-desc"
-	import SortAsc from "~icons/kensho-icons/sort-asc"
-	import Sliders from "~icons/kensho-icons/sliders"
-
-    // Import Stores
-    import { getTranslations } from '../../../stores/addTranslations';
-    import { bonusLabels, conditions, sort } from "../../../stores/filters"
-    import { casinoQsStore, casinoVariables, wageringReqAmount, bonusAmount, alphabeticProviders} from "../../../stores/casinos"
+    import Sliders from "~icons/kensho-icons/sliders";
+    import SortAsc from "~icons/kensho-icons/sort-asc";
+    import SortDesc from "~icons/kensho-icons/sort-desc";
+    import Xmark from "~icons/kensho-icons/xmark";
+// Import Stores
+    import { alphabeticProviders, bonusAmount, casinoQsStore, casinoVariables, wageringReqAmount } from "../../../stores/casinos";
+    import { bonusLabels, conditions, sort } from "../../../stores/filters";
 
     //get translation context
-    const translationStore:any = get(getTranslations);
 
 	// Valid Keys for the Casino Filters Array to validate and squash typescript errors
     const validKeys: (keyof CasinoFilters)[] = ["limit", "sort", "providers", "ids", "bonusKey", "condition", "amount", "wagering", "speed"];
@@ -137,7 +131,7 @@
             <input type="checkbox" id="toggleMobileFilters" bind:checked={mobileFilterBtn} class="hidden"/>
             <label for="toggleMobileFilters" class="bg-filter-alternate-toggle h-11 rounded-md border border-background-900 uppercase relative items-center justify-between flex w-full text-sm p-2.5">
                 <span>
-                    {translationStore.filter}
+                    {translationStore?.filter}
                     {selection > 0
                         ? '(' + selection + ')'
                         : ''}
@@ -164,7 +158,7 @@
                         class="relative peer w-full h-11 rounded-l-[4px] bg-filter-alternate-toggle border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-xs open:rounded-b-none text-xs"
                         {...(toggleSort ? { open:'' } : {})}
                     >
-                        {$casinoVariables.sort ? getSortLabelByValue($casinoVariables.sort) : translationStore.welcomeBonus }
+                        {$casinoVariables.sort ? getSortLabelByValue($casinoVariables.sort) : translationStore?.welcomeBonus }
                     </label>
                     <button
                         type="button"
@@ -227,13 +221,13 @@
                 <div
                     class="border-b border-grey-300 sticky top-0 bg-white z-[999] flex items-center justify-between p-4"
                 >
-                    <h2 class="text-lg uppercase font-medium !text-black">{translationStore.filter}</h2>
+                    <h2 class="text-lg uppercase font-medium !text-black">{translationStore?.filter}</h2>
                     <button
                         type="button"
                         class="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         on:click={() => (mobileFilterBtn = false)}
                     >
-                        <span class="sr-only">{translationStore.closeMenu}</span>
+                        <span class="sr-only">{translationStore?.closeMenu}</span>
                         <Xmark />
                     </button>
                 </div>
@@ -242,7 +236,7 @@
                     <!-- Bonus Type Section  -->
                     <div class="pb-6">
                         <h3 class="flex flex-col px-4 py-3">
-                            <span class="font-medium text-gray-900">{translationStore.bonusType}</span>
+                            <span class="font-medium text-gray-900">{translationStore?.bonusType}</span>
                         </h3>
                         <div class="flex flex-wrap px-6 gap-2">
                             {#each bonusTypeKeys as key}
@@ -271,7 +265,7 @@
                     <!-- Conditions Section -->
                     <div class="pb-6">
                         <h3 class="flex flex-col px-4 py-3 border-t border-grey-300">
-                            <span class="font-medium text-gray-900">{translationStore.condition}</span>
+                            <span class="font-medium text-gray-900">{translationStore?.condition}</span>
                         </h3>
                         <div class="flex flex-wrap px-6 gap-2">
                             {#each conditionsKeys as key}
@@ -300,7 +294,7 @@
                     <!-- Bonus Amount Section -->
                     <div class="pb-6">
                         <h3 class="flex flex-col px-4 py-3 border-t border-grey-300">
-                            <span class="font-medium text-gray-900">{translationStore.bonusAmount}</span>
+                            <span class="font-medium text-gray-900">{translationStore?.bonusAmount}</span>
                         </h3>
                         <div class="flex flex-wrap px-6 gap-2">
                                 {#each $bonusAmount as bonus}
@@ -329,7 +323,7 @@
                     <!-- Wagering Amount Section -->
                     <div class="pb-6">
                         <h3 class="flex flex-col px-4 py-3 border-t border-grey-300">
-                            <span class="font-medium text-gray-900">{translationStore.wagering}</span>
+                            <span class="font-medium text-gray-900">{translationStore?.wagering}</span>
                         </h3>
                         <div class="flex flex-wrap px-6 gap-2">
                                 {#each $wageringReqAmount as wager}
@@ -358,7 +352,7 @@
                     <!-- Bonus Speed Section -->
                     <div class="pb-6">
                         <h3 class="flex flex-col px-4 py-3 border-t border-grey-300">
-                            <span class="font-medium text-gray-900">{translationStore.immediate}</span>
+                            <span class="font-medium text-gray-900">{translationStore?.immediate}</span>
                         </h3>
                         <div class="flex flex-wrap px-6 gap-2">
                             <div class="flex">
@@ -375,7 +369,7 @@
                                     for="immediate"
                                     class="select-none relative text-[10px] uppercase cursor-pointer rounded-full border border-transparent bg-white gradient-box py-1 px-2.5 font-bold transition-colors duration-200 ease-in-out peer-checked:catpill"
                                 >
-                                    {translationStore.immediate}
+                                    {translationStore?.immediate}
                                 </label>
                             </div>
                         </div>
@@ -385,7 +379,7 @@
                     <!-- Providers Section -->
                     <div class="pb-6">
                         <h3 class="flex flex-col px-4 py-3 border-t border-grey-300">
-                            <span class="font-medium text-gray-900">{translationStore.software}</span>
+                            <span class="font-medium text-gray-900">{translationStore?.software}</span>
                         </h3>
                         <div class="flex flex-wrap px-6 gap-2">
                             <div class="space-y-6 w-full">
@@ -429,10 +423,10 @@
                     >
                         <button type="button" class="btn btn-misc" on:click={clearFilterOptions}>
                             {selection > 0
-                                ? `${translationStore.clear}(` + selection + ')'
-                                : translationStore.clear}
+                                ? `${translationStore?.clear}(` + selection + ')'
+                                : translationStore?.clear}
                         </button>
-                        <button type="submit" class="btn btn-secondary" on:click={(e) => e.preventDefault()} on:click={() => mobileFilterBtn = false}>{translationStore.submit}</button>
+                        <button type="submit" class="btn btn-secondary" on:click={(e) => e.preventDefault()} on:click={() => mobileFilterBtn = false}>{translationStore?.submit}</button>
                     </div>
                     <!-- End of Sticky Buttons at the Bottom -->
                 </form>

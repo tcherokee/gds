@@ -32,32 +32,15 @@ import IntroBlock from "../../components/general/introWithImage.astro";
 import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
 
-import { getTranslations } from "../../../utils/api-requests";
+import {
+  slotCategories as slotCategoriesResponse,
+  slotProviders as slotProvidersResponse,
+  getTranslations,
+} from "../../../utils/api-requests";
 
 const translationStore = await getTranslations();
-// Fetch Slot Categories Filter
-const slotCategoriesResponse = await fetchApi<
-  {
-    id: number;
-    attributes: TUserGameProvider;
-  }[]
->({
-  endpoint: "slot-categories",
-  wrappedByKey: "data",
-  query: `?fields[0]=id&fields[1]=slug&pagination[page]=1&pagination[pageSize]=1000&sort[0]=listSortOrder%3Aasc&fields[2]=title`,
-});
-let slotCategories: TUserGameProvider[] = [];
-
-if (slotCategoriesResponse.length) {
-  slotCategoriesResponse.map(
-    (category: { id: number; attributes: TUserGameProvider }) => {
-      slotCategories.push({
-        title: category.attributes.title,
-        slug: category.attributes.slug,
-      });
-    }
-  );
-}
+const slotCategories = await slotCategoriesResponse();
+const slotProviders = await slotProvidersResponse();
 
 const gameProviders = await fetchApi<{
   id: number;
@@ -165,6 +148,7 @@ const seo = {
           ? gameProviders.attributes.filterProviders.data
           : []}
         {translationStore}
+        {slotProviders}
       />
     </div>
   </div>

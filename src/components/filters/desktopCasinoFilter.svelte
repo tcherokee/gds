@@ -1,27 +1,20 @@
 <script lang="ts">
+	export let translationStore: TranslationData = {};
     // Import First or Third Party Plugins
-	import qs from 'qs'
-    import { get } from 'svelte/store';
-
-    // Import Types
-    import type { CasinoFilters, BonusLabels, Toggles } from '../../../interfaces/common/types';
-
+	import qs from 'qs';
+// Import Types
+    import type { BonusLabels, CasinoFilters, Toggles, TranslationData } from '../../../interfaces/common/types';
     // Import QS Function
-    import { casinosQs } from "../../../qs/casinos"
-
+    import { casinosQs } from "../../../qs/casinos";
     // Import Images
-    import Angle from "~icons/kensho-icons/angle"
-    import Xmark from "~icons/kensho-icons/xmark"
-	import SortDesc from "~icons/kensho-icons/sort-desc"
-	import SortAsc from "~icons/kensho-icons/sort-asc"
+    import Angle from "~icons/kensho-icons/angle";
+    import SortAsc from "~icons/kensho-icons/sort-asc";
+    import SortDesc from "~icons/kensho-icons/sort-desc";
+    import Xmark from "~icons/kensho-icons/xmark";
+// Import Stores
+    import { bonusAmount, casinoQsStore, casinoVariables, wageringReqAmount } from "../../../stores/casinos";
+    import { bonusLabels, conditions, sort } from "../../../stores/filters";
 
-    // Import Stores
-    import { getTranslations } from '../../../stores/addTranslations';
-    import { bonusLabels, conditions, sort } from "../../../stores/filters"
-    import { casinoQsStore, casinoVariables, wageringReqAmount, bonusAmount } from "../../../stores/casinos"
-
-    //get translation context
-    const translationStore:any = get(getTranslations);
 
 	// Valid Keys for the Casino Filters Array to validate and squash typescript errors
     const validKeys: (keyof CasinoFilters)[] = ["limit", "sort", "providers", "ids", "bonusKey", "condition", "amount", "wagering", "speed"];
@@ -140,7 +133,7 @@
 
 <div class="relative mx-auto text-center z-20">                                              
 	<section aria-labelledby="filter-heading" class="glowy-bkg shadow-none p-2.5">
-		<h2 id="filter-heading" class="sr-only">{translationStore.filter}</h2>
+		<h2 id="filter-heading" class="sr-only">{translationStore?.filter}</h2>
 
 		<div class="flex items-center gap-2 justify-between">
 			<div class="flex w-full items-center space-x-4">
@@ -160,7 +153,7 @@
 							on:click={() => handleToggle('toggleBonusType')}
 						>
 							<span class="uppercase text-xs pointer-events-none">
-								{$casinoVariables.bonusKey ? getLabelByValue($bonusLabels, $casinoVariables.bonusKey) : translationStore.welcomeBonus }
+								{$casinoVariables.bonusKey ? getLabelByValue($bonusLabels, $casinoVariables.bonusKey) : translationStore?.welcomeBonus }
 							</span>
 							{#if $casinoVariables.bonusKey}
 								<button type="button" on:click={(e) => clearFilterOptions(e, 'bonusKey', '')}>
@@ -210,7 +203,7 @@
 							on:click={() => $casinoVariables.bonusKey && handleToggle('toggleConditions')}
 						>
 							<span class="uppercase text-xs pointer-events-none">
-								{$casinoVariables.condition ? getLabelByValue($conditions, $casinoVariables.condition) : translationStore.condition }
+								{$casinoVariables.condition ? getLabelByValue($conditions, $casinoVariables.condition) : translationStore?.condition }
 							</span>
 							{#if $casinoVariables.condition}
 								<button type="button" on:click={(e) => clearFilterOptions(e, 'condition', '')}>
@@ -260,7 +253,7 @@
 								on:click={() => handleToggle('toggleAmount')}
 							>
 								<span class="uppercase text-xs pointer-events-none">
-									{$casinoVariables.amount ? $casinoVariables.amount : translationStore.bonusAmount }
+									{$casinoVariables.amount ? $casinoVariables.amount : translationStore?.bonusAmount }
 								</span>
 								{#if $casinoVariables.amount}
 									<button type="button" on:click={(e) => clearFilterOptions(e, 'amount', '')}>
@@ -312,7 +305,7 @@
 								on:click={() => handleToggle('toggleWagering')}
 							>
 								<span class="uppercase text-xs pointer-events-none">
-									{$casinoVariables.wagering ? $casinoVariables.wagering : translationStore.wagering }
+									{$casinoVariables.wagering ? $casinoVariables.wagering : translationStore?.wagering }
 								</span>
 								{#if $casinoVariables.wagering}
 									<button type="button" on:click={(e) => clearFilterOptions(e, 'wagering', '')}>
@@ -354,7 +347,7 @@
 							for="immediate"
 							class="font-medium capitalize text-grey-300 cursor-not-allowed open:text-black open:cursor-auto"
 						>
-							{translationStore.immediate}
+							{translationStore?.immediate}
 						</label>
 					</div>
 					<div class="ml-3 flex h-6 items-center">
@@ -385,7 +378,7 @@
 								on:click={() => handleToggle('toggleSort')}
 							>
 								<span class="uppercase text-xs pointer-events-none">
-									{$casinoVariables.sort ? getSortLabelByValue($casinoVariables.sort) : translationStore.welcomeBonus }
+									{$casinoVariables.sort ? getSortLabelByValue($casinoVariables.sort) : translationStore?.welcomeBonus }
 								</span>
 							</div>
 							<button

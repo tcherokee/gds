@@ -15,9 +15,15 @@ import { authorPageQs } from "../../../qs/author";
 // Helpers
 import fetchApi from "../../../lib/strapi";
 import { urlTranslate } from "../../../utils/data-store.util";
-import { getTranslations } from "../../../utils/api-requests";
+import {
+  slotProviders as slotProvidersResponse,
+  getTranslations,
+  slotCategories as slotCategoriesResponse,
+} from "../../../utils/api-requests";
 
 const translationStore = await getTranslations();
+const slotCategories = await slotCategoriesResponse();
+const slotProviders = await slotProvidersResponse();
 
 // Layouts
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -170,6 +176,8 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
                   {initialGames}
                   author={page.slug}
                   translations={translationStore}
+                  {slotProviders}
+                  {slotCategories}
                   client:load
                 />
               </div>

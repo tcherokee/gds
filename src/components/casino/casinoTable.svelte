@@ -8,15 +8,17 @@
     CasinoData,
     CasinoListBlock,
     CasinoListData,
+    TProviderAttributesOnly,
     TranslationData,
   } from "../../../interfaces/common/types";
   // Import Stores
-  import { getTranslations } from "../../../stores/addTranslations";
+  
   import {
     bonusAmount,
     casinoQsStore,
     casinoVariables,
     casinos,
+    providers,
     wageringReqAmount,
   } from "../../../stores/casinos";
   import { bonusLabels } from "../../../stores/filters";
@@ -35,9 +37,11 @@
   import CircleInfo from "~icons/kensho-icons/circle-info";
   // Query String
   import { casinosQs } from "../../../qs/casinos";
+  import { getTranslations } from "../../../stores/addTranslations";
 
   export let initialCasinos: CasinoListBlock;
   export let translations: TranslationData;
+  export let slotProviders: TProviderAttributesOnly[] = [];
 
   const {
     showLoadMore,
@@ -101,11 +105,16 @@
   // Set Wagering Requirements value to Wagering Requirements Store
   $: wageringReqAmount.set(wageringReq);
 
+  $: {
+		getTranslations.set(translations);
+    providers.set(slotProviders);
+	}
+
   // Reset Casino Filters
   const resetCasinoFilters = () => {
     casinoVariables.setKey("limit", 1000);
     casinoVariables.setKey("sort", "ratingAvg:desc");
-    casinoVariables.setKey("providers", []);
+    // casinoVariables.setKey("providers", []);
     casinoVariables.setKey("ids", []);
     casinoVariables.setKey("bonusKey", "");
     casinoVariables.setKey("condition", "");
@@ -119,7 +128,7 @@
     });
 
     // Set Qs Store to Query Value
-    casinoQsStore.set(`?${query}`);
+    // casinoQsStore.set(`?${query}`);
   };
 </script>
 
@@ -130,9 +139,9 @@
         <div class="text-black relative mb-10 z-20">
           <MediaQuery query="(max-width: 768px)" let:matches>
             {#if matches}
-              <MobileCasinoFilter />
+              <MobileCasinoFilter translationStore={translations} />
             {:else}
-              <DesktopCasinoFilter />
+              <DesktopCasinoFilter translationStore={translations} />
             {/if}
           </MediaQuery>
         </div>
@@ -149,19 +158,19 @@
             >
               <tr class="border-b-[12px] border-b-grey-100">
                 <th scope="col" class="px-3"
-                  >{$getTranslations.casinoTableHeadingCasinos}</th
+                  >{translations?.casinoTableHeadingCasinos}</th
                 >
                 <th scope="col" class="px-3"
-                  >{$getTranslations.casinoTableHeadingRating}</th
+                  >{translations?.casinoTableHeadingRating}</th
                 >
                 <th scope="col" class="px-3"
-                  >{$getTranslations.casinoTableHeadingBonus}</th
+                  >{translations?.casinoTableHeadingBonus}</th
                 >
                 <th scope="col" class="px-3"
-                  >{$getTranslations.withoutDeposit}</th
+                  >{translations?.withoutDeposit}</th
                 >
                 <th scope="col" class="px-3"
-                  >{$getTranslations.casinoTableHeadinRegister}</th
+                  >{translations?.casinoTableHeadinRegister}</th
                 >
               </tr>
             </thead>
@@ -178,12 +187,12 @@
                       {#if casino?.attributes?.Badges}
                         <span
                           class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
-                          >{$getTranslations.exclusive}</span
+                          >{translations?.exclusive}</span
                         >
                       {:else if casino?.attributes?.publishedAt && dayjs().diff(casino?.attributes?.publishedAt, "day") <= 14}
                         <span
                           class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
-                          >{$getTranslations.newCasino}</span
+                          >{translations?.newCasino}</span
                         >
                       {/if}
                       <div
@@ -242,7 +251,7 @@
                               >{casino?.attributes?.title}</span
                             >
                             <span class="underline"
-                              >{$getTranslations.review}</span
+                              >{translations?.review}</span
                             >
                           </Link>
                           <ArrowRight class="w-[14px]" />
@@ -256,7 +265,7 @@
                         <div
                           class="text-[#7C838D] text-center text-sm leading-[18px] font-bold mb-2 md:hidden"
                         >
-                          {$getTranslations.casinoTableHeadingBonus}
+                          {translations?.casinoTableHeadingBonus}
                         </div>
                         <Link
                           href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
@@ -269,7 +278,7 @@
                         <span
                           class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
                         >
-                          {$getTranslations.wageringRequirement}
+                          {translations?.wageringRequirement}
                           <CircleInfo
                             width="12px"
                             height="12px"
@@ -287,7 +296,7 @@
                             class="flex items-center justify-between text-sm text-grey-500 group"
                             tabindex="0"
                           >
-                            {$getTranslations.wageringRequirement}
+                            {translations?.wageringRequirement}
                             <Angle
                               class="fill-grey-500 group-open:rotate-180"
                               height="20px"
@@ -314,7 +323,7 @@
                         <div
                           class="text-[#7C838D] text-center text-sm leading-[18px] font-bold mb-2 md:hidden"
                         >
-                          {$getTranslations.withoutDeposit}
+                          {translations?.withoutDeposit}
                         </div>
                         {#if noDepositBonus(casino)?.bonus}
                           <Link
@@ -331,7 +340,7 @@
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
                           >
-                            {$getTranslations.wageringRequirement}
+                            {translations?.wageringRequirement}
                             <CircleInfo
                               width="12px"
                               height="12px"
@@ -349,7 +358,7 @@
                               class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open"
                               tabindex="0"
                             >
-                              {$getTranslations.wageringRequirement}
+                              {translations?.wageringRequirement}
                               <Angle
                                 class="fill-grey-500 group-[.open]:rotate-180"
                                 height="20px"
@@ -380,7 +389,7 @@
                             <div
                               class="mb-[7px] text-[#212529] text-[14px] font-bold"
                             >
-                              {$getTranslations.bonusCode}
+                              {translations?.bonusCode}
                             </div>
                           {/if}
                           {#if casino?.attributes?.casinoBonus?.bonusUrl}
@@ -392,13 +401,13 @@
                             >
                               {casino?.attributes?.casinoBonus?.bonusCode
                                 ? casino?.attributes?.casinoBonus?.bonusCode
-                                : $getTranslations.visitSite}
+                                : translations?.visitSite}
                             </Link>
                           {/if}
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
                           >
-                            {$getTranslations.termsConditions}
+                            {translations?.termsConditions}
                             <CircleInfo
                               width="12px"
                               height="12px"
@@ -416,7 +425,7 @@
                               class="flex items-center justify-between text-sm text-grey-500 group"
                               tabindex="0"
                             >
-                              {$getTranslations.termsConditions}
+                              {translations?.termsConditions}
                               <Angle
                                 class="fill-grey-500 group-open:rotate-180"
                                 height="20px"
@@ -471,7 +480,7 @@
         on:click={() =>
           (currentCasinosLength = currentCasinosLength + numberPerLoadMore)}
       >
-        {$getTranslations.expandList}
+        {translations?.expandList}
       </button>
     </div>
   {/if}

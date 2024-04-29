@@ -1,9 +1,8 @@
 // Import First and Third Party Plugins
-import { allTasks, map } from "nanostores";
-import { atom, computed } from "nanostores";
+import { allTasks, computed } from "nanostores";
 
 // Import Types
-import type { BonusLabels, TranslationData } from "../interfaces/common/types";
+import type { BonusLabels } from "../interfaces/common/types";
 
 // Set Nano Store to active state to start data loading
 getTranslations.listen(() => {});

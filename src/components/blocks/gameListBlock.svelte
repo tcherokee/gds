@@ -22,6 +22,7 @@
     TUserGame,
     TUserGameProvider,
   } from "../../../interfaces/games.ts";
+  import { providers } from "../../../stores/casinos.ts";
 
   export let data: CustomGameList;
   export let author: string = "";
@@ -30,6 +31,7 @@
   export let gameProviders: TProviderAttributesOnly[] = [];
   export let slotCategories: TUserGameProvider[] = [];
   export let translations: TranslationData = {};
+  export let slotProviders: TProviderAttributesOnly[] = [];
 
   // Get provider slugs
   const providerSlugs = data.gameProviders.map(
@@ -68,6 +70,7 @@
 
   $: {
     getTranslations.set(translations);
+    providers.set(slotProviders);
     if (!$games.loading) {
       genericGame =
         $games?.data?.data?.map((game) => {
@@ -99,7 +102,7 @@
   <div class="flex flex-col align-center relative xl:container px-2 pb-5">
     <MediaQuery query="(max-width: 768px)" let:matches>
       {#if matches}
-        <MobileGameFilter {page} translationStore={translations} />
+        <MobileGameFilter {page} {slotCategories} translationStore={translations} />
       {:else}
         <DesktopGameFilter
           {page}
