@@ -95,7 +95,7 @@ const { data, translationStore } = Astro.props;
 
         <div class="mb-3 text-[#01579B]">
           <Link
-            href={`/blog_/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}
+            href={`/blog/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}
           >
             {translationStore?.readMore} >
           </Link>
