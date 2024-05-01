@@ -74,7 +74,7 @@ const translationStore: TranslationData = getTranslations.get()
 				</div>
 
 				<div class="mb-3 text-[#01579B]">
-					<Link href={`/blog_/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}>
+					<Link href={`/blog/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}>
 						{translationStore.readMore} >
 					</Link>
 				</div>
