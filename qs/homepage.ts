@@ -54,7 +54,7 @@ export const homepageQs = () => ({
           fields: ["title", "testimony", "testifierName", "testifierTitle"],
           populate: {
             provider: {
-              fields: ["title", "slug"],
+              fields: ["activate", "title", "slug"],
               populate: {
                 images: {
                   fields: ["url"],

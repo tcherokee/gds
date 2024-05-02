@@ -9,7 +9,6 @@ import type { Homepage } from "../../interfaces/homepage.ts"
 import type { Block, BlogBlockTypes, HomeGameListBlock } from "../../interfaces/common/types.ts"
 import type { Game } from "../../interfaces/games.ts"
 import type { Blog } from "../../interfaces/blog.ts"
-// import type { ProviderTestimony } from "../components/blocks/providerTestimonyBlock.astro"
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -48,7 +47,6 @@ const isHomeGameListBlock = (block: Block): block is HomeGameListBlock => {
 
 // get the games and blog parameters from the homepage block section
 const blogBlock = homepage.attributes.blocks.find(isBlogBlockTypes)
-	
 const gamesBlock = homepage.attributes.blocks.find(isHomeGameListBlock)
 
 //Get the providers in an array
@@ -111,6 +109,7 @@ let seo = {
 								? combinedGamesArray 
 								: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
 								? homepageBlogs : homepage.attributes.blocks[i]
+								// ? featuredProviders.activate : homepage.attributes.blocks[i]
 							}
 							{...(homepage?.attributes?.blocks[i]?.__component === 'homepage.home-casino-list' ? { isTop: true } : {})}
 							timeDate={homepage.attributes.updatedAt}

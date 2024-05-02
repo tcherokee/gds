@@ -10,9 +10,9 @@ const { data } = Astro.props
 	console.log("Featured Providers", data?.homeFeaturedProviders?.providers)
 </script>
 
-<div class="flex flex-col justify-center items-center gap-10 xl:container">
+<div class="flex flex-col justify-center items-center pb-5 gap-10 xl:container content-auto px-2">
     <div class="text-white text-2xl">{data?.title}</div>
-     <div class="flex gap-5 justify-between w-full">
+    <div class="flex gap-5 justify-between w-full">
         {
 			data?.homeFeaturedProviders?.providers?.data.map((item: any) =>  (
 				 <div class="provider-img">
@@ -20,12 +20,17 @@ const { data } = Astro.props
                     src={item?.attributes?.images?.data?.attributes.url}
                     imageWidth={116}
                     imageHeight={40}
-                    classes="providerImage rounded border-[1px] border-[#3FE6FC]"
+                    classes="rounded"
                     alt={item?.attributes?.title+' photo'}
                     />
                 </div>
 			))
 		}
-       
     </div>
 </div>
+
+<style>
+    .provider-img {
+        box-shadow: 0 0px 12px 0 theme("colors.testimony-box-shadow");
+    }
+</style>
