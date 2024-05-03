@@ -120,7 +120,6 @@ const slotCategories = await fetchApi<
   slotCategoryFilterElem.addEventListener("click", () => {
     const slotCategoryFilterElemIsOpen =
       slotCategoryFilterElem.hasAttribute("open");
-    console.log(slotCategoryFilterElemIsOpen);
     if (slotCategoryFilterElemIsOpen) {
       slotCategoryFilterElem.removeAttribute("open");
       slotCategoryListElem.removeAttribute("open");

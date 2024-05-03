@@ -1,45 +1,50 @@
 ---
 // Import Types
-import type { TranslationData } from "../../../interfaces/common/types"
-import { getTranslations } from "../../../stores/addTranslations"
-const translationStore: TranslationData = getTranslations.get()
+import type { TranslationData } from "../../../interfaces/common/types";
+import { getTranslations } from "../../../stores/addTranslations";
+const translationStore: TranslationData = getTranslations.get();
 ---
-<script define:vars={{translationStore}}>
-    console.log('translationStore', translationStore)
-</script>
+
 <div
   class="bg-newsletter-bkg text-footer-text mt-5 content-auto -mb-5 py-20"
   aria-labelledby="footer-heading"
 >
-    <div class="mx-auto xl:container px-2 py-0">
-        <div class="flex justify-between items-center">
-            <div>
-                <div class="text-white text-3xl">{translationStore.newsletterSignUp}</div>
-                <p>{translationStore.beTheFirstToKnow}</p>
-            </div>
-            <div class="w-1/3">
-                <form class="flex items-center justify-between gap-2">
-                     <div class="w-full">
-                        <input
-                        id="email-address"
-                        class="w-full py-2.5 px-[14px] text-base text-[#000] rounded border border-[rgba(255,255,255,0.30)] focus:border-misc focus:shadow-none"
-                        name="email"
-                        type="email"
-                        autocomplete="email"
-                        required
-                        placeholder={translationStore.enterEmail}
-                        />
-                    </div>
-                     <div class="1/4">
-                        <button type="button"
-                        class="flex w-full justify-center items-center rounded-md btn-misc px-3 py-2.5 text-sm font-semibold text-white"
-                        >{translationStore.subscribe}</button>
-                    </div>
-                </form>
-                <div class="text-[14px]"><a href="#" class="underline">{translationStore.weCareAboutYourData }</a></div>
-            </div>
+  <div class="mx-auto xl:container px-2 py-0">
+    <div class="flex justify-between items-center">
+      <div>
+        <div class="text-white text-3xl">
+          {translationStore.newsletterSignUp}
         </div>
+        <p>{translationStore.beTheFirstToKnow}</p>
+      </div>
+      <div class="w-1/3">
+        <form class="flex items-center justify-between gap-2">
+          <div class="w-full">
+            <input
+              id="email-address"
+              class="w-full py-2.5 px-[14px] text-base text-[#000] rounded border border-[rgba(255,255,255,0.30)] focus:border-misc focus:shadow-none"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              placeholder={translationStore.enterEmail}
+            />
+          </div>
+          <div class="1/4">
+            <button
+              type="button"
+              class="flex w-full justify-center items-center rounded-md btn-misc px-3 py-2.5 text-sm font-semibold text-white"
+              >{translationStore.subscribe}</button
+            >
+          </div>
+        </form>
+        <div class="text-[14px]">
+          <a href="#" class="underline"
+            >{translationStore.weCareAboutYourData}</a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <style lang="postcss" is:global>

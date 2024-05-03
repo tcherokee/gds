@@ -88,7 +88,6 @@ export const getStaticPaths = (async () => {
   for (let i = 0; i < customPage.length; i++) {
     const page = customPage[i];
     const path = page.attributes?.urlPath;
-    console.log("CUSTOM_PAGE", page, path);
     const gameQuery = page.attributes.blocks.find(
       (block) => block.__component === "games.games-carousel"
     ) as CustomGameList;
@@ -108,7 +107,6 @@ export const getStaticPaths = (async () => {
         wrappedByKey: "data",
         query: `?${gamesQuery}`,
       });
-      console.log("CUSTOM_GAMES_QUERY:", gamesQuery);
 
       initialGames = customPageGames.map((elem) => {
         return {
