@@ -1,29 +1,26 @@
 ---
-import Link from "../helpers/link.astro";
 import Images from "../../components/helpers/images.astro";
 
 const { data } = Astro.props;
 ---
 
-<div
-  class="flex flex-col justify-center items-center pb-5 gap-10 xl:container content-auto px-2"
->
-  <div class="text-white text-2xl">{data?.title}</div>
-  <div class="flex gap-5 justify-between w-full">
-    {
-      data?.homeFeaturedProviders?.providers?.data.map((item: any) => (
-        <div class="provider-img">
-          <Images
-            src={item?.attributes?.images?.data?.attributes.url}
-            imageWidth={116}
-            imageHeight={40}
-            classes="rounded"
-            alt={item?.attributes?.title + " photo"}
-          />
-        </div>
-      ))
-    }
-  </div>
+<div class="flex flex-col justify-center items-center pb-5 gap-10 xl:container content-auto px-2 mt-[40px]">
+    <div class="text-white text-2xl">{data?.title}</div>
+    <div class="flex gap-5 justify-between w-full">
+        {
+			data?.homeFeaturedProviders?.providers?.data.map((item: any) =>  (
+				 <div class="provider-img">
+                    <Images
+                    src={item?.attributes?.images?.data?.attributes.url}
+                    imageWidth={116}
+                    imageHeight={40}
+                    classes="rounded"
+                    alt={item?.attributes?.title+' photo'}
+                    />
+                </div>
+			))
+		}
+    </div>
 </div>
 
 <style>
