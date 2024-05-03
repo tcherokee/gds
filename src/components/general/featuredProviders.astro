@@ -1,16 +1,11 @@
 ---
-
-import Link from "../helpers/link.astro"
 import Images from "../../components/helpers/images.astro";
 
 const { data } = Astro.props
 
 ---
-<script define:vars={{data}}>
-	console.log("Featured Providers", data?.homeFeaturedProviders?.providers)
-</script>
 
-<div class="flex flex-col justify-center items-center pb-5 gap-10 xl:container content-auto px-2">
+<div class="flex flex-col justify-center items-center pb-5 gap-10 xl:container content-auto px-2 mt-[40px]">
     <div class="text-white text-2xl">{data?.title}</div>
     <div class="flex gap-5 justify-between w-full">
         {
