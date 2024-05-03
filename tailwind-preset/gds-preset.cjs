@@ -285,6 +285,9 @@ module.exports = {
       "menu-link-text": COLORS.blue[100],
       "menu-link-text-active": COLORS.white,
       "menu-link-bg-active": COLORS.blue[300],
+
+      // Testimony box
+      "testimony-box-shadow": COLORS.accent[500],
     },
     backgroundImage: {
       "cover-image-wrapper": `url('/src/icons/dashboard/cover-image.jpg')`,

@@ -113,102 +113,92 @@ dayjs.extend(advancedFormat);
 dayjs.locale(import.meta.env.LANG);
 
 const formattedDate = dayjs(page?.attributes?.createdAt).format("D MMM YYYY");
+
+const blogBriefAlternative = page?.attributes?.content1.replace(/(<([^>]+)>)/gi, "").substring(0,300);
 ---
-
+<script define:vars={{page}}>
+	console.log("Blog", page)
+</script>
 <MainLayout seoData={seo}>
-  { 
-    isPaginated ? (
-      <div class="bg-blog-list-bkg mb-5">
-        <div class="xl:container px-2 pb-5 pt-4">
-          <BlogListBlock data={page.data} {translationStore} />
-
-          <Pagination
-            currPage={page?.meta?.pagination?.page}
-            pageCount={page?.meta?.pagination?.pageCount}
-            path={
-              urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]
-            }
-          />
-        </div>
-      </div>
-    ) : (
-      <div class="relative after:content-[''] bg-blog-list-bkg">
-        <div class="blog-title-section flex justify-center pt-[66px] md:pt-24 pb-[66px] md:pb-48">
-          <div class="w-full px-2 md:px-0 md:w-4/6 flex flex-col items-center justify-center text-center text-white">
-            <div class="blog-category w-fit text-[10px] mb-3 text-white font-bold rounded-[40px]">
-              Generale
-            </div>
-            <h1>{page?.attributes?.title}</h1>
-            {/* <div class="pt-6 pb-10">
-              How did we change? What do we eat? How do we prefer to spend our
-              money? What do we like? These are the main questions that the Coop
-              Report 2016, presented on 8 September, prepared by the Ancc-Coop
-              Studies Office (National Association of Consumer Cooperatives) in
-              collaboration with Ref.
-            </div> */}
-            <div class="flex justify-center">
-              <div class="flex items-center gap-2 sub-header text-[0.6875em] italic capitalize">
-                <div class="flex gap-2 items-center">
-                  <Link href={authorLink}>
-                    <div class="w-[40px] h-[40px] border border-white rounded-full">
-                      <Images
-                        src={
-                          page?.attributes?.author?.data?.attributes?.photo
-                            ?.data?.attributes.url
-                        }
-                        imageWidth={40}
-                        imageHeight={40}
-                        classes="providerImage rounded-full"
-                        alt={
-                          page?.attributes?.author?.data?.attributes
-                            ?.firstName +
-                          " " +
-                          page?.attributes?.author?.data?.attributes?.lastName +
-                          " photo"
-                        }
-                        imageResponsive={false}
-                      />
-                    </div>
-                  </Link>
-                  <div class="flex flex-col justify-center text-start">
-                    <Link href={authorLink}>
-                      <div class="cursor-pointer hover:underline">
-                        {page?.attributes?.author?.data?.attributes?.firstName}
-                        {page?.attributes?.author?.data?.attributes?.lastName}
-                      </div>
-                    </Link>
-                    <div>{formattedDate}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="relative xl:container px-2 pb-5">
-          <div class="flex justify-center md:-mx-3 [&>*]:px-3">
-            <div class="w-full md:w-4/6">
-              <div class="mb-5 -mt-[33px] md:-mt-24">
-                <Images
-                  src={page?.attributes?.images?.data?.attributes?.url}
-                  alt={page?.attributes?.title}
-                  imageWidth={820}
-                  imageHeight={550}
-                />
-              </div>
-              <div class="blog-content">
-                <Fragment set:html={page?.attributes?.content1} />
-              </div>
-              {page?.attributes?.author?.data && (
-                <div class="mt-10 mb-10 md:mb-0">
-                  <AuthorCard data={page?.attributes?.author} />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
+	{ isPaginated ?
+		<div class="bg-blog-list-bkg mb-5">
+			<div class="xl:container px-2 pb-5 pt-4">
+				<BlogListBlock data={page.data} {translationStore} />
+		
+				<Pagination 
+				currPage={page?.meta?.pagination?.page} 
+				pageCount={page?.meta?.pagination?.pageCount} 
+				path={urlTranslate[siteID as keyof typeof urlTranslate]['blog-pages']} />
+			</div>
+		</div>
+	:
+		<div class="relative after:content-[''] bg-blog-list-bkg">
+			<div class="blog-title-section flex justify-center pt-[66px] md:pt-24 pb-[66px] md:pb-48">
+				<div class="w-full px-2 md:px-0 md:w-4/6 flex flex-col items-center justify-center text-center text-white">
+					<div class="blog-category w-fit text-[10px] mb-3 text-white font-bold rounded-[40px]">
+						{page?.attributes?.blogCategory?.data?.attributes?.blogCategory || "Generale"}
+					</div>
+					<h1>
+						{page?.attributes?.title}
+					</h1>
+					<div class="pt-6 pb-10 line-clamp-2">
+						{page?.attributes?.blogBrief || blogBriefAlternative}
+					</div>
+					<div class="flex justify-center">
+						<div class="flex items-center gap-2 sub-header text-[0.6875em] italic capitalize">
+							<div class="flex gap-2 items-center">
+								<Link href={authorLink} >
+									<div class="w-[40px] h-[40px] border border-white rounded-full">
+										<Images
+										src={page?.attributes?.author?.data?.attributes?.photo?.data?.attributes.url}
+										imageWidth={40}
+										imageHeight={40}
+										classes="providerImage rounded-full"
+										alt={page?.attributes?.author?.data?.attributes?.firstName+' '+page?.attributes?.author?.data?.attributes
+														?.lastName+' photo'}
+										imageResponsive={false}
+										/>
+									</div>
+								</Link>
+								<div class="flex flex-col justify-center text-start">
+									<Link href={authorLink} >
+										<div class="cursor-pointer hover:underline">
+											{page?.attributes?.author?.data?.attributes?.firstName}
+											{page?.attributes?.author?.data?.attributes?.lastName}
+										</div>
+									</Link>
+									<div>{formattedDate}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="relative xl:container px-2 pb-5">
+				<div class="flex justify-center md:-mx-3 [&>*]:px-3">
+					<div class="w-full md:w-4/6">
+						<div class="mb-5 -mt-[33px] md:-mt-24">
+							<Images
+								src={page?.attributes?.images?.data?.attributes?.url}
+								alt={page?.attributes?.title}
+								imageWidth={820}
+								imageHeight={550}
+							/>
+						</div>
+						<div class="blog-content">
+							<Fragment set:html={page?.attributes?.content1} />
+						</div>
+						{page?.attributes?.author?.data &&
+							<div class="mt-10 mb-10 md:mb-0">
+								<AuthorCard data={page?.attributes?.author} />
+							</div>
+						}
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	}
 </MainLayout>
 
 <style lang="scss">

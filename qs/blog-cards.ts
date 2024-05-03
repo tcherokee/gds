@@ -5,14 +5,19 @@ export const blogcardQs = (
   fields: [
     "title",
     "slug",
+    "blogBrief",
     "createdAt",
     "updatedAt",
     "content1",
     "publishedAt",
+    "minutesRead",
   ],
   populate: {
     images: {
       fields: ["url"],
+    },
+    blogCategory: {
+      fields: ["blogCategory", "slug"],
     },
     author: {
       fields: ["firstName", "lastName"],

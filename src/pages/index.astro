@@ -9,7 +9,6 @@ import type { Homepage } from "../../interfaces/homepage.ts"
 import type { Block, BlogBlockTypes, HomeGameListBlock } from "../../interfaces/common/types.ts"
 import type { Game } from "../../interfaces/games.ts"
 import type { Blog } from "../../interfaces/blog.ts"
-// import type { ProviderTestimony } from "../components/blocks/providerTestimonyBlock.astro"
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -137,7 +136,7 @@ let seo = {
     {
       Components.map(
         (Component, i) =>
-          i < 2 && (
+          i < 3 && (
             <Component
               data={
                 homepage?.attributes?.blocks[i]?.__component ===
@@ -164,7 +163,7 @@ let seo = {
     {
       Components.map(
         (Component, i) =>
-          i > 1 && (
+          i > 2 && (
             <Component
               data={
                 homepage?.attributes?.blocks[i]?.__component ===
