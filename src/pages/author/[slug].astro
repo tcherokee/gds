@@ -6,10 +6,7 @@ import qs from "qs";
 
 // Types and TypeGuards
 import type { GetStaticPaths } from "astro";
-import type {
-GameFilters,
-TranslationData,
-} from "../../../interfaces/common/types";
+import type { GameFilters } from "../../../interfaces/common/types";
 import type { TAuthor } from "../../../interfaces/users";
 
 // Queries
@@ -18,9 +15,15 @@ import { authorPageQs } from "../../../qs/author";
 // Helpers
 import fetchApi from "../../../lib/strapi";
 import { urlTranslate } from "../../../utils/data-store.util";
+import {
+  slotProviders as slotProvidersResponse,
+  getTranslations,
+  slotCategories as slotCategoriesResponse,
+} from "../../../utils/api-requests";
 
-// Stores
-import { getTranslations } from "../../../stores/addTranslations";
+const translationStore = await getTranslations();
+const slotCategories = await slotCategoriesResponse();
+const slotProviders = await slotProvidersResponse();
 
 // Layouts
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -32,7 +35,6 @@ import GameListBlock from "../../components/blocks/gameListBlock.svelte";
 import BlogCard from "../../components/blogs/blogCard.astro";
 import CasinoTable from "../../components/casino/casinoTable.astro";
 import AuthorCard from "../../components/general/authorCardAlt.astro";
-import type { Blog } from "../../../interfaces/blog";
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -110,8 +112,6 @@ export const getStaticPaths = (async () => {
 const { page, initialGames } = Astro.props;
 const { slug } = Astro.params;
 
-const translationStore: TranslationData = getTranslations.get();
-
 // Setting SITE ID
 const SITE_ID = import.meta.env.SITE_ID;
 
@@ -155,96 +155,71 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
   return item;
 });
 ---
+
 <MainLayout seoData={seo}>
-    <div class="relative after:content-[''] bg-blog-list-bkg">
-        <div class="w-full pt-5 px-3 author-upper-section pb-[65px]">
-            <div class="xl:container">
-                <div>
-                    <AuthorCard  data={page} isFlat={true} />
-                </div>
-    
-                {
-                    page.games.length > 0 &&
-                    <div class="mt-[80px]">
-                        <h2 class="text-white">Ultimi giochi recensiti dall'autore</h2>
-                    </div>
-                    <div class="mt-5 glass-wrapper">
-                        <GameListBlock data={gameBlockObj} author={page.slug} client:load />
-                    </div>
-                }
-            </div>
+  <div class="relative after:content-[''] bg-blog-list-bkg">
+    <div class="w-full pt-5 px-3 author-upper-section pb-[65px]">
+      <div class="xl:container">
+        <div>
+          <AuthorCard data={page} isFlat={true} {translationStore} />
         </div>
-        <div class="relative xl:container px-2 pb-5">
-          {
-                page?.blogs.length > 0 &&
-                <div>
-                    <div class="mt-[60px] md:mt-[80px] mb-[40px] md:mb-[65px]">
-                        <h2>Articoli recenti dell'autore</h2>
-                    </div>
-                    <div class="grid md:grid-cols-3 gap-3 md:gap-8">
-                        <BlogCard data={truncatedBlogObj} />
-                    </div>
-                </div>
-            }
 
-            {
-                page?.casinos.length > 0 &&
-                <div class="mt-5">
-                    <h2>Casino recensiti dall'autore</h2>
-                    <div class="mb-5">
-                        <CasinoTable
-                            casinos={page?.casinos}
-                        />
-                    </div>
-                </div>
-            }
-        </div>
+        {
+          page.games.length > 0 && (
+            <>
+              <div class="">
+                <h2 class="text-white">Ultimi giochi recensiti dall'autore</h2>
+              </div>
+              <div class="mt-5 glass-wrapper">
+                <GameListBlock
+                  data={gameBlockObj}
+                  {initialGames}
+                  author={page.slug}
+                  translations={translationStore}
+                  {slotProviders}
+                  {slotCategories}
+                  client:load
+                />
+              </div>
+            </>
+          )
+        }
       </div>
-
-      {
-        page.games.length > 0 && (
-          <div class="mt-5">
-            <div class="mb-5">
-              <h2>Ultimi giochi recensiti dall'autore</h2>
-            </div>
-            <GameListBlock
-              data={gameBlockObj}
-              {initialGames}
-              author={page.slug}
-              client:load
-            />
-          </div>
-        )
-      }
-
-      {
-        page?.blogs.length > 0 && (
-          <div class="mt-5">
-            <div class="mb-5">
-              <h2>Articoli recenti dell'autore</h2>
-            </div>
-            <div class="grid md:grid-cols-3 gap-3 md:gap-8">
-              <BlogCard data={truncatedBlogObj} />
-            </div>
-          </div>
-        )
-      }
-
-      {
-        page?.casinos.length > 0 && (
-          <div class="mt-5">
-            <h2>Casino recensiti dall'autore</h2>
-            <div class="mb-5">
-              <CasinoTable casinos={page?.casinos} />
-            </div>
-          </div>
-        )
-      }
     </div>
+  </div>
+  <div class="relative xl:container px-2 pb-5">
+    {
+      page?.blogs.length > 0 && (
+        <div class="mt-6 md:mt-8">
+          <h2 class="!mb-5 !md:mb-6">Articoli recenti dell'autore</h2>
+          <div class="grid md:grid-cols-3 gap-3 md:gap-8">
+            <BlogCard data={truncatedBlogObj} {translationStore} />
+          </div>
+        </div>
+      )
+    }
+    {
+      page?.casinos.length > 0 && (
+        <div class="mt-5">
+          <h2>Casino recensiti dall'autore</h2>
+          <div class="mb-5">
+            <CasinoTable casinos={page?.casinos} {translationStore} />
+          </div>
+        </div>
+      )
+    }
+  </div>
 </MainLayout>
 
 <style lang="scss">
-    .author-upper-section {
-		background: var(--Gradients-BG-Blue, linear-gradient(180deg, theme('colors.background-top-gradient') 0%, theme('colors.background-bottom-gradient') 100%));
-	}
+  .author-upper-section {
+    background: var(
+      --Gradients-BG-Blue,
+      linear-gradient(
+        180deg,
+        theme("colors.background-top-gradient") 0%,
+        theme("colors.background-bottom-gradient") 100%
+      )
+    );
+  }
 </style>

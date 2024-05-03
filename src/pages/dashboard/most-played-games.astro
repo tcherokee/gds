@@ -1,19 +1,12 @@
 ---
-
-// Types
-import type { TranslationData } from "../../../interfaces/common/types";
-
-// Stores
-import { getTranslations } from "../../../stores/addTranslations";
-
 // Components
 import DashboardLayout from "../../layouts/DashboardLayout.astro";
 import MostPlayegGames from "../../components/dashboard/mostPlayedGames.svelte";
+import { getTranslations } from "../../../utils/api-requests";
 
-// Set Up Translation Store
-const translationStore: TranslationData = getTranslations.get()
+const translationStore = await getTranslations();
 ---
 
-<DashboardLayout>
-  <MostPlayegGames translations={translationStore} client:load />
+<DashboardLayout {translationStore}>
+  <MostPlayegGames translations={translationStore ?? {}} client:load />
 </DashboardLayout>

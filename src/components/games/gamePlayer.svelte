@@ -2,29 +2,25 @@
   export let data: any;
   export let gamePageURL: string;
   export let layout: any;
-  export let translations: TranslationData;
+  export let translations: TranslationData = {};
 
   // Svelte Stuff
-  import { onMount } from "svelte";
   import { urlTranslate } from "../../../utils/data-store.util";
-  import { getTranslations } from "../../../stores/addTranslations";
 
-  import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
-  import Images from "../helpers/images.svelte";
   import AddToFav from "../helpers/addToFavs.svelte";
-  import ReportAnIssue from "./reportAnIssue.svelte";
+  import Images from "../helpers/images.svelte";
   import Link from "../helpers/link.svelte";
-
+  import ReportAnIssue from "./reportAnIssue.svelte";
   // Import Images
-  import NoGameImage from "~icons/kensho-icons/no-game";
-  import Fullscreen from "~icons/kensho-icons/fullscreen";
   import Chevrondown from "~icons/kensho-icons/chevron-down";
-  import Reload from "~icons/kensho-icons/reload";
   import Danger from "~icons/kensho-icons/exclamation";
-  import Close from "~icons/kensho-icons/xmark";
+  import Fullscreen from "~icons/kensho-icons/fullscreen";
   import Info from "~icons/kensho-icons/info-no-circle";
-  import RatingStar from "../helpers/ratingStar.svelte";
+  import NoGameImage from "~icons/kensho-icons/no-game";
+  import Reload from "~icons/kensho-icons/reload";
+  import Close from "~icons/kensho-icons/xmark";
   import type { TranslationData } from "../../../interfaces/common/types";
+  import RatingStar from "../helpers/ratingStar.svelte";
 
   let fullscreen: boolean = false;
   let startGame: boolean = false;
@@ -112,8 +108,9 @@
           <Reload width="25px" height="17px" />
         </button>
         <AddToFav
-          game={data}
           classes="btn btn-link heart bg-[#7C838D] mb-[5px] w-[30px] h-[30px] flex items-center justify-items-center rounded-full"
+          game={data}
+          {translations}
         />
         <button
           type="button"
@@ -265,7 +262,7 @@
               role="tooltip"
               class="hidden px-5 text-black opacity-100 bg-grey-100 text-sm z-20 -mt-20 w-[150px] absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
             >
-              {$getTranslations.fullscreen}
+              {translations?.fullscreen}
             </div>
           </button>
           <button
@@ -282,7 +279,7 @@
               role="tooltip"
               class="hidden px-5 text-black opacity-100 bg-grey-100 text-sm z-20 -mt-20 w-[150px] absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
             >
-              {$getTranslations.reloadGame}
+              {translations?.reloadGame}
             </div>
           </button>
           <div
@@ -291,15 +288,16 @@
             on:mouseout={() => hideTooltip("favourite-tooltip")}
           >
             <AddToFav
-              game={data}
               classes="btn relative btn-link heart bg-[#CED4DA] rounded-[5px] w-[30px] h-[30px] flex items-center justify-items-center border border-[#7C838D"
+              game={data}
+              {translations}
             />
             <div
               id="favourite-tooltip"
               role="tooltip"
               class="hidden px-5 text-black opacity-100 bg-grey-100 text-sm z-20 -mt-20 -ml-[180px] w-fit absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
             >
-              {$getTranslations.favouriteAGame}
+              {translations?.favouriteAGame}
             </div>
           </div>
           <button
@@ -316,7 +314,7 @@
               role="tooltip"
               class="hidden px-5 text-black opacity-100 bg-grey-100 text-sm z-20 -mt-20 -ml-[180px] w-fit absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
             >
-              {$getTranslations.reportAGame}
+              {translations?.reportAGame}
             </div>
           </button>
         </div>
@@ -326,7 +324,7 @@
 </div>
 
 {#if ReportAnIssueOpen}
-  <ReportAnIssue {gamePageURL} on:click={ReportAnIssueModal} />
+  <ReportAnIssue {gamePageURL} {translations} on:click={ReportAnIssueModal} />
 {/if}
 
 <style lang="scss">

@@ -1,20 +1,12 @@
 ---
-
-// Types
-import type { TranslationData } from "../../../interfaces/common/types";
-
-// Stores
-import { getTranslations } from "../../../stores/addTranslations";
-
 // Components
 import DashboardLayout from "../../layouts/DashboardLayout.astro";
 import ProfilePage from "../../components/dashboard/profile.svelte";
+import { getTranslations } from "../../../utils/api-requests";
 
-// Set Up Translation Store
-const translationStore: TranslationData = getTranslations.get()
-
+const translationStore = await getTranslations();
 ---
 
-<DashboardLayout>
-  <ProfilePage translations={translationStore} client:load />
+<DashboardLayout {translationStore}>
+  <ProfilePage translations={translationStore ?? {}} client:load />
 </DashboardLayout>

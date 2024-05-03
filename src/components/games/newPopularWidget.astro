@@ -1,98 +1,106 @@
 ---
-
 // First and Third Party Plugins
-import qs from 'qs'
+import qs from "qs";
 
 // Helpers
-import fetchApi from "../../../lib/strapi"
-import { gamesQs } from '../../../qs/games';
+import fetchApi from "../../../lib/strapi";
+import { gamesQs } from "../../../qs/games";
 
 // Types and TypeGuards
-import type { TranslationData } from '../../../interfaces/common/types';
-import type { Game } from '../../../interfaces/games';
-import type { TProviderAttributesOnly, Category } from '../../../interfaces/common/types';
+import type { TranslationData } from "../../../interfaces/common/types";
+import type { Game } from "../../../interfaces/games";
+import type {
+  TProviderAttributesOnly,
+  Category,
+} from "../../../interfaces/common/types";
 
 // Components
-import GameCard from './gameCard.astro';
+import GameCard from "./gameCard.astro";
 
 // Stores
-import { getTranslations } from '../../../stores/addTranslations';
+// import { getTranslations } from "../../../stores/addTranslations";
 
-const translationStore: TranslationData = getTranslations.get();
+// const translationStore: TranslationData = getTranslations.get();
 
-const { data: {newSlots, slot_providers, slot_categories}} = Astro.props
+const {
+  data: { newSlots, slot_providers, slot_categories },
+  translationStore,
+} = Astro.props;
 
 // New Games Variables
 const newGamesVariables = {
   limit: 3,
   sort: "publishedAt:desc",
   page: 1,
-  providers:slot_providers.data.map((provider: TProviderAttributesOnly) => provider.attributes.slug),
-  categories: slot_categories.data.map((category: Category) => category.attributes.slug)
+  providers: slot_providers.data.map(
+    (provider: TProviderAttributesOnly) => provider.attributes.slug
+  ),
+  categories: slot_categories.data.map(
+    (category: Category) => category.attributes.slug
+  ),
 };
 
-const newGamesQuery: string = qs.stringify(gamesQs(newGamesVariables), {encodeValuesOnly: true})
+const newGamesQuery: string = qs.stringify(gamesQs(newGamesVariables), {
+  encodeValuesOnly: true,
+});
 
 // Popular Games Variables
 const popularGamesVariables = {
   limit: 3,
   sort: "ratingAvg:desc,ratingCount:desc",
   page: 1,
-  providers:slot_providers.data.map((provider: TProviderAttributesOnly) => provider.attributes.slug),
-  categories: slot_categories.data.map((category: Category) => category.attributes.slug)
+  providers: slot_providers.data.map(
+    (provider: TProviderAttributesOnly) => provider.attributes.slug
+  ),
+  categories: slot_categories.data.map(
+    (category: Category) => category.attributes.slug
+  ),
 };
 
-const popularGamesQuery: string = qs.stringify(gamesQs(popularGamesVariables), {encodeValuesOnly: true})
+const popularGamesQuery: string = qs.stringify(gamesQs(popularGamesVariables), {
+  encodeValuesOnly: true,
+});
 
-const newGames:Game[] = await fetchApi({
-	endpoint: 'games',
-    wrappedByKey: 'data',
-    query: `?${newGamesQuery}`
-})
+const newGames: Game[] = await fetchApi({
+  endpoint: "games",
+  wrappedByKey: "data",
+  query: `?${newGamesQuery}`,
+});
 
-const popularGames:Game[] = await fetchApi({
-	endpoint: 'games',
-    wrappedByKey: 'data',
-    query: `?${popularGamesQuery}`
-})
-
+const popularGames: Game[] = await fetchApi({
+  endpoint: "games",
+  wrappedByKey: "data",
+  query: `?${popularGamesQuery}`,
+});
 ---
 
-{newSlots && (newGames.length > 0 || popularGames.length > 0) &&
+{
+  newSlots && (newGames.length > 0 || popularGames.length > 0) && (
     <div>
-        <div class="relative xl:container px-2 pb-5">
-            <div
-                class="hidden pt-[23px] gap-x-5 gap-y-6 flex-col md:flex md:max-w-[60%] xl:flex-row xl:max-w-[100%]"
-            >
-                <div class="xl:w-1/2">
-                    <h2 class="text-white mb-4 font-bold text-[20px] leading-[24px] !mt-0">
-                        {translationStore.newSlots}
-                    </h2>
-                    <div
-                        class="bg-[rgba(255,255,255,0.36)] border border-[rgba(255,255,255,0.3)] shadow-[0px_0px_12px_rgba(63,230,252,0.6)] backdrop-blur-[6px] rounded-xl flex md:grid grid-cols-3 gap-x-2 p-2"
-                    >
-                        {
-                            newGames.map(game => (
-                                <GameCard game={game} />
-                            ))
-                        }
-                    </div>
-                </div>
-                <div class="xl:w-1/2">
-                    <h2 class="text-white mb-4 font-bold text-[20px] leading-[24px] !mt-0">
-                        {translationStore.mostPopularSlots}
-                    </h2>
-                    <div
-                        class="bg-[rgba(255,255,255,0.36)] border border-[rgba(255,255,255,0.3)] shadow-[0px_0px_12px_rgba(63,230,252,0.6)] backdrop-blur-[6px] rounded-xl flex md:grid grid-cols-3 gap-x-2 p-2"
-                    >
-                        {
-                            popularGames.map(game => (
-                                <GameCard game={game} />
-                            ))
-                        }
-                    </div>
-                </div>
+      <div class="relative xl:container px-2 pb-5">
+        <div class="hidden pt-[23px] gap-x-5 gap-y-6 flex-col md:flex md:max-w-[60%] xl:flex-row xl:max-w-[100%]">
+          <div class="xl:w-1/2">
+            <h2 class="text-white mb-4 font-bold text-[20px] leading-[24px] !mt-0">
+              {translationStore?.newSlots}
+            </h2>
+            <div class="bg-[rgba(255,255,255,0.36)] border border-[rgba(255,255,255,0.3)] shadow-[0px_0px_12px_rgba(63,230,252,0.6)] backdrop-blur-[6px] rounded-xl flex md:grid grid-cols-3 gap-x-2 p-2">
+              {newGames.map((game) => (
+                <GameCard game={game} {translationStore} />
+              ))}
             </div>
+          </div>
+          <div class="xl:w-1/2">
+            <h2 class="text-white mb-4 font-bold text-[20px] leading-[24px] !mt-0">
+              {translationStore?.mostPopularSlots}
+            </h2>
+            <div class="bg-[rgba(255,255,255,0.36)] border border-[rgba(255,255,255,0.3)] shadow-[0px_0px_12px_rgba(63,230,252,0.6)] backdrop-blur-[6px] rounded-xl flex md:grid grid-cols-3 gap-x-2 p-2">
+              {popularGames.map((game) => (
+                <GameCard game={game} {translationStore} />
+              ))}
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  )
 }

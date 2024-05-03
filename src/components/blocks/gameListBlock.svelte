@@ -5,22 +5,24 @@
   import { getTranslations } from "../../../stores/addTranslations.ts";
   import { gameVariables, games, gamesQsStore } from "../../../stores/games.ts";
   import { sortOptions } from "../../../stores/sortFilters.ts";
-  // Components
+// Components
   import DesktopGameFilter from "../filters/desktopGameFilter.svelte";
   import MobileGameFilter from "../filters/mobileGameFilter.svelte";
   import GameCard from "../games/gameCard.svelte";
-  // Helpers
+// Helpers
   import { gamesQs } from "../../../qs/games.ts";
   import MediaQuery from "../helpers/mediaQuery.svelte";
-  // Types
+// Types
   import type {
     CustomGameList,
     TProviderAttributesOnly,
+    TranslationData,
   } from "../../../interfaces/common/types.ts";
   import type {
     TUserGame,
     TUserGameProvider,
   } from "../../../interfaces/games.ts";
+  import { providers } from "../../../stores/casinos.ts";
 
   export let data: CustomGameList;
   export let author: string = "";
@@ -28,6 +30,8 @@
   export let initialGames: TUserGame[] = [];
   export let gameProviders: TProviderAttributesOnly[] = [];
   export let slotCategories: TUserGameProvider[] = [];
+  export let translations: TranslationData = {};
+  export let slotProviders: TProviderAttributesOnly[] = [];
 
   // Get provider slugs
   const providerSlugs = data.gameProviders.map(
@@ -65,6 +69,8 @@
   let genericGame: TUserGame[] = [];
 
   $: {
+    getTranslations.set(translations);
+    providers.set(slotProviders);
     if (!$games.loading) {
       genericGame =
         $games?.data?.data?.map((game) => {
@@ -96,13 +102,14 @@
   <div class="flex flex-col align-center relative xl:container px-2 pb-5">
     <MediaQuery query="(max-width: 768px)" let:matches>
       {#if matches}
-        <MobileGameFilter {page} />
+        <MobileGameFilter {page} {slotCategories} translationStore={translations} />
       {:else}
         <DesktopGameFilter
           {page}
           showGameFilterPanel={data.showGameFilterPanel}
           {gameProviders}
           {slotCategories}
+          {translations}
         />
       {/if}
     </MediaQuery>
@@ -110,13 +117,13 @@
       {#if initialGames.length && !genericGame.length}
         {#each initialGames as game}
           <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
-            <GameCard {game} translations={$getTranslations} />
+            <GameCard {game} translations={translations} />
           </div>
         {/each}
       {:else if !$games.loading}
         {#each genericGame as game}
           <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6">
-            <GameCard {game} translations={$getTranslations} />
+            <GameCard {game} translations={translations} />
           </div>
         {/each}
       {:else}
@@ -135,7 +142,7 @@
         class="btn self-center mt-5 btn-secondary min-w-[300px] md:min-w-[500px]"
         on:click={loadMoreGames}
       >
-        {$getTranslations.loadMore.toUpperCase()}
+        {translations?.loadMore?.toUpperCase()}
       </button>
     {/if}
   </div>

@@ -11,14 +11,12 @@ import type {
   Faqs,
   GameFilters,
   TProviderAttributesOnly,
-  TranslationData,
 } from "../../../interfaces/common/types";
 
 // Layouts
 import MainLayout from "../../layouts/MainLayout.astro";
 
 // Stores
-import { getTranslations } from "../../../stores/addTranslations";
 
 // Queries
 import { categoryPagesQs } from "../../../qs/categoryPages";
@@ -38,6 +36,13 @@ import { urlTranslate } from "../../../utils/data-store.util";
 import Quicklinks from "../../components/helpers/quicklinks.astro";
 import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
 
+import {
+  slotProviders as slotProvidersResponse,
+  getTranslations as translationResponse,
+} from "../../../utils/api-requests";
+
+const translationStore = await translationResponse();
+const slotProviders = await slotProvidersResponse();
 // Fetch Game Providers Filter
 const gameProviders = await fetchApi<{
   id: number;
@@ -134,7 +139,7 @@ export const getStaticPaths = (async () => {
 const { page, modifiedGames, slotCategories } = Astro.props;
 const { slug } = Astro.params;
 
-const translationStore: TranslationData = getTranslations.get();
+// const translationStore: TranslationData = getTranslations.get();
 
 // Setting SITE ID
 const SITE_ID = import.meta.env.SITE_ID;
@@ -186,6 +191,7 @@ const seo = {
       data={introBlock}
       timeDate={page?.attributes?.updatedAt}
       authorData={undefined}
+      {translationStore}
     />
     <GameListBlock
       data={gameBlock}
@@ -194,6 +200,8 @@ const seo = {
         ? gameProviders.attributes.filterProviders.data
         : []}
       {slotCategories}
+      translations={translationStore}
+      {slotProviders}
       client:load
     />
   </div>
@@ -220,7 +228,7 @@ const seo = {
         {
           page?.attributes?.faqs.length > 0 && (
             <div class="content">
-              <h2 class="mb-4">{translationStore.faq}</h2>
+              <h2 class="mb-4">{translationStore?.faq}</h2>
 
               {page?.attributes?.faqs.map((faq: Faqs) => (
                 <FaqListBlock data={faq} />
@@ -230,7 +238,7 @@ const seo = {
         }
       </div>
       <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-        <CasinoSidebar />
+        <CasinoSidebar {translationStore} />
       </div>
     </div>
   </div>

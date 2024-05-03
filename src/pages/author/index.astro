@@ -1,72 +1,83 @@
 ---
-
 // First and Third Party Plugins
-import qs from 'qs'
+import qs from "qs";
 
 // Layouts
-import MainLayout from "../../layouts/MainLayout.astro"
+import MainLayout from "../../layouts/MainLayout.astro";
 
 // Types and TypeGuards
-import type { TAuthor } from '../../../interfaces/users'
-import type { TAuthorPageData } from '../../../interfaces/layout'
+import type { TAuthor } from "../../../interfaces/users";
+import type { TAuthorPageData } from "../../../interfaces/layout";
 
 // Queries
-import { authorIndexQs, authorCardQs } from "../../../qs/author"
+import { authorIndexQs, authorCardQs } from "../../../qs/author";
 
 // Helpers
-import fetchApi from "../../../lib/strapi"
+import fetchApi from "../../../lib/strapi";
 
 // Components
-import AuthorCard from '../../components/general/authorCard.astro'
+import AuthorCard from "../../components/general/authorCard.astro";
+
+import { getTranslations } from "../../../utils/api-requests";
+
+const translationStore = await getTranslations();
 
 // Create Query String
-const query = qs.stringify(authorIndexQs(), {encodeValuesOnly: true})
-const authorCardQuery = qs.stringify(authorCardQs(), {encodeValuesOnly: true})
+const query = qs.stringify(authorIndexQs(), { encodeValuesOnly: true });
+const authorCardQuery = qs.stringify(authorCardQs(), {
+  encodeValuesOnly: true,
+});
 
 const authorIndex = await fetchApi<TAuthorPageData>({
-    endpoint: 'layout',
-    wrappedByKey: 'data',
-    query: `?${query}`
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?${query}`,
 });
 
 const authors = await fetchApi<TAuthor[]>({
-    endpoint: 'users',
-    wrappedByKey: '',
-    query: `?${authorCardQuery}`
+  endpoint: "users",
+  wrappedByKey: "",
+  query: `?${authorCardQuery}`,
 });
 
 // Create Canonical URL
-const canonical: string =  `${import.meta.env.PUBLIC_FULL_URL}`;
+const canonical: string = `${import.meta.env.PUBLIC_FULL_URL}`;
 
 const seo = {
-	pageTitle: authorIndex.attributes?.authorPage?.metaTitle,
-    metaDescription: authorIndex.attributes?.authorPage?.metaDescription,
-    url: canonical
-}
-
+  pageTitle: authorIndex.attributes?.authorPage?.metaTitle,
+  metaDescription: authorIndex.attributes?.authorPage?.metaDescription,
+  url: canonical,
+};
 ---
 
 <MainLayout seoData={seo}>
-    <div class="featured-background">
-        <div class="intro-content">
-            <div class="relative px-2 py-20 xl:container xl:px-0">
-                <Fragment set:html={authorIndex.attributes?.authorPage?.content1} />
-            </div>
-        </div>
+  <div class="featured-background">
+    <div class="intro-content">
+      <div class="relative px-2 py-20 xl:container xl:px-0">
+        <Fragment set:html={authorIndex.attributes?.authorPage?.content1} />
+      </div>
     </div>
-    <div class="py-5 xl:container xl:px-0">
-        <Fragment set:html={authorIndex.attributes?.authorPage?.content2} />
-    </div>
+  </div>
+  <div class="py-5 xl:container xl:px-0">
+    <Fragment set:html={authorIndex.attributes?.authorPage?.content2} />
+  </div>
 
-    <div class="relative px-2 py-5 grid gap-4 group author-index grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:container xl:px-0 xl:grid-cols-4">
-        {
-            authors.map(author => (
-                <AuthorCard data={author} isFlat={true} authorIndex={true} />
-            ))
-        }
-    </div>
+  <div
+    class="relative px-2 py-5 grid gap-4 group author-index grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:container xl:px-0 xl:grid-cols-4"
+  >
+    {
+      authors.map((author) => (
+        <AuthorCard
+          data={author}
+          isFlat={true}
+          authorIndex={true}
+          {translationStore}
+        />
+      ))
+    }
+  </div>
 
-    <div class="px-2 py-5 xl:container xl:px-0">
-        <Fragment set:html={authorIndex.attributes?.authorPage?.content3} />
-    </div>
+  <div class="px-2 py-5 xl:container xl:px-0">
+    <Fragment set:html={authorIndex.attributes?.authorPage?.content3} />
+  </div>
 </MainLayout>

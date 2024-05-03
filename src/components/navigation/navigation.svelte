@@ -29,6 +29,7 @@
   })
 
   import { Toasts } from 'svoast'
+  import type { TranslationData } from "../../../interfaces/common/types.ts";
 
   let mobileChecked = false;
 
@@ -37,6 +38,7 @@
   };
 
   export let mainNavigation: MenuItem[];
+  export let translationStore: TranslationData = {};
 
   const backToTop = () => {
 		document.body.scrollIntoView()
@@ -210,7 +212,7 @@
     </ul>
 
     <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
-      <Favourite />
+      <Favourite {translationStore}/>
       <Link href="/authentication/login/" classes="pt-2 mt-1 px-2 pb-3 rounded-t">
         {#if !toggle}
           <UserSignedIn height="32px" width="32px" class="fill-sign-in" />

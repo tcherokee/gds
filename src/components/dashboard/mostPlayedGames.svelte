@@ -26,7 +26,7 @@
 
 <div class="">
   <div class="text-xl text-white font-bold font-lato mb-[14px]">
-    {translations.mostPlayed}
+    {translations?.mostPlayed}
   </div>
   {#if mostPlayedGamesLoader}
     <div class="py-10 flex justify-center">
@@ -43,13 +43,13 @@
       {:else}
         <div class="py-12 px-8 space-y-3 flex flex-col items-center">
           <div class="text-base text-center text-white font-bold">
-            {translations.emptyMostPlayedGames}
+            {translations?.emptyMostPlayedGames}
           </div>
           <Link
             href={`${$slotMachineUrl}/`}
             class="text-center min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
           >
-            {translations.seeAllGames}
+            {translations?.seeAllGames}
           </Link>
         </div>
       {/if}

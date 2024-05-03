@@ -1,24 +1,21 @@
 ---
 
-import dayjs from 'dayjs'
 import Icon from 'astro-icon'
 import { Link } from 'astro-link'
+import dayjs from 'dayjs'
 
 // Types
-import type { TranslationData, CasinoComparison } from "../../../interfaces/common/types.ts"
+import type { CasinoComparison } from "../../../interfaces/common/types.ts"
 
 // Stores
-import { getTranslations } from "../../../stores/addTranslations.ts"
 
 // Helpers
-import { welcomeBonus, noDepositBonus } from '../../../lib/casinoBonusLayout'
+import { noDepositBonus, welcomeBonus } from '../../../lib/casinoBonusLayout'
 
 // Components
-import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
-import Images from '../helpers/images.astro'
 import Collapse from '../helpers/collapse.astro'
-
-const translationStore: TranslationData = getTranslations.get()
+import Images from '../helpers/images.astro'
+import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
 
 // Tailwind Gradient Object for Dynamic Classes
 const badgesOptions = ([
@@ -27,16 +24,18 @@ const badgesOptions = ([
     "bg-gradient-to-b from-bronze-tag-t-gradient to-bronze-tag-b-gradient",
 ])
 
-const { data, isCustom = false } = Astro.props
+const { data, isCustom = false, translationStore } = Astro.props
 
 // Snippet of Code to handle the differences betwen Custom Casino Comparison and Casino Pages Casino Comparison
 const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) => item.casino.data) : data
 
 ---
-
+<script define:vars={{translationStore}}>
+ console.log('Translation Data',translationStore)
+</script> 
 <div class="rounded-[6px]">
 	<div class="text-center px-3 py-[11px] bg-casino-table-header-bkg rounded-tr-[6px] rounded-tl-[6px] md:text-start">
-		<span class="text-[20px] leading-[24px] font-bold text-white">{translationStore.casinoTableHeading}</span>
+		<span class="text-[20px] leading-[24px] font-bold text-white">{translationStore?.casinoTableHeading}</span>
 	</div>
 	<div class="p-3 rounded-br-[6px] rounded-bl-[6px] bg-grey-100 gap-y-3 md:flex md-gap-y-0 md:gap-x-3">
         {
@@ -46,9 +45,9 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                     <div class="">
                         {
                            casinoData?.attributes?.Badges 
-                            ? <span class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore.exclusive}</span>
+                            ? <span class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.exclusive}</span>
                             :casinoData?.attributes?.publishedAt && dayjs().diff(casinoData?.attributes.publishedAt, 'day') <= 14 
-                            ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore.newCasino}</span>
+                            ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.newCasino}</span>
                             :<></>
                         }
                         <div
@@ -77,50 +76,74 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                     </div>
                     <div class="flex flex-col items-center bg-white justify-center pb-3">
                         <div class="ratings">
-                            <ReadOnlyRating avgRating={casinoData?.attributes.ratingAvg} ratingCount={casinoData?.attributes.ratingCount} showVotes={true} />
+                            <ReadOnlyRating
+                                avgRating={casinoData?.attributes.ratingAvg} ratingCount={casinoData?.attributes.ratingCount}
+                                showVotes={true}
+                                {translationStore} />
                         </div>
                         <div class="flex items-center">
                             <Link
                                 class="flex text-[14px] space-x-4 text-grey-500 mr-[11px]"
                                 href={`/casino/recensione/${casinoData?.attributes?.slug}/`}
                             >
-                                <span class="underline">{translationStore.review}</span>
+                                <span class="underline">{translationStore?.review}</span>
                                 <Icon name="arrow-right" class="w-[14px] fill-grey-500" />
                             </Link>
                         </div>
                     </div>
                     <div class="flex flex-col border-t border-grey-300 bg-white items-center justify-center h-full px-3 py-6">
                         <div class="text-[#7C838D] text-center text-sm leading-[18px] font-bold">
-                            {translationStore.casinoTableHeadingBonus}
+                            {translationStore?.casinoTableHeadingBonus}
                         </div>
                         <Link
                             href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored"
-                            set:html={welcomeBonus(casinoData)}>
+                            set:html={welcomeBonus(casinoData, translationStore?.reloadBonus)}>
                         </Link>
-                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                        <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                        {/* <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.bonusSection?.termsConditions} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span> */}
+                        {/* <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.bonusSection?.termsConditions} data-tooltip-placement="left">
+                            {translationStore?.wageringRequirement} 
+                            <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
+                        </span>
+                        <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore?.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
                             <div slot="content" class="content-inner text-grey-500 mt-4">
                                 <Fragment set:html={casinoData?.attributes.bonusSection?.termsConditions} />
                             </div>
-                        </Collapse>
+                        </Collapse> */}
                     </div>
                     <div class="flex flex-col border-t border-grey-300 bg-gradient-to-r from-no-deposit-gradient/20 via-white/30 via-[percentage:30%_70%] to-no-deposit-gradient/20 items-center justify-center h-full px-3 py-6">
                         <div class="text-[#7C838D] text-center text-sm leading-[18px] font-bold">
-                            {translationStore.withoutDeposit}
+                            {translationStore?.withoutDeposit}
                         </div>
                         <Link href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored">
-                            <Fragment set:html={noDepositBonus(casinoData)?.bonus} />
+                            <Fragment
+                                set:html={noDepositBonus(
+                                    casinoData,
+                                    {
+                                        withoutDeposit: translationStore?.withoutDeposit,
+                                        freeSpins: translationStore?.freeSpins})?.bonus
+                                    } 
+                            />
                         </Link>
-                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casinoData)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                        <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                        {/* <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casinoData)?.terms} data-tooltip-placement="left">{translationStore.wageringRequirement} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span> */}
+                        {/* <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                        <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={noDepositBonus(casinoData, {
+                                        withoutDeposit: translationStore?.withoutDeposit,
+                                        freeSpins: translationStore?.freeSpins})?.terms} data-tooltip-placement="left">
+                            {translationStore?.wageringRequirement} 
+                            <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
+                        </span>
+                        <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore?.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
                             <div class="content-inner text-grey-500 mt-4">
-                                <Fragment set:html={noDepositBonus(casinoData)?.terms} />
+                                <Fragment set:html={noDepositBonus(casinoData, {
+                                        withoutDeposit: translationStore?.withoutDeposit,
+                                        freeSpins: translationStore?.freeSpins})?.terms} />
                             </div>
-                        </Collapse>
+                        </Collapse> */}
                     </div>
                     <div class="flex flex-col border-t border-grey-300 bg-white items-center justify-center h-full px-3 py-6">
                         <div class="h-full w-full flex flex-col justify-end items-center sm:justify-center">
-                            {casinoData?.attributes.casinoBonus?.bonusCode && <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{translationStore.bonusCode}</div>}
+                            {casinoData?.attributes.casinoBonus?.bonusCode && <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{translationStore?.bonusCode}</div>}
                             {casinoData?.attributes.casinoBonus?.bonusUrl &&
                                 <Link
                                     href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`}
@@ -128,15 +151,20 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                                     type="external"
                                     rel="sponsored"
                                 >
-                                    {casinoData?.attributes.casinoBonus?.bonusCode ?casinoData?.attributes?.casinoBonus?.bonusCode : translationStore.visitSite}
+                                    {casinoData?.attributes.casinoBonus?.bonusCode ?casinoData?.attributes?.casinoBonus?.bonusCode : translationStore?.visitSite}
                                 </Link>
                             }
-                            <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.termsAndConditions?.copy} data-tooltip-placement="left">{translationStore.termsConditions} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span>
-                            <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                            {/* <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.termsAndConditions?.copy} data-tooltip-placement="left">{translationStore.termsConditions} <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" /></span> */}
+                            {/* <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
+                            <span class="hidden md:flex items-center text-xs text-grey-500 underline mr-[7px]" title={casinoData?.attributes.termsAndConditions?.copy} data-tooltip-placement="left">
+                                {translationStore.termsConditions} 
+                                <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
+                            </span>
+                            <Collapse slot="content" id={`welcomeBonus${i}`} label={translationStore?.wageringRequirement} containerClass="w-full md:hidden mt-2" labelClass="text-sm text-grey-500">
                                 <div class="content-inner text-grey-500 mt-4">
                                     <Fragment set:html={casinoData?.attributes.termsAndConditions?.copy} />
                                 </div>
-                            </Collapse>
+                            </Collapse> */}
                         </div> 
                     </div>
                 </div>

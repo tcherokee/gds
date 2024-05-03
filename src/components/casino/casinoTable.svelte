@@ -2,49 +2,46 @@
   // Import First Party and Third Party Plugins
   import dayjs from "dayjs";
   import qs from "qs";
-
   // Import Types
   import type {
-    Block,
-    CasinoListData,
     BonusSectionOnly,
-    CasinoListBlock,
     CasinoData,
-    CasinoAttributes,
+    CasinoListBlock,
+    CasinoListData,
+    TProviderAttributesOnly,
+    TranslationData,
   } from "../../../interfaces/common/types";
-
   // Import Stores
-  import { getTranslations } from "../../../stores/addTranslations";
+  
   import {
-    casinos,
+    bonusAmount,
     casinoQsStore,
     casinoVariables,
-    bonusAmount,
+    casinos,
+    providers,
     wageringReqAmount,
   } from "../../../stores/casinos";
   import { bonusLabels } from "../../../stores/filters";
-
   // Import Components
   import DesktopCasinoFilter from "../filters/desktopCasinoFilter.svelte";
   import MobileCasinoFilter from "../filters/mobileCasinoFilter.svelte";
-
   // Import Helpers
-  import Image from "../helpers/images.svelte";
-  import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
-  import { welcomeBonus, noDepositBonus } from "../../../lib/casinoBonusLayout";
-  import MediaQuery from "../helpers/mediaQuery.svelte";
-  import Link from "../helpers/link.svelte";
+  import { noDepositBonus, welcomeBonus } from "../../../lib/casinoBonusLayout";
   import { sortOptions } from "../../../stores/sortFilters";
-
+  import Image from "../helpers/images.svelte";
+  import Link from "../helpers/link.svelte";
+  import MediaQuery from "../helpers/mediaQuery.svelte";
+  import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
   // Images
   import ArrowRight from "~icons/kensho-icons/arrow-right";
-  import Angle from "~icons/kensho-icons/angle";
   import CircleInfo from "~icons/kensho-icons/circle-info";
-
   // Query String
   import { casinosQs } from "../../../qs/casinos";
+  import { getTranslations } from "../../../stores/addTranslations";
 
   export let initialCasinos: CasinoListBlock;
+  export let translations: TranslationData;
+  export let slotProviders: TProviderAttributesOnly[] = [];
 
   const {
     showLoadMore,
@@ -108,11 +105,16 @@
   // Set Wagering Requirements value to Wagering Requirements Store
   $: wageringReqAmount.set(wageringReq);
 
+  $: {
+		getTranslations.set(translations);
+    providers.set(slotProviders);
+	}
+
   // Reset Casino Filters
   const resetCasinoFilters = () => {
     casinoVariables.setKey("limit", 1000);
     casinoVariables.setKey("sort", "ratingAvg:desc");
-    casinoVariables.setKey("providers", []);
+    // casinoVariables.setKey("providers", []);
     casinoVariables.setKey("ids", []);
     casinoVariables.setKey("bonusKey", "");
     casinoVariables.setKey("condition", "");
@@ -126,7 +128,7 @@
     });
 
     // Set Qs Store to Query Value
-    casinoQsStore.set(`?${query}`);
+    // casinoQsStore.set(`?${query}`);
   };
 </script>
 
@@ -137,15 +139,17 @@
         <div class="text-black relative mb-10 z-20">
           <MediaQuery query="(max-width: 768px)" let:matches>
             {#if matches}
-              <MobileCasinoFilter />
+              <MobileCasinoFilter translationStore={translations} />
             {:else}
-              <DesktopCasinoFilter />
+              <DesktopCasinoFilter translationStore={translations} />
             {/if}
           </MediaQuery>
         </div>
       </div>
       <div>
-        <div class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden">
+        <div
+          class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden"
+        >
           <table
             class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse"
           >
@@ -154,19 +158,19 @@
             >
               <tr class="border-b-[12px] border-b-grey-100">
                 <th scope="col" class="px-3"
-                  >{$getTranslations.casinoTableHeadingCasinos}</th
+                  >{translations?.casinoTableHeadingCasinos}</th
                 >
                 <th scope="col" class="px-3"
-                  >{$getTranslations.casinoTableHeadingRating}</th
+                  >{translations?.casinoTableHeadingRating}</th
                 >
                 <th scope="col" class="px-3"
-                  >{$getTranslations.casinoTableHeadingBonus}</th
+                  >{translations?.casinoTableHeadingBonus}</th
                 >
                 <th scope="col" class="px-3"
-                  >{$getTranslations.withoutDeposit}</th
+                  >{translations?.withoutDeposit}</th
                 >
                 <th scope="col" class="px-3"
-                  >{$getTranslations.casinoTableHeadinRegister}</th
+                  >{translations?.casinoTableHeadinRegister}</th
                 >
               </tr>
             </thead>
@@ -183,16 +187,23 @@
                       {#if casino?.attributes?.Badges}
                         <span
                           class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
-                          >{$getTranslations.exclusive}</span
+                          >{translations?.exclusive}</span
                         >
                       {:else if casino?.attributes?.publishedAt && dayjs().diff(casino?.attributes?.publishedAt, "day") <= 14}
                         <span
                           class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
-                          >{$getTranslations.newCasino}</span
+                          >{translations?.newCasino}</span
                         >
                       {/if}
                       <div
-                        class="h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative {i === 0 ? 'casino-logo__first' : i === 1 ? 'casino-logo__second' : i === 2 ? 'casino-logo__third' : ''}"
+                        class="h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative {i ===
+                        0
+                          ? 'casino-logo__first'
+                          : i === 1
+                            ? 'casino-logo__second'
+                            : i === 2
+                              ? 'casino-logo__third'
+                              : ''}"
                       >
                         {#if i <= 2}
                           <span
@@ -240,7 +251,7 @@
                               >{casino?.attributes?.title}</span
                             >
                             <span class="underline"
-                              >{$getTranslations.review}</span
+                              >{translations?.review}</span
                             >
                           </Link>
                           <ArrowRight class="w-[14px]" />
@@ -254,7 +265,7 @@
                         <div
                           class="text-[#7C838D] text-center text-sm leading-[18px] font-bold mb-2 md:hidden"
                         >
-                          {$getTranslations.casinoTableHeadingBonus}
+                          {translations?.casinoTableHeadingBonus}
                         </div>
                         <Link
                           href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
@@ -262,19 +273,19 @@
                           type="external"
                           rel="sponsored"
                         >
-                          {@html welcomeBonus(casino)}
+                          {@html welcomeBonus(casino, translations?.reloadBonus)}
                         </Link>
                         <span
                           class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
                         >
-                          {$getTranslations.wageringRequirement}
+                          {translations?.wageringRequirement}
                           <CircleInfo
                             width="12px"
                             height="12px"
                             class="fill-text-grey-500 ml-1"
                           />
                         </span>
-                        <div class="wrap-collabsible w-full md:hidden mt-2">
+                        <!-- <div class="wrap-collabsible w-full md:hidden mt-2">
                           <input
                             id={`welcomeBonus${i}`}
                             class="toggle hidden peer"
@@ -285,7 +296,7 @@
                             class="flex items-center justify-between text-sm text-grey-500 group"
                             tabindex="0"
                           >
-                            {$getTranslations.wageringRequirement}
+                            {translations?.wageringRequirement}
                             <Angle
                               class="fill-grey-500 group-open:rotate-180"
                               height="20px"
@@ -300,7 +311,7 @@
                                 ?.termsConditions}
                             </div>
                           </div>
-                        </div>
+                        </div> -->
                       </div>
                     </td>
                     <td
@@ -312,7 +323,7 @@
                         <div
                           class="text-[#7C838D] text-center text-sm leading-[18px] font-bold mb-2 md:hidden"
                         >
-                          {$getTranslations.withoutDeposit}
+                          {translations?.withoutDeposit}
                         </div>
                         {#if noDepositBonus(casino)?.bonus}
                           <Link
@@ -321,19 +332,22 @@
                             type="external"
                             rel="sponsored"
                           >
-                            {@html noDepositBonus(casino)?.bonus}
+                            {@html noDepositBonus(casino, {
+                              withoutDeposit: translations?.withoutDeposit,
+                              freeSpins: translations?.freeSpins,
+                            })?.bonus}
                           </Link>
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
                           >
-                            {$getTranslations.wageringRequirement}
+                            {translations?.wageringRequirement}
                             <CircleInfo
                               width="12px"
                               height="12px"
                               class="fill-text-grey-500 ml-1"
                             />
                           </span>
-                          <div class="wrap-collabsible w-full md:hidden mt-2">
+                          <!-- <div class="wrap-collabsible w-full md:hidden mt-2">
                             <input
                               id={`noDepositBonus${i}`}
                               class="toggle hidden peer"
@@ -344,7 +358,7 @@
                               class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open"
                               tabindex="0"
                             >
-                              {$getTranslations.wageringRequirement}
+                              {translations?.wageringRequirement}
                               <Angle
                                 class="fill-grey-500 group-[.open]:rotate-180"
                                 height="20px"
@@ -358,7 +372,7 @@
                                 {@html noDepositBonus(casino)?.terms}
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         {:else}
                           <span> - </span>
                         {/if}
@@ -375,7 +389,7 @@
                             <div
                               class="mb-[7px] text-[#212529] text-[14px] font-bold"
                             >
-                              {$getTranslations.bonusCode}
+                              {translations?.bonusCode}
                             </div>
                           {/if}
                           {#if casino?.attributes?.casinoBonus?.bonusUrl}
@@ -387,20 +401,20 @@
                             >
                               {casino?.attributes?.casinoBonus?.bonusCode
                                 ? casino?.attributes?.casinoBonus?.bonusCode
-                                : $getTranslations.visitSite}
+                                : translations?.visitSite}
                             </Link>
                           {/if}
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
                           >
-                            {$getTranslations.termsConditions}
+                            {translations?.termsConditions}
                             <CircleInfo
                               width="12px"
                               height="12px"
                               class="fill-text-grey-500 ml-1"
                             />
                           </span>
-                          <div class="wrap-collabsible w-full md:hidden mt-2">
+                          <!-- <div class="wrap-collabsible w-full md:hidden mt-2">
                             <input
                               id={`bonus${i}`}
                               class="toggle hidden peer"
@@ -411,7 +425,7 @@
                               class="flex items-center justify-between text-sm text-grey-500 group"
                               tabindex="0"
                             >
-                              {$getTranslations.termsConditions}
+                              {translations?.termsConditions}
                               <Angle
                                 class="fill-grey-500 group-open:rotate-180"
                                 height="20px"
@@ -422,10 +436,10 @@
                               class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max"
                             >
                               <div class="content-inner text-grey-500 mt-4">
-                                {casino?.attributes?.termsAndConditions?.copy}
+                                {@html casino?.attributes?.termsAndConditions?.copy}
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
                       </div>
                     </td>
@@ -466,7 +480,7 @@
         on:click={() =>
           (currentCasinosLength = currentCasinosLength + numberPerLoadMore)}
       >
-        {$getTranslations.expandList}
+        {translations?.expandList}
       </button>
     </div>
   {/if}

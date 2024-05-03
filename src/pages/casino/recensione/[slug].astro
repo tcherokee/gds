@@ -1,43 +1,45 @@
 ---
 export const prerender = true;
 
-import { Link } from "astro-link";
 import type { GetStaticPaths } from "astro";
+import { Link } from "astro-link";
 import qs from "qs";
-import MainLayout from "../../../layouts/MainLayout.astro";
-import { urlTranslate } from "../../../../utils/data-store.util";
+import type { Casinopage } from "../../../../interfaces/casinopage";
+import type { Gamepage } from "../../../../interfaces/game-page";
 import fetchApi from "../../../../lib/strapi";
 import { casinopageQs } from "../../../../qs/casinopage";
-import type { Casinopage } from "../../../../interfaces/casinopage";
 import { gamesQs } from "../../../../qs/games";
-import type { Gamepage } from "../../../../interfaces/game-page";
+import { urlTranslate } from "../../../../utils/data-store.util";
+import MainLayout from "../../../layouts/MainLayout.astro";
 
-import TimeDate from "../../../components/helpers/timeDate.astro";
-import HeaderAuthor from "../../../components/helpers/headerAuthor.astro";
-import Image from "../../../components/helpers/images.astro";
-import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
-import RatingStar from "../../../components/helpers/ratingStar.svelte";
-import { get } from "svelte/store";
-import { getTranslations } from "../../../../stores/addTranslations";
 import Icon from "astro-icon";
-import Images from "../../../components/helpers/images.astro";
-import ProviderIcons from "../../../components/helpers/providerIcons.svelte";
-import Collapse from "../../../components/helpers/collapse.astro";
-import QuickLinks from "../../../components/helpers/quicklinks.astro";
 import {
   loadComponents,
   mapBlocksToDynamicComponents,
 } from "../../../../lib/loadBlockComponents";
-import HowTo from "../../../components/general/howTo.astro";
-import ProsCons from "../../../components/general/proCons.astro";
+import { getTranslations } from "../../../../utils/api-requests";
 import ContentBlock from "../../../components/blocks/contentBlock.astro";
-import CasinoComparison from "../../../components/casino/casinoComparison.astro";
-import Faqs from "../../../components/general/faqs.astro";
-import ImageCarousel from "../../../components/general/imageCarousel.svelte";
-import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
-import AuthorCard from "../../../components/general/authorCard.astro";
 import GameListBlock from "../../../components/blocks/gameListBlock.astro";
-import type { TranslationData } from "../../../../interfaces/common/types";
+import CasinoComparison from "../../../components/casino/casinoComparison.astro";
+import AuthorCard from "../../../components/general/authorCard.astro";
+import Faqs from "../../../components/general/faqs.astro";
+import HowTo from "../../../components/general/howTo.astro";
+import ImageCarousel from "../../../components/general/imageCarousel.svelte";
+import ProsCons from "../../../components/general/proCons.astro";
+import Collapse from "../../../components/helpers/collapse.astro";
+import HeaderAuthor from "../../../components/helpers/headerAuthor.astro";
+import {
+  default as Image,
+  default as Images,
+} from "../../../components/helpers/images.astro";
+import ProviderIcons from "../../../components/helpers/providerIcons.svelte";
+import QuickLinks from "../../../components/helpers/quicklinks.astro";
+import RatingStar from "../../../components/helpers/ratingStar.svelte";
+import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
+import TimeDate from "../../../components/helpers/timeDate.astro";
+import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
+
+const translationStore = await getTranslations();
 
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
@@ -83,8 +85,6 @@ const games = await fetchApi<Gamepage[]>({
   wrappedByKey: "data",
   query: `?${query}`,
 });
-
-const translationStore: TranslationData = get(getTranslations);
 
 const termsAndConditions = `${page?.attributes?.termsAndConditions?.copy}`;
 const termsAndConditionsCleaned = termsAndConditions.replace(
@@ -147,7 +147,10 @@ let seo = {
               {page?.attributes?.heading}
             </h1>
             <div class="flex items-center gap-2">
-              <TimeDate timeDate={page?.attributes?.updatedAt} />
+              <TimeDate
+                timeDate={page?.attributes?.updatedAt}
+                {translationStore}
+              />
               <HeaderAuthor author={page?.attributes?.author} />
             </div>
           </div>
@@ -178,7 +181,7 @@ let seo = {
                 ratingCount={page.attributes.ratingCount}
                 itemId={page.id + ""}
                 ratingType={"casinos"}
-                translations={translationStore}
+                translations={translationStore ?? {}}
                 client:load
               />
               <!-- <ReadOnlyRatings
@@ -222,7 +225,7 @@ let seo = {
                           /></span
                         >
                         <span class="bonus-heading"
-                          >{translationStore.reloadBonus}</span
+                          >{translationStore?.reloadBonus}</span
                         >
                       </div>
                     </td>
@@ -270,7 +273,7 @@ let seo = {
                           /></span
                         >
                         <span class="bonus-heading"
-                          >{translationStore.withoutDeposit}</span
+                          >{translationStore?.withoutDeposit}</span
                         >
                       </div>
                     </td>
@@ -281,7 +284,7 @@ let seo = {
                             ? `${
                                 page?.attributes?.noDepositSection
                                   ?.bonusAmount || 0
-                              }€ ${translationStore.withoutDeposit}`
+                              }€ ${translationStore?.withoutDeposit}`
                             : ""
                         }
                         {
@@ -303,7 +306,7 @@ let seo = {
                             ? `${
                                 page?.attributes?.freeSpinsSection
                                   ?.bonusAmount || 0
-                              } ${translationStore.freeSpins}`
+                              } ${translationStore?.freeSpins}`
                             : ""
                         }
                       </div>
@@ -318,12 +321,12 @@ let seo = {
                 externalInNewTab={true}
                 href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
               >
-                {translationStore.accessWebsite}
+                {translationStore?.accessWebsite}
               </Link>
             </div>
             <Collapse
               id="termsConditions"
-              label={translationStore.termsConditions}
+              label={translationStore?.termsConditions}
               containerClass="mt-1 text-[12px]"
               labelClass="ml-3 font-bold text-[16px] cursor-pointer"
               checked={true}
@@ -358,7 +361,7 @@ let seo = {
                               />
                             </span>
                             <div class="font-bold">
-                              {translationStore.features}
+                              {translationStore?.features}
                             </div>
                           </div>
                         </th>
@@ -405,7 +408,7 @@ let seo = {
                               />
                             </span>
                             <div class="font-bold">
-                              {translationStore.generalInfo}
+                              {translationStore?.generalInfo}
                             </div>
                           </div>
                         </th>
@@ -422,7 +425,7 @@ let seo = {
                                 fill="#01579B"
                               /></span
                             >
-                            {translationStore.website}
+                            {translationStore?.website}
                           </div>
                         </td>
                         <td class=""
@@ -439,7 +442,7 @@ let seo = {
                                 fill="#01579B"
                               /></span
                             >
-                            {translationStore.society}
+                            {translationStore?.society}
                           </div>
                         </td>
                         <td>{page?.attributes?.casinoGeneralInfo?.societa}</td>
@@ -454,7 +457,7 @@ let seo = {
                                 fill="#01579B"
                               /></span
                             >
-                            {translationStore.license}
+                            {translationStore?.license}
                           </div>
                         </td>
                         <td
@@ -474,7 +477,7 @@ let seo = {
                                 fill="#01579B"
                               /></span
                             >
-                            {translationStore.phone}
+                            {translationStore?.phone}
                           </div>
                         </td>
                         <td>{page?.attributes?.casinoGeneralInfo?.telephone}</td
@@ -490,7 +493,7 @@ let seo = {
                                 fill="#01579B"
                               /></span
                             >
-                            {translationStore.email}
+                            {translationStore?.email}
                           </div>
                         </td>
                         <td>{page?.attributes?.casinoGeneralInfo?.email}</td>
@@ -520,7 +523,7 @@ let seo = {
                           </div>
                           <div class="flex flex-col details-container">
                             <div class="approval-author-details">
-                              <span>{translationStore.reviewedBy}</span>
+                              <span>{translationStore?.reviewedBy}</span>
                               <span class="">
                                 <Link href={reviewAuthorPageURL}>
                                   {
@@ -556,7 +559,7 @@ let seo = {
                           </div>
                           <div class="flex flex-col details-container">
                             <div class="approval-author-details">
-                              <span>{translationStore.approvedBy}</span>
+                              <span>{translationStore?.approvedBy}</span>
                               <span class="">
                                 <Link href={approvedAuthorPageURL}>
                                   {
@@ -587,6 +590,7 @@ let seo = {
                         avgRating={page?.attributes?.authorRatings}
                         showVotes={false}
                         ratingClasses={"flex-row justify-center items-center"}
+                        {translationStore}
                       />
                     </div>
 
@@ -605,7 +609,7 @@ let seo = {
                       ><Icon name="card-icon" height="25px" /></span
                     >
                     <h5 class="text-xl font-bold text-white !mt-0">
-                      {translationStore.payment}
+                      {translationStore?.payment}
                     </h5>
                   </div>
                   <div class="flex flex-wrap">
@@ -716,7 +720,7 @@ let seo = {
                       /></span
                     >
                     <h5 class="text-xl font-bold text-white !mt-0">
-                      {translationStore.software}
+                      {translationStore?.software}
                     </h5>
                   </div>
                   <div class="flex">
@@ -755,7 +759,7 @@ let seo = {
             externalInNewTab={true}
             href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
           >
-            {translationStore.accessWebsite}
+            {translationStore?.accessWebsite}
           </Link>
         </div>
       </div>
@@ -805,7 +809,7 @@ let seo = {
           {
             games.length > 0 && (
               <div class="p-2 backdrop-blur-[6px] shadow-[0px_0px_12px_rgba(63,230,252,0.6)] bg-[rgba(255,255,255,0.3)] border border-[rgba(255,255,255,0.3)] rounded-lg">
-                <GameListBlock data={games} />
+                <GameListBlock data={games} {translationStore} />
               </div>
             )
           }
@@ -839,13 +843,16 @@ let seo = {
           }
 
           <div class="">
-            <CasinoComparison data={page?.attributes?.casinoComparison.data} />
+            <CasinoComparison
+              data={page?.attributes?.casinoComparison.data}
+              {translationStore}
+            />
           </div>
           {
             page?.attributes?.faqs && (
               <div class="mt-3 qc">
                 <div class="mb-4">
-                  <h2 class="faq-title">{translationStore.faq}</h2>
+                  <h2 class="faq-title">{translationStore?.faq}</h2>
                 </div>
 
                 <div class="mb-5">
@@ -857,7 +864,7 @@ let seo = {
             )
           }
 
-          <AuthorCard data={page.attributes.author} />
+          <AuthorCard data={page.attributes.author} {translationStore} />
         </div>
 
         <div class="col-span-1 hidden md:block">
@@ -885,7 +892,7 @@ let seo = {
                 ratingCount={page.attributes.ratingCount}
                 itemId={page.id + ""}
                 ratingType={"casinos"}
-                translations={translationStore}
+                translations={translationStore ?? {}}
                 client:load
               />
               <!-- <ReadOnlyRatings
@@ -929,7 +936,7 @@ let seo = {
                           /></span
                         >
                         <span class="bonus-heading"
-                          >{translationStore.reloadBonus}</span
+                          >{translationStore?.reloadBonus}</span
                         >
                       </div>
                     </td>
@@ -977,7 +984,7 @@ let seo = {
                           /></span
                         >
                         <span class="bonus-heading"
-                          >{translationStore.withoutDeposit}</span
+                          >{translationStore?.withoutDeposit}</span
                         >
                       </div>
                     </td>
@@ -988,7 +995,7 @@ let seo = {
                             ? `${
                                 page?.attributes?.noDepositSection
                                   ?.bonusAmount || 0
-                              }€ ${translationStore.withoutDeposit}`
+                              }€ ${translationStore?.withoutDeposit}`
                             : ""
                         }
                         {
@@ -1010,7 +1017,7 @@ let seo = {
                             ? `${
                                 page?.attributes?.freeSpinsSection
                                   ?.bonusAmount || 0
-                              } ${translationStore.freeSpins}`
+                              } ${translationStore?.freeSpins}`
                             : ""
                         }
                       </div>
@@ -1025,12 +1032,12 @@ let seo = {
                 class="btn btn-misc block w-full uppercase"
                 externalInNewTab={true}
               >
-                {translationStore.accessWebsite}
+                {translationStore?.accessWebsite}
               </Link>
             </div>
             <Collapse
               id="termsConditions-2"
-              label={translationStore.termsConditions}
+              label={translationStore?.termsConditions}
               containerClass="mt-1 text-[12px]"
               labelClass="ml-3 font-bold text-[16px] cursor-pointer"
               checked={true}

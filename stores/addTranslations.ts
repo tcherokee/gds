@@ -7,29 +7,29 @@ import type { TranslationData } from "../interfaces/common/types";
 
 export const getTranslations = map<TranslationData>({});
 
-onMount(getTranslations, () => {
-  task(async () => {
-    try {
-      const translationQuery = qs.stringify(translationsQs(), {
-        encodeValuesOnly: true,
-      });
-      const response = await fetchApi<TranslationDataItem>({
-        endpoint: "translation",
-        wrappedByKey: "data",
-        query: `?${translationQuery}`,
-      });
+// onMount(getTranslations, () => {
+//   task(async () => {
+//     try {
+//       const translationQuery = qs.stringify(translationsQs(), {
+//         encodeValuesOnly: true,
+//       });
+//       const response = await fetchApi<TranslationDataItem>({
+//         endpoint: "translation",
+//         wrappedByKey: "data",
+//         query: `?${translationQuery}`,
+//       });
 
-      const translations = response.attributes.translation.reduce<Record<string, string>>(
-        (acc, { key, value }) => {
-          acc[key] = value;
-          return acc;
-        },
-        {} as Record<string, string>
-      );
+//       const translations = response.attributes.translation.reduce<Record<string, string>>(
+//         (acc, { key, value }) => {
+//           acc[key] = value;
+//           return acc;
+//         },
+//         {} as Record<string, string>
+//       );
 
-      getTranslations.set(translations);
-    } catch (error) {
-      console.error("Error fetching translations:", error);
-    }
-  });
-});
+//       getTranslations.set(translations);
+//     } catch (error) {
+//       console.error("Error fetching translations:", error);
+//     }
+//   });
+// });

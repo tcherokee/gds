@@ -1,33 +1,39 @@
 ---
-
 // Types
-import type { CasinoListData } from "../../../interfaces/common/types"
+import type { CasinoListData } from "../../../interfaces/common/types";
 
 // Components
-import CasinoTable from "../casino/casinoTable.astro"
+import CasinoTable from "../casino/casinoTable.astro";
 
-
-const { data, isCustom = false, isTop = false } = Astro.props
+const { data, isCustom = false, isTop = false, translationStore } = Astro.props;
 
 const createCustomCasinos = (casinos: CasinoListData[]) => {
-    return casinos
-        .map(item => item.casino.data)
-        .filter(casino => casino !== null); // filter out null values
-}
+  return casinos
+    .map((item) => item.casino.data)
+    .filter((casino) => casino !== null); // filter out null values
+};
 
-const customCasinos = isCustom && createCustomCasinos(data?.casinosList)
-
+const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
 ---
+
 {
-    !isTop ?
-    <CasinoTable casinos={isCustom ? customCasinos : data.casinos.data} /> :
+  !isTop ? (
+    <CasinoTable
+      casinos={isCustom ? customCasinos : data.casinos.data}
+      {translationStore}
+    />
+  ) : (
     <div>
-        <div class="relative xl:container px-2 pb-5">
-            <div class="mb-5 pt-2.5">
-                <div class="">
-                    <CasinoTable casinos={isCustom ? customCasinos : data.casinos.data} />
-                </div>
-            </div>
+      <div class="relative xl:container px-2 pb-5">
+        <div class="mb-5 pt-2.5">
+          <div class="">
+            <CasinoTable
+              casinos={isCustom ? customCasinos : data.casinos.data}
+              {translationStore}
+            />
+          </div>
         </div>
+      </div>
     </div>
+  )
 }

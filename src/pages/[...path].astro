@@ -2,73 +2,53 @@
 export const prerender = true;
 import qs from "qs";
 
-// Stores
 import { sortOptions } from "../../stores/sortFilters";
-import { getTranslations } from "../../stores/addTranslations";
 
 // Helpers
-import fetchApi from "../../lib/strapi";
 import {
   loadComponents,
   mapBlocksToDynamicComponents,
 } from "../../lib/loadBlockComponents";
-import { urlTranslate } from "../../utils/data-store.util";
+import fetchApi from "../../lib/strapi";
 
 // Query Strings
 import { customPageQs } from "../../qs/customPages";
 import { gamesQs } from "../../qs/games.ts";
 
+import {
+  slotCategories as slotCategoriesResponse,
+  slotProviders as slotProvidersResponse,
+  getTranslations as translationResponse,
+} from "../../utils/api-requests";
+
 //types and typeguards
 import type { GetStaticPaths } from "astro";
-import type { CustomPageItem } from "../../interfaces/custom-pages";
 import type {
   Block,
   CasinoListBlock,
-  TGameListBlock,
-  TranslationData,
-  TCasinoLiveVideo,
-  GameFilters,
   CustomGameList,
+  GameFilters,
+  TCasinoLiveVideo,
+  TGameListBlock,
   TProviderAttributesOnly,
 } from "../../interfaces/common/types.ts";
+import type { CustomPageItem } from "../../interfaces/custom-pages";
 
 // Import Svelte Components
-import CasinoTable from "../components/casino/casinoTable.svelte";
 import GameListBlock from "../components/blocks/gameListBlock.svelte";
+import CasinoTable from "../components/casino/casinoTable.svelte";
 import CasinoLiveVideo from "../components/general/casinoLiveVideo.svelte";
 
 // Astro Layouts & Components
-import MainLayout from "../layouts/MainLayout.astro";
+import type { TUserGame } from "../../interfaces/games";
 import CasinoSidebar from "../components/casino/casinoSidebar.astro";
 import AuthorCard from "../components/general/authorCard.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
-import type { TUserGame, TUserGameProvider } from "../../interfaces/games";
+import MainLayout from "../layouts/MainLayout.astro";
 
-const translationStore: TranslationData = getTranslations.get();
-
-// Fetch Slot Categories Filter
-const slotCategoriesResponse = await fetchApi<
-  {
-    id: number;
-    attributes: TUserGameProvider;
-  }[]
->({
-  endpoint: "slot-categories",
-  wrappedByKey: "data",
-  query: `?fields[0]=id&fields[1]=slug&pagination[page]=1&pagination[pageSize]=1000&sort[0]=listSortOrder%3Aasc&fields[2]=title`,
-});
-let slotCategories: TUserGameProvider[] = [];
-
-if (slotCategoriesResponse.length) {
-  slotCategoriesResponse.map(
-    (category: { id: number; attributes: TUserGameProvider }) => {
-      slotCategories.push({
-        title: category.attributes.title,
-        slug: category.attributes.slug,
-      });
-    }
-  );
-}
+const translationStore = await translationResponse();
+const slotProviders = await slotProvidersResponse();
+const slotCategories = await slotCategoriesResponse();
 
 // Fetch Game Providers Filter
 const gameProviders = await fetchApi<{
@@ -108,6 +88,7 @@ export const getStaticPaths = (async () => {
   for (let i = 0; i < customPage.length; i++) {
     const page = customPage[i];
     const path = page.attributes?.urlPath;
+    console.log("CUSTOM_PAGE", page, path);
     const gameQuery = page.attributes.blocks.find(
       (block) => block.__component === "games.games-carousel"
     ) as CustomGameList;
@@ -127,6 +108,7 @@ export const getStaticPaths = (async () => {
         wrappedByKey: "data",
         query: `?${gamesQuery}`,
       });
+      console.log("CUSTOM_GAMES_QUERY:", gamesQuery);
 
       initialGames = customPageGames.map((elem) => {
         return {
@@ -136,8 +118,8 @@ export const getStaticPaths = (async () => {
             url: elem.attributes.images.data.attributes.url,
           },
           provider: {
-            slug: elem.attributes.provider.data.attributes.slug,
-            title: elem.attributes.provider.data.attributes.title,
+            slug: elem.attributes.provider.data?.attributes.slug,
+            title: elem.attributes.provider.data?.attributes.title,
           },
         };
       });
@@ -229,6 +211,7 @@ const seo = {
                 "casinos.casino-list"
                   ? { isCustom: true, isTop: true }
                   : {})}
+                {translationStore}
               />
             );
           } else {
@@ -239,6 +222,8 @@ const seo = {
                     initialCasinos={
                       page.attributes.blocks[i] as CasinoListBlock
                     }
+                    translations={translationStore ?? {}}
+                    {slotProviders}
                     client:load
                   />
                 );
@@ -254,6 +239,8 @@ const seo = {
                         : []
                     }
                     {slotCategories}
+                    translations={translationStore}
+                    {slotProviders}
                     client:load
                   />
                 );
@@ -300,6 +287,7 @@ const seo = {
                       "casinos.casinos-comparison"
                       ? { isCustom: true }
                       : {})}
+                    {translationStore}
                   />
                 );
               } else {
@@ -310,6 +298,8 @@ const seo = {
                         initialCasinos={
                           page.attributes.blocks[i] as CasinoListBlock
                         }
+                        translations={translationStore ?? {}}
+                        {slotProviders}
                         client:load
                       />
                     );
@@ -325,6 +315,8 @@ const seo = {
                             : []
                         }
                         {slotCategories}
+                        translations={translationStore}
+                        {slotProviders}
                         client:load
                       />
                     );
@@ -347,10 +339,10 @@ const seo = {
           })
         }
 
-        <AuthorCard data={page.attributes.author} />
+        <AuthorCard data={page.attributes.author} {translationStore} />
       </div>
       <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-        <CasinoSidebar />
+        <CasinoSidebar {translationStore} />
       </div>
     </div>
   </div>

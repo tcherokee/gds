@@ -2,136 +2,181 @@
 export const prerender = true;
 
 // First and Third Party Plugins
-import qs from 'qs'
+import qs from "qs";
 
 // Types and Typeguards
 import type { Homepage } from "../../interfaces/homepage.ts"
 import type { Block, BlogBlockTypes, HomeGameListBlock } from "../../interfaces/common/types.ts"
 import type { Game } from "../../interfaces/games.ts"
 import type { Blog } from "../../interfaces/blog.ts"
-// import type { ProviderTestimony } from "../components/blocks/providerTestimonyBlock.astro"
 
 // Helpers
 import fetchApi from "../../lib/strapi";
-import { loadComponents, mapBlocksToDynamicComponents } from '../../lib/loadBlockComponents'
+import {
+  loadComponents,
+  mapBlocksToDynamicComponents,
+} from "../../lib/loadBlockComponents";
 
 // Stores
-import { sortOptions } from "../../stores/sortFilters.ts"
+import { sortOptions } from "../../stores/sortFilters.ts";
 
 // Query Strings
-import { homepageQs } from "../../qs/homepage.ts"
-import { gamesQs } from "../../qs/games.ts"
-import { blogsQs } from "../../qs/blogs.ts"
+import { homepageQs } from "../../qs/homepage.ts";
+import { gamesQs } from "../../qs/games.ts";
+import { blogsQs } from "../../qs/blogs.ts";
 
 // Components
-import MainLayout from '../layouts/MainLayout.astro';
-import Breadcrumbs from '../components/layout/breadcrumbs.astro';
+import MainLayout from "../layouts/MainLayout.astro";
+import Breadcrumbs from "../components/layout/breadcrumbs.astro";
+import { getTranslations } from "../../utils/api-requests";
 
-const sortStore = sortOptions.get()
+const sortStore = sortOptions.get();
 
-const query = qs.stringify(homepageQs(), {encodeValuesOnly: true})
+const translationStore = await getTranslations();
+
+const query = qs.stringify(homepageQs(), { encodeValuesOnly: true });
 
 const homepage = await fetchApi<Homepage>({
-	endpoint: 'homepage',
-    wrappedByKey: 'data',
-    query: `?${query}`
-})
+  endpoint: "homepage",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
 
 //Type Guards for the find functions
 const isBlogBlockTypes = (block: Block): block is BlogBlockTypes => {
-	return block.__component === 'homepage.home-blog-list';
-}
+  return block.__component === "homepage.home-blog-list";
+};
 
 const isHomeGameListBlock = (block: Block): block is HomeGameListBlock => {
-	return block.__component === 'homepage.home-game-list';
-}
+  return block.__component === "homepage.home-game-list";
+};
 
 // get the games and blog parameters from the homepage block section
-const blogBlock = homepage.attributes.blocks.find(isBlogBlockTypes)
-	
-const gamesBlock = homepage.attributes.blocks.find(isHomeGameListBlock)
+const blogBlock = homepage.attributes.blocks.find(isBlogBlockTypes);
+
+const gamesBlock = homepage.attributes.blocks.find(isHomeGameListBlock);
 
 //Get the providers in an array
-const gameProviders = gamesBlock && gamesBlock.providers.map(item => item.slotProvider.data.attributes.slug);
+const gameProviders =
+  gamesBlock &&
+  gamesBlock.providers.map((item) => item.slotProvider.data.attributes.slug);
 
 // get the qs query for the blogs and the games
-const gamesQuery = gameProviders && gameProviders.map(provider => qs.stringify(gamesQs({limit:gamesBlock?.numberOfGames ?? 6, sort:sortStore[gamesBlock?.sortBy ?? 'Newest'], page:undefined, providers:[provider ?? ''], categories:[]}), {encodeValuesOnly: true}))
-const blogsQuery = qs.stringify(blogsQs(undefined, blogBlock?.numOfBlogs ?? 6, "createdAt:desc"), {encodeValuesOnly: true})
+const gamesQuery =
+  gameProviders &&
+  gameProviders.map((provider) =>
+    qs.stringify(
+      gamesQs({
+        limit: gamesBlock?.numberOfGames ?? 6,
+        sort: sortStore[gamesBlock?.sortBy ?? "Newest"],
+        page: undefined,
+        providers: [provider ?? ""],
+        categories: [],
+      }),
+      { encodeValuesOnly: true }
+    )
+  );
+const blogsQuery = qs.stringify(
+  blogsQs(undefined, blogBlock?.numOfBlogs ?? 6, "createdAt:desc"),
+  { encodeValuesOnly: true }
+);
 
 const fetchHomepageBlogs: Promise<Blog[]> = fetchApi({
-    endpoint: 'blogs',
-    wrappedByKey: 'data',
-    query: `?${blogsQuery}`
+  endpoint: "blogs",
+  wrappedByKey: "data",
+  query: `?${blogsQuery}`,
 });
 
 let fetchHomepageGames: Promise<Game[][]> = Promise.resolve([]);
 
 if (gamesQuery) {
-    fetchHomepageGames = Promise.all(gamesQuery.map((query: string) => {
-        return fetchApi<Game[]>({
-            endpoint: 'games',
-            wrappedByKey: 'data',
-            query: `?${query}`
-        });
-    }));
+  fetchHomepageGames = Promise.all(
+    gamesQuery.map((query: string) => {
+      return fetchApi<Game[]>({
+        endpoint: "games",
+        wrappedByKey: "data",
+        query: `?${query}`,
+      });
+    })
+  );
 } else {
-    console.error("No Query was submitted")
+  console.error("No Query was submitted");
 }
 
-const [homepageBlogs, homepageGames] = await Promise.all([fetchHomepageBlogs, fetchHomepageGames]);
+const [homepageBlogs, homepageGames] = await Promise.all([
+  fetchHomepageBlogs,
+  fetchHomepageGames,
+]);
 
 // combining games array
-const combinedGamesArray: Game[] = homepageGames.flat()
+const combinedGamesArray: Game[] = homepageGames.flat();
 
-const Components = await loadComponents(mapBlocksToDynamicComponents(homepage.attributes.blocks))
+const Components = await loadComponents(
+  mapBlocksToDynamicComponents(homepage.attributes.blocks)
+);
 
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
-const PUBLIC_FULL_URL = import.meta.env.FULL_URL
+const PUBLIC_FULL_URL = import.meta.env.FULL_URL;
 
-let canonical: string =  `${PUBLIC_FULL_URL}`;
+let canonical: string = `${PUBLIC_FULL_URL}`;
 
 let seo = {
-	pageTitle: homepage.attributes?.seo?.metaTitle,
-    metaDescription: homepage.attributes?.seo?.metaDescription,
-    url: canonical
-}
-
+  pageTitle: homepage.attributes?.seo?.metaTitle,
+  metaDescription: homepage.attributes?.seo?.metaDescription,
+  url: canonical,
+};
 ---
-<script define:vars={{homepage}}>
-	console.log("homepage", homepage)
-</script>
+
 <MainLayout seoData={seo}>
-	<Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
-	<div class="featured-background pb-[50px]">
-		{
-			Components.map((Component, i) => (
-				i < 3 && <Component 
-							data={
-								homepage?.attributes?.blocks[i]?.__component === 'homepage.home-game-list' 
-								? combinedGamesArray 
-								: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
-								? homepageBlogs : homepage.attributes.blocks[i]
-							}
-							{...(homepage?.attributes?.blocks[i]?.__component === 'homepage.home-casino-list' ? { isTop: true } : {})}
-							timeDate={homepage.attributes.updatedAt}
-							isHomePage={true}
-						/>
-			))
-		}
-	</div>
-	<div class="xl:container content-auto px-2 pt-5">
-		{
-			Components.map((Component, i) => (
-				i > 2 && <Component 
-							data={
-								homepage?.attributes?.blocks[i]?.__component === 'homepage.home-game-list' 
-								? combinedGamesArray 
-								: homepage?.attributes?.blocks[i]?.__component === 'homepage.home-blog-list' 
-								? homepageBlogs : homepage.attributes.blocks[i]
-							}
-							timeDate={homepage.attributes.updatedAt}
-							isHomePage={true}/>
-			))
-		}
-	</div>
+  <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
+  <div class="featured-background pb-[50px]">
+    {
+      Components.map(
+        (Component, i) =>
+          i < 3 && (
+            <Component
+              data={
+                homepage?.attributes?.blocks[i]?.__component ===
+                "homepage.home-game-list"
+                  ? combinedGamesArray
+                  : homepage?.attributes?.blocks[i]?.__component ===
+                      "homepage.home-blog-list"
+                    ? homepageBlogs
+                    : homepage.attributes.blocks[i]
+              }
+              {...(homepage?.attributes?.blocks[i]?.__component ===
+              "homepage.home-casino-list"
+                ? { isTop: true }
+                : {})}
+              timeDate={homepage.attributes.updatedAt}
+              isHomePage={true}
+              {translationStore}
+            />
+          )
+      )
+    }
+  </div>
+  <div class="xl:container content-auto px-2 pt-5">
+    {
+      Components.map(
+        (Component, i) =>
+          i > 2 && (
+            <Component
+              data={
+                homepage?.attributes?.blocks[i]?.__component ===
+                "homepage.home-game-list"
+                  ? combinedGamesArray
+                  : homepage?.attributes?.blocks[i]?.__component ===
+                      "homepage.home-blog-list"
+                    ? homepageBlogs
+                    : homepage.attributes.blocks[i]
+              }
+              timeDate={homepage.attributes.updatedAt}
+              isHomePage={true}
+              {translationStore}
+            />
+          )
+      )
+    }
+  </div>
 </MainLayout>

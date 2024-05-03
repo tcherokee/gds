@@ -2,142 +2,148 @@
 export const prerender = true;
 
 // First and Third Party Plugins
-import qs from 'qs'
+import qs from "qs";
 
 // Types
 import type { GetStaticPaths } from "astro";
-import type { Casinoprovider } from "../../../interfaces/casino-provider"
-import type { TranslationData } from '../../../interfaces/common/types';
-
-// Stores
-import { getTranslations } from '../../../stores/addTranslations';
+import type { Casinoprovider } from "../../../interfaces/casino-provider";
 
 // Queries
-import { casinoproviderQs } from "../../../qs/casino-provider"
+import { casinoproviderQs } from "../../../qs/casino-provider";
 
 // Helpers
-import fetchApi from '../../../lib/strapi';
-import { urlTranslate } from '../../../utils/data-store.util'
+import fetchApi from "../../../lib/strapi";
+import { urlTranslate } from "../../../utils/data-store.util";
 
 // Components
-import MainLayout from '../../layouts/MainLayout.astro';
-import IntroBlock from "../../components/general/introWithImage.astro";
-import ProviderCasino from "../../components/casino/providerCasino.astro"
-import ContentBlock from '../../components/blocks/contentBlock.astro';
-import CasinoComparison from '../../components/casino/casinoComparison.astro';
+import ContentBlock from "../../components/blocks/contentBlock.astro";
+import CasinoComparison from "../../components/casino/casinoComparison.astro";
+import CasinoSideBar from "../../components/casino/casinoSidebar.astro";
+import ProviderCasino from "../../components/casino/providerCasino.astro";
 import Faqs from "../../components/general/faqs.astro";
-import CasinoSideBar from '../../components/casino/casinoSidebar.astro';
-import Breadcrumb from '../../components/layout/breadcrumbs.astro'
+import IntroBlock from "../../components/general/introWithImage.astro";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+
+import { getTranslations } from "../../../utils/api-requests";
+
+const translationStore = await getTranslations();
 
 export const getStaticPaths = (async () => {
-    // Import the QS Query string for custom slugs and prepare it for the API fetch
-    const query = qs.stringify(casinoproviderQs(), {encodeValuesOnly: true})
-    // Request to the Fetch Function to get page data from API
-    const casinoProvider = await fetchApi<Casinoprovider[]>({
-        endpoint: 'casino-providers',
-        wrappedByKey: 'data',
-        query: `?${query}`
-    })
+  // Import the QS Query string for custom slugs and prepare it for the API fetch
+  const query = qs.stringify(casinoproviderQs(), { encodeValuesOnly: true });
+  // Request to the Fetch Function to get page data from API
+  const casinoProvider = await fetchApi<Casinoprovider[]>({
+    endpoint: "casino-providers",
+    wrappedByKey: "data",
+    query: `?${query}`,
+  });
 
-    return casinoProvider.map((page) => {
-        return {
-            params: {slug: page?.attributes?.slug},
-            props: { page }
-        }
-    });
+  return casinoProvider.map((page) => {
+    return {
+      params: { slug: page?.attributes?.slug },
+      props: { page },
+    };
+  });
 }) satisfies GetStaticPaths;
 
-// Set Up Translation Store
-const translationStore: TranslationData = getTranslations.get()
-
-const { page } = Astro.props
+const { page } = Astro.props;
 const { slug } = Astro.params; //get the slug from the page url
 
 const block = {
-    showCasinoFilters: false
-}
+  showCasinoFilters: false,
+};
 //generate page url
-let siteID = import.meta.env.SITE_ID
-let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]['casino-providers-page']}/${slug}`;
+let siteID = import.meta.env.SITE_ID;
+let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"]}/${slug}`;
 
 //set page breadcrumb
-let breadcumb = [{ breadCrumbText: page?.attributes?.title, breadCrumbUrl: null }];
+let breadcumb = [
+  { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
+];
 
 //set page seo data
 let seo = {
-    pageTitle: page?.attributes?.seo?.metaTitle,
-    metaDescription: page?.attributes?.seo?.metaDescription,
-    url: canonical
-}
-
+  pageTitle: page?.attributes?.seo?.metaTitle,
+  metaDescription: page?.attributes?.seo?.metaDescription,
+  url: canonical,
+};
 ---
 
 <MainLayout seoData={seo}>
+  <Breadcrumb
+    breadcrumbs={breadcumb}
+    breadcrumbKey="casinoProvidersBreadcrumbs"
+  />
 
-    <Breadcrumb breadcrumbs={breadcumb} breadcrumbKey="casinoProvidersBreadcrumbs" />
+  <div class="featured-background">
+    <IntroBlock
+      data={page?.attributes?.IntroductionWithImage}
+      timeDate={page?.attributes?.updatedAt}
+      authorData={page?.attributes?.author}
+      {translationStore}
+    />
 
-    <div class="featured-background">
-
-        <IntroBlock 
-            data={page?.attributes?.IntroductionWithImage}
-            timeDate={page?.attributes?.updatedAt}
-            authorData={page?.attributes?.author} />
-
-        <div class="mb-[40px]">
-           <ProviderCasino slug={page?.attributes?.slug} />
-        </div>
+    <div class="mb-[40px]">
+      <ProviderCasino slug={page?.attributes?.slug} {translationStore} />
     </div>
+  </div>
 
-    <div class="xl:container px-2 pb-5 pt-4">
-        {(page?.attributes?.content1 || page?.attributes?.content2 || page?.attributes?.content3 || page?.attributes?.faqs?.length > 0) &&
-            <div class="flex flex-col md:flex-row gap-x-8">
-                <div class="order-last md:order-first">
-                    <div class="content">
-                        {page?.attributes?.content1 &&
-                            <ContentBlock pageContent={page?.attributes?.content1} />
-                        }
-                        {page?.attributes?.content2 &&
-                            <ContentBlock pageContent={page?.attributes?.content2} />
-                        }
-                        {page?.attributes?.content3 &&
-                            <ContentBlock pageContent={page?.attributes?.content3} />
-                        }
-                    </div>
-
-                    {page?.attributes?.casinoComparison?.data.length > 0 &&
-                        <CasinoComparison
-                            block={{}}
-                            data={page?.attributes?.casinoComparison?.data.slice(0, 3)}
-                        />
-                    }
-                    {page?.attributes?.faqs?.length > 0 &&
-                        <div class="content">
-                            <h2 class="mb-4">{translationStore.faq}</h2>
-
-                            {page?.attributes?.faqs.map(faq => 
-                                <Faqs data={faq} />
-                            )}
-                        </div>
-                    }
-                </div>
-                <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-                    <CasinoSideBar />
-                </div>
+  <div class="xl:container px-2 pb-5 pt-4">
+    {
+      (page?.attributes?.content1 ||
+        page?.attributes?.content2 ||
+        page?.attributes?.content3 ||
+        page?.attributes?.faqs?.length > 0) && (
+        <div class="flex flex-col md:flex-row gap-x-8">
+          <div class="order-last md:order-first">
+            <div class="content">
+              {page?.attributes?.content1 && (
+                <ContentBlock pageContent={page?.attributes?.content1} />
+              )}
+              {page?.attributes?.content2 && (
+                <ContentBlock pageContent={page?.attributes?.content2} />
+              )}
+              {page?.attributes?.content3 && (
+                <ContentBlock pageContent={page?.attributes?.content3} />
+              )}
             </div>
-        }
-    </div>
 
+            {page?.attributes?.casinoComparison?.data.length > 0 && (
+              <CasinoComparison
+                block={{}}
+                data={page?.attributes?.casinoComparison?.data.slice(0, 3)}
+                {translationStore}
+              />
+            )}
+            {page?.attributes?.faqs?.length > 0 && (
+              <div class="content">
+                <h2 class="mb-4">{translationStore?.faq}</h2>
+
+                {page?.attributes?.faqs.map((faq) => (
+                  <Faqs data={faq} />
+                ))}
+              </div>
+            )}
+          </div>
+          <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
+            <CasinoSideBar {translationStore} />
+          </div>
+        </div>
+      )
+    }
+  </div>
 </MainLayout>
 
 <style lang="scss">
-	.content {
-		& > :global(.content-block) {
-			& > :global(h1) {
-				margin-top: 0 !important;
-			}
-			& > :global(h2) {
-				margin-top: 0 !important;
-			}
-		}
-	}
+  .content {
+    & > :global(.content-block) {
+      & > :global(h1) {
+        margin-top: 0 !important;
+      }
+      & > :global(h2) {
+        margin-top: 0 !important;
+      }
+    }
+  }
 </style>

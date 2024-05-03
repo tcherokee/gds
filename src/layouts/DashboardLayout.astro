@@ -19,18 +19,14 @@ import {
   isMainLayoutData,
   isNavigationItemArray,
 } from "../../interfaces/common/typeguards";
-import type { TranslationData } from "../../interfaces/common/types";
 
 //Components
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
 import DashboardSideNav from "../components/dashboard/dashboardSideNav.svelte";
-import { getTranslations } from "../../stores/addTranslations";
 import DashboardFooter from "../components/dashboard/dashboardFooter.svelte";
 
-import { ViewTransitions } from 'astro:transitions'
-
-const translationStore: TranslationData = getTranslations.get();
+import { ViewTransitions } from "astro:transitions";
 
 // Setting up the queries in array for use in the promise all map
 const queries = {
@@ -89,6 +85,8 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
   },
   {}
 );
+
+const { translationStore } = Astro.props;
 ---
 
 <!doctype html>
@@ -108,10 +106,8 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
     <meta name="generator" content={Astro.generator} />
     <title>User Dashboard</title>
     <Tooltips />
-
   </head>
   <body class="h-screen overflow-hidden overflow-y-auto">
-    
     <main class="h-full">
       {
         layout?.attributes?.legalText && (

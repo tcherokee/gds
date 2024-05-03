@@ -1,15 +1,14 @@
 // Import First and Third Party Plugins
-import { allTasks } from "nanostores";
-import { atom, computed } from "nanostores";
+import { allTasks, computed } from "nanostores";
 
 // Import Types
 import type { BonusLabels } from "../interfaces/common/types";
 
 // Set Nano Store to active state to start data loading
-getTranslations.listen(() => { })
+getTranslations.listen(() => {});
 
 // Wait for nanostore to finish loading
-await allTasks()
+await allTasks();
 
 // Stores
 import { getTranslations } from "./addTranslations";
