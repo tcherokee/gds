@@ -1,30 +1,39 @@
 ---
-import Images from "../../components/helpers/images.astro";
 
-const { data } = Astro.props;
+import Link from "../helpers/link.astro"
+import Images from "../../components/helpers/images.astro";
+import { urlTranslate } from "../../../utils/data-store.util";
+
+const { data } = Astro.props
+
+const siteID = import.meta.env.PUBLIC_SITE_ID;
+const providerBaseURL = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["provider-pages"]}`
+
 ---
 
-<div class="flex flex-col justify-center items-center pb-5 gap-10 xl:container content-auto px-2 mt-[40px]">
-    <div class="text-white text-2xl">{data?.title}</div>
-    <div class="flex gap-5 justify-between w-full">
-        {
-			data?.homeFeaturedProviders?.providers?.data.map((item: any) =>  (
-				 <div class="provider-img">
-                    <Images
-                    src={item?.attributes?.images?.data?.attributes.url}
-                    imageWidth={116}
-                    imageHeight={40}
-                    classes="rounded"
-                    alt={item?.attributes?.title+' photo'}
-                    />
-                </div>
-			))
-		}
+<div class="flex flex-col justify-center items-center gap-10 xl:container">
+    <div class="text-white text-2xl font-bold">{data?.title}</div>
+     <div class="flex gap-5 md:justify-between justify-center flex-wrap w-full">
+         {
+             data?.homeFeaturedProviders?.providers?.data.map((item: any) =>  (
+                <Link href={`${providerBaseURL}/${item.attributes.slug}/`}>
+                    <div class="provider-img rounded-lg">
+                        <Images
+                        src={item?.attributes?.images?.data?.attributes.url}
+                        imageWidth={110}
+                        imageHeight={48}
+                        classes="rounded-lg"
+                        alt={item?.attributes?.title+' photo'}
+                        />
+                    </div>
+                </Link>
+            ))
+        }
     </div>
 </div>
 
 <style>
-  .provider-img {
-    box-shadow: 0 0px 12px 0 theme("colors.testimony-box-shadow");
-  }
+    .provider-img {
+        box-shadow: 0 0px 12px 0 theme("colors.testimony-box-shadow");
+    }
 </style>
