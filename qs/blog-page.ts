@@ -1,8 +1,19 @@
 export const blogpageQs = () => ({
-  fields: ["title", "slug", "createdAt", "updatedAt", "content1"],
+  fields: [
+    "title",
+    "slug",
+    "blogBrief",
+    "createdAt",
+    "updatedAt",
+    "content1",
+    "minutesRead",
+  ],
   populate: {
     images: {
       fields: ["url"],
+    },
+    blogCategory: {
+      fields: ["blogCategory", "slug"],
     },
     author: {
       fields: [
@@ -16,6 +27,7 @@ export const blogpageQs = () => ({
         "experience",
         "areaOfWork",
         "specialization",
+        "minutesRead",
       ],
       populate: {
         photo: {

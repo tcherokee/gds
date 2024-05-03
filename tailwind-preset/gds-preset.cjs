@@ -120,7 +120,7 @@ module.exports = {
       "btn-back-to-top": COLORS.blue[500],
       // Custom Theme Colors
       // Extras
-      "background-top-gradient": COLORS.background[700],
+      "background-top-gradient": COLORS.background[500],
       "background-bottom-gradient": COLORS.background[500],
       "background-back-curve": COLORS.background[900],
       // Breadcrumb
@@ -285,6 +285,9 @@ module.exports = {
       "menu-link-text": COLORS.blue[100],
       "menu-link-text-active": COLORS.white,
       "menu-link-bg-active": COLORS.blue[300],
+
+      // Testimony box
+      "testimony-box-shadow": COLORS.accent[500],
     },
     backgroundImage: {
       "cover-image-wrapper": `url('/src/icons/dashboard/cover-image.jpg')`,
