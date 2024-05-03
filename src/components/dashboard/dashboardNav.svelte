@@ -86,7 +86,7 @@
           fill="currentColor"
         />
       </svg>
-      <span>{translations.mostPlayed}</span>
+      <span>{translations?.mostPlayed}</span>
     </Link>
   </li>
   <li
@@ -113,7 +113,7 @@
           fill="currentColor"
         />
       </svg>
-      <span>{translations.favouriteGame}</span>
+      <span>{translations?.favouriteGame}</span>
     </Link>
   </li>
   <li
@@ -141,7 +141,7 @@
         />
       </svg>
 
-      <span>{translations.pickOfTheWeek}</span>
+      <span>{translations?.pickOfTheWeek}</span>
     </Link>
   </li>
   <li
@@ -169,7 +169,7 @@
         />
       </svg>
 
-      <span>{translations.message}</span>
+      <span>{translations?.message}</span>
       {#if $messages.length - $readMessages.length > 0}
         <div
           class="flex px-2 py-[1px] h-6 min-h-6 !rounded-full btn-secondary justify-center items-center"
@@ -197,7 +197,7 @@
         />
       </svg>
 
-      <span>{translations.contactUs}</span>
+      <span>{translations?.contactUs}</span>
     </Link>
   </li>
   <li class="md:hidden">

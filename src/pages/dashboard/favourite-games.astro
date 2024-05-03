@@ -1,12 +1,11 @@
 ---
-import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import { getTranslations } from "../../../utils/api-requests";
 import FavouriteGamesPage from "../../components/dashboard/favouriteGames.svelte";
-import { get } from "svelte/store";
-import { getTranslations } from "../../../stores/addTranslations";
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
 
-const translationStore: any = get(getTranslations);
+const translationStore = await getTranslations();
 ---
 
-<DashboardLayout>
-  <FavouriteGamesPage translations={translationStore} client:load />
+<DashboardLayout {translationStore}>
+  <FavouriteGamesPage translations={translationStore ?? {}} client:load />
 </DashboardLayout>

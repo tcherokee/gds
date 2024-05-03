@@ -1,17 +1,12 @@
 ---
 import { Link } from "astro-link";
-// Types
-import type { TranslationData } from "../../../interfaces/common/types";
-
-// Stores
-import { getTranslations } from "../../../stores/addTranslations";
 
 // Components
 import MainLayout from "../../layouts/MainLayout.astro";
 import LoginForm from "../../components/auth/loginForm.svelte";
+import { getTranslations } from "../../../utils/api-requests";
 
-// Set Up Translation Store
-const translationStore: TranslationData = getTranslations.get();
+const translationStore = await getTranslations();
 
 // TODO
 let seo = {
@@ -30,21 +25,21 @@ let seo = {
     >
       <div class="space-y-3">
         <h2 class="text-blue-700 text-[32px] font-bold leading-[38px]">
-          {translationStore.logIn}
+          {translationStore?.logIn}
         </h2>
         <p class="text-base text-blue-500">
-          {translationStore.loginPageSubtitle}
+          {translationStore?.loginPageSubtitle}
         </p>
       </div>
 
-      <LoginForm translations={translationStore} client:only="svelte" />
+      <LoginForm translations={translationStore ?? {}} client:load />
       <p class="text-center text-base text-blue-500 !mb-0">
-        {translationStore.noAccount}
+        {translationStore?.noAccount}
         <Link
           href={"/authentication/register/"}
           class="-m-3 font-bold rounded-md p-3 transition duration-150 ease-in-out text-misc hover:text-misc/90"
         >
-          {translationStore.signUp}
+          {translationStore?.signUp}
         </Link>
       </p>
     </div>

@@ -120,14 +120,14 @@
                 classes="text-[#7C838D] flex items-center bg-white rounded-[6px] gap-x-[6px] rounded-md py-[6px] px-4 text-sm font-bold"
               >
                 <UserSvg class="w-5 h-5" />
-                <span>{translations.editProfile}</span>
+                <span>{translations?.editProfile}</span>
               </Link>
               <Link
                 href="/dashboard/messages/"
                 classes="text-[#7C838D] flex items-center bg-white rounded-[6px] gap-x-[6px] rounded-md py-[6px] px-4 text-sm font-bold"
               >
                 <ChatsSvg class="w-5 h-5" />
-                <span>{translations.message}</span>
+                <span>{translations?.message}</span>
               </Link>
             </div>
           </div>
@@ -139,7 +139,7 @@
             <div class="flex items-center gap-x-2">
               <HourGlassSvg class="w-[14px] h-5" />
               <span class="text-blue-700 text-xl font-bold font-lato"
-                >{translations.mostPlayed}</span
+                >{translations?.mostPlayed}</span
               >
             </div>
             {#if $userMostPlayedGames.length}
@@ -154,6 +154,7 @@
                       title={game.game.title}
                       imageUrl={game?.game?.images?.url}
                       link={game?.game?.slug}
+                      {translations}
                     />
                   </div>
                 {/each}
@@ -163,13 +164,13 @@
                 class="flex flex-col items-center justify-center gap-y-3 py-3 h-[calc(100%_-_30px)]"
               >
                 <div class="text-sm text-center text-blue-700 font-medium">
-                  {translations.emptyMostPlayedGames}
+                  {translations?.emptyMostPlayedGames}
                 </div>
                 <Link
                   href={`${$slotMachineUrl}/`}
                   classes="text-center w-fit min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
                 >
-                  {translations.seeAllGames}
+                  {translations?.seeAllGames}
                 </Link>
               </div>
             {/if}
@@ -181,7 +182,7 @@
                   type="button"
                   classes="register-btn flex w-full justify-center items-center px-3 py-[7px]"
                 >
-                  {translations.viewAll}
+                  {translations?.viewAll}
                 </Link>
               </div>
             {/if}
@@ -190,7 +191,7 @@
             <div class="flex items-center gap-x-2">
               <HeartSvg class="w-[22px]" />
               <span class="text-blue-700 text-xl font-bold font-lato"
-                >{translations.favouriteGame}</span
+                >{translations?.favouriteGame}</span
               >
             </div>
             {#if favouriteGames.length}
@@ -205,6 +206,7 @@
                       title={game.game?.title}
                       imageUrl={game?.game?.images?.url}
                       link={game?.game?.slug}
+                      {translations}
                     />
                   </div>
                 {/each}
@@ -214,13 +216,13 @@
                 class="flex flex-col items-center justify-center gap-y-3 py-3 h-[calc(100%_-_30px)]"
               >
                 <div class="text-sm text-center text-blue-700 font-medium">
-                  {translations.emptyFavoriteGames}
+                  {translations?.emptyFavoriteGames}
                 </div>
                 <Link
                   href={`${$slotMachineUrl}/`}
                   classes="text-center w-fit min-h-[37px] uppercase rounded-md btn-secondary px-4 py-[6px] text-sm font-semibold"
                 >
-                  {translations.seeAllGames}
+                  {translations?.seeAllGames}
                 </Link>
               </div>
             {/if}
@@ -230,7 +232,7 @@
                   href="/dashboard/favourite-games/"
                   classes="register-btn flex w-full justify-center items-center px-3 py-[7px]"
                 >
-                  {translations.viewAll}
+                  {translations?.viewAll}
                 </Link>
               </div>
             {/if}
@@ -239,7 +241,7 @@
             <div class="flex items-center gap-x-2">
               <StarSvg class="w-[22px] h-5" />
               <span class="text-blue-700 text-xl font-bold font-lato"
-                >{translations.pickOfTheWeek}</span
+                >{translations?.pickOfTheWeek}</span
               >
             </div>
             <div class="mt-2">
@@ -254,6 +256,7 @@
                       title={game.game.title}
                       imageUrl={game?.game?.images?.url}
                       link={game?.game?.slug}
+                      {translations}
                     />
                   </div>
                 {/each}
@@ -262,7 +265,7 @@
                   class="flex items-center justify-center gap-y-3 py-3 h-[calc(100%_-_30px)]"
                 >
                   <div class="text-sm text-center text-blue-700 font-medium">
-                    {translations.emptyWeeklyPick}
+                    {translations?.emptyWeeklyPick}
                   </div>
                 </div>
               {/if}
@@ -273,7 +276,7 @@
                   href="/dashboard/favourite-games/"
                   classes="register-btn flex w-full justify-center items-center px-3 py-[7px] cursor-pointer"
                 >
-                  {translations.viewAll}
+                  {translations?.viewAll}
                 </Link>
               </div>
             {/if}
@@ -290,7 +293,7 @@
                 class="flex items-center justify-center gap-y-3 py-3 h-[calc(100%_-_30px)]"
               >
                 <div class="text-sm text-center text-blue-700 font-medium">
-                  {translations.comingSoon}
+                  {translations?.comingSoon}
                 </div>
               </div>
             </div>
