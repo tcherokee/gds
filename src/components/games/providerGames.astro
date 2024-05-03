@@ -14,9 +14,9 @@ const gamePage = await fetchApi<Gamepage[]>({
   query: `?${query}`,
 });
 
-const gamesData = [
-  ...gamePage[0]?.attributes?.provider?.data?.attributes?.games?.data,
-];
+const gamesData = gamePage[0]?.attributes?.provider.data
+  ? [...gamePage[0]?.attributes?.provider?.data?.attributes?.games?.data]
+  : [];
 const limitGames = gamesData.splice(0, 6);
 ---
 

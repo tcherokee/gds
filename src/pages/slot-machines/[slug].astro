@@ -81,6 +81,7 @@ let seo = {
 
 //list componets on page
 const __blocks = page?.attributes?.blocks;
+console.log("SM:", page);
 ---
 
 <MainLayout seoData={seo}>
@@ -246,7 +247,11 @@ const __blocks = page?.attributes?.blocks;
           )
         }
 
-        <AuthorCard data={page.attributes.author} {translationStore} />
+        {
+          page?.attributes?.author?.data && (
+            <AuthorCard data={page.attributes.author} {translationStore} />
+          )
+        }
       </div>
       <div class="basis-[315px] shrink-0 order-first order-last">
         <CasinoSideBar {translationStore} />
