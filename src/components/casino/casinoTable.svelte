@@ -12,7 +12,7 @@
     TranslationData,
   } from "../../../interfaces/common/types";
   // Import Stores
-  
+
   import {
     bonusAmount,
     casinoQsStore,
@@ -33,6 +33,7 @@
   import MediaQuery from "../helpers/mediaQuery.svelte";
   import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
   // Images
+  import Angle from "~icons/kensho-icons/angle";
   import ArrowRight from "~icons/kensho-icons/arrow-right";
   import CircleInfo from "~icons/kensho-icons/circle-info";
   // Query String
@@ -106,9 +107,9 @@
   $: wageringReqAmount.set(wageringReq);
 
   $: {
-		getTranslations.set(translations);
+    getTranslations.set(translations);
     providers.set(slotProviders);
-	}
+  }
 
   // Reset Casino Filters
   const resetCasinoFilters = () => {
@@ -166,9 +167,7 @@
                 <th scope="col" class="px-3"
                   >{translations?.casinoTableHeadingBonus}</th
                 >
-                <th scope="col" class="px-3"
-                  >{translations?.withoutDeposit}</th
-                >
+                <th scope="col" class="px-3">{translations?.withoutDeposit}</th>
                 <th scope="col" class="px-3"
                   >{translations?.casinoTableHeadinRegister}</th
                 >
@@ -250,8 +249,7 @@
                             <span class="hidden sm:inline-flex sm:pr-1"
                               >{casino?.attributes?.title}</span
                             >
-                            <span class="underline"
-                              >{translations?.review}</span
+                            <span class="underline">{translations?.review}</span
                             >
                           </Link>
                           <ArrowRight class="w-[14px]" />
@@ -273,7 +271,10 @@
                           type="external"
                           rel="sponsored"
                         >
-                          {@html welcomeBonus(casino, translations?.reloadBonus)}
+                          {@html welcomeBonus(
+                            casino,
+                            translations?.reloadBonus
+                          )}
                         </Link>
                         <span
                           class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
@@ -285,7 +286,7 @@
                             class="fill-text-grey-500 ml-1"
                           />
                         </span>
-                        <!-- <div class="wrap-collabsible w-full md:hidden mt-2">
+                        <div class="wrap-collabsible w-full md:hidden mt-2">
                           <input
                             id={`welcomeBonus${i}`}
                             class="toggle hidden peer"
@@ -311,7 +312,7 @@
                                 ?.termsConditions}
                             </div>
                           </div>
-                        </div> -->
+                        </div>
                       </div>
                     </td>
                     <td
@@ -347,7 +348,7 @@
                               class="fill-text-grey-500 ml-1"
                             />
                           </span>
-                          <!-- <div class="wrap-collabsible w-full md:hidden mt-2">
+                          <div class="wrap-collabsible w-full md:hidden mt-2">
                             <input
                               id={`noDepositBonus${i}`}
                               class="toggle hidden peer"
@@ -369,10 +370,13 @@
                               class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max"
                             >
                               <div class="content-inner text-grey-500 mt-4">
-                                {@html noDepositBonus(casino)?.terms}
+                                {@html noDepositBonus(casino, {
+                                  withoutDeposit: translations?.withoutDeposit,
+                                  freeSpins: translations?.freeSpins,
+                                })?.terms}
                               </div>
                             </div>
-                          </div> -->
+                          </div>
                         {:else}
                           <span> - </span>
                         {/if}
@@ -414,7 +418,7 @@
                               class="fill-text-grey-500 ml-1"
                             />
                           </span>
-                          <!-- <div class="wrap-collabsible w-full md:hidden mt-2">
+                          <div class="wrap-collabsible w-full md:hidden mt-2">
                             <input
                               id={`bonus${i}`}
                               class="toggle hidden peer"
@@ -436,10 +440,11 @@
                               class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max"
                             >
                               <div class="content-inner text-grey-500 mt-4">
-                                {@html casino?.attributes?.termsAndConditions?.copy}
+                                {@html casino?.attributes?.termsAndConditions
+                                  ?.copy}
                               </div>
                             </div>
-                          </div> -->
+                          </div>
                         </div>
                       </div>
                     </td>
