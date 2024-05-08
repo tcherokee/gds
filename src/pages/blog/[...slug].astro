@@ -45,9 +45,11 @@ export const getStaticPaths = (async () => {
       query: `?${query}`,
     });
 
+    const filterBlogs = blogs.data.filter((blog:Blog) => blog.attributes.content1)
+
     prerenderPath.push({
       params: { slug },
-      props: { page: blogs, isPaginated: true },
+      props: { page: {data: filterBlogs}, isPaginated: true },
     });
   }
 
