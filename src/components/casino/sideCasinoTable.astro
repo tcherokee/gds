@@ -1,71 +1,76 @@
 ---
+// Stores
+import { getTranslations } from "../../../stores/addTranslations";
 
-	// Stores
-    import { getTranslations } from '../../../stores/addTranslations';
+// Helpers
+import Images from "../helpers/images.astro";
 
-	// Helpers
-	import Images from '../helpers/images.astro';
+// Types
+import type { TranslationData } from "../../../interfaces/common/types";
 
-	// Types
-	import type { TranslationData } from '../../../interfaces/common/types';
+const { casinos, title, type = "BEST" } = Astro.props;
 
-
-    const {casinos, title, type = 'BEST'} = Astro.props
-
-	//get translation context
-    const translationStore: TranslationData = getTranslations.get();
-
+//get translation context
+const translationStore: TranslationData = getTranslations.get();
 ---
 
 <div class="side-casino-table">
-	<div
-		class="rounded-t-[6px] py-[11px] px-3 bg-casino-table-header-bkg text-white text-[19px] leading-[24px] font-bold"
-	>
-		{title}
-	</div>
-	<table class="border-separate border-spacing-[11px] rounded-b-[6px]">
-		<tbody>
-			{casinos.map((casino: any, index:number) =>
-				<tr class="">
-					<td class="border-b border-b-black p-0">
-						<div class="flex items-center justify-between">
-							<div class="flex items-center pb-3">
-								<Images
-									alt="Test"
-									imageWidth={50}
-									imageHeight={50}
-									imageQuality={100}
-									src={casino?.attributes?.logoIcon?.data?.attributes?.url}
-									classes="rounded-[4px] mr-[10px]"
-								/>
-								<div class="">
-									<div class="line-clamp-1">{casino?.attributes?.title}</div>
-									{type === 'BEST' &&
-										<div>{casino?.attributes?.bonusSection?.bonusAmount}€</div> }
-									{type === 'NO_DEPOSIT' &&
-										<div>{casino?.attributes?.noDepositSection?.bonusAmount}€</div> }
-									{type === 'FREE' &&
-										<div>{casino?.attributes?.freeSpinsSection?.bonusAmount}</div>
-									}
-								</div>
-							</div>
-							<button
-								class="btn btn-misc uppercase text-white !text-[14px] px-[22.5px] w-fit h-[37px]"
-							>
-								{translationStore.review}
-							</button>
-						</div>
-					</td>
-				</tr>
-			)}
-		</tbody>
-	</table>
+  <div
+    class="rounded-t-[6px] py-[11px] px-3 bg-casino-table-header-bkg text-white text-[19px] leading-[24px] font-bold"
+  >
+    {title}
+  </div>
+  <table class="border-separate border-spacing-[11px] rounded-b-[6px]">
+    <tbody>
+      {
+        casinos.map((casino: any, index: number) => (
+          <tr class="">
+            <td class="border-b border-b-black p-0">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center pb-3">
+                  <Images
+                    alt={casino?.attributes?.title}
+                    imageWidth={50}
+                    imageHeight={50}
+                    imageQuality={100}
+                    src={casino?.attributes?.logoIcon?.data?.attributes?.url}
+                    classes="rounded-[4px] mr-[10px]"
+                  />
+                  <div class="">
+                    <div class="line-clamp-1">{casino?.attributes?.title}</div>
+                    {type === "BEST" && (
+                      <div>
+                        {casino?.attributes?.bonusSection?.bonusAmount}€
+                      </div>
+                    )}
+                    {type === "NO_DEPOSIT" && (
+                      <div>
+                        {casino?.attributes?.noDepositSection?.bonusAmount}€
+                      </div>
+                    )}
+                    {type === "FREE" && (
+                      <div>
+                        {casino?.attributes?.freeSpinsSection?.bonusAmount}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <button class="btn btn-misc uppercase text-white !text-[14px] px-[22.5px] w-fit h-[37px]">
+                  {translationStore.review}
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
 </div>
 
 <style type="scss">
-	tr:last-child {
-		td {
-			@apply border-0;
-		}
-	}
+  tr:last-child {
+    td {
+      @apply border-0;
+    }
+  }
 </style>
