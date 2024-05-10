@@ -189,7 +189,7 @@ const blogBriefAlternative = page?.attributes?.content1.replace(/(<([^>]+)>)/gi,
 						</div>
 						{page?.attributes?.author?.data &&
 							<div class="mt-10 mb-10 md:mb-0">
-								<AuthorCard data={page?.attributes?.author} />
+								<AuthorCard data={page?.attributes?.author} {translationStore} />
 							</div>
 						}
 					</div>
