@@ -66,9 +66,9 @@
         classes="btn btn-secondary uppercase text-white w-[130px] mb-3"
         >{translations.playFunBtn}
       </Link>
-      <Link href={`${provideURL}/`} classes="btn btn-misc uppercase text-white w-[130px]"
+      <!-- <Link href={`${provideURL}/`} classes="btn btn-misc uppercase text-white w-[130px]"
         >{translations.playRealBtn}</Link
-      >
+      > -->
     </div>
     <div
       class="game-title-container p-2 rounded-b-lg bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]"
