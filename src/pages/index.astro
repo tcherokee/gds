@@ -112,6 +112,16 @@ const [homepageBlogs, homepageGames] = await Promise.all([
   fetchHomepageGames,
 ]);
 
+// Loop counter
+let loopCounter = 2;
+if (
+  homepage.attributes.blocks.find(
+    (block) => block.__component === "homepage.home-featured-providers"
+  )
+) {
+  loopCounter = 3;
+}
+
 // combining games array
 const combinedGamesArray: Game[] = homepageGames.flat();
 
@@ -133,11 +143,16 @@ let seo = {
 
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
-  <div class="featured-background pb-[50px]">
+  <div
+    class:list={[
+      "featured-background pb-[50px]",
+      loopCounter > 2 ? "home-feature" : "",
+    ]}
+  >
     {
       Components.map(
         (Component, i) =>
-          i < 3 && (
+          i < loopCounter && (
             <Component
               data={
                 homepage?.attributes?.blocks[i]?.__component ===
@@ -164,7 +179,7 @@ let seo = {
     {
       Components.map(
         (Component, i) =>
-          i > 2 && (
+          i >= loopCounter && (
             <Component
               data={
                 homepage?.attributes?.blocks[i]?.__component ===

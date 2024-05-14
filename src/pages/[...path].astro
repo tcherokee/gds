@@ -195,7 +195,12 @@ const seo = {
 
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
-  <div class="featured-background">
+  <div
+    class:list={[
+      "featured-background",
+      loopCounter > 2 ? "two-plus-feature" : "",
+    ]}
+  >
     {
       Components.map((Component, i) => {
         if (i < loopCounter) {
