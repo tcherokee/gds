@@ -41,7 +41,7 @@ steps:
         '--build-arg',
         'SITE_NAME=${_SITE_NAME}',
         '--build-arg',
-        'MATOMO_SITE_ID=${_MATOMO_SITE_ID}',
+        'PUBLIC_SWETRIX_ID=${_PUBLIC_SWETRIX_ID}',
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '.'
@@ -107,7 +107,7 @@ steps:
       - '--set-env-vars'
       - 'SITE_NAME=${_SITE_NAME}'
       - '--set-env-vars'
-      - 'MATOMO_SITE_ID=${_MATOMO_SITE_ID}'
+      - 'PUBLIC_SWETRIX_ID=${_PUBLIC_SWETRIX_ID}'
 
 substitutions:
   _OUTPUT_DIST_PATH: '/'
@@ -134,6 +134,6 @@ substitutions:
   _PUBLIC_FULL_URL: ''
   _SITE_NAME: ''
   _IS_PROD: 'false'
-  _MATOMO_SITE_ID: ''
+  _PUBLIC_SWETRIX_ID: ''
 
 timeout: 2700s

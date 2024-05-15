@@ -26,7 +26,6 @@
     "astro": "^4.0.5",
     "astro-icon": "^0.8.2",
     "astro-link": "^1.2.1",
-    "astro-matomo": "^1.4.2",
     "astro-tooltips": "^0.6.2",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",

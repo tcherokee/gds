@@ -149,5 +149,22 @@ const { translationStore } = Astro.props;
       client:load
     />
     <!-- </footer> -->
-  </body>
+  </body><script is:inline src="https://swetrix.org/swetrix.js" defer></script>
+  <script define:vars={{ swetrixId: import.meta.env.PUBLIC_SWETRIX_ID }}>
+    document.addEventListener("DOMContentLoaded", function () {
+      swetrix.init(swetrixId, {
+        devMode: false,
+        apiURL: "https://api.stats.kenshomedia.com/log",
+      });
+      swetrix.trackViews();
+    });
+  </script>
+
+  <noscript is:inline>
+    <img
+      src="https://api.stats.kenshomedia.com/log/noscript?pid=6wNdNPt3U82T"
+      alt="analytics-pixel"
+      referrerpolicy="no-referrer-when-downgrade"
+    />
+  </noscript>
 </html>
