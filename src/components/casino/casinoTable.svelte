@@ -239,6 +239,7 @@
                             avgRating={casino?.attributes?.ratingAvg}
                             ratingCount={casino?.attributes?.ratingCount}
                             showVotes={true}
+                            {translations}
                           />
                         </div>
                         <div class="flex items-center">
@@ -278,6 +279,8 @@
                         </Link>
                         <span
                           class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
+                          title={casino?.attributes?.bonusSection?.termsConditions}
+                          data-tooltip-placement="left"
                         >
                           {translations?.wageringRequirement}
                           <CircleInfo
@@ -340,6 +343,9 @@
                           </Link>
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
+                            title={noDepositBonus(casino, {withoutDeposit: translations?.withoutDeposit,
+                              freeSpins: translations?.freeSpins,})?.terms}
+                            data-tooltip-placement="left"
                           >
                             {translations?.wageringRequirement}
                             <CircleInfo
@@ -410,6 +416,8 @@
                           {/if}
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
+                            title={casino?.attributes?.termsAndConditions?.copy}
+                            data-tooltip-placement="left"
                           >
                             {translations?.termsConditions}
                             <CircleInfo

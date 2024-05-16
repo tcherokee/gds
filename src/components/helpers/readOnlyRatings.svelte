@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { getTranslations } from "../../../stores/addTranslations.ts"
+  import type { TranslationData } from "../../../interfaces/common/types.ts";
 
     export let avgRating: number
     export let showVotes: boolean
 	export let ratingCount: number;
     export let ratingClasses: string = 'flex-col';
+	export let translations: TranslationData;
 </script>
 
 <div class="container flex  w-auto p-0 m-0">
@@ -39,7 +40,7 @@
 		</div>
 		{#if  ratingClasses === 'flex-col'}
 			<span class="flex items-center justify-center text-center rating-text text-[14px] mt-2">
-				<span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {$getTranslations.from} {ratingCount} {$getTranslations.votes}
+				<span class="font-bold uppercase">{avgRating}/5</span>&nbsp; {translations?.from} {ratingCount} {translations?.votes}
 			</span>
 		{:else}
 			<span class="flex items-center justify-center text-center rating-text text-[14px] ml-1">
