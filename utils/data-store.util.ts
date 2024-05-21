@@ -72,7 +72,7 @@ export const GameInfoHeader = {
 export const urlTranslate = {
   gds: {
     "game-pages": "/slot-machines",
-    "casino-pages": "/casino/recensione",
+    "casino-pages": "/it/casino/recensione",
     "blog-pages": "/blog",
     "blog-index": "/blog",
     "author-page": "/author",
