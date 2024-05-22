@@ -192,10 +192,12 @@ const seo = {
   url: `${import.meta.env.FULL_URL}/${path}`,
 };
 ---
-
+<script define:vars={{page}}>
+  console.log('Blocks',page.attributes.blocks)
+</script>
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
-  <div class="featured-background">
+  <div class="featured-background curve pb-[50px]">
     {
       Components.map((Component, i) => {
         if (i < loopCounter) {

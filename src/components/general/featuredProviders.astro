@@ -11,13 +11,13 @@ const providerBaseURL = `${import.meta.env.FULL_URL}${urlTranslate[siteID as key
 
 ---
 
-<div class="flex flex-col justify-center items-center gap-10 xl:container mt-[40px]">
+<div class="relative flex flex-col justify-center items-center gap-10 xl:container mt-[40px]">
     <div class="text-white text-2xl font-bold">{data?.title}</div>
     <div class="flex gap-5 justify-center flex-wrap w-full">
          {
              data?.homeFeaturedProviders?.providers?.data.map((item: any) =>  (
                 <Link href={`${providerBaseURL}/${item.attributes.slug}/`}>
-                    <div class="provider-img rounded-lg">
+                    <div class="provider-img bg-white rounded-lg">
                         <Images
                         src={item?.attributes?.images?.data?.attributes.url}
                         imageWidth={110}
