@@ -72,7 +72,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         <div class="flex items-center">
                                             <Link
                                                 classes="casino-name text-[14px] text-grey-500 mr-[11px]"
-                                                href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+ ((casino as CasinoData)?.attributes?.slug || (casino as AuthorCasinoAttributes)?.slug)}/`}
+                                                href={`${PUBLIC_SITE_ID === 'gds' ? '/it' : ''}${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+ ((casino as CasinoData)?.attributes?.slug || (casino as AuthorCasinoAttributes)?.slug)}/`}
                                             >
                                                 <span class="hidden sm:inline-flex sm:pr-1">{(casino as CasinoData)?.attributes?.title ?? (casino as AuthorCasinoAttributes)?.title}</span>
                                                 <span class="underline">{translationStore?.review}</span>
