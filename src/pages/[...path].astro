@@ -197,64 +197,72 @@ const seo = {
 </script>
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
-  <div class="featured-background curve pb-[50px]">
+  <div class:list={["featured-background curve pb-[50px]"]}>
     {
       Components.map((Component, i) => {
         if (i < loopCounter) {
           if (mappedComponents[i].extension === "astro") {
             return (
-              <Component
-                data={page.attributes.blocks[i]}
-                timeDate={page?.attributes?.updatedAt}
-                authorData={page?.attributes?.author}
-                {...(page?.attributes?.blocks[i]?.__component ===
-                "casinos.casino-list"
-                  ? { isCustom: true, isTop: true }
-                  : {})}
-                {translationStore}
-              />
+              <div>
+                <Component
+                  data={page.attributes.blocks[i]}
+                  timeDate={page?.attributes?.updatedAt}
+                  authorData={page?.attributes?.author}
+                  {...(page?.attributes?.blocks[i]?.__component ===
+                  "casinos.casino-list"
+                    ? { isCustom: true, isTop: true }
+                    : {})}
+                  {translationStore}
+                />
+              </div>
             );
           } else {
             switch (mappedComponents[i].name) {
               case "casinoTable": {
                 return (
-                  <CasinoTable
-                    initialCasinos={
-                      page.attributes.blocks[i] as CasinoListBlock
-                    }
-                    translations={translationStore ?? {}}
-                    {slotProviders}
-                    client:load
-                  />
+                  <div>
+                    <CasinoTable
+                      initialCasinos={
+                        page.attributes.blocks[i] as CasinoListBlock
+                      }
+                      translations={translationStore ?? {}}
+                      {slotProviders}
+                      client:load
+                    />
+                  </div>
                 );
               }
               case "gameListBlock": {
                 return (
-                  <GameListBlock
-                    data={page.attributes.blocks[i] as TGameListBlock}
-                    {initialGames}
-                    gameProviders={
-                      gameProviders.attributes.filterProviders
-                        ? gameProviders.attributes.filterProviders.data
-                        : []
-                    }
-                    {slotCategories}
-                    translations={translationStore}
-                    {slotProviders}
-                    client:load
-                  />
+                  <div>
+                    <GameListBlock
+                      data={page.attributes.blocks[i] as TGameListBlock}
+                      {initialGames}
+                      gameProviders={
+                        gameProviders.attributes.filterProviders
+                          ? gameProviders.attributes.filterProviders.data
+                          : []
+                      }
+                      {slotCategories}
+                      translations={translationStore}
+                      {slotProviders}
+                      client:load
+                    />
+                  </div>
                 );
               }
               case "casinoLiveVideo": {
                 return (
-                  <CasinoLiveVideo
-                    translations={translationStore}
-                    playbackUrl={
-                      (page?.attributes?.blocks[i] as TCasinoLiveVideo)
-                        .playbackUrl
-                    }
-                    client:load
-                  />
+                  <div>
+                    <CasinoLiveVideo
+                      translations={translationStore}
+                      playbackUrl={
+                        (page?.attributes?.blocks[i] as TCasinoLiveVideo)
+                          .playbackUrl
+                      }
+                      client:load
+                    />
+                  </div>
                 );
               }
             }
@@ -262,6 +270,7 @@ const seo = {
         }
       })
     }
+    <div></div>
   </div>
 
   <div class="xl:container content-auto px-2 pt-5">
