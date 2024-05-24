@@ -1,0 +1,83 @@
+---
+import Icon from "astro-icon";
+const {
+  id,
+  label,
+  containerClass = "",
+  inputClass = "",
+  labelClass = "",
+  icon = {
+    name: "angle",
+    height: "",
+    width: "",
+    classes: "",
+  },
+  content,
+} = Astro.props;
+---
+
+<!-- Store the message prop as a data attribute. -->
+<astro-collapsible data-content={content}>
+  <div class:list={["wrap-collapsible", containerClass]}>
+    <input
+      id={id}
+      class:list={["toggle hidden peer", inputClass]}
+      type="checkbox"
+    />
+    <label
+      for={id}
+      class:list={[
+        "group flex justify-between rounded-md cursor-pointer",
+        labelClass,
+      ]}
+      tabindex="0"
+    >
+      {label}
+      <Icon
+        name={icon.name}
+        class:list={[
+          "group flex justify-between rounded-md cursor-pointer peer-checked:group-[]:rotate-180",
+          icon.classes,
+        ]}
+        class="fill-grey-500"
+        height={icon.height}
+        width={icon.width}
+      />
+    </label>
+  </div>
+</astro-collapsible>
+
+<script>
+  class AstroCollapsible extends HTMLElement {
+    constructor() {
+      super();
+
+      // Read the message from the data attribute.
+      const content = this.dataset.content;
+      const collapsibleElem = this.querySelector(".wrap-collapsible");
+      collapsibleElem?.addEventListener("click", () => {
+        const contentElem = collapsibleElem.querySelector("div");
+        if (!contentElem) {
+          const collapsibleTag = document.createElement("DIV");
+          collapsibleTag.classList.add(
+            ...[
+              "max-h-0",
+              "overflow-hidden",
+              "transition-all",
+              "peer-checked:max-h-max",
+            ]
+          );
+          const collapsibleInnerTag = document.createElement("DIV");
+          collapsibleInnerTag.classList.add(
+            ...["content-inner", "text-grey-500", "mt-4"]
+          );
+          collapsibleInnerTag.innerHTML = content + "";
+          collapsibleTag.appendChild(collapsibleInnerTag);
+          collapsibleElem.appendChild(collapsibleTag);
+        }
+      });
+    }
+  }
+
+  customElements.define("astro-collapsible", AstroCollapsible);
+</script>
