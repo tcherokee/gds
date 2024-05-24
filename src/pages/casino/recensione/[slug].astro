@@ -765,7 +765,7 @@ let seo = {
       </div>
       <div class="grid md:grid-cols-4 gap-8">
         <div class="col-span-1 md:col-span-3">
-          <QuickLinks data={page} />
+          <QuickLinks data={page} {translationStore} />
 
           <ImageCarousel data={page?.attributes.blocks[0]} client:visible />
 

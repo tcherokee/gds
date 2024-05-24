@@ -132,7 +132,7 @@ const __blocks = page?.attributes?.blocks;
     <div class="flex flex-col md:flex-row gap-x-8">
       <div class="order-last md:order-first mt-5 md:mt-0">
         <div class="quicklinks mb-5">
-          <QuickLinks data={page} />
+          <QuickLinks data={page} {translationStore} />
         </div>
         <div class="intro-content">
           <h1 class="text-blue-700 !mt-0">{page?.attributes?.heading}</h1>
