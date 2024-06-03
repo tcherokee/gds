@@ -120,7 +120,7 @@ module.exports = {
       "btn-back-to-top": COLORS.blue[500],
       // Custom Theme Colors
       // Extras
-      "background-top-gradient": COLORS.background[500],
+      "background-top-gradient": COLORS.background[700],
       "background-bottom-gradient": COLORS.background[500],
       "background-back-curve": COLORS.background[900],
       // Breadcrumb

@@ -3,7 +3,6 @@
 import Icon from "astro-icon";
 
 // Types
-import type { TranslationData } from "../../../interfaces/common/types.ts";
 import { urlTranslate } from "../../../utils/data-store.util";
 
 //Helpers
@@ -45,7 +44,7 @@ const contentSplit = content1?.slice(0, 100) + "&hellip;";
 //generate author page url
 const lcFirstName = firstName?.toLowerCase();
 const lcLastName = lastName?.toLowerCase();
-const siteID = import.meta.env.SITE_ID;
+const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 ---
 
 <div class="bg-author-wrapper-bkg m-0 rounded-lg p-3 mb-6 md:mb-0">
@@ -90,7 +89,7 @@ const siteID = import.meta.env.SITE_ID;
         class="flex !mt-0 !text-[18px] md:!text-[20px] justify-center my-4 md:justify-normal md:mb-1 group-[.author-index]:justify-center"
       >
         <Link
-          href={`${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${lcFirstName}.${lcLastName}/`}
+          href={`${PUBLIC_SITE_ID === "gds" ? "/it" : ""}${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]["author-page"]}/${lcFirstName}.${lcLastName}/`}
         >
           {`${firstName} ${lastName}`}
         </Link>

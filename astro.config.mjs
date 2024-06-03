@@ -53,6 +53,9 @@ export default defineConfig({
     ],
   },
   output: "server",
+  server: {
+    port: process.env.PORT ? process.env.PORT : 4231,
+  },
   adapter: node({
     mode: "standalone",
   }),

@@ -3,30 +3,23 @@
 import { Link } from "astro-link";
 
 // Types and TypeGuards
-import type {
-  Block,
-  TranslationData,
-  quicklinksObj,
-} from "../../../interfaces/common/types.ts";
 import {
-  isSingleContentBlock,
   isFaqBlockType,
   isHowToBlockType,
-  isProsAndConsType,
   isImageWithParagraphType,
   isIntroductionWithImageBlock,
+  isProsAndConsType,
+  isSingleContentBlock,
 } from "../../../interfaces/common/typeguards";
+import type { Block, quicklinksObj } from "../../../interfaces/common/types.ts";
 
 // Helpers
-import { getTranslations } from "../../../stores/addTranslations.ts";
 import { sanitizeAndHyphenate } from "../../../lib/sanitizeAndHyphenate";
 
 //Components
 import Collapse from "./collapse.astro";
 
-const { data, block, isGamePage = false } = Astro.props;
-
-const translationStore: TranslationData = getTranslations.get();
+const { data, block, translationStore, isGamePage = false } = Astro.props;
 
 // Regex to target H2 Headings
 const h2Regex = /<h2>(.*?)<\/h2>/g;

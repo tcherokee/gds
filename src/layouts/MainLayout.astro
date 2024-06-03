@@ -195,8 +195,8 @@ const { seoData } = Astro.props;
     }
     
     <title>{seoData.pageTitle}</title>
-    <ViewTransitions />
-    <!-- <Tooltips placement="auto" /> -->
+    <!-- <ViewTransitions /> -->
+    <Tooltips placement="auto" maxWidth="300" />
   </head>
   <body>
     <!-- <Analytics client:load /> -->
@@ -233,7 +233,8 @@ const { seoData } = Astro.props;
     <style lang="scss">
       :global(.tippy-box[data-theme="default"]) {
         padding: 0 !important;
-        @apply text-[10px] text-black leading-[16px] border border-secondary-tint bg-white rounded-[4px] max-w-[300px];
+        max-width: 300px !important;
+        @apply text-[10px] text-black leading-[16px] border border-secondary-tint bg-white rounded-[4px];
         :global(p) {
           font-size: 10px !important;
           line-height: 1rem;

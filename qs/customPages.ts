@@ -147,6 +147,19 @@ export const customPageQs = () => {
               },
             },
           },
+          homeFeaturedProviders: {
+            fields: ["title"],
+            populate: {
+              providers: {
+                fields: ["title", "slug"],
+                populate: {
+                  images: {
+                    fields: ["url"],
+                  },
+                },
+              },
+            },
+          },
           providers: {
             fields: ["title", "slug"],
             populate: {

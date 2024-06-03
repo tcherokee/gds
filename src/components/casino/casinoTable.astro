@@ -10,6 +10,7 @@ import { urlTranslate } from '../../../utils/data-store.util'
 import Images from '../helpers/images.astro'
 import Link from "../helpers/link.astro"
 import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
+import AstroCollapsible from "../helpers/collapsible.astro";
 
 // Tailwind Gradient Object for Dynamic Classes
 const badgesOptions = ([
@@ -67,12 +68,12 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                 <td class="text-center w-1/2 md:w-auto">
                                     <div class="px-3 py-3 flex h-full flex-col items-center justify-center bg-white rounded-tr-lg md:rounded-tr-none">
                                         <div class="ratings">
-                                            <ReadOnlyRating avgRating={(casino as CasinoData)?.attributes?.ratingAvg ?? (casino as AuthorCasinoAttributes)?.ratingAvg} ratingCount={(casino as CasinoData)?.attributes?.ratingCount ?? (casino as AuthorCasinoAttributes)?.ratingCount} showVotes={true} />
+                                            <ReadOnlyRating avgRating={(casino as CasinoData)?.attributes?.ratingAvg ?? (casino as AuthorCasinoAttributes)?.ratingAvg} ratingCount={(casino as CasinoData)?.attributes?.ratingCount ?? (casino as AuthorCasinoAttributes)?.ratingCount} showVotes={true} {translationStore} />
                                         </div>
                                         <div class="flex items-center">
                                             <Link
                                                 classes="casino-name text-[14px] text-grey-500 mr-[11px]"
-                                                href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+ ((casino as CasinoData)?.attributes?.slug || (casino as AuthorCasinoAttributes)?.slug)}/`}
+                                                href={`${PUBLIC_SITE_ID === 'gds' ? '/it' : ''}${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['casino-pages']+"/"+ ((casino as CasinoData)?.attributes?.slug || (casino as AuthorCasinoAttributes)?.slug)}/`}
                                             >
                                                 <span class="hidden sm:inline-flex sm:pr-1">{(casino as CasinoData)?.attributes?.title ?? (casino as AuthorCasinoAttributes)?.title}</span>
                                                 <span class="underline">{translationStore?.review}</span>
@@ -96,21 +97,23 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         >
                                              <Fragment set:html={welcomeBonus(casino, translationStore?.reloadBonus)} />
                                         </Link>
-                                        <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
+                                        <span
+                                            class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
+                                            title={(casino as CasinoData)?.attributes?.bonusSection?.termsConditions ?? (casino as AuthorCasinoAttributes)?.bonusSection?.termsConditions}
+                                            data-tooltip-placement="left">
                                             {translationStore?.wageringRequirement} 
                                             <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                         </span>
-                                        <div class="wrap-collabsible w-full md:hidden mt-2">
-                                            <input id={`welcomeBonus${i}`} class="toggle hidden peer" type="checkbox" />
-                                            <label for={`welcomeBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
-                                                {translationStore?.wageringRequirement}
-                                                <Icon name="angle" class="fill-grey-500 group-open:rotate-180" height="20px" width="18px"/>
-                                            </label>
-                                            <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
-                                                <div class="content-inner text-grey-500 mt-4">
-                                                    <Fragment set:html={(casino as CasinoData)?.attributes?.bonusSection?.termsConditions ?? (casino as AuthorCasinoAttributes)?.bonusSection?.termsConditions} />
-                                                </div>
-                                            </div>
+                                        
+                                        <div class="w-full">
+                                            <AstroCollapsible
+                                                id={`welcomeBonus${i}`}
+                                                label={translationStore?.wageringRequirement}
+                                                containerClass={'w-full md:hidden mt-2'}
+                                                labelClass={'text-sm items-center text-grey-500'}
+                                                icon={{name: 'angle', height: '20px', width: '20px', classes: 'fill-grey-500'}}
+                                                content={(casino as CasinoData)?.attributes?.bonusSection?.termsConditions ?? (casino as AuthorCasinoAttributes)?.bonusSection?.termsConditions}>
+                                            </AstroCollapsible>
                                         </div>
                                             
                                     </div>
@@ -142,30 +145,33 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                         }
                                                     )?.bonus} />
                                             </Link>
-                                            <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
+                                            <span
+                                                class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
+                                                title={noDepositBonus(casino, {
+                                                            withoutDeposit: translationStore?.withoutDeposit,
+                                                            freeSpins: translationStore?.freeSpins
+                                                        })?.terms}
+                                                data-tooltip-placement="left">
                                                 {translationStore?.wageringRequirement} 
                                                 <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                             </span>
-                                            <div class="wrap-collabsible w-full md:hidden mt-2">
-                                                <input id={`noDepositBonus${i}`} class="toggle hidden peer" type="checkbox" />
-                                                <label for={`noDepositBonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open" tabindex="0">
-                                                    {translationStore?.wageringRequirement}
-                                                    <Icon name="angle" class="fill-grey-500 group-[.open]:rotate-180" height="20px" width="18px"/>
-                                                </label>
-                                                <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
-                                                    <div class="content-inner text-grey-500 mt-4">
-                                                        <Fragment
-                                                            set:html={noDepositBonus(
-                                                                casino,
-                                                                {
-                                                                    withoutDeposit: translationStore?.withoutDeposit,
-                                                                    freeSpins: translationStore?.freeSpins
-                                                                }
-                                                            )?.terms} />
-                                                    </div>
-                                                </div>
-                                            </div> :
-                                            <span> - </span>
+                                            <div class="w-full">
+                                                <AstroCollapsible
+                                                    id={`noDepositBonus${i}`}
+                                                    label={translationStore?.wageringRequirement}
+                                                    containerClass={'w-full md:hidden mt-2'}
+                                                    labelClass={'text-sm items-center text-grey-500'}
+                                                    icon={{name: 'angle', height: '20px', width: '20px', classes: 'fill-grey-500'}}
+                                                    content={noDepositBonus(
+                                                        casino,
+                                                        {
+                                                            withoutDeposit: translationStore?.withoutDeposit,
+                                                            freeSpins: translationStore?.freeSpins
+                                                        }
+                                                    )?.terms}>
+                                                </AstroCollapsible>
+                                            </div>
+                                             : <span> - </span>
                                         }
                                     </div>
                                 </td>
@@ -183,21 +189,21 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                                     text={((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) ? ((casino as CasinoData)?.attributes?.casinoBonus?.bonusCode ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusCode) : translationStore?.visitSite}
                                                 />
 										    }
-                                            <span class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]">
+                                            <span
+                                                class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
+                                                title={(casino as CasinoData)?.attributes?.termsAndConditions?.copy ?? (casino as AuthorCasinoAttributes)?.termsAndConditions?.copy}>
                                                 {translationStore?.termsConditions} 
                                                 <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                                             </span>
-                                            <div class="wrap-collabsible w-full md:hidden mt-2">
-                                                <input id={`bonus${i}`} class="toggle hidden peer" type="checkbox" />
-                                                <label for={`bonus${i}`} class="flex items-center justify-between text-sm text-grey-500 group" tabindex="0">
-                                                    {translationStore?.termsConditions}
-                                                    <Icon name="angle" class="fill-grey-500 group-open:rotate-180" height="20px" width="18px"/>
-                                                </label>
-                                                <div class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max">
-                                                    <div class="content-inner text-grey-500 mt-4">
-                                                        <Fragment set:html={(casino as CasinoData)?.attributes?.termsAndConditions?.copy ?? (casino as AuthorCasinoAttributes)?.termsAndConditions?.copy} />
-                                                    </div>
-                                                </div>
+                                            <div class="w-full">
+                                                <AstroCollapsible
+                                                    id={`bonus${i}`}
+                                                    label={translationStore?.termsConditions}
+                                                    containerClass={'w-full md:hidden mt-2'}
+                                                    labelClass={'text-sm items-center text-grey-500'}
+                                                    icon={{name: 'angle', height: '20px', width: '20px', classes: 'fill-grey-500'}}
+                                                    content={(casino as CasinoData)?.attributes?.termsAndConditions?.copy ?? (casino as AuthorCasinoAttributes)?.termsAndConditions?.copy}>
+                                                </AstroCollapsible>
                                             </div>
                                         </div>
                                     </div>
