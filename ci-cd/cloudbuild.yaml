@@ -42,6 +42,8 @@ steps:
         'SITE_NAME=${_SITE_NAME}',
         '--build-arg',
         'PUBLIC_SWETRIX_ID=${_PUBLIC_SWETRIX_ID}',
+        '--build-arg',
+        'PORT=${_PORT}',
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '.'
@@ -108,6 +110,8 @@ steps:
       - 'SITE_NAME=${_SITE_NAME}'
       - '--set-env-vars'
       - 'PUBLIC_SWETRIX_ID=${_PUBLIC_SWETRIX_ID}'
+      - '--set-env-vars'
+      - 'PORT=${_PORT}'
 
 substitutions:
   _OUTPUT_DIST_PATH: '/'
@@ -135,5 +139,6 @@ substitutions:
   _SITE_NAME: ''
   _IS_PROD: 'false'
   _PUBLIC_SWETRIX_ID: ''
+  _PORT: '4231'
 
 timeout: 2700s
