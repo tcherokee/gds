@@ -192,8 +192,9 @@ const seo = {
   url: `${import.meta.env.FULL_URL}/${path}`,
 };
 ---
-<script define:vars={{page}}>
-  console.log('Blocks',page.attributes.blocks)
+
+<script define:vars={{ page }}>
+  console.log("Blocks", page.attributes.blocks);
 </script>
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
@@ -220,7 +221,7 @@ const seo = {
             switch (mappedComponents[i].name) {
               case "casinoTable": {
                 return (
-                  <div>
+                  <div class="relative z-10">
                     <CasinoTable
                       initialCasinos={
                         page.attributes.blocks[i] as CasinoListBlock
@@ -234,7 +235,7 @@ const seo = {
               }
               case "gameListBlock": {
                 return (
-                  <div>
+                  <div class="relative z-10">
                     <GameListBlock
                       data={page.attributes.blocks[i] as TGameListBlock}
                       {initialGames}
@@ -253,7 +254,7 @@ const seo = {
               }
               case "casinoLiveVideo": {
                 return (
-                  <div>
+                  <div class="relative z-10">
                     <CasinoLiveVideo
                       translations={translationStore}
                       playbackUrl={
