@@ -132,7 +132,7 @@ const seo = {
     ]}
     breadcrumbKey="providersBreadcrumbs"
   />
-  <div class="featured-background pb-5">
+  <div class="featured-background curve pb-5">
     <IntroBlock
       data={page?.attributes?.IntroductionWithImage}
       timeDate={page?.attributes?.dateCreated}
@@ -140,7 +140,7 @@ const seo = {
       {translationStore}
     />
 
-    <div class="d-flex flex-wrap">
+    <div class="d-flex flex-wrap relative z-10">
       <SlotProviderGames
         slug={slug}
         {slotCategories}

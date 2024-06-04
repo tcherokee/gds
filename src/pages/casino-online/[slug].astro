@@ -76,7 +76,7 @@ let seo = {
     breadcrumbKey="casinoProvidersBreadcrumbs"
   />
 
-  <div class="featured-background">
+  <div class="featured-background curve">
     <IntroBlock
       data={page?.attributes?.IntroductionWithImage}
       timeDate={page?.attributes?.updatedAt}
@@ -84,7 +84,7 @@ let seo = {
       {translationStore}
     />
 
-    <div class="mb-[40px]">
+    <div class="mb-[40px] relative z-10">
       <ProviderCasino slug={page?.attributes?.slug} {translationStore} />
     </div>
   </div>
