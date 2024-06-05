@@ -24,7 +24,7 @@ import HeaderAuthor from "../helpers/headerAuthor.astro";
       <div class="mx-auto {!transformHero && 'pt-10 lg:pt-0'} lg:mx-0">
         <h1 id="features-heading" class="font-medium m-0">{data?.heading}</h1>
         <div class="flex flex-col md:flex-row gap-2 md:items-center">
-          {!isHomePage && <TimeDate timeDate={timeDate} {translationStore} />}
+          <!-- {!isHomePage && <TimeDate timeDate={timeDate} {translationStore} />} -->
           {authorData && <HeaderAuthor author={authorData} />}
         </div>
         <div class="flex flex-col-reverse mt-4 mb-5 lg:mb-0">
