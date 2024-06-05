@@ -193,9 +193,6 @@ const seo = {
 };
 ---
 
-<script define:vars={{ page }}>
-  console.log("Blocks", page.attributes.blocks);
-</script>
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
   <div class:list={["featured-background curve pb-[50px]"]}>
