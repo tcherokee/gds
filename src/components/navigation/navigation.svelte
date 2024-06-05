@@ -1,11 +1,9 @@
 <script lang="ts">
-
   // Helpers
   import MediaQuery from "../helpers/mediaQuery.svelte";
   import Search from "../helpers/search.svelte";
   import Favourite from "../helpers/favourite.svelte";
   import Link from "../helpers/link.svelte";
-
 
   // Images
   import Xmark from "~icons/kensho-icons/xmark";
@@ -21,14 +19,13 @@
   import { y } from "../../../stores/window.ts";
   import { onMount } from "svelte";
 
-  let toggle: boolean
+  let toggle: boolean;
 
   onMount(() => {
+    toggle = !$user;
+  });
 
-    toggle = !$user
-  })
-
-  import { Toasts } from 'svoast'
+  import { Toasts } from "svoast";
   import type { TranslationData } from "../../../interfaces/common/types.ts";
 
   let mobileChecked = false;
@@ -41,9 +38,8 @@
   export let translationStore: TranslationData = {};
 
   const backToTop = () => {
-		document.body.scrollIntoView()
-	}
-  
+    document.body.scrollIntoView();
+  };
 </script>
 
 <svelte:window bind:scrollY={$y} />
@@ -59,7 +55,10 @@
       </label>
     </div>
 
-    <Link href="/authentication/login/" classes="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t">
+    <Link
+      href="/authentication/login/"
+      classes="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t"
+    >
       {#if $user}
         <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
       {:else}
@@ -149,7 +148,7 @@
                             href={`${nav?.attributes?.url}/`}
                             classes="flex w-full items-center rounded-md py-2 pl-2 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
                             >{nav?.attributes?.title}
-                        </Link>
+                          </Link>
                         {/if}
                       {/each}
                     </nav>
@@ -187,7 +186,7 @@
               classes="group flex w-full items-center uppercase rounded-md p-3 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
             >
               {nav?.attributes?.title}
-          </Link>
+            </Link>
           {/if}
 
           {#if nav?.attributes?.children?.data?.length > 0}
@@ -195,16 +194,16 @@
               class="absolute top-full w-max z-40 overflow-hidden rounded-b rounded-tr invisible transition ease-out translate-y-1 duration-200 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 group-hover:transition group-hover:ease-in group-hover:duration-150 group-hover:visible"
               style="display"
             >
-              <li class="relative grid gap-4 bg-nav-hover-bkg px-4 py-4">
-                {#each nav?.attributes?.children?.data as child}
+              {#each nav?.attributes?.children?.data as child}
+                <li class="relative grid gap-4 bg-nav-hover-bkg px-4 py-3">
                   <Link
                     href={`${child?.attributes?.url}/`}
                     classes="-m-3 uppercase block rounded-md p-3 transition duration-150 ease-in-out hover:bg-gray-50 text-navbar-text"
                   >
                     {child?.attributes?.title}
                   </Link>
-                {/each}
-              </li>
+                </li>
+              {/each}
             </ul>
           {/if}
         </li>
@@ -212,8 +211,11 @@
     </ul>
 
     <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
-      <Favourite {translationStore}/>
-      <Link href="/authentication/login/" classes="pt-2 mt-1 px-2 pb-3 rounded-t">
+      <Favourite {translationStore} />
+      <Link
+        href="/authentication/login/"
+        classes="pt-2 mt-1 px-2 pb-3 rounded-t"
+      >
         {#if !toggle}
           <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
         {:else}
@@ -228,9 +230,13 @@
 <button
   class="hidden w-12 h-12 fixed bottom-14 right-2.5 z-40 data-active:block"
   on:click={backToTop}
-  data-ui={$y > 50 ? 'active' : null}
+  data-ui={$y > 50 ? "active" : null}
 >
-  <svg xmlns="http://www.w3.org/2000/svg" class="scroll-arrow" viewBox="0 0 512 512">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="scroll-arrow"
+    viewBox="0 0 512 512"
+  >
     <path
       class="fill-scroll-up-arrow"
       d="M390.6 310.6c-12.5 12.5-32.75 12.5-45.25 0L256 221.3L166.6 310.6c-12.5 12.5-32.75 12.5-45.25 0s-12.5-32.75 0-45.25l112-112C239.6 147.1 247.8 144 256 144s16.38 3.125 22.62 9.375l112 112C403.1 277.9 403.1 298.1 390.6 310.6z"
