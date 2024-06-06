@@ -68,6 +68,8 @@ export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
   const query = qs.stringify(customPageQs(), { encodeValuesOnly: true });
 
+  console.log(query);
+
   let gamesQueryObj: GameFilters = {
     limit: 18,
     sort: "views:desc",
@@ -193,6 +195,9 @@ const seo = {
 };
 ---
 
+<script define:vars={{ page }}>
+  console.log("custome page", page?.attributes);
+</script>
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
   <div class:list={["featured-background curve pb-[50px]"]}>
@@ -206,6 +211,7 @@ const seo = {
                   data={page.attributes.blocks[i]}
                   timeDate={page?.attributes?.updatedAt}
                   authorData={page?.attributes?.author}
+                  isDateEnabled={page?.attributes?.showContentDate}
                   {...(page?.attributes?.blocks[i]?.__component ===
                   "casinos.casino-list"
                     ? { isCustom: true, isTop: true }

@@ -10,6 +10,7 @@ export type CustomPageAttributes = {
   author: {
     data: Author;
   };
+  showContentDate: boolean;
   blocks: Block[];
 };
 
