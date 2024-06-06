@@ -1,6 +1,6 @@
 export const customPageQs = () => {
   return {
-    fields: ["title", "urlPath", "createdAt", "updatedAt"],
+    fields: ["title", "urlPath", "createdAt", "updatedAt", "showContentDate"],
     populate: {
       seo: {
         fields: ["metaTitle", "metaDescription"],
