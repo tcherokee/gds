@@ -35,7 +35,7 @@ import HeaderAuthor from "../helpers/headerAuthor.astro";
               <TimeDate timeDate={timeDate} {translationStore} />
             )
           }
-          {authorData && <HeaderAuthor author={authorData} />}
+          {authorData && isDateEnabled && <HeaderAuthor author={authorData} />}
         </div>
         <div class="flex flex-col-reverse mt-4 mb-5 lg:mb-0">
           <input type="checkbox" id="ReadMore" class="hidden peer" />
