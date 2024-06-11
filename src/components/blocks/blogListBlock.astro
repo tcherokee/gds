@@ -9,6 +9,7 @@ const {
   blogText = "",
   singleBlogPage = false,
   translationStore,
+  isFeatured = false,
 } = Astro.props;
 
 const truncateAndCleanContent = (blogData: Blog[]): Blog[] => {
@@ -39,28 +40,55 @@ const truncateAndCleanContent = (blogData: Blog[]): Blog[] => {
 const truncatedData = truncateAndCleanContent(data as Blog[]);
 ---
 
-<div>
-  <div class="blog-container">
-    <div
-      class={singleBlogPage
-        ? "flex flex-col"
-        : "grid grid-cols-1 md:grid-cols-3"}
-    >
-      <BlogCard data={truncatedData} {translationStore} />
-    </div>
-    {
-      blogLink.length > 0 && (
-        <div class="grid gap-2 justify-center mt-3">
-          <Link
-            href={`${blogLink}/`}
-            class="btn btn-secondary blog-btn"
-            text={blogText}
-          />
+{
+  isFeatured && (
+    <div>
+      <div class="relative xl:container px-2 blog-container">
+        <div
+          class={
+            singleBlogPage ? "flex flex-col" : "grid grid-cols-1 md:grid-cols-3"
+          }
+        >
+          <BlogCard data={truncatedData} {translationStore} {isFeatured} />
         </div>
-      )
-    }
-  </div>
-</div>
+        {blogLink.length > 0 && (
+          <div class="grid gap-2 justify-center mt-3">
+            <Link
+              href={`${blogLink}/`}
+              class="btn btn-secondary blog-btn"
+              text={blogText}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+{
+  !isFeatured && (
+    <div>
+      <div class="blog-container">
+        <div
+          class={
+            singleBlogPage ? "flex flex-col" : "grid grid-cols-1 md:grid-cols-3"
+          }
+        >
+          <BlogCard data={truncatedData} {translationStore} />
+        </div>
+        {blogLink.length > 0 && (
+          <div class="grid gap-2 justify-center mt-3">
+            <Link
+              href={`${blogLink}/`}
+              class="btn btn-secondary blog-btn"
+              text={blogText}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 <style lang="postcss">
 	.blog-container {
