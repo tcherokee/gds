@@ -19,6 +19,7 @@ import fetchApi from "../../../lib/strapi";
 import AuthorCard from "../../components/general/authorCard.astro";
 
 import { getTranslations } from "../../../utils/api-requests";
+import ContentBlock from "../../components/blocks/contentBlock.astro";
 
 const translationStore = await getTranslations();
 
@@ -58,9 +59,18 @@ const seo = {
       </div>
     </div>
   </div>
-  <div class="py-5 xl:container xl:px-0">
+  {
+    authorIndex.attributes?.authorPage?.content2 && (
+      <div class="py-5 xl:container xl:px-0">
+        <ContentBlock
+          pageContent={authorIndex.attributes?.authorPage?.content2}
+        />
+      </div>
+    )
+  }
+  <!-- <div class="py-5 xl:container xl:px-0">
     <Fragment set:html={authorIndex.attributes?.authorPage?.content2} />
-  </div>
+  </div> -->
 
   <div
     class="relative px-2 py-5 grid gap-4 group author-index grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:container xl:px-0 xl:grid-cols-4"
@@ -77,7 +87,17 @@ const seo = {
     }
   </div>
 
-  <div class="px-2 py-5 xl:container xl:px-0">
+  {
+    authorIndex.attributes?.authorPage?.content3 && (
+      <div class="py-5 xl:container xl:px-0">
+        <ContentBlock
+          pageContent={authorIndex.attributes?.authorPage?.content3}
+        />
+      </div>
+    )
+  }
+
+  <!-- <div class="px-2 py-5 xl:container xl:px-0">
     <Fragment set:html={authorIndex.attributes?.authorPage?.content3} />
-  </div>
+  </div> -->
 </MainLayout>
