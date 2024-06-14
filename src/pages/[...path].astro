@@ -195,9 +195,6 @@ const seo = {
 };
 ---
 
-<script define:vars={{ page }}>
-  console.log("custome page", page?.attributes);
-</script>
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
   <div class:list={["featured-background curve pb-[50px]"]}>
