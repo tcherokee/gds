@@ -167,6 +167,10 @@ let seo = {
               "homepage.home-casino-list"
                 ? { isTop: true }
                 : {})}
+              {...(homepage?.attributes?.blocks[i]?.__component ===
+              "homepage.home-blog-list"
+                ? { isFeatured: true }
+                : {})}
               timeDate={homepage.attributes.updatedAt}
               isHomePage={true}
               {translationStore}

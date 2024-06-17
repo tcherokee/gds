@@ -1,6 +1,5 @@
 <script lang="ts">
   // Helpers
-  import MediaQuery from "../helpers/mediaQuery.svelte";
   import Search from "../helpers/search.svelte";
   import Favourite from "../helpers/favourite.svelte";
   import Link from "../helpers/link.svelte";
@@ -43,9 +42,8 @@
 </script>
 
 <svelte:window bind:scrollY={$y} />
-<MediaQuery query="(max-width: 991px)" let:matches>
-  {#if matches}
-    <div class="relative z-40 flex items-center">
+
+    <div class="relative visible z-40 flex items-center lg:hidden">
       <input type="checkbox" id="toggleMenu" bind:checked={mobileChecked} />
       <label
         for="toggleMenu"
@@ -55,7 +53,7 @@
       </label>
     </div>
 
-    <Link
+    <!-- <Link
       href="/authentication/login/"
       classes="pt-2 mt-1 ml-16 px-2 pb-3 rounded-t"
     >
@@ -64,7 +62,7 @@
       {:else}
         <UserSignedOut height="32px" width="32px" class="fill-sign-in" />
       {/if}
-    </Link>
+    </Link> -->
 
     <div
       class="invisible relative z-40 delay-500 open:delay-[0ms] open:visible"
@@ -161,12 +159,12 @@
       </div>
     </div>
 
-    <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
+    <!-- <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
       <Favourite />
       <Search />
-    </div>
-  {:else}
-    <ul class="flex items-center lg:gap-x-2">
+    </div> -->
+  
+    <ul class="hidden flex items-center lg:gap-x-2 lg:flex">
       {#each mainNavigation as nav}
         <li class="relative group">
           {#if nav?.attributes?.children?.data?.length > 0}
@@ -214,7 +212,7 @@
       <Favourite {translationStore} />
       <Link
         href="/authentication/login/"
-        classes="pt-2 mt-1 px-2 pb-3 rounded-t"
+        classes="absolute left-[70px] top-[5px] pt-2 mt-1 px-2 pb-3 rounded-t lg:relative lg:left-auto lg:top-auto z-0"
       >
         {#if !toggle}
           <UserSignedIn height="32px" width="32px" class="fill-sign-in" />
@@ -224,8 +222,9 @@
       </Link>
       <Search />
     </div>
-  {/if}
-</MediaQuery>
+
+
+
 <Toasts position="top-right" />
 <button
   class="hidden w-12 h-12 fixed bottom-14 right-2.5 z-40 data-active:block"
