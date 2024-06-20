@@ -1,4 +1,6 @@
 ---
+//Third Party Modules
+import Icon from "astro-icon";
 // Types
 
 // Stores
@@ -9,19 +11,32 @@ import Collapse from "../helpers/collapse.astro";
 const { data } = Astro.props;
 ---
 
-<Collapse
-  id={"data" + data.id}
-  label={data.question}
-  labelIcon={`<span class="mr-3">D:</span>`}
-  containerClass="mb-5"
-  labelClass="text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3"
-  collapseClass="bg-white rounded-b-md"
-  checked={true}
->
-  <div slot="content" class="flex">
-    <span class="mr-4 text-xl"> R:</span>
-    <span>
-      <Fragment set:html={data.answer} />
-    </span>
-  </div>
-</Collapse>
+<details open class="group mb-5">
+  <summary
+    data-suffix="D:"
+    class="flex flex-row rounded-md cursor-pointer text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3 group-open:rounded-b-none before:content-[attr(data-suffix)] before:pr-3"
+  >
+    {data.question}
+    <Icon
+      name="minus"
+      width="25px"
+      class="hidden group-open:block ml-auto fill-white"
+    />
+    <Icon
+      name="plus"
+      width="25px"
+      class="fill-white block group-open:hidden ml-auto"
+    />
+  </summary>
+  <Fragment
+    set:html={data.answer}
+    data-suffix="R:"
+    class=""
+  />
+</details>
+
+<style lang="postcss">
+  summary + :global(p) {
+    @apply flex flex-row p-3 bg-white rounded-b-md before:content-["R:"] before:pr-3 before:text-xl before:font-medium;
+  }
+</style>
