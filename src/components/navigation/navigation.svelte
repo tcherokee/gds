@@ -65,7 +65,7 @@
     </Link> -->
 
     <div
-      class="invisible relative z-40 delay-500 open:delay-[0ms] open:visible"
+      class="invisible relative z-[200] delay-500 open:delay-[0ms] open:visible"
       aria-labelledby="slide-over-title"
       role="dialog"
       aria-modal="true"
