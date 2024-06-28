@@ -13,8 +13,7 @@ const { data } = Astro.props;
 
 <details open class="group mb-5">
   <summary
-    data-suffix="D:"
-    class="flex flex-row rounded-md cursor-pointer text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3 group-open:rounded-b-none before:content-[attr(data-suffix)] before:pr-3"
+    class="flex flex-row rounded-md cursor-pointer text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3 group-open:rounded-b-none"
   >
     {data.question}
     <Icon
@@ -37,6 +36,6 @@ const { data } = Astro.props;
 
 <style lang="postcss">
   summary + :global(p) {
-    @apply flex flex-row p-3 bg-white rounded-b-md before:content-["R:"] before:pr-3 before:text-xl before:font-medium;
+    @apply p-3 bg-white rounded-b-md;
   }
 </style>
