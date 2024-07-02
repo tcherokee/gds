@@ -99,7 +99,7 @@
 </script>
 
 <div>
-  <div class="flex flex-col align-center relative xl:container px-2 pb-5">
+  <div class="flex flex-col align-center relative xl:container px-2 pb-5 z-20">
     <MediaQuery query="(max-width: 768px)" let:matches>
       {#if matches}
         <MobileGameFilter {page} {slotCategories} translationStore={translations} />
