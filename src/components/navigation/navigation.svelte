@@ -43,7 +43,7 @@
 
 <svelte:window bind:scrollY={$y} />
 
-    <div class="relative visible z-10 flex items-center lg:hidden">
+    <div class="relative visible z-40 flex items-center lg:hidden">
       <input type="checkbox" id="toggleMenu" bind:checked={mobileChecked} />
       <label
         for="toggleMenu"
@@ -208,7 +208,7 @@
       {/each}
     </ul>
 
-    <div class="fav-search z-[9] flex ml-auto lg:ml-0 align-items-center">
+    <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
       <Favourite {translationStore} />
       <Link
         href="/authentication/login/"
