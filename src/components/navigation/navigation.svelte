@@ -208,8 +208,8 @@
       {/each}
     </ul>
 
-    <Favourite {translationStore} />
     <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
+      <Favourite {translationStore} />
       <Link
         href="/authentication/login/"
         classes="absolute left-[70px] top-[5px] pt-2 mt-1 px-2 pb-3 rounded-t lg:relative lg:left-auto lg:top-auto z-0"
