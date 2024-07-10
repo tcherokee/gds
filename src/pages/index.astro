@@ -56,9 +56,9 @@ const isHomeGameListBlock = (block: Block): block is HomeGameListBlock => {
 };
 
 // get the games and blog parameters from the homepage block section
-const blogBlock = homepage.attributes.blocks.find(isBlogBlockTypes);
+const blogBlock = homepage?.attributes?.blocks.find(isBlogBlockTypes);
 
-const gamesBlock = homepage.attributes.blocks.find(isHomeGameListBlock);
+const gamesBlock = homepage?.attributes?.blocks.find(isHomeGameListBlock);
 
 //Get the providers in an array
 const gameProviders =
@@ -115,7 +115,7 @@ const [homepageBlogs, homepageGames] = await Promise.all([
 // Loop counter
 let loopCounter = 2;
 if (
-  homepage.attributes.blocks.find(
+  homepage?.attributes?.blocks.find(
     (block) => block.__component === "homepage.home-featured-providers"
   )
 ) {
@@ -126,7 +126,7 @@ if (
 const combinedGamesArray: Game[] = homepageGames.flat();
 
 const Components = await loadComponents(
-  mapBlocksToDynamicComponents(homepage.attributes.blocks)
+  mapBlocksToDynamicComponents(homepage?.attributes?.blocks)
 );
 
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
@@ -135,12 +135,15 @@ const PUBLIC_FULL_URL = import.meta.env.FULL_URL;
 let canonical: string = `${PUBLIC_FULL_URL}`;
 
 let seo = {
-  pageTitle: homepage.attributes?.seo?.metaTitle,
-  metaDescription: homepage.attributes?.seo?.metaDescription,
+  pageTitle: homepage?.attributes?.seo?.metaTitle,
+  metaDescription: homepage?.attributes?.seo?.metaDescription,
   url: canonical,
 };
 ---
 
+<script define:vars={{ homepage }}>
+  console.log("homepage", homepage);
+</script>
 <MainLayout seoData={seo}>
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
   <div
@@ -161,7 +164,7 @@ let seo = {
                   : homepage?.attributes?.blocks[i]?.__component ===
                       "homepage.home-blog-list"
                     ? homepageBlogs
-                    : homepage.attributes.blocks[i]
+                    : homepage?.attributes?.blocks[i]
               }
               {...(homepage?.attributes?.blocks[i]?.__component ===
               "homepage.home-casino-list"
@@ -171,7 +174,7 @@ let seo = {
               "homepage.home-blog-list"
                 ? { isFeatured: true }
                 : {})}
-              timeDate={homepage.attributes.updatedAt}
+              timeDate={homepage?.attributes?.updatedAt}
               isHomePage={true}
               {translationStore}
             />
@@ -192,9 +195,9 @@ let seo = {
                   : homepage?.attributes?.blocks[i]?.__component ===
                       "homepage.home-blog-list"
                     ? homepageBlogs
-                    : homepage.attributes.blocks[i]
+                    : homepage?.attributes?.blocks[i]
               }
-              timeDate={homepage.attributes.updatedAt}
+              timeDate={homepage?.attributes?.updatedAt}
               isHomePage={true}
               {translationStore}
             />

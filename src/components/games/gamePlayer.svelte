@@ -329,7 +329,7 @@
 
 <style lang="scss">
   .game-player-fullscreen {
-    @apply h-full w-full fixed left-0 top-0 flex justify-center bg-black z-[999];
+    @apply h-full w-full fixed left-0 top-0 flex justify-center bg-black z-[40];
 
     .float-close-btn {
       display: flex;
