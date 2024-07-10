@@ -33,6 +33,7 @@ export const categoriesFilters = createFetcherStore([
 ]);
 
 export const games = createFetcherStore<{ data: Game[] }>([
-  `${import.meta.env.PUBLIC_API_URL}/api/games`,
+  // `${import.meta.env.PUBLIC_API_URL}/api/games`,
+  `${import.meta.env.BASE_URL}api/games/games/`,
   gamesQsStore,
 ]);

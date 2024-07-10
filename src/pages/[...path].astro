@@ -68,8 +68,6 @@ export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
   const query = qs.stringify(customPageQs(), { encodeValuesOnly: true });
 
-  console.log(query);
-
   let gamesQueryObj: GameFilters = {
     limit: 18,
     sort: "views:desc",
