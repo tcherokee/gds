@@ -79,16 +79,19 @@
   const gameInFullscreenToggle = () => {
     const favBtnNav = document.getElementById("fav-search");
     const burgerMenu = document.getElementById("burger-menu");
+    const backToTop = document.getElementById("backToTop");
     
     fullscreen = !fullscreen;
     if(fullscreen) {
       (gamePlayerClass = "game-player-fullscreen")
       if(favBtnNav) favBtnNav.style["z-index"] = -1;
       if(burgerMenu) burgerMenu.style["z-index"] = -1;
+      if(backToTop) backToTop.style["z-index"] = -1;
     } else {
       (gamePlayerClass = "game-player");
        if(favBtnNav) favBtnNav.style["z-index"] = 40;
        if(burgerMenu) burgerMenu.style["z-index"] = 40;
+       if(backToTop) backToTop.style["z-index"] = 40;
     }
 
   };

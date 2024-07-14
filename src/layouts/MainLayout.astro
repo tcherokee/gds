@@ -3,6 +3,7 @@
 import qs from "qs";
 import { Tooltips } from "astro-tooltips";
 import { ViewTransitions } from "astro:transitions";
+import LDTag from "../components/helpers/LDTag.svelte";
 
 // QS Query Strings
 import { layoutQs, menuQs } from "../../qs/layout.ts";
@@ -93,8 +94,24 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
 
 const favicon = `https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.env.SITE_ID}.png`;
 
-const { seoData } = Astro.props;
+const { seoData, isHomePage=false, schemaData=null} = Astro.props;
 
+console.log('breadCrumbUrl', layout?.attributes?.homeBreadcrumbs);
+
+
+// Home Breadcrum Schema
+const HomeBreadcrumSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: layout?.attributes?.homeBreadcrumbs.map((bread, i) => {
+    return {
+      "@type": "ListItem",
+      position: i + 1,
+      name: bread?.breadCrumbText,
+      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+    };
+  }),
+};
 
 ---
 <!doctype html>
@@ -197,6 +214,10 @@ const { seoData } = Astro.props;
     <title>{seoData.pageTitle}</title>
     <!-- <ViewTransitions /> -->
     <Tooltips placement="auto" maxWidth="300" />
+
+    { schemaData && <LDTag schema={schemaData} client:load />  }
+
+    {isHomePage && <LDTag schema={HomeBreadcrumSchema} client:load />}
   </head>
   <body>
     <!-- <Analytics client:load /> -->
