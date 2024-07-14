@@ -11,6 +11,7 @@ import { casinopageQs } from "../../../../qs/casinopage";
 import { gamesQs } from "../../../../qs/games";
 import { urlTranslate } from "../../../../utils/data-store.util";
 import MainLayout from "../../../layouts/MainLayout.astro";
+import { getBreadcrumbs } from "../../../../stores/breadcrumbs";
 
 import Icon from "astro-icon";
 import {
@@ -128,6 +129,30 @@ let seo = {
 };
 
 let pageSchema = [];
+
+let pageBreadcrum = [
+  {
+    breadCrumbText: page?.attributes?.title,
+    breadCrumbUrl: null,
+  },
+];
+
+//Breadcrum Schema
+const breadcrumStore: any = await getBreadcrumbs.get();
+pageBreadcrum.unshift(...breadcrumStore["casinoBreadcrumbs"]);
+const breadSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: pageBreadcrum.map((bread, i) => {
+    return {
+      "@type": "ListItem",
+      position: i + 1,
+      name: bread?.breadCrumbText,
+      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+    };
+  }),
+};
+pageSchema.push(breadSchema);
 
 // Review Schema
 const reviewSchema = {
@@ -264,15 +289,7 @@ pageSchema.push(howToSchema);
 ---
 
 <MainLayout seoData={seo} schemaData={pageSchema}>
-  <Breadcrumb
-    breadcrumbs={[
-      {
-        breadCrumbText: page?.attributes?.title,
-        breadCrumbUrl: null,
-      },
-    ]}
-    breadcrumbKey="casinoBreadcrumbs"
-  />
+  <Breadcrumb breadcrumbs={pageBreadcrum} breadcrumbKey="casinoBreadcrumbs" />
   <div class="casino-page">
     <div class="iframe-bkg curve rounded-b-3xl pb-3">
       <div class="section-wrapper">
