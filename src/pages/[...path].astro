@@ -50,6 +50,8 @@ const translationStore = await translationResponse();
 const slotProviders = await slotProvidersResponse();
 const slotCategories = await slotCategoriesResponse();
 
+let pageSchema = [];
+
 // Fetch Game Providers Filter
 const gameProviders = await fetchApi<{
   id: number;
@@ -179,6 +181,83 @@ const faqIndex = page?.attributes?.blocks.findIndex(
   (block: Block) => block.__component === "shared.faqs"
 );
 
+// FAQs Schema
+const allFAQs = page?.attributes?.blocks.filter(
+  (block: Block) => block.__component === "shared.faqs"
+);
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: allFAQs?.map(({ answer, question }) => {
+    return {
+      "@type": "Question",
+      name: `${question}`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `${answer}`,
+      },
+    };
+  }),
+};
+
+pageSchema.push(faqSchema);
+
+// HowTo Schema
+const allHowTos = page?.attributes?.blocks.filter(
+  (block: Block) => block.__component === "how-to-group"
+);
+
+const howToSchema = allHowTos?.map(({ title, howToGroup }) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `${title}`,
+    totalTime: "PT15M",
+    tool: [
+      {
+        "@type": "HowToTool",
+        name: "smartphone, PC, tablet, metodo di pagamento",
+      },
+    ],
+    step: howToGroup?.map(({ heading, copy, image }, i) => {
+      return {
+        "@type": "HowToStep",
+        url: `${page?.attributes?.urlPath}#step0${i + 1}`,
+        name: heading,
+        itemListElement: {
+          "@type": "HowToDirection",
+          text: copy,
+        },
+        ...(image?.data?.attributes && {
+          image: {
+            "@type": "ImageObject",
+            url: image?.data?.attributes.url,
+          },
+        }),
+      };
+    }),
+  };
+});
+
+pageSchema.push(howToSchema);
+
+// Breadcrum Schema
+const breadSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: page?.attributes?.breadcrumbs.map((bread, i) => {
+    return {
+      "@type": "ListItem",
+      position: i + 1,
+      name: bread?.breadCrumbText,
+      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+    };
+  }),
+};
+
+pageSchema.push(breadSchema);
+
 // First mapping components so I can check them against the svelte extentsion
 const mappedComponents = mapBlocksToDynamicComponents(page.attributes.blocks);
 
@@ -193,7 +272,7 @@ const seo = {
 };
 ---
 
-<MainLayout seoData={seo}>
+<MainLayout seoData={seo} schemaData={pageSchema}>
   <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
   <div class:list={["featured-background curve pb-[50px]"]}>
     {

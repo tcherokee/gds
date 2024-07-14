@@ -46,6 +46,8 @@ const homepage = await fetchApi<Homepage>({
   query: `?${query}`,
 });
 
+// const metaQuery = qs.stringify(blogmetaQs(), { encodeValuesOnly: true });
+
 //Type Guards for the find functions
 const isBlogBlockTypes = (block: Block): block is BlogBlockTypes => {
   return block.__component === "homepage.home-blog-list";
@@ -141,7 +143,7 @@ let seo = {
 };
 ---
 
-<MainLayout seoData={seo}>
+<MainLayout seoData={seo} isHomePage={true}>
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
   <div
     class:list={[
