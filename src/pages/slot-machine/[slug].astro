@@ -191,7 +191,7 @@ let pageBreadcrum: BreadcrumbData[] = [
 
 //Breadcrum Schema
 const breadcrumStore: any = await getBreadcrumbs.get();
-pageBreadcrum.unshift(...breadcrumStore["categoriesBreadcrumbs"]);
+pageBreadcrum.unshift(...breadcrumStore?.["categoriesBreadcrumbs"]);
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",

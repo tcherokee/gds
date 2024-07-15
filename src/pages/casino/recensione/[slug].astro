@@ -141,7 +141,7 @@ let pageBreadcrum: BreadcrumbData[] = [
 //Breadcrum Schema
 const breadcrumStore: any = await getBreadcrumbs.get();
 if (breadcrumStore) {
-  pageBreadcrum.unshift(...breadcrumStore["casinoBreadcrumbs"]);
+  pageBreadcrum.unshift(...breadcrumStore?.["casinoBreadcrumbs"]);
 }
 const breadSchema = {
   "@context": "https://schema.org",
