@@ -11,6 +11,7 @@ import { casinopageQs } from "../../../../qs/casinopage";
 import { gamesQs } from "../../../../qs/games";
 import { urlTranslate } from "../../../../utils/data-store.util";
 import MainLayout from "../../../layouts/MainLayout.astro";
+import { getBreadcrumbs } from "../../../../stores/breadcrumbs";
 
 import Icon from "astro-icon";
 import {
@@ -38,6 +39,7 @@ import RatingStar from "../../../components/helpers/ratingStar.svelte";
 import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
 import TimeDate from "../../../components/helpers/timeDate.astro";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
+import type { BreadcrumbData } from "../../../../interfaces/common/types";
 
 const translationStore = await getTranslations();
 
@@ -126,18 +128,169 @@ let seo = {
   metaDescription: page?.attributes?.seo?.metaDescription,
   url: canonical,
 };
+
+let pageSchema = [];
+
+let pageBreadcrum: BreadcrumbData[] = [
+  {
+    breadCrumbText: page?.attributes?.title,
+    breadCrumbUrl: "",
+  },
+];
+
+//Breadcrum Schema
+const breadcrumStore: any = await getBreadcrumbs.get();
+pageBreadcrum.unshift(...breadcrumStore["casinoBreadcrumbs"]);
+const breadSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: pageBreadcrum.map((bread, i) => {
+    return {
+      "@type": "ListItem",
+      position: i + 1,
+      name: bread?.breadCrumbText,
+      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+    };
+  }),
+};
+pageSchema.push(breadSchema);
+
+// Review Schema
+const reviewSchema = {
+  "@context": "https://schema.org/",
+  "@type": "Review",
+  datePublished: `${page?.attributes?.createdAt}`,
+  dateModified: `${page?.attributes?.updatedAt}`,
+  description: `${page?.attributes?.introduction?.replace(/(<([^>]+)>)/gi, "")}`,
+  itemReviewed: {
+    "@type": "Organization",
+    image: `${page?.attributes?.images?.data?.attributes?.url}`,
+    name: `${page?.attributes?.title}`,
+    makesOffer: [
+      {
+        "@type": "Offer",
+        "@id": `${import.meta.env.PUBLIC_FULL_URL}`,
+        name: `${page?.attributes?.casinoBonus?.bonusLabel}`,
+        description: `${translationStore?.reviewAndBonus} ${page?.attributes?.title}`,
+        url: `${import.meta.env.PUBLIC_FULL_URL}${
+          page?.attributes?.casinoBonus?.bonusUrl
+        }`,
+      },
+    ],
+  },
+  reviewRating: {
+    "@type": "Rating",
+    ratingValue: `${page?.attributes?.authorRatings}`,
+    bestRating: "5",
+    worstRating: "0",
+  },
+  name: `${translationStore?.reviewAndBonus} ${page?.attributes?.title}`,
+  author: {
+    "@type": "Person",
+    name: `${page?.attributes?.author?.data?.attributes?.firstName} ${page?.attributes?.author?.data?.attributes?.lastName}`,
+    url: `${import.meta.env.PUBLIC_FULL_URL}/author/${
+      page?.attributes?.author?.data?.attributes?.firstName
+    }.${page?.attributes?.author?.data?.attributes?.lastName}`,
+  },
+  ...(page?.attributes?.proscons && {
+    positiveNotes: {
+      "@type": "ItemList",
+      itemListElement: page?.attributes?.proscons?.pros.map((pro, i) => {
+        return {
+          "@type": "ListItem",
+          position: i + 1,
+          name: `${pro.list}`,
+        };
+      }),
+    },
+    negativeNotes: {
+      "@type": "ItemList",
+      itemListElement: page?.attributes?.proscons?.cons.map((con, i) => {
+        return {
+          "@type": "ListItem",
+          position: i + 1,
+          name: `${con.list}`,
+        };
+      }),
+    },
+  }),
+  contributor: {
+    "@type": "Person",
+    name: `${page?.attributes?.testimonial?.approvedBy?.data?.attributes.firstName} ${page?.attributes?.testimonial?.approvedBy?.data?.attributes.lastName}`,
+    url: `${import.meta.env.PUBLIC_FULL_URL}/author/${
+      page?.attributes?.testimonial?.approvedBy?.data?.attributes.firstName
+    }.${page?.attributes?.testimonial?.approvedBy?.data?.attributes.lastName}`,
+    sameAs: [
+      `${page?.attributes?.testimonial?.approvedBy?.data?.attributes?.jobTitle}`,
+    ],
+    worksFor: {
+      "@type": "Organization",
+      "@id": `${import.meta.env.PUBLIC_FULL_URL}`,
+    },
+  },
+  reviewBody: `${page?.attributes?.testimonial?.testimonial}`,
+  publisher: {
+    "@type": "Organization",
+    name: `${import.meta.env.PUBLIC_SITE_ID}`,
+    url: `${import.meta.env.PUBLIC_FULL_URL}`,
+    logo: `${page?.attributes?.images?.data?.attributes?.url}`,
+  },
+};
+pageSchema.push(reviewSchema);
+
+// FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: page?.attributes?.faqs.map(({ answer, question }) => {
+    return {
+      "@type": "Question",
+      name: `${question}`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `${answer}`,
+      },
+    };
+  }),
+};
+pageSchema.push(faqSchema);
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: `${page?.attributes?.howTo?.title}`,
+  totalTime: "PT15M",
+  tool: [
+    {
+      "@type": "HowToTool",
+      name: "smartphone, PC, tablet, metodo di pagamento",
+    },
+  ],
+  step: page?.attributes?.howTo?.howToGroup?.map(
+    ({ heading, copy, image }, i) => {
+      return {
+        "@type": "HowToStep",
+        url: `${page?.attributes?.slug}#step0${i + 1}`,
+        name: heading,
+        itemListElement: {
+          "@type": "HowToDirection",
+          text: copy,
+        },
+        ...(image?.data?.attributes && {
+          image: {
+            "@type": "ImageObject",
+            url: image?.data?.attributes.url,
+          },
+        }),
+      };
+    }
+  ),
+};
+pageSchema.push(howToSchema);
 ---
 
-<MainLayout seoData={seo}>
-  <Breadcrumb
-    breadcrumbs={[
-      {
-        breadCrumbText: page?.attributes?.title,
-        breadCrumbUrl: null,
-      },
-    ]}
-    breadcrumbKey="casinoBreadcrumbs"
-  />
+<MainLayout seoData={seo} schemaData={pageSchema}>
+  <Breadcrumb breadcrumbs={pageBreadcrum} breadcrumbKey="casinoBreadcrumbs" />
   <div class="casino-page">
     <div class="iframe-bkg curve rounded-b-3xl pb-3">
       <div class="section-wrapper">

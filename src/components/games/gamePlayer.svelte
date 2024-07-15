@@ -77,10 +77,23 @@
   };
 
   const gameInFullscreenToggle = () => {
+    const favBtnNav = document.getElementById("fav-search");
+    const burgerMenu = document.getElementById("burger-menu");
+    const backToTop = document.getElementById("back-to-top");
+    
     fullscreen = !fullscreen;
-    fullscreen
-      ? (gamePlayerClass = "game-player-fullscreen")
-      : (gamePlayerClass = "game-player");
+    if(fullscreen) {
+      (gamePlayerClass = "game-player-fullscreen")
+      if(favBtnNav) favBtnNav.style["z-index"] = -1;
+      if(burgerMenu) burgerMenu.style["z-index"] = -1;
+      if(backToTop) backToTop.style["z-index"] = -1;
+    } else {
+      (gamePlayerClass = "game-player");
+       if(favBtnNav) favBtnNav.style["z-index"] = 40;
+       if(burgerMenu) burgerMenu.style["z-index"] = 40;
+       if(backToTop) backToTop.style["z-index"] = 40;
+    }
+
   };
 
   const showTooltip = (elementID: any) => {
@@ -329,7 +342,7 @@
 
 <style lang="scss">
   .game-player-fullscreen {
-    @apply h-full w-full fixed left-0 top-0 flex justify-center bg-black z-[999];
+    @apply h-full w-full fixed left-0 top-0 flex justify-center bg-black z-[40];
 
     .float-close-btn {
       display: flex;

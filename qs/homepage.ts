@@ -64,7 +64,6 @@ export const homepageQs = () => ({
           },
         },
         homeFeaturedProviders: {
-          fields: ["title"],
           populate: {
             providers: {
               fields: ["title", "slug"],

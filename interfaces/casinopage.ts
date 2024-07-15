@@ -21,6 +21,7 @@ export type Casinopage = {
 type Attributes = {
   title: string;
   heading: string | null;
+  createdAt: string;
   updatedAt: string;
   blocks: Block[];
   slug: string;

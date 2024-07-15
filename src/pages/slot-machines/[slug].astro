@@ -8,7 +8,10 @@ import qs from "qs";
 import type { GetStaticPaths } from "astro";
 import type { Gamepage } from "../../../interfaces/game-page";
 import type { LayoutData } from "../../../interfaces/layout";
-import type { TranslationData } from "../../../interfaces/common/types";
+import type {
+  BreadcrumbData,
+  TranslationData,
+} from "../../../interfaces/common/types";
 
 // Helpers
 import { urlTranslate, GameInfoHeader } from "../../../utils/data-store.util";
@@ -17,6 +20,7 @@ import fetchApi from "../../../lib/strapi";
 // Queries
 import { gamepageQs } from "../../../qs/game-page";
 import { customPageLayoutAddOnsQs } from "../../../qs/customPages";
+import { getBreadcrumbs } from "../../../stores/breadcrumbs";
 
 // Components
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -79,11 +83,118 @@ let seo = {
   url: siteURL,
 };
 
+let pageSchema = [];
+
+let pageBreadcrum: BreadcrumbData[] = [
+  {
+    breadCrumbText: page?.attributes?.title,
+    breadCrumbUrl: "",
+  },
+];
+
+//Breadcrum Schema
+const breadcrumStore: any = await getBreadcrumbs.get();
+pageBreadcrum.unshift(...breadcrumStore["gamesBreadcrumbs"]);
+const breadSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: pageBreadcrum.map((bread, i) => {
+    return {
+      "@type": "ListItem",
+      position: i + 1,
+      name: bread?.breadCrumbText,
+      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+    };
+  }),
+};
+pageSchema.push(breadSchema);
+
+// FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: page?.attributes?.faqs.map(({ answer, question }) => {
+    return {
+      "@type": "Question",
+      name: `${question}`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `${answer}`,
+      },
+    };
+  }),
+};
+pageSchema.push(faqSchema);
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: `${page?.attributes?.howTo?.title}`,
+  totalTime: "PT15M",
+  tool: [
+    {
+      "@type": "HowToTool",
+      name: "smartphone, PC, tablet, metodo di pagamento",
+    },
+  ],
+  step: page?.attributes?.howTo?.howToGroup?.map(
+    ({ heading, copy, image }, i) => {
+      return {
+        "@type": "HowToStep",
+        url: `${page?.attributes?.slug}#step0${i + 1}`,
+        name: heading,
+        itemListElement: {
+          "@type": "HowToDirection",
+          text: copy,
+        },
+        ...(image?.data?.attributes && {
+          image: {
+            "@type": "ImageObject",
+            url: image?.data?.attributes.url,
+          },
+        }),
+      };
+    }
+  ),
+};
+pageSchema.push(howToSchema);
+
+//Rating schema
+const ratingsSchema = {
+  "@context": "http://schema.org",
+  "@type": "VideoGame",
+  name: `${page?.attributes?.title}`,
+  // url: `${CanonicalURL}`,
+  image: `${page?.attributes?.images?.data?.attributes?.url}`,
+  description: `${page?.attributes?.introduction.replace(/(<([^>]+)>)/gi, "")}`,
+  applicationCategory: ["Game"],
+  operatingSystem: "Multi-platform",
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: `3`, //To be Updated
+    reviewCount: `20`, // To be Updated
+    bestRating: "5",
+    worstRating: "0",
+  },
+  author: {
+    "@type": "Person",
+    name: `${page?.attributes?.author?.data?.attributes?.firstName} ${page?.attributes?.author?.data?.attributes?.lastName}`,
+    url: `${import.meta.env.PUBLIC_FULL_URL}/author/${page?.attributes?.author?.data?.attributes?.firstName}.${page?.attributes?.author?.data?.attributes?.lastName}`,
+    publisher: {
+      "@type": "Organization",
+      name: `${import.meta.env.PUBLIC_SITE_ID}`,
+      url: `${import.meta.env.PUBLIC_FULL_URL}`,
+      logo: `${page?.attributes?.images?.data?.attributes?.url}`,
+    },
+  },
+};
+pageSchema.push(ratingsSchema);
+
 //list componets on page
 const __blocks = page?.attributes?.blocks;
 ---
 
-<MainLayout seoData={seo}>
+<MainLayout seoData={seo} schemaData={pageSchema}>
   <Breadcrumb
     breadcrumbs={[
       { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },

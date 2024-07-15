@@ -131,7 +131,7 @@
     }
 </script>
 
-<div class="relative mx-auto text-center z-20">                                              
+<div class="relative mx-auto text-center hidden md:block z-20">                                              
 	<section aria-labelledby="filter-heading" class="glowy-bkg shadow-none p-2.5">
 		<h2 id="filter-heading" class="sr-only">{translationStore?.filter}</h2>
 

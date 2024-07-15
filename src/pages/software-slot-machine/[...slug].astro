@@ -7,6 +7,7 @@ import qs from "qs";
 // Types
 import type { GetStaticPaths } from "astro";
 import type {
+  BreadcrumbData,
   Faqs,
   TProviderAttributesOnly,
 } from "../../../interfaces/common/types";
@@ -16,6 +17,7 @@ import type { Slotprovider } from "../../../interfaces/slot-provider";
 
 // Queries
 import { gamesQs, slotProvidersQs } from "../../../qs/ssm-games";
+import { getBreadcrumbs } from "../../../stores/breadcrumbs";
 
 // Helpers
 import fetchApi from "../../../lib/strapi";
@@ -123,9 +125,52 @@ const seo = {
   metaDescription: page?.attributes?.seo?.metaDescription,
   url: canonical,
 };
+
+let pageSchema = [];
+
+let pageBreadcrum: BreadcrumbData[] = [
+  {
+    breadCrumbText: page?.attributes?.title,
+    breadCrumbUrl: "",
+  },
+];
+
+//Breadcrum Schema
+const breadcrumStore: any = await getBreadcrumbs.get();
+pageBreadcrum.unshift(...breadcrumStore["categoriesBreadcrumbs"]);
+const breadSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: pageBreadcrum.map((bread, i) => {
+    return {
+      "@type": "ListItem",
+      position: i + 1,
+      name: bread?.breadCrumbText,
+      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+    };
+  }),
+};
+pageSchema.push(breadSchema);
+
+// FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: (page?.attributes?.faqs as Faqs[]).map(({ answer, question }) => {
+    return {
+      "@type": "Question",
+      name: `${question}`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `${answer}`,
+      },
+    };
+  }),
+};
+pageSchema.push(faqSchema);
 ---
 
-<MainLayout seoData={seo}>
+<MainLayout seoData={seo} schemaData={pageSchema}>
   <Breadcrumb
     breadcrumbs={[
       { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },

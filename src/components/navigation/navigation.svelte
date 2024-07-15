@@ -43,7 +43,7 @@
 
 <svelte:window bind:scrollY={$y} />
 
-    <div class="relative visible z-40 flex items-center lg:hidden">
+    <div class="relative visible z-40 flex items-center lg:hidden" id="burger-menu">
       <input type="checkbox" id="toggleMenu" bind:checked={mobileChecked} />
       <label
         for="toggleMenu"
@@ -208,7 +208,7 @@
       {/each}
     </ul>
 
-    <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center">
+    <div class="fav-search z-40 flex ml-auto lg:ml-0 align-items-center" id="fav-search">
       <Favourite {translationStore} />
       <Link
         href="/authentication/login/"
@@ -228,6 +228,7 @@
 <Toasts position="top-right" />
 <button
   class="hidden w-12 h-12 fixed bottom-14 right-2.5 z-40 data-active:block"
+  id="back-to-top"
   on:click={backToTop}
   data-ui={$y > 50 ? "active" : null}
 >

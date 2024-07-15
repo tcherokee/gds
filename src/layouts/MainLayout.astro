@@ -3,6 +3,7 @@
 import qs from "qs";
 import { Tooltips } from "astro-tooltips";
 import { ViewTransitions } from "astro:transitions";
+import LDTag from "../components/helpers/LDTag.svelte";
 
 // QS Query Strings
 import { layoutQs, menuQs } from "../../qs/layout.ts";
@@ -93,10 +94,25 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
 
 const favicon = `https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.env.SITE_ID}.png`;
 
-const { seoData } = Astro.props;
+const { seoData, isHomePage = false, schemaData = null } = Astro.props;
 
+console.log("breadCrumbUrl", layout?.attributes?.homeBreadcrumbs);
 
+// Home Breadcrum Schema
+const HomeBreadcrumSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: layout?.attributes?.homeBreadcrumbs.map((bread, i) => {
+    return {
+      "@type": "ListItem",
+      position: i + 1,
+      name: bread?.breadCrumbText,
+      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+    };
+  }),
+};
 ---
+
 <!doctype html>
 <html lang="it">
   <head>
@@ -105,98 +121,29 @@ const { seoData } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="canonical" href={`${seoData.url}/`} />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
-    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/flickity@2/dist/flickity.min.css"
+    />
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"
+    ></script>
     {seoData?.author && <meta name="author" content={seoData?.author} />}
     <link rel="icon" type="image/svg+xml" href={favicon} />
     <meta name="generator" content={Astro.generator} />
-    { siteID === 'gds' ? 
-      <style>
-        @font-face {
-          font-family: "Lato";
-          font-weight: 700;
-          src: url("/it/fonts/Lato/Lato-Bold.ttf") format("truetype");
-          font-display: swap;
-        }
-        @font-face {
-          font-family: "Roboto";
-          font-weight: 400;
-          src: url("/it/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
-          font-display: swap;
-        }
-        @font-face {
-          font-family: "Roboto";
-          font-weight: 400;
-          font-style: italic;
-          src: url("/it/fonts/Roboto/Roboto-Italic.ttf") format("truetype");
-          font-display: swap;
-        }
-        @font-face {
-          font-family: "Roboto";
-          font-weight: 700;
-          src: url("/it/fonts/Roboto/Roboto-Bold.ttf") format("truetype");
-          font-display: swap;
-        }
-        @font-face {
-          font-family: "Roboto-fallback";
-          size-adjust: 100.06%;
-          ascent-override: 93%;
-          src: local("Arial");
-        }
-        @font-face {
-          font-family: "Lato-fallback";
-          size-adjust: 97.38%;
-          ascent-override: 101%;
-          src: local("Arial");
-        }
-    </style>
-    
-    :
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
 
-    <style>
-      @font-face {
-        font-family: "Lato";
-        font-weight: 700;
-        src: url("/fonts/Lato/Lato-Bold.ttf") format("truetype");
-        font-display: swap;
-      }
-      @font-face {
-        font-family: "Roboto";
-        font-weight: 400;
-        src: url("/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
-        font-display: swap;
-      }
-      @font-face {
-        font-family: "Roboto";
-        font-weight: 400;
-        font-style: italic;
-        src: url("/fonts/Roboto/Roboto-Italic.ttf") format("truetype");
-        font-display: swap;
-      }
-      @font-face {
-        font-family: "Roboto";
-        font-weight: 700;
-        src: url("/fonts/Roboto/Roboto-Bold.ttf") format("truetype");
-        font-display: swap;
-      }
-      @font-face {
-        font-family: "Roboto-fallback";
-        size-adjust: 100.06%;
-        ascent-override: 93%;
-        src: local("Arial");
-      }
-      @font-face {
-        font-family: "Lato-fallback";
-        size-adjust: 97.38%;
-        ascent-override: 101%;
-        src: local("Arial");
-      }
-    </style>
-    }
-    
     <title>{seoData.pageTitle}</title>
     <!-- <ViewTransitions /> -->
     <Tooltips placement="auto" maxWidth="300" />
+
+    {schemaData && <LDTag schema={schemaData} client:load />}
+
+    {isHomePage && <LDTag schema={HomeBreadcrumSchema} client:load />}
   </head>
   <body>
     <!-- <Analytics client:load /> -->
@@ -224,10 +171,10 @@ const { seoData } = Astro.props;
       footerNavigations={processedMenus.footernavigations}
     />
     <CookiesConsent
-      headerText={layout?.attributes?.cookiesHeaderText+''}
-      description={layout?.attributes?.cookiesDescription+''}
-      link={layout?.attributes?.cookiesUrl+''}
-      linkText={layout?.attributes?.cookiesLinkText+''}
+      headerText={layout?.attributes?.cookiesHeaderText + ""}
+      description={layout?.attributes?.cookiesDescription + ""}
+      link={layout?.attributes?.cookiesUrl + ""}
+      linkText={layout?.attributes?.cookiesLinkText + ""}
       client:load
     />
     <style lang="scss">
@@ -248,21 +195,22 @@ const { seoData } = Astro.props;
       font-size: 10px: !important;
     } */
     </style>
-  </body>
+  </body><script is:inline src="https://swetrix.org/swetrix.js" defer></script>
+  <script define:vars={{ swetrixId: import.meta.env.PUBLIC_SWETRIX_ID }}>
+    document.addEventListener("DOMContentLoaded", function () {
+      swetrix.init(swetrixId, {
+        devMode: false,
+        apiURL: "https://api.stats.kenshomedia.com/log",
+      });
+      swetrix.trackViews();
+    });
+  </script>
+
+  <noscript is:inline>
+    <img
+      src="https://api.stats.kenshomedia.com/log/noscript?pid=6wNdNPt3U82T"
+      alt="analytics-pixel"
+      referrerpolicy="no-referrer-when-downgrade"
+    />
+  </noscript>
 </html>
-
-<script is:inline src="https://swetrix.org/swetrix.js" defer></script>
-<script define:vars={{ swetrixId: import.meta.env.PUBLIC_SWETRIX_ID}}>
-  document.addEventListener("DOMContentLoaded", function () {
-    swetrix.init(swetrixId, { devMode: false, apiURL: "https://api.stats.kenshomedia.com/log" });
-    swetrix.trackViews();
-  });
-</script>
-
-<noscript is:inline>
-  <img
-    src="https://api.stats.kenshomedia.com/log/noscript?pid=6wNdNPt3U82T"
-    alt="analytics-pixel"
-    referrerpolicy="no-referrer-when-downgrade"
-  />
-</noscript>

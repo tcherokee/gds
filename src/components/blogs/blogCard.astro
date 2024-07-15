@@ -96,16 +96,17 @@ const { data, translationStore, isFeatured = false } = Astro.props;
               (blog as AuthorBlogAttributes)?.title}
           </Link>
         </h4>
-        <div class="mt-3">
-          <p class="line-clamp-3">
-            {(blog as Blog)?.attributes?.content1 ??
-              (blog as AuthorBlogAttributes)?.content1}
-          </p>
+        <div class="mt-0">
+          <div class="line-clamp-3">
+            {<Fragment set:html={(blog as Blog)?.attributes?.content1} /> ?? (
+              <Fragment set:html={(blog as AuthorBlogAttributes)?.content1} />
+            )}
+          </div>
         </div>
 
         <div
           class:list={[
-            "mb-3 text-[#01579B]",
+            "mb-3 mt-5 text-[#01579B]",
             { "!text-secondary": isFeatured },
           ]}
         >
