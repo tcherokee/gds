@@ -143,7 +143,7 @@
 
 </script>
 
-<div class="text-black relative mb-10 z-20 flex flex-col">
+<div class="text-black relative mb-10 z-50 flex flex-col md:hidden">
     <!-- Search Section -->
     <div
         class="glowy-bkg shadow-none flex gap-2 p-2.5 mb-3 relative z-50"

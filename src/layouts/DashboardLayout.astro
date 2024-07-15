@@ -104,6 +104,12 @@ const { translationStore } = Astro.props;
       }.png`}
     />
     <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
     <title>User Dashboard</title>
     <Tooltips />
   </head>
@@ -149,22 +155,23 @@ const { translationStore } = Astro.props;
       client:load
     />
     <!-- </footer> -->
-  </body><script is:inline src="https://swetrix.org/swetrix.js" defer></script>
-  <script define:vars={{ swetrixId: import.meta.env.PUBLIC_SWETRIX_ID }}>
-    document.addEventListener("DOMContentLoaded", function () {
-      swetrix.init(swetrixId, {
-        devMode: false,
-        apiURL: "https://api.stats.kenshomedia.com/log",
+    <script is:inline src="https://swetrix.org/swetrix.js" defer></script>
+    <script define:vars={{ swetrixId: import.meta.env.PUBLIC_SWETRIX_ID }}>
+      document.addEventListener("DOMContentLoaded", function () {
+        swetrix.init(swetrixId, {
+          devMode: false,
+          apiURL: "https://api.stats.kenshomedia.com/log",
+        });
+        swetrix.trackViews();
       });
-      swetrix.trackViews();
-    });
-  </script>
+    </script>
 
-  <noscript is:inline>
-    <img
-      src="https://api.stats.kenshomedia.com/log/noscript?pid=6wNdNPt3U82T"
-      alt="analytics-pixel"
-      referrerpolicy="no-referrer-when-downgrade"
-    />
-  </noscript>
+    <noscript is:inline>
+      <img
+        src="https://api.stats.kenshomedia.com/log/noscript?pid=6wNdNPt3U82T"
+        alt="analytics-pixel"
+        referrerpolicy="no-referrer-when-downgrade"
+      />
+    </noscript>
+  </body>
 </html>

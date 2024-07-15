@@ -125,7 +125,7 @@
 
 </script>
 
-<div class="text-black relative mb-10 z-20">
+<div class="text-black relative mb-10 md:hidden z-20">
     <section class="glowy-bkg shadow-none flex gap-2 p-2.5">
         <div class="relative z-40 flex basis-1/2 cursor-pointer items-center shadow-sm overflow-hidden">
             <input type="checkbox" id="toggleMobileFilters" bind:checked={mobileFilterBtn} class="hidden"/>

@@ -30,7 +30,6 @@
   import { sortOptions } from "../../../stores/sortFilters";
   import Image from "../helpers/images.svelte";
   import Link from "../helpers/link.svelte";
-  import MediaQuery from "../helpers/mediaQuery.svelte";
   import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
   // Images
   import Angle from "~icons/kensho-icons/angle";
@@ -138,13 +137,8 @@
     <div class="mb-5 pt-2.5">
       <div>
         <div class="text-black relative mb-10 z-20">
-          <MediaQuery query="(max-width: 768px)" let:matches>
-            {#if matches}
-              <MobileCasinoFilter translationStore={translations} />
-            {:else}
-              <DesktopCasinoFilter translationStore={translations} />
-            {/if}
-          </MediaQuery>
+          <MobileCasinoFilter translationStore={translations} />
+          <DesktopCasinoFilter translationStore={translations} />
         </div>
       </div>
       <div>
