@@ -115,6 +115,7 @@ export const getStaticPaths = (async () => {
           images: {
             url: elem.attributes.images.data.attributes.url,
           },
+          categories: elem.attributes.categories.data,
           provider: {
             slug: elem.attributes.provider.data?.attributes.slug,
             title: elem.attributes.provider.data?.attributes.title,
