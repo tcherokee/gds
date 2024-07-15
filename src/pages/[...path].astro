@@ -25,9 +25,12 @@ import {
 import type { GetStaticPaths } from "astro";
 import type {
   Block,
+  BreadcrumbData,
   CasinoListBlock,
   CustomGameList,
+  Faqs,
   GameFilters,
+  HowTo,
   TCasinoLiveVideo,
   TGameListBlock,
   TProviderAttributesOnly,
@@ -69,8 +72,6 @@ const gameProviders = await fetchApi<{
 export const getStaticPaths = (async () => {
   // Import the QS Query string for custom slugs and prepare it for the API fetch
   const query = qs.stringify(customPageQs(), { encodeValuesOnly: true });
-
-  console.log(query);
 
   let gamesQueryObj: GameFilters = {
     limit: 18,
@@ -186,7 +187,7 @@ const faqIndex = page?.attributes?.blocks.findIndex(
 // FAQs Schema
 const allFAQs = page?.attributes?.blocks.filter(
   (block: Block) => block.__component === "shared.faqs"
-);
+) as Faqs[];
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -208,7 +209,7 @@ pageSchema.push(faqSchema);
 // HowTo Schema
 const allHowTos = page?.attributes?.blocks.filter(
   (block: Block) => block.__component === "how-to-group"
-);
+) as { title: string; howToGroup: HowTo[] }[];
 
 const howToSchema = allHowTos?.map(({ title, howToGroup }) => {
   return {
@@ -222,7 +223,7 @@ const howToSchema = allHowTos?.map(({ title, howToGroup }) => {
         name: "smartphone, PC, tablet, metodo di pagamento",
       },
     ],
-    step: howToGroup?.map(({ heading, copy, image }, i) => {
+    step: howToGroup?.map(({ heading, copy, image }, i: number) => {
       return {
         "@type": "HowToStep",
         url: `${page?.attributes?.urlPath}#step0${i + 1}`,
@@ -248,14 +249,16 @@ pageSchema.push(howToSchema);
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  itemListElement: page?.attributes?.breadcrumbs.map((bread, i) => {
-    return {
-      "@type": "ListItem",
-      position: i + 1,
-      name: bread?.breadCrumbText,
-      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
-    };
-  }),
+  itemListElement: (page?.attributes?.breadcrumbs as BreadcrumbData[]).map(
+    (bread, i) => {
+      return {
+        "@type": "ListItem",
+        position: i + 1,
+        name: bread?.breadCrumbText,
+        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+      };
+    }
+  ),
 };
 
 pageSchema.push(breadSchema);

@@ -238,7 +238,7 @@ export type TranslationData = {
 };
 
 export type BreadcrumbData = {
-  id: number;
+  id?: number;
   breadCrumbText: string;
   breadCrumbUrl?: string;
 };

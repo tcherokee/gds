@@ -228,7 +228,7 @@
 <Toasts position="top-right" />
 <button
   class="hidden w-12 h-12 fixed bottom-14 right-2.5 z-40 data-active:block"
-  id="backToTop"
+  id="back-to-top"
   on:click={backToTop}
   data-ui={$y > 50 ? "active" : null}
 >

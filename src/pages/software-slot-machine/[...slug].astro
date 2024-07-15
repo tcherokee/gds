@@ -7,6 +7,7 @@ import qs from "qs";
 // Types
 import type { GetStaticPaths } from "astro";
 import type {
+  BreadcrumbData,
   Faqs,
   TProviderAttributesOnly,
 } from "../../../interfaces/common/types";
@@ -127,10 +128,10 @@ const seo = {
 
 let pageSchema = [];
 
-let pageBreadcrum = [
+let pageBreadcrum: BreadcrumbData[] = [
   {
     breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: null,
+    breadCrumbUrl: "",
   },
 ];
 
@@ -155,7 +156,7 @@ pageSchema.push(breadSchema);
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: page?.attributes?.faqs.map(({ answer, question }) => {
+  mainEntity: (page?.attributes?.faqs as Faqs[]).map(({ answer, question }) => {
     return {
       "@type": "Question",
       name: `${question}`,

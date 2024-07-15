@@ -8,7 +8,10 @@ import qs from "qs";
 import type { GetStaticPaths } from "astro";
 import type { Gamepage } from "../../../interfaces/game-page";
 import type { LayoutData } from "../../../interfaces/layout";
-import type { TranslationData } from "../../../interfaces/common/types";
+import type {
+  BreadcrumbData,
+  TranslationData,
+} from "../../../interfaces/common/types";
 
 // Helpers
 import { urlTranslate, GameInfoHeader } from "../../../utils/data-store.util";
@@ -82,10 +85,10 @@ let seo = {
 
 let pageSchema = [];
 
-let pageBreadcrum = [
+let pageBreadcrum: BreadcrumbData[] = [
   {
     breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: null,
+    breadCrumbUrl: "",
   },
 ];
 

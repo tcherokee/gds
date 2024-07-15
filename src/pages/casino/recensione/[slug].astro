@@ -39,6 +39,7 @@ import RatingStar from "../../../components/helpers/ratingStar.svelte";
 import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
 import TimeDate from "../../../components/helpers/timeDate.astro";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
+import type { BreadcrumbData } from "../../../../interfaces/common/types";
 
 const translationStore = await getTranslations();
 
@@ -130,10 +131,10 @@ let seo = {
 
 let pageSchema = [];
 
-let pageBreadcrum = [
+let pageBreadcrum: BreadcrumbData[] = [
   {
     breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: null,
+    breadCrumbUrl: "",
   },
 ];
 
