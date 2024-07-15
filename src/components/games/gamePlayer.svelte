@@ -79,7 +79,7 @@
   const gameInFullscreenToggle = () => {
     const favBtnNav = document.getElementById("fav-search");
     const burgerMenu = document.getElementById("burger-menu");
-    const backToTop = document.getElementById("backToTop");
+    const backToTop = document.getElementById("back-to-top");
     
     fullscreen = !fullscreen;
     if(fullscreen) {

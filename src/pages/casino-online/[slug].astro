@@ -27,6 +27,7 @@ import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
 
 import { getTranslations } from "../../../utils/api-requests";
+import type { BreadcrumbData } from "../../../interfaces/common/types";
 
 const translationStore = await getTranslations();
 
@@ -72,10 +73,10 @@ let seo = {
 
 let pageSchema = [];
 
-let pageBreadcrum = [
+let pageBreadcrum: BreadcrumbData[] = [
   {
     breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: null,
+    breadCrumbUrl: "",
   },
 ];
 
