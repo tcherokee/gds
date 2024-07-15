@@ -11,7 +11,6 @@
   import GameCard from "../games/gameCard.svelte";
 // Helpers
   import { gamesQs } from "../../../qs/games.ts";
-  import MediaQuery from "../helpers/mediaQuery.svelte";
 // Types
   import type {
     CustomGameList,
@@ -100,19 +99,14 @@
 
 <div>
   <div class="flex flex-col align-center relative xl:container px-2 pb-5 z-20">
-    <MediaQuery query="(max-width: 768px)" let:matches>
-      {#if matches}
-        <MobileGameFilter {page} {slotCategories} translationStore={translations} />
-      {:else}
-        <DesktopGameFilter
-          {page}
-          showGameFilterPanel={data.showGameFilterPanel}
-          {gameProviders}
-          {slotCategories}
-          {translations}
-        />
-      {/if}
-    </MediaQuery>
+    <MobileGameFilter {page} {slotCategories} translationStore={translations}/>
+    <DesktopGameFilter
+      {page}
+      showGameFilterPanel={data.showGameFilterPanel}
+      {gameProviders}
+      {slotCategories}
+      {translations}
+    />
     <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
       {#if initialGames.length && !genericGame.length}
         {#each initialGames as game}
