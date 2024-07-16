@@ -190,61 +190,65 @@ const allFAQs = page?.attributes?.blocks.filter(
   (block: Block) => block.__component === "shared.faqs"
 ) as Faqs[];
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: allFAQs?.map(({ answer, question }) => {
-    return {
-      "@type": "Question",
-      name: `${question}`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `${answer}`,
-      },
-    };
-  }),
-};
-
-pageSchema.push(faqSchema);
+if (allFAQs && allFAQs.length > 0) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allFAQs?.map(({ answer, question }) => {
+      return {
+        "@type": "Question",
+        name: `${question}`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${answer}`,
+        },
+      };
+    }),
+  };
+  pageSchema.push(faqSchema);
+}
 
 // HowTo Schema
 const allHowTos = page?.attributes?.blocks.filter(
   (block: Block) => block.__component === "how-to-group"
 ) as { title: string; howToGroup: HowTo[] }[];
 
-const howToSchema = allHowTos?.map(({ title, howToGroup }) => {
-  return {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: `${title}`,
-    totalTime: "PT15M",
-    tool: [
-      {
-        "@type": "HowToTool",
-        name: "smartphone, PC, tablet, metodo di pagamento",
-      },
-    ],
-    step: howToGroup?.map(({ heading, copy, image }, i: number) => {
-      return {
-        "@type": "HowToStep",
-        url: `${page?.attributes?.urlPath}#step0${i + 1}`,
-        name: heading,
-        itemListElement: {
-          "@type": "HowToDirection",
-          text: copy,
+if (allHowTos && allHowTos.length > 0) {
+  const howToSchema = allHowTos?.map(({ title, howToGroup }) => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      name: `${title}`,
+      totalTime: "PT15M",
+      description: `${title}`,
+      tool: [
+        {
+          "@type": "HowToTool",
+          name: "smartphone, PC, tablet, metodo di pagamento",
         },
-        ...(image?.data?.attributes && {
-          image: {
-            "@type": "ImageObject",
-            url: image?.data?.attributes.url,
+      ],
+      step: howToGroup?.map(({ heading, copy, image }, i: number) => {
+        return {
+          "@type": "HowToStep",
+          url: `${page?.attributes?.urlPath}#step0${i + 1}`,
+          name: heading,
+          itemListElement: {
+            "@type": "HowToDirection",
+            text: copy,
           },
-        }),
-      };
-    }),
-  };
-});
+          ...(image?.data?.attributes && {
+            image: {
+              "@type": "ImageObject",
+              url: image?.data?.attributes.url,
+            },
+          }),
+        };
+      }),
+    };
+  });
 
-pageSchema.push(howToSchema);
+  pageSchema.push(howToSchema);
+}
 
 // Breadcrum Schema
 const breadSchema = {
@@ -261,7 +265,6 @@ const breadSchema = {
     }
   ),
 };
-
 pageSchema.push(breadSchema);
 
 // First mapping components so I can check them against the svelte extentsion

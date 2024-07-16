@@ -112,35 +112,40 @@ const breadSchema = {
 pageSchema.push(breadSchema);
 
 // FAQ Schema
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: page?.attributes?.faqs.map(({ answer, question }) => {
-    return {
-      "@type": "Question",
-      name: `${question}`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `${answer}`,
-      },
-    };
-  }),
-};
-pageSchema.push(faqSchema);
+const allFAQs = page?.attributes?.faqs;
+if (allFAQs.length > 0) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allFAQs.map(({ answer, question }) => {
+      return {
+        "@type": "Question",
+        name: `${question}`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${answer}`,
+        },
+      };
+    }),
+  };
+  pageSchema.push(faqSchema);
+}
 
-const howToSchema = {
-  "@context": "https://schema.org",
-  "@type": "HowTo",
-  name: `${page?.attributes?.howTo?.title}`,
-  totalTime: "PT15M",
-  tool: [
-    {
-      "@type": "HowToTool",
-      name: "smartphone, PC, tablet, metodo di pagamento",
-    },
-  ],
-  step: page?.attributes?.howTo?.howToGroup?.map(
-    ({ heading, copy, image }, i) => {
+const howTo = page?.attributes?.howTo;
+if (howTo) {
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `${howTo?.title}`,
+    totalTime: "PT15M",
+    description: `${howTo?.title}`,
+    tool: [
+      {
+        "@type": "HowToTool",
+        name: "smartphone, PC, tablet, metodo di pagamento",
+      },
+    ],
+    step: howTo?.howToGroup?.map(({ heading, copy, image }, i) => {
       return {
         "@type": "HowToStep",
         url: `${page?.attributes?.slug}#step0${i + 1}`,
@@ -156,10 +161,10 @@ const howToSchema = {
           },
         }),
       };
-    }
-  ),
-};
-pageSchema.push(howToSchema);
+    }),
+  };
+  pageSchema.push(howToSchema);
+}
 
 //Rating schema
 const ratingsSchema = {
@@ -173,8 +178,8 @@ const ratingsSchema = {
   operatingSystem: "Multi-platform",
   aggregateRating: {
     "@type": "AggregateRating",
-    ratingValue: `3`, //To be Updated
-    reviewCount: `20`, // To be Updated
+    ratingValue: `${page?.attributes?.ratingAvg}`, //To be Updated
+    reviewCount: `${page?.attributes?.ratingCount}`, // To be Updated
     bestRating: "5",
     worstRating: "0",
   },

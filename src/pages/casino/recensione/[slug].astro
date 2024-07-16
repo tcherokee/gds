@@ -23,7 +23,6 @@ import ContentBlock from "../../../components/blocks/contentBlock.astro";
 import GameListBlock from "../../../components/blocks/gameListBlock.astro";
 import CasinoComparison from "../../../components/casino/casinoComparison.astro";
 import AuthorCard from "../../../components/general/authorCard.astro";
-import Faqs from "../../../components/general/faqs.astro";
 import HowTo from "../../../components/general/howTo.astro";
 import ImageCarousel from "../../../components/general/imageCarousel.svelte";
 import ProsCons from "../../../components/general/proCons.astro";
@@ -40,6 +39,7 @@ import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
 import TimeDate from "../../../components/helpers/timeDate.astro";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
 import type { BreadcrumbData } from "../../../../interfaces/common/types";
+import Faqs from "../../../components/general/faqs.astro";
 
 const translationStore = await getTranslations();
 
@@ -241,35 +241,40 @@ const reviewSchema = {
 pageSchema.push(reviewSchema);
 
 // FAQ Schema
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: page?.attributes?.faqs.map(({ answer, question }) => {
-    return {
-      "@type": "Question",
-      name: `${question}`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `${answer}`,
-      },
-    };
-  }),
-};
-pageSchema.push(faqSchema);
+const allFAQs = page?.attributes?.faqs;
+if (allFAQs.length > 0) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allFAQs.map(({ answer, question }) => {
+      return {
+        "@type": "Question",
+        name: `${question}`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${answer}`,
+        },
+      };
+    }),
+  };
+  pageSchema.push(faqSchema);
+}
 
-const howToSchema = {
-  "@context": "https://schema.org",
-  "@type": "HowTo",
-  name: `${page?.attributes?.howTo?.title}`,
-  totalTime: "PT15M",
-  tool: [
-    {
-      "@type": "HowToTool",
-      name: "smartphone, PC, tablet, metodo di pagamento",
-    },
-  ],
-  step: page?.attributes?.howTo?.howToGroup?.map(
-    ({ heading, copy, image }, i) => {
+const howTo = page?.attributes?.howTo;
+if (howTo) {
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `${howTo?.title}`,
+    totalTime: "PT15M",
+    description: `${howTo?.title}`,
+    tool: [
+      {
+        "@type": "HowToTool",
+        name: "smartphone, PC, tablet, metodo di pagamento",
+      },
+    ],
+    step: howTo?.howToGroup?.map(({ heading, copy, image }, i) => {
       return {
         "@type": "HowToStep",
         url: `${page?.attributes?.slug}#step0${i + 1}`,
@@ -285,14 +290,19 @@ const howToSchema = {
           },
         }),
       };
-    }
-  ),
-};
-pageSchema.push(howToSchema);
+    }),
+  };
+  pageSchema.push(howToSchema);
+}
 ---
 
 <MainLayout seoData={seo} schemaData={pageSchema}>
-  <Breadcrumb breadcrumbs={pageBreadcrum} breadcrumbKey="casinoBreadcrumbs" />
+  <Breadcrumb
+    breadcrumbs={[
+      { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
+    ]}
+    breadcrumbKey="casinoBreadcrumbs"
+  />
   <div class="casino-page">
     <div class="iframe-bkg curve rounded-b-3xl pb-3">
       <div class="section-wrapper">

@@ -155,21 +155,24 @@ const breadSchema = {
 pageSchema.push(breadSchema);
 
 // FAQ Schema
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: (page?.attributes?.faqs as Faqs[]).map(({ answer, question }) => {
-    return {
-      "@type": "Question",
-      name: `${question}`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `${answer}`,
-      },
-    };
-  }),
-};
-pageSchema.push(faqSchema);
+const allFAQs: Faqs[] = page?.attributes?.faqs;
+if (allFAQs.length > 0) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allFAQs.map(({ answer, question }) => {
+      return {
+        "@type": "Question",
+        name: `${question}`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${answer}`,
+        },
+      };
+    }),
+  };
+  pageSchema.push(faqSchema);
+}
 ---
 
 <MainLayout seoData={seo} schemaData={pageSchema}>
