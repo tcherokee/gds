@@ -17,7 +17,6 @@ import type { Slotprovider } from "../../../interfaces/slot-provider";
 
 // Queries
 import { gamesQs, slotProvidersQs } from "../../../qs/ssm-games";
-import { getBreadcrumbs } from "../../../stores/breadcrumbs";
 
 // Helpers
 import fetchApi from "../../../lib/strapi";
@@ -33,6 +32,8 @@ import FaqsComponent from "../../components/general/faqs.astro";
 import IntroBlock from "../../components/general/introWithImage.astro";
 import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
+import { layoutQs } from "../../../qs/layout";
+import type { LayoutData } from "../../../interfaces/layout";
 
 import {
   slotCategories as slotCategoriesResponse,
@@ -69,6 +70,14 @@ export const getStaticPaths = (async () => {
     query: `?${slotProvidersQuery}`,
   });
 
+  // Request to the Fetch Function to get layout data from API
+  const layout = qs.stringify(layoutQs(), { encodeValuesOnly: true });
+  const layoutData = await fetchApi<LayoutData>({
+    endpoint: "layout",
+    wrappedByKey: "data",
+    query: `?${layout}`,
+  });
+
   let prerenderPath: any[] = [];
   for (let i = 0; i < slotProviders.length; i++) {
     const slug = slotProviders[i]?.attributes?.slug;
@@ -83,7 +92,7 @@ export const getStaticPaths = (async () => {
 
     prerenderPath.push({
       params: { slug },
-      props: { page: slotProviders[i] },
+      props: { page: slotProviders[i], layoutData },
     });
 
     if (
@@ -94,7 +103,7 @@ export const getStaticPaths = (async () => {
       for (let p = 1; p <= games.meta?.pagination?.pageCount; p++) {
         prerenderPath.push({
           params: { slug: `${slug}/p${p}` },
-          props: { page: slotProviders[i] },
+          props: { page: slotProviders[i], layoutData },
         });
       }
     }
@@ -113,7 +122,7 @@ export const getStaticPaths = (async () => {
 // Set Up Translation Store
 // const translationStore: TranslationData = getTranslations.get();
 
-const { page } = Astro.props;
+const { page, layoutData } = Astro.props;
 const { slug } = Astro.params;
 
 let siteID = import.meta.env.SITE_ID;
@@ -136,9 +145,8 @@ let pageBreadcrum: BreadcrumbData[] = [
 ];
 
 //Breadcrum Schema
-const breadcrumStore: any = await getBreadcrumbs.get();
-if (breadcrumStore && breadcrumStore["categoriesBreadcrumbs"]) {
-  pageBreadcrum.unshift(...breadcrumStore?.["categoriesBreadcrumbs"]);
+if (layoutData) {
+  pageBreadcrum.unshift(...layoutData?.attributes?.providersBreadcrumbs);
 }
 const breadSchema = {
   "@context": "https://schema.org",
@@ -155,21 +163,24 @@ const breadSchema = {
 pageSchema.push(breadSchema);
 
 // FAQ Schema
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: (page?.attributes?.faqs as Faqs[]).map(({ answer, question }) => {
-    return {
-      "@type": "Question",
-      name: `${question}`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `${answer}`,
-      },
-    };
-  }),
-};
-pageSchema.push(faqSchema);
+const allFAQs: Faqs[] = page?.attributes?.faqs;
+if (allFAQs.length > 0) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allFAQs.map(({ answer, question }) => {
+      return {
+        "@type": "Question",
+        name: `${question}`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${answer}`,
+        },
+      };
+    }),
+  };
+  pageSchema.push(faqSchema);
+}
 ---
 
 <MainLayout seoData={seo} schemaData={pageSchema}>
