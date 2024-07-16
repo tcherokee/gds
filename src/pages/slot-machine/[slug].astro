@@ -21,7 +21,6 @@ import MainLayout from "../../layouts/MainLayout.astro";
 
 // Queries
 import { categoryPagesQs } from "../../../qs/categoryPages";
-import { getBreadcrumbs } from "../../../stores/breadcrumbs";
 
 // Components
 import ContentBlock from "../../components/blocks/contentBlock.astro";
@@ -42,6 +41,8 @@ import {
   slotProviders as slotProvidersResponse,
   getTranslations as translationResponse,
 } from "../../../utils/api-requests";
+import { layoutQs } from "../../../qs/layout";
+import type { LayoutData } from "../../../interfaces/layout";
 
 const translationStore = await translationResponse();
 const slotProviders = await slotProvidersResponse();
@@ -68,6 +69,14 @@ export const getStaticPaths = (async () => {
     endpoint: "slot-categories",
     wrappedByKey: "data",
     query: `?${query}`,
+  });
+
+  // Request to the Fetch Function to get layout data from API
+  const layout = qs.stringify(layoutQs(), { encodeValuesOnly: true });
+  const layoutData = await fetchApi<LayoutData>({
+    endpoint: "layout",
+    wrappedByKey: "data",
+    query: `?${layout}`,
   });
 
   // // Get Category Slugs
@@ -125,6 +134,7 @@ export const getStaticPaths = (async () => {
         page: categoryPage[i],
         modifiedGames,
         slotCategories,
+        layoutData,
       },
     });
   }
@@ -138,7 +148,7 @@ export const getStaticPaths = (async () => {
   // });
 }) satisfies GetStaticPaths;
 
-const { page, modifiedGames, slotCategories } = Astro.props;
+const { page, modifiedGames, slotCategories, layoutData } = Astro.props;
 const { slug } = Astro.params;
 
 // const translationStore: TranslationData = getTranslations.get();
@@ -190,8 +200,9 @@ let pageBreadcrum: BreadcrumbData[] = [
 ];
 
 //Breadcrum Schema
-const breadcrumStore: any = await getBreadcrumbs.get();
-pageBreadcrum.unshift(...breadcrumStore["categoriesBreadcrumbs"]);
+if (layoutData) {
+  pageBreadcrum.unshift(...layoutData?.attributes?.categoriesBreadcrumbs);
+}
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
