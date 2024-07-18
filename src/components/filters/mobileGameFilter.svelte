@@ -152,7 +152,7 @@
             <input
                 type="text"
                 id="searchInput"
-                class="text-xs w-full h-11 uppercase rounded-[4px] peer/input border border-background-900 bg-white/[.7] focus:rounded-b-none"
+                class="text-base w-full h-11 uppercase rounded-[4px] peer/input border border-background-900 bg-white/[.7] focus:rounded-b-none"
                 placeholder="{translationStore?.search}"
                 bind:this={searchInput}
                 bind:value={searchInputValue}
@@ -208,7 +208,7 @@
                     />
                     <label 
                         for="mobileSort"
-                        class="relative peer w-full h-11 rounded-l-[4px] bg-filter-alternate-toggle border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-xs open:rounded-b-none text-xs"
+                        class="relative peer w-full h-11 rounded-l-[4px] bg-filter-alternate-toggle border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-sm open:rounded-b-none"
                         {...(toggleSort ? { open:'' } : {})}
                     >
                         {$gameVariables.sort ? getSortLabelByValue($gameVariables.sort) : translations.sortFilterH6 }
