@@ -130,6 +130,7 @@ export const authorCardQs = () => {
       "twitterLink",
       "slug",
       "isAnAuthor",
+      "jobTitle",
     ],
     populate: {
       photo: {
@@ -161,6 +162,7 @@ export const authorIndexQs = () => {
           "experience",
           "areaOfWork",
           "specialization",
+          "jobTitle",
         ],
       },
     },
