@@ -282,7 +282,7 @@
             <input
               type="text"
               id="searchInput"
-              class="text-xs w-full h-11 uppercase rounded-[4px] peer/input border border-background-900 bg-white/[.7] focus:rounded-b-none"
+              class="text-base w-full h-11 uppercase rounded-[4px] peer/input border border-background-900 bg-white/[.7] focus:rounded-b-none"
               placeholder={translations?.search}
               bind:this={searchInput}
               bind:value={searchInputValue}
@@ -329,7 +329,7 @@
                 {...toggles.categories ? { open: "" } : {}}
                 on:click={() => handleToggle("categories")}
               >
-                <span class="uppercase text-xs pointer-events-none">
+                <span class="uppercase text-sm pointer-events-none">
                   {$gameVariables.categories.length > 0
                     ? $gameVariables.categories[0]
                     : translations?.categories}
@@ -373,7 +373,7 @@
             <span class="isolate w-full inline-flex rounded-md shadow-sm">
               <button
                 type="button"
-                class="!bg-filter-alternate-toggle relative peer w-full h-11 rounded-l-[4px] bg-white/[.7] border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-xs open:rounded-b-none"
+                class="!bg-filter-alternate-toggle relative peer w-full h-11 rounded-l-[4px] bg-white/[.7] border-background-900 border flex items-center gap-x-1.5 rounded-l-md p-2.5 uppercase text-sm open:rounded-b-none"
                 {...toggles.sort ? { open: "" } : {}}
                 on:click={() => handleToggle("sort")}
               >

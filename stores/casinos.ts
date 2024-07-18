@@ -48,7 +48,8 @@ export const casinoVariables = map<CasinoFilters>({
 export const casinoQsStore = atom<string | undefined>(undefined);
 
 export const casinos = createFetcherStore<QSCasinoData>([
-  `${import.meta.env.PUBLIC_API_URL}/api/casinos`,
+  // `${import.meta.env.PUBLIC_API_URL}/api/casinos`,
+  `${import.meta.env.BASE_URL}api/casinos/casinos/`,
   casinoQsStore,
 ]);
 

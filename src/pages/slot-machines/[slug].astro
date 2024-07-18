@@ -7,7 +7,6 @@ import qs from "qs";
 // Types
 import type { GetStaticPaths } from "astro";
 import type { Gamepage } from "../../../interfaces/game-page";
-import type { LayoutData } from "../../../interfaces/layout";
 import type {
   BreadcrumbData,
   TranslationData,
@@ -20,7 +19,6 @@ import fetchApi from "../../../lib/strapi";
 // Queries
 import { gamepageQs } from "../../../qs/game-page";
 import { customPageLayoutAddOnsQs } from "../../../qs/customPages";
-import { getBreadcrumbs } from "../../../stores/breadcrumbs";
 
 // Components
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -37,6 +35,8 @@ import GamePlayer from "../../components/games/gamePlayer.svelte";
 import QuickLinks from "../../components/helpers/quicklinks.astro";
 import AuthorCard from "../../components/general/authorCard.astro";
 import { getTranslations } from "../../../utils/api-requests";
+import { layoutQs } from "../../../qs/layout";
+import type { LayoutData } from "../../../interfaces/layout";
 
 // Set Up Translation Store
 const translationStore = await getTranslations();
@@ -49,27 +49,35 @@ export const getStaticPaths = (async () => {
     query: `?${query}`,
   });
 
+  // Request to the Fetch Function to get layout data from API
+  const layout = qs.stringify(layoutQs(), { encodeValuesOnly: true });
+  const layoutData = await fetchApi<LayoutData>({
+    endpoint: "layout",
+    wrappedByKey: "data",
+    query: `?${layout}`,
+  });
+
   return gamePage.map((page) => {
     return {
       params: { slug: page?.attributes?.slug },
-      props: { page },
+      props: { page, layoutData },
     };
   });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
+const { page, layoutData } = Astro.props;
 const { slug } = Astro.params; //get the slug from the page url
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
-const layoutQuery = qs.stringify(customPageLayoutAddOnsQs(), {
+const customLayoutQuery = qs.stringify(customPageLayoutAddOnsQs(), {
   encodeValuesOnly: true,
 });
 
 // Request to the Fetch Function to get the custom page slugs from the API
-const layout = await fetchApi<LayoutData>({
+const customLayout = await fetchApi<LayoutData>({
   endpoint: "layout",
   wrappedByKey: "data",
-  query: `?${layoutQuery}`,
+  query: `?${customLayoutQuery}`,
 });
 
 //generate page url
@@ -93,8 +101,9 @@ let pageBreadcrum: BreadcrumbData[] = [
 ];
 
 //Breadcrum Schema
-const breadcrumStore: any = await getBreadcrumbs.get();
-pageBreadcrum.unshift(...breadcrumStore["gamesBreadcrumbs"]);
+if (layoutData) {
+  pageBreadcrum.unshift(...layoutData?.attributes?.gamesBreadcrumbs);
+}
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -110,35 +119,40 @@ const breadSchema = {
 pageSchema.push(breadSchema);
 
 // FAQ Schema
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: page?.attributes?.faqs.map(({ answer, question }) => {
-    return {
-      "@type": "Question",
-      name: `${question}`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `${answer}`,
-      },
-    };
-  }),
-};
-pageSchema.push(faqSchema);
+const allFAQs = page?.attributes?.faqs;
+if (allFAQs.length > 0) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allFAQs.map(({ answer, question }) => {
+      return {
+        "@type": "Question",
+        name: `${question}`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${answer}`,
+        },
+      };
+    }),
+  };
+  pageSchema.push(faqSchema);
+}
 
-const howToSchema = {
-  "@context": "https://schema.org",
-  "@type": "HowTo",
-  name: `${page?.attributes?.howTo?.title}`,
-  totalTime: "PT15M",
-  tool: [
-    {
-      "@type": "HowToTool",
-      name: "smartphone, PC, tablet, metodo di pagamento",
-    },
-  ],
-  step: page?.attributes?.howTo?.howToGroup?.map(
-    ({ heading, copy, image }, i) => {
+const howTo = page?.attributes?.howTo;
+if (howTo) {
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `${howTo?.title}`,
+    totalTime: "PT15M",
+    description: `${howTo?.title}`,
+    tool: [
+      {
+        "@type": "HowToTool",
+        name: "smartphone, PC, tablet, metodo di pagamento",
+      },
+    ],
+    step: howTo?.howToGroup?.map(({ heading, copy, image }, i) => {
       return {
         "@type": "HowToStep",
         url: `${page?.attributes?.slug}#step0${i + 1}`,
@@ -154,10 +168,10 @@ const howToSchema = {
           },
         }),
       };
-    }
-  ),
-};
-pageSchema.push(howToSchema);
+    }),
+  };
+  pageSchema.push(howToSchema);
+}
 
 //Rating schema
 const ratingsSchema = {
@@ -171,8 +185,8 @@ const ratingsSchema = {
   operatingSystem: "Multi-platform",
   aggregateRating: {
     "@type": "AggregateRating",
-    ratingValue: `3`, //To be Updated
-    reviewCount: `20`, // To be Updated
+    ratingValue: `${page?.attributes?.ratingAvg}`, //To be Updated
+    reviewCount: `${page?.attributes?.ratingCount}`, // To be Updated
     bestRating: "5",
     worstRating: "0",
   },
@@ -207,7 +221,7 @@ const __blocks = page?.attributes?.blocks;
       <GamePlayer
         data={page}
         gamePageURL={siteURL}
-        {layout}
+        layout={customLayout}
         translations={translationStore ?? {}}
         client:load
       />
