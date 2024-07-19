@@ -225,23 +225,13 @@ const __blocks = page?.attributes?.blocks;
         translations={translationStore ?? {}}
         client:load
       />
-      <div class="mt-6 md:mt-8">
+      <div class="mt-6 mb-6 md:mt-8">
         <h2 class="text-white !m-0">
           {translationStore?.gamePageRelatedGamesH2}
         </h2>
-        <div class="mt-4 glass-wrapper">
-          <!-- <GameListBlock data={limitGames} /> -->
+        <div class="mt-4">
           <ProviderGames slug={page?.attributes?.slug} {translationStore} />
         </div>
-        <!-- {gamesData?.length > $GamesStore?.length &&
-					<div class="flex justify-center mt-10">
-						<button
-							on:click={loadMoreGames}
-							class="btn btn-secondary uppercase text-white w-[130px] mb-3"
-							>{translations.loadMore.toUpperCase()}</button
-						>
-					</div>
-				} -->
       </div>
     </div>
   </div>

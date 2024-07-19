@@ -70,7 +70,7 @@ export type TUserGame = {
   publishedAt: string;
   images: TUserGameImage;
   provider: TUserGameProvider;
-  categories: {
+  categories?: {
     title: string;
   }[];
 };
