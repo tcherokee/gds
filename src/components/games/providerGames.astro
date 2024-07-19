@@ -1,9 +1,9 @@
 ---
 import qs from "qs";
+import type { Gamepage } from "../../../interfaces/game-page";
 import fetchApi from "../../../lib/strapi";
 import { providerGamesQs } from "../../../qs/provider-games";
-import type { Gamepage } from "../../../interfaces/game-page";
-import GameListBlock from "../../components/blocks/gameListBlock.astro";
+import RelatedGames from "../../components/games/relatedGames.svelte";
 
 const { slug, translationStore } = Astro.props;
 const query = qs.stringify(providerGamesQs(slug), { encodeValuesOnly: true });
@@ -17,7 +17,10 @@ const gamePage = await fetchApi<Gamepage[]>({
 const gamesData = gamePage[0]?.attributes?.provider.data
   ? [...gamePage[0]?.attributes?.provider?.data?.attributes?.games?.data]
   : [];
-const limitGames = gamesData.splice(0, 6);
 ---
 
-<GameListBlock data={limitGames} {translationStore} />
+<RelatedGames
+  relatedGames={gamesData}
+  translations={translationStore}
+  client:load
+/>

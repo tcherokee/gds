@@ -145,7 +145,7 @@
 
 <div class="text-black relative mb-10 z-50 flex flex-col md:hidden">
     <!-- Search Section -->
-    <div
+    <!-- <div
         class="glowy-bkg shadow-none flex gap-2 p-2.5 mb-3 relative z-50"
     >
         <div id="searchBox" class="relative w-full peer/search">
@@ -176,7 +176,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Search Section -->
 
     <section class="glowy-bkg shadow-none flex gap-2 p-2.5">
