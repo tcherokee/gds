@@ -1,0 +1,15 @@
+---
+import Icon from "astro-icon";
+import Link from "../helpers/link.astro";
+
+const { overview } = Astro.props;
+---
+
+<Link href={`${overview?.url}/`} class="btn btn-secondary blog-btn">
+  <div
+    class="flex justify-between items-center rounded-lg p-5 bg-black text-white"
+  >
+    {overview?.title}
+    <Icon name="chevron-right" height="25px" />
+  </div>
+</Link>
