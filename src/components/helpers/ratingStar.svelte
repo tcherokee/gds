@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { TranslationData } from "../../../interfaces/common/types.ts";
+  import { user } from "../../../stores/authStore.ts";
   import { ratings } from "../../../stores/ratings";
 
   export let avgRating: number;
@@ -103,7 +104,7 @@
         max="5"
         id="range-{itemId}"
         {disabled}
-        value={userRating ? userRating : avgRating}
+        value={userRating}
         bind:this={starRating}
         on:change={ratingHandler}
       />
