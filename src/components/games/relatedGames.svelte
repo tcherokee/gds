@@ -26,7 +26,7 @@
   };
 </script>
 
-<div class="space-y-4">
+<div class="space-y-6">
   <div class="glass-wrapper">
     <div class="relative xl:container px-2 z-20">
       <div
@@ -41,10 +41,10 @@
     </div>
   </div>
   {#if relatedGames.length > limitGames.length}
-    <div class="flex justify-center mt-10">
+    <div class="flex justify-center !mt-8">
       <button
         on:click={loadMoreRelatedGames}
-        class="btn btn-secondary uppercase text-white w-[130px] mb-3"
+        class="btn btn-secondary uppercase text-white min-w-[300px] md:min-w-[500px] mb-3"
       >
         {translations.loadMore.toUpperCase()}
       </button>
