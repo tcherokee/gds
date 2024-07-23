@@ -122,7 +122,15 @@ if (
     (block) => block.__component === "homepage.home-featured-providers"
   )
 ) {
-  loopCounter = 3;
+  loopCounter += 1;
+}
+
+if (
+  homepage?.attributes?.blocks.find(
+    (block) => block.__component === "shared.overview-block"
+  )
+) {
+  loopCounter += 1;
 }
 
 // combining games array
