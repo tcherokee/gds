@@ -1,15 +1,29 @@
 ---
 import Icon from "astro-icon";
 import Link from "../helpers/link.astro";
+import Image from "../helpers/images.astro";
 
 const { overview } = Astro.props;
 ---
 
 <Link href={`${overview?.url}/`} class="btn btn-secondary blog-btn">
-  <div
-    class="flex justify-between items-center rounded-lg p-5 bg-black text-white"
-  >
-    {overview?.title}
-    <Icon name="chevron-right" height="25px" />
+  <div class="relative">
+    <div
+      class="relative flex justify-between items-center rounded-lg p-5 text-white z-40 font-bold"
+    >
+      {overview?.title}
+      <Icon name="chevron-right" height="25px" />
+    </div>
+    <div
+      class="absolute pointer-events-none h-full left-0 top-0 w-full bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]"
+    >
+      <Image
+        src={overview?.card_img?.data?.attributes?.url}
+        alt={overview?.title}
+        imageWidth={315}
+        imageHeight={155}
+        classes="rounded-lg w-full h-full opacity-50 blur-[2px]"
+      />
+    </div>
   </div>
 </Link>
