@@ -32,6 +32,7 @@ import { blogsQs } from "../../qs/blogs.ts";
 // Components
 import MainLayout from "../layouts/MainLayout.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
+import OverviewListBlock from "../components/blocks/overviewListBlock.astro";
 import { getTranslations } from "../../utils/api-requests";
 
 const sortStore = sortOptions.get();
@@ -121,7 +122,15 @@ if (
     (block) => block.__component === "homepage.home-featured-providers"
   )
 ) {
-  loopCounter = 3;
+  loopCounter += 1;
+}
+
+if (
+  homepage?.attributes?.blocks.find(
+    (block) => block.__component === "shared.overview-block"
+  )
+) {
+  loopCounter += 1;
 }
 
 // combining games array
@@ -143,8 +152,13 @@ let seo = {
 };
 ---
 
+<script define:vars={{ homepage }}>
+  console.log("home page", homepage);
+</script>
+
 <MainLayout seoData={seo} isHomePage={true}>
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
+
   <div
     class:list={[
       "featured-background curve pb-[50px]",

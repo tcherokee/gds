@@ -1,0 +1,17 @@
+---
+import OverviewCard from "../general/overviewCard.astro";
+import type { Overview } from "../../../interfaces/overview";
+
+const { data } = Astro.props;
+---
+
+<script define:vars={{ data }}>
+  console.log("over view", data);
+</script>
+<div class="mb-10">
+  <div class="relative xl:container px-2 z-20">
+    <div class="flex flex-wrap gap-5">
+      {data?.overviews.map((overview: Overview) => <OverviewCard {overview} />)}
+    </div>
+  </div>
+</div>
