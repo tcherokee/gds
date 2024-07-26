@@ -7,9 +7,9 @@ const { overview } = Astro.props;
 ---
 
 <Link href={`${overview?.url}/`} class="btn btn-secondary blog-btn">
-  <div class="relative">
+  <div class="overview-box">
     <div
-      class="relative flex justify-between items-center rounded-lg p-5 text-white z-40 font-bold"
+      class="relative flex justify-center h-full items-center rounded-lg p-5 text-white z-40 font-bold text-[32px] bold"
     >
       {overview?.title}
       <Icon name="chevron-right" height="25px" />
@@ -27,3 +27,9 @@ const { overview } = Astro.props;
     </div>
   </div>
 </Link>
+
+<style>
+  .overview-box {
+    @apply relative w-[310px] h-[158px];
+  }
+</style>
