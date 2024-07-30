@@ -14,7 +14,7 @@ const { overview } = Astro.props;
       "); background-repeat: no-repeat; background-size: cover;"}
   >
     <div
-      class="relative flex justify-center h-full items-center rounded-lg p-5 text-white z-40 font-bold text-[20px] bold"
+      class="relative flex justify-center h-full items-center rounded-lg p-5 text-white z-40 font-bold text-[10px] md:text-[20px] bold"
     >
       {overview?.title}
       <Icon name="chevron-right" height="25px" />
@@ -35,7 +35,7 @@ const { overview } = Astro.props;
 
 <style>
   .overview-box {
-    @apply relative py-10 font-lato bg-no-repeat bg-center bg-cover;
+    @apply relative py-5 md:py-10 font-lato bg-no-repeat bg-center bg-cover;
     background: rgba(1, 87, 155, 0.2);
     backdrop-filter: blur(1px);
     border-radius: 16px;
