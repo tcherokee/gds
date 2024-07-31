@@ -2,11 +2,12 @@
 import type { Game } from "../../../interfaces/games.ts";
 import GameCard from "../games/gameCard.astro";
 
-const { data, translationStore } = Astro.props;
+const { data, translationStore, gameListTitle = null } = Astro.props;
 ---
 
 <div>
   <div class="relative xl:container px-2 z-20">
+    {gameListTitle && <div class="game-list-title">{gameListTitle}</div>}
     <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
       {
         data.map((game: Game) => (
@@ -18,3 +19,16 @@ const { data, translationStore } = Astro.props;
     </div>
   </div>
 </div>
+
+<style>
+  .game-list-title {
+    color: #fff;
+    text-shadow: 0px 0px 12px rgba(63, 230, 252, 0.6);
+    font-family: Lato;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 38px; /* 118.75% */
+    margin-bottom: 32px;
+  }
+</style>
