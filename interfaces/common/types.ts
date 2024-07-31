@@ -111,6 +111,7 @@ export type HomeGameListBlock = BlockBase & {
   link: LinkAttribute;
   providers: GameProvider[];
   categories: GameCategory[];
+  gameListTitle: string;
 };
 
 export type CustomGameList = {

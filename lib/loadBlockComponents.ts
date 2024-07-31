@@ -76,6 +76,13 @@ export const mapBlocksToDynamicComponents = (
             name: "casinoComparison",
             extension: "astro",
           };
+
+        case "shared.overview-block":
+          return {
+            location: "blocks",
+            name: "overviewListBlock",
+            extension: "astro",
+          };
         case "casinos.casino-list":
           const casinoListBlock = block as CasinoListBlock;
           if (casinoListBlock.showCasinoFilters !== true) {
