@@ -66,7 +66,7 @@
 		<div
 			id="more-games"
 			role="tooltip"
-			class="hidden flex flex-wrap -mt-[190px] ml-[30px] text-black opacity-100 bg-grey-100 -mt-0 text-sm z-20 w-fit absolute transition duration-150 ease-in-out shadow-lg p-2 border border-grey-200 rounded"
+			class="hidden flex flex-wrap ml-[30px] text-black opacity-100 bg-grey-100 -mt-0 text-sm z-20 w-fit absolute transition duration-150 ease-in-out shadow-lg p-2 border border-grey-200 rounded"
 		>
 			{#each popUpItems as provider}
 				<Images

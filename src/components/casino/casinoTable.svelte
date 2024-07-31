@@ -73,7 +73,7 @@
   // Flatten Casinos
   const customCasinos: CasinoData[] = casinosList.flatMap(
     (casino: CasinoListData) => casino.casino.data
-  );
+  ).filter(elem => elem);
 
   // Get Casino Amounts
   $: bonusAmounts = ($casinos.data?.data ?? customCasinos)
