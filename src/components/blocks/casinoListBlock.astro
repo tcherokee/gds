@@ -16,6 +16,9 @@ const createCustomCasinos = (casinos: CasinoListData[]) => {
 const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
 ---
 
+<script define:vars={{ data }}>
+  console.log("CAsino block", data);
+</script>
 {
   !isTop ? (
     <CasinoTable
@@ -25,6 +28,11 @@ const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
   ) : (
     <div>
       <div class="relative xl:container px-2 pb-5 z-20">
+        {data.casinoTableTitle && (
+          <div class="mb-[30px]">
+            <h2 class="game-list-title">{data.casinoTableTitle}</h2>
+          </div>
+        )}
         <div class="mb-5 pt-2.5">
           <div class="">
             <CasinoTable
@@ -37,3 +45,9 @@ const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
     </div>
   )
 }
+
+<style>
+  .game-list-title {
+    text-shadow: 0px 0px 12px rgba(63, 230, 252, 0.6);
+  }
+</style>
