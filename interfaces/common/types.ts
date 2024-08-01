@@ -497,6 +497,7 @@ export type CasinoBlock = {
   id: number;
   __component: string;
   link: Link;
+  casinoTableTitle: string;
   casinos: {
     data: [Casino];
   };

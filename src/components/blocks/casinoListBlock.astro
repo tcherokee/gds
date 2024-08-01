@@ -16,9 +16,6 @@ const createCustomCasinos = (casinos: CasinoListData[]) => {
 const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
 ---
 
-<script define:vars={{ data }}>
-  console.log("CAsino block", data);
-</script>
 {
   !isTop ? (
     <CasinoTable
