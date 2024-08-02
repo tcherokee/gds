@@ -254,16 +254,16 @@ if (allHowTos && allHowTos.length > 0) {
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  itemListElement: (page?.attributes?.breadcrumbs as BreadcrumbData[]).map(
-    (bread, i) => {
+  itemListElement: ([...page?.attributes?.breadcrumbs] as BreadcrumbData[])
+    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
+    .map((bread, i) => {
       return {
         "@type": "ListItem",
         position: i + 1,
         name: bread?.breadCrumbText,
         ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
       };
-    }
-  ),
+    }),
 };
 pageSchema.push(breadSchema);
 
