@@ -1,5 +1,7 @@
 // export type { HomepageQueryOptions } from '../interfaces/qs/homepage'
 
+import { populate } from "dotenv";
+
 export const homepageQs = () => ({
   fields: ["title", "heading", "updatedAt"],
   populate: {
@@ -72,6 +74,14 @@ export const homepageQs = () => ({
                   fields: ["url"],
                 },
               },
+            },
+          },
+        },
+        overviews: {
+          fields: ["title", "url"],
+          populate: {
+            card_img: {
+              fields: ["url"],
             },
           },
         },

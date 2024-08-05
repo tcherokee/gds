@@ -111,6 +111,7 @@ export type HomeGameListBlock = BlockBase & {
   link: LinkAttribute;
   providers: GameProvider[];
   categories: GameCategory[];
+  gameListTitle: string;
 };
 
 export type CustomGameList = {
@@ -496,6 +497,7 @@ export type CasinoBlock = {
   id: number;
   __component: string;
   link: Link;
+  casinoTableTitle: string;
   casinos: {
     data: [Casino];
   };

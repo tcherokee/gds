@@ -151,14 +151,16 @@ if (layoutData) {
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  itemListElement: pageBreadcrum.map((bread, i) => {
-    return {
-      "@type": "ListItem",
-      position: i + 1,
-      name: bread?.breadCrumbText,
-      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
-    };
-  }),
+  itemListElement: [...pageBreadcrum]
+    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
+    .map((bread, i) => {
+      return {
+        "@type": "ListItem",
+        position: i + 1,
+        name: bread?.breadCrumbText,
+        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+      };
+    }),
 };
 pageSchema.push(breadSchema);
 

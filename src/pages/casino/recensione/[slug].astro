@@ -154,14 +154,16 @@ if (layoutData) {
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  itemListElement: pageBreadcrum.map((bread, i) => {
-    return {
-      "@type": "ListItem",
-      position: i + 1,
-      name: bread?.breadCrumbText,
-      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
-    };
-  }),
+  itemListElement: [...pageBreadcrum]
+    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
+    .map((bread, i) => {
+      return {
+        "@type": "ListItem",
+        position: i + 1,
+        name: bread?.breadCrumbText,
+        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+      };
+    }),
 };
 pageSchema.push(breadSchema);
 
@@ -322,7 +324,7 @@ if (howTo) {
             <h1 class="font-medium m-0">
               {page?.attributes?.heading}
             </h1>
-            <div class="flex items-center gap-2">
+            <div class="md:flex items-center gap-2">
               <TimeDate
                 timeDate={page?.attributes?.updatedAt}
                 {translationStore}
