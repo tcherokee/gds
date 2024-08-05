@@ -225,7 +225,7 @@ module.exports = {
       "silver-tag-b-gradient": COLORS.grey[300],
       "bronze-tag-t-gradient": COLORS.accent[800],
       "bronze-tag-b-gradient": COLORS.accent[900],
-      "casino-table-header-bkg": COLORS.grey[300],
+      "casino-table-header-bkg": COLORS.primary,
       "casino-table-header-text": COLORS.black,
       "casino-table-text": COLORS.blue[900],
       "casino-table-row-bkg": COLORS.white,
@@ -254,14 +254,14 @@ module.exports = {
       "quicklinks-bkg": COLORS.white,
       "quicklinks-bdr": "",
       "quicklinks-btn-color": COLORS.primary,
-      "quicklinks-btn-bkg": COLORS.purple[600],
+      "quicklinks-btn-bkg": COLORS.primary,
       "quicklinks-btn-active-bkg": "",
 
       // faqs
-      "faq-header": COLORS.purple[600],
+      "faq-header": COLORS.primary,
 
       // Filter Panel
-      "filter-provider-header-bkg": COLORS.purple[600],
+      "filter-provider-header-bkg": COLORS.primary,
       "filter-provider-header-text": COLORS.white,
       "filter-alternate-toggle": COLORS.blue[100],
       "filter-alternate-icon": COLORS.blue[700],

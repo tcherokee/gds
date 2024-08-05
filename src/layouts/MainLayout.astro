@@ -96,8 +96,6 @@ const favicon = `https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.e
 
 const { seoData, isHomePage = false, schemaData = null } = Astro.props;
 
-console.log("breadCrumbUrl", layout?.attributes?.homeBreadcrumbs);
-
 // Home Breadcrum Schema
 const HomeBreadcrumSchema = {
   "@context": "https://schema.org",
