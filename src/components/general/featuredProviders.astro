@@ -9,9 +9,6 @@ const siteID = import.meta.env.PUBLIC_SITE_ID;
 const providerBaseURL = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["provider-pages"]}`;
 ---
 
-<script define:vars={{ data }}>
-  console.log("featured providers", data);
-</script>
 <div
   class="relative flex flex-col justify-center items-center gap-10 xl:container z-10"
 >

@@ -148,4 +148,17 @@ export const urlTranslate = {
     "popular-games-page": "/slot-machine/piu-giocate",
     "software-page": "/slot-software",
   },
+  tgs: {
+    "game-pages": "/slot",
+    "casino-pages": "/casino/recensione",
+    "blog-pages": "/blog",
+    "blog-index": "/blog",
+    "author-page": "/author",
+    "category-pages": "/gratis",
+    "provider-pages": "/software",
+    "casino-providers-page": "/casino-online",
+    "new-games-page": "/slot-machine/nuove",
+    "popular-games-page": "/slot-machine/piu-giocate",
+    "software-page": "/slot-software",
+  },
 };

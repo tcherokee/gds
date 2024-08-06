@@ -27,7 +27,7 @@ export const getTranslations = async () => {
     );
     return translations;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -51,7 +51,7 @@ export const slotCategories = async () => {
     }
     return slotCategoriesArr ?? [];
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -64,6 +64,6 @@ export const slotProviders = async () => {
     });
     return providersArr ?? [];
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };

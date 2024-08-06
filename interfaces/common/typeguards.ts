@@ -10,7 +10,6 @@ export const isMainLayoutData = (data: any): data is LayoutData => {
     typeof data === "object" &&
     typeof data.id === "number" &&
     data.attributes !== undefined &&
-    typeof data.attributes.legalText === "string" &&
     typeof data.attributes.footerContent === "string"
   );
 };
