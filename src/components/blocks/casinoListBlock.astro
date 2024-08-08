@@ -4,6 +4,7 @@ import type { CasinoListData } from "../../../interfaces/common/types";
 
 // Components
 import CasinoTable from "../casino/casinoTable.astro";
+import Link from "../helpers/link.astro";
 
 const { data, isCustom = false, isTop = false, translationStore } = Astro.props;
 
@@ -16,6 +17,9 @@ const createCustomCasinos = (casinos: CasinoListData[]) => {
 const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
 ---
 
+<script define:vars={{ data }}>
+  console.log("casino", data);
+</script>
 {
   !isTop ? (
     <CasinoTable
@@ -38,6 +42,15 @@ const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
             />
           </div>
         </div>
+        {data?.link && (
+          <div class="flex justify-center">
+            <Link href={data?.link?.url}>
+              <button class="btn self-center mt-5 btn-secondary min-w-[300px] md:min-w-[500px]">
+                {data?.link?.label}
+              </button>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
