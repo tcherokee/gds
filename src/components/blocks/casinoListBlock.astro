@@ -18,12 +18,13 @@ const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
 ---
 
 <script define:vars={{ data }}>
-  console.log("casino", data);
+  console.log("casino", data?.link);
 </script>
 {
   !isTop ? (
     <CasinoTable
       casinos={isCustom ? customCasinos : data.casinos.data}
+      link={data?.link}
       {translationStore}
     />
   ) : (
@@ -38,19 +39,11 @@ const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
           <div class="">
             <CasinoTable
               casinos={isCustom ? customCasinos : data.casinos.data}
+              link={data?.link}
               {translationStore}
             />
           </div>
         </div>
-        {data?.link && (
-          <div class="flex justify-center">
-            <Link href={data?.link?.url}>
-              <button class="btn self-center mt-5 btn-secondary min-w-[300px] md:min-w-[500px]">
-                {data?.link?.label}
-              </button>
-            </Link>
-          </div>
-        )}
       </div>
     </div>
   )

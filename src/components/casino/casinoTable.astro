@@ -20,11 +20,14 @@ const badgesOptions = ([
 ])
 
 
-const { casinos, translationStore } = Astro.props
+const { casinos, link=null, translationStore } = Astro.props
 
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 
 ---
+<script define:vars={{ link }}>
+  console.log("casino table", link);
+</script>
 
 <div class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden relative z-[8]">
 	<table class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse">
@@ -216,6 +219,16 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 		}
     </table>
 </div>
+
+{link && (
+    <div class="flex justify-center">
+    <Link href={link?.url}>
+        <button class="btn self-center mt-5 btn-secondary min-w-[300px] md:min-w-[500px]">
+        {link?.label}
+        </button>
+    </Link>
+    </div>
+)}
 
 <style lang="postcss">
     table {
