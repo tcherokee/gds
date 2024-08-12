@@ -25,9 +25,6 @@ const { casinos, link=null, translationStore } = Astro.props
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 
 ---
-<script define:vars={{ link }}>
-  console.log("casino table", link);
-</script>
 
 <div class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden relative z-[8]">
 	<table class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse">
