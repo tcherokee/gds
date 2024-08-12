@@ -1,10 +1,19 @@
 ---
 import type { Game } from "../../../interfaces/games.ts";
 import GameCard from "../games/gameCard.astro";
+import Link from "../helpers/link.astro";
 
-const { data, translationStore, gameListTitle = null } = Astro.props;
+const {
+  data,
+  translationStore,
+  gameListTitle = null,
+  gameListLink = null,
+} = Astro.props;
 ---
 
+<script define:vars={{ data }}>
+  console.log("game list", data);
+</script>
 <div>
   <div class="relative xl:container px-2 z-20">
     {
@@ -24,6 +33,18 @@ const { data, translationStore, gameListTitle = null } = Astro.props;
       }
     </div>
   </div>
+
+  {
+    gameListLink && (
+      <div class="flex justify-center">
+        <Link href={gameListLink?.url}>
+          <button class="btn self-center mt-5 btn-secondary min-w-[300px] md:min-w-[500px]">
+            {gameListLink?.label}
+          </button>
+        </Link>
+      </div>
+    )
+  }
 </div>
 
 <style>
