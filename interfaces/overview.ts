@@ -5,5 +5,4 @@ export type Overview = {
   title: string;
   url: string;
   card_img: ImageInfo;
-  card_description: string;
 };
