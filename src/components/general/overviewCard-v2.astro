@@ -1,0 +1,30 @@
+---
+import Icon from "astro-icon";
+import Link from "../helpers/link.astro";
+import Image from "../helpers/images.astro";
+
+const { overview } = Astro.props;
+---
+
+<Link href={`${overview?.url}/`}>
+  <div class="overview-box">
+    <Image
+      src={overview?.card_img?.data?.attributes?.url}
+      imageWidth={40}
+      imageHeight={40}
+      classes="img-fluid rounded-[6px]"
+      alt={overview?.card_description}
+    />
+    <div
+      class="relative flex justify-center h-full items-center rounded-lg p-5 text-white z-40 text-[10px]"
+    >
+      {overview?.card_description}
+    </div>
+  </div>
+</Link>
+
+<style>
+  .overview-box {
+    @apply flex items-center py-5 px-5 font-lato border border-white;
+  }
+</style>
