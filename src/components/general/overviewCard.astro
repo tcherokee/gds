@@ -21,18 +21,18 @@ const { overview, overviewType } = Astro.props;
           {overview?.title}
           <Icon name="chevron-right" height="25px" />
         </div>
-        <div class="absolute pointer-events-none h-full left-0 top-0 w-full bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]"></div>
+        <div class="absolute pointer-events-none h-full left-0 top-0 w-full bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]" />
       </div>
     ) : (
       <div class="overview-box-2">
         <Image
           src={overview?.card_img?.data?.attributes?.url}
-          imageWidth={40}
-          imageHeight={40}
+          imageWidth={80}
+          imageHeight={80}
           classes="img-fluid rounded-[6px]"
           alt={overview?.title}
         />
-        <div class="relative flex justify-center h-full items-center rounded-lg p-5 text-white z-40 text-[10px]">
+        <div class="relative text-center md:text-left flex justify-center h-full items-center rounded-lg text-white z-40 text-[12px]">
           {overview?.title}
         </div>
       </div>
@@ -48,6 +48,6 @@ const { overview, overviewType } = Astro.props;
   }
 
   .overview-box-2 {
-    @apply flex items-center py-5 px-5 font-lato border border-white;
+    @apply flex flex-col gap-5 md:flex-row items-center py-5 md:py-2.5 px-2.5 font-lato border border-white rounded-lg;
   }
 </style>
