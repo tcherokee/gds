@@ -78,7 +78,7 @@ export const homepageQs = () => ({
           },
         },
         overviews: {
-          fields: ["title", "url", "card_description"],
+          fields: ["title", "url"],
           populate: {
             card_img: {
               fields: ["url"],
