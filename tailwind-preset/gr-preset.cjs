@@ -32,6 +32,7 @@ const COLORS = {
   purple: {
     100: "#D6BDFF",
     300: "#A569F2",
+    400: "#36166a",
     500: "#680497",
     700: "#36166A",
     800: "#680497",
@@ -221,7 +222,7 @@ module.exports = {
       "silver-tag-b-gradient": COLORS.grey[300],
       "bronze-tag-t-gradient": COLORS.accent[800],
       "bronze-tag-b-gradient": COLORS.accent[900],
-      "casino-table-header-bkg": COLORS.purple[900],
+      "casino-table-header-bkg": COLORS.purple[400],
       "casino-table-header-text": COLORS.white,
       "casino-table-text": COLORS.blue[900],
       "casino-table-row-bkg": COLORS.white,

@@ -5,7 +5,7 @@ import BlogCard from "../blogs/blogCard.astro";
 
 const {
   data,
-  blogLink = "",
+  blogListLink = "",
   blogText = "",
   singleBlogPage = false,
   translationStore,
@@ -40,6 +40,9 @@ const truncateAndCleanContent = (blogData: Blog[]): Blog[] => {
 const truncatedData = truncateAndCleanContent(data as Blog[]);
 ---
 
+<script define:vars={{ data }}>
+  console.log("Blog block", data);
+</script>
 {
   isFeatured && (
     <div>
@@ -51,13 +54,13 @@ const truncatedData = truncateAndCleanContent(data as Blog[]);
         >
           <BlogCard data={truncatedData} {translationStore} {isFeatured} />
         </div>
-        {blogLink.length > 0 && (
-          <div class="grid gap-2 justify-center mt-3">
-            <Link
-              href={`${blogLink}/`}
-              class="btn btn-secondary blog-btn"
-              text={blogText}
-            />
+        {blogListLink && (
+          <div class="flex justify-center">
+            <Link href={blogListLink?.url}>
+              <button class="btn self-center mt-5 btn-secondary min-w-[300px] md:min-w-[500px]">
+                {blogListLink?.label}
+              </button>
+            </Link>
           </div>
         )}
       </div>
@@ -76,13 +79,14 @@ const truncatedData = truncateAndCleanContent(data as Blog[]);
         >
           <BlogCard data={truncatedData} {translationStore} />
         </div>
-        {blogLink.length > 0 && (
-          <div class="grid gap-2 justify-center mt-3">
-            <Link
-              href={`${blogLink}/`}
-              class="btn btn-secondary blog-btn"
-              text={blogText}
-            />
+
+        {blogListLink && (
+          <div class="flex justify-center">
+            <Link href={blogListLink?.url}>
+              <button class="btn self-center mt-5 btn-secondary min-w-[300px] md:min-w-[500px]">
+                {blogListLink?.label}
+              </button>
+            </Link>
           </div>
         )}
       </div>
