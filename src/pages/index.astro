@@ -152,6 +152,9 @@ let seo = {
 };
 ---
 
+<script define:vars={{ homepage }}>
+  console.log("Home page", homepage);
+</script>
 <MainLayout seoData={seo} isHomePage={true}>
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 
@@ -188,6 +191,7 @@ let seo = {
               {translationStore}
               gameListTitle={gamesBlock ? gamesBlock?.gameListTitle : null}
               gameListLink={gamesBlock ? gamesBlock?.link : null}
+              blogListLink={blogBlock ? blogBlock?.link : null}
             />
           )
       )
@@ -213,6 +217,7 @@ let seo = {
               {translationStore}
               gameListTitle={gamesBlock ? gamesBlock?.gameListTitle : null}
               gameListLink={gamesBlock ? gamesBlock?.link : null}
+              blogListLink={blogBlock ? blogBlock?.link : null}
             />
           )
       )
