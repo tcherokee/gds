@@ -18,12 +18,12 @@ const { footerContent, footerImages, footerNavigation, footerNavigations } =
         <div class="flex flex-wrap mb-6">
           {footerNavigations.map((nav: MenuItem) => (
             <div class="w-1/2 md:w-1/4">
-              <Link
+              <a
                 href={`${nav.attributes.url}/`}
                 class="underline mb-3 uppercase font-semibold block text-sm text-footer-quicklink-text"
               >
                 {nav.attributes.title}
-              </Link>
+              </a>
               <ul>
                 {nav.attributes.children.data.length > 0 && (
                   <>
