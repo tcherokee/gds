@@ -29,12 +29,12 @@ const { footerContent, footerImages, footerNavigation, footerNavigations } =
                   <>
                     {nav.attributes.children.data.map((child) => (
                       <li>
-                        <Link
+                        <a
                           href={`${child.attributes.url}/`}
                           class="text-sm text-footer-quicklink-text"
                         >
                           {child.attributes.title}
-                        </Link>
+                        </a>
                       </li>
                     ))}
                   </>
@@ -101,8 +101,10 @@ const { footerContent, footerImages, footerNavigation, footerNavigations } =
       <p
         class="flex m-0 justify-center text-center md:text-left text-sm text-gray-500"
       >
-        &copy; 2011-<span class="currYear mr-1"></span>
-        {import.meta.env.FULL_URL} | Tutti i Diritti Riservati
+        <span class="shrink-0"
+          >&copy; 2011-<span class="currYear mr-1"></span></span
+        >
+        <span>{import.meta.env.FULL_URL} | Tutti i Diritti Riservati</span>
       </p>
     </div>
   </div>
