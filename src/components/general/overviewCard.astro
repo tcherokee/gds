@@ -8,7 +8,20 @@ const { overview, overviewType } = Astro.props;
 
 <Link href={`${overview?.url}/`} class="btn btn-secondary blog-btn rounded-lg">
   {
-    overviewType === "Version 1" ? (
+    overviewType === "Version 2" ? (
+      <div class="overview-box-2">
+        <Image
+          src={overview?.card_img?.data?.attributes?.url}
+          imageWidth={80}
+          imageHeight={80}
+          classes="img-fluid rounded-[6px]"
+          alt={overview?.title}
+        />
+        <div class="relative text-center md:text-left flex justify-center h-full items-center rounded-lg text-white z-40 text-[12px]">
+          {overview?.title}
+        </div>
+      </div>
+    ) : (
       <div
         class="overview-box"
         style={
@@ -22,19 +35,6 @@ const { overview, overviewType } = Astro.props;
           <Icon name="chevron-right" height="25px" />
         </div>
         <div class="absolute rounded-lg h-full left-0 top-0 w-full bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]" />
-      </div>
-    ) : (
-      <div class="overview-box-2">
-        <Image
-          src={overview?.card_img?.data?.attributes?.url}
-          imageWidth={80}
-          imageHeight={80}
-          classes="img-fluid rounded-[6px]"
-          alt={overview?.title}
-        />
-        <div class="relative text-center md:text-left flex justify-center h-full items-center rounded-lg text-white z-40 text-[12px]">
-          {overview?.title}
-        </div>
       </div>
     )
   }
