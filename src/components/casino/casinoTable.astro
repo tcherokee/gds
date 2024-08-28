@@ -43,7 +43,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                     { 
                         casinos && casinos.map((casino: CasinoData | AuthorCasinoAttributes, i: number) => (
                             <tr class="flex flex-wrap md:table-row border-[12px] border-casino-table-tr-border bg-white">
-                                <td class="casino-logo w-1/2 md:w-auto relative overflow-hidden">
+                                <td class="casino-logo w-1/2 md:w-[210px] md:max-w-[210px] relative overflow-hidden">
                                     {
                                         ((casino as CasinoData)?.attributes?.Badges ?? (casino as AuthorCasinoAttributes)?.Badges) 
                                         ? <span class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.exclusive}</span>
@@ -51,7 +51,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                         ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.newCasino}</span>
                                         :<></>
                                     }
-                                    <div class:list={["h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative", i === 0 ? 'casino-logo__first' : i === 1 ? 'casino-logo__second' : i === 2 ? 'casino-logo__third' : '']}>
+                                    <div class:list={["h-full flex items-center px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative max-w-[368px]", i === 0 ? 'casino-logo__first' : i === 1 ? 'casino-logo__second' : i === 2 ? 'casino-logo__third' : '']}>
                                         
                                     {i <= 2 && <span class:list={["casino-logo__tag w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b"]}>#{i + 1}</span>}
                                         
@@ -61,7 +61,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                             type="external"
                                             rel="sponsored"
                                         >
-                                            <Images src={(casino as CasinoData)?.attributes?.images?.data?.attributes.url ?? (casino as AuthorCasinoAttributes)?.images?.url} classes="w-full rounded" alt={(casino as CasinoData)?.attributes?.title ?? (casino as AuthorCasinoAttributes)?.title} imageWidth={230} imageHeight={100} />
+                                            <Images src={(casino as CasinoData)?.attributes?.images?.data?.attributes.url ?? (casino as AuthorCasinoAttributes)?.images?.url} classes="w-full rounded" alt={(casino as CasinoData)?.attributes?.title ?? (casino as AuthorCasinoAttributes)?.title} imageWidth={206} imageHeight={88} />
                                         </Link>
                                     </div>
                                 </td>
