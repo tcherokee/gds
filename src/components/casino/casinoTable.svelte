@@ -175,7 +175,7 @@
                     class="flex flex-wrap md:table-row border-[12px] border-casino-table-tr-border bg-white"
                   >
                     <td
-                      class="casino-logo w-1/2 md:w-auto relative overflow-hidden"
+                      class="casino-logo w-1/2 md:w-auto relative overflow-hidden md:w-[210px] md:max-w-[210px]"
                     >
                       {#if casino?.attributes?.Badges}
                         <span
@@ -189,7 +189,7 @@
                         >
                       {/if}
                       <div
-                        class="h-full px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative {i ===
+                        class="h-full flex items-center px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative max-w-[368px] {i ===
                         0
                           ? 'casino-logo__first'
                           : i === 1
@@ -218,8 +218,8 @@
                               ?.attributes.url}
                             imageClass="w-full rounded"
                             imageAlt={casino?.attributes?.title}
-                            imageWidth={230}
-                            imageHeight={100}
+                            imageWidth={206}
+                            imageHeight={88}
                           />
                         </Link>
                       </div>
