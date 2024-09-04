@@ -23,6 +23,7 @@ const customCasinos = isCustom && createCustomCasinos(data?.casinosList);
       casinos={isCustom ? customCasinos : data.casinos.data}
       link={data?.link}
       {translationStore}
+      showCasinoTableHeader={data?.showCasinoTableHeader}
     />
   ) : (
     <div>

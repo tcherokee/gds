@@ -46,6 +46,7 @@
   const {
     showLoadMore,
     showCasinoFilters,
+    showCasinoTableHeader = true,
     numberPerLoadMore,
     casinosList,
     casinoSort,
@@ -148,6 +149,7 @@
           <table
             class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse"
           >
+          {#if showCasinoTableHeader}
             <thead
               class="hidden border-l-[12px] border-r-[12px] border-l-casino-table-header-bkg border-r-casino-table-header-bkg md:table-row-group"
             >
@@ -167,6 +169,7 @@
                 >
               </tr>
             </thead>
+            {/if}
             <tbody class="text-casino-table-text">
               <!-- If the casino store is emty, use customCasinos otherwise use casino store -->
               {#if ($casinos.data?.data ?? customCasinos).length > 0}
