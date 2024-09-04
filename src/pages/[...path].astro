@@ -314,6 +314,9 @@ const seo = {
                       }
                       translations={translationStore ?? {}}
                       {slotProviders}
+                      showCasinoTableHeader={
+                        page.attributes.blocks[i]?.showCasinoTableHeader
+                      }
                       client:load
                     />
                   </div>
@@ -396,6 +399,9 @@ const seo = {
                         }
                         translations={translationStore ?? {}}
                         {slotProviders}
+                        showCasinoTableHeader={
+                          page.attributes.blocks[i]?.showCasinoTableHeader
+                        }
                         client:load
                       />
                     );

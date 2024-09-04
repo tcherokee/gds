@@ -42,16 +42,19 @@
   export let initialCasinos: CasinoListBlock;
   export let translations: TranslationData;
   export let slotProviders: TProviderAttributesOnly[] = [];
+  export let showCasinoTableHeader:boolean;
 
   const {
     showLoadMore,
     showCasinoFilters,
-    showCasinoTableHeader = true,
     numberPerLoadMore,
     casinosList,
     casinoSort,
     casinoFilters,
   } = initialCasinos;
+
+  if(showCasinoTableHeader === null) showCasinoTableHeader = true; //ensures that when this flag is null the table header shows
+  
 
   let currentCasinosLength = numberPerLoadMore;
 
