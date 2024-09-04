@@ -5,6 +5,7 @@ const rootURL = () => {
       return `
 Allow: /
 Disallow: /go/*
+
         `
     } else {
         return `Disallow: /`
@@ -37,7 +38,7 @@ Disallow: /it/giri-gratis/p*
 Disallow: /it/casino/recensione/slot-machines/
 Disallow: /it/software-slot-machine/slot-machines/
             `;
-        }
+m~÷        }
 }
 
 const robotsTxt = `
