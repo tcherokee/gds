@@ -368,6 +368,7 @@ export type CasinoListBlock = BlockBase & {
   showLoadMore: boolean;
   numberPerLoadMore: number;
   casinosList: CasinoListData[];
+  showTableHeader: boolean;
 };
 
 export type TGameListBlock = BlockBase & CustomGameList;

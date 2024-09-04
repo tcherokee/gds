@@ -27,9 +27,6 @@ export const customPageQs = () => {
           },
         },
       },
-      liveCasinoStats: {
-        fields: ["showLiveStats", "game", "casinoId", "tableId"],
-      },
       blocks: {
         populate: {
           content: true,

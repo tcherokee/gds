@@ -20,16 +20,19 @@ const badgesOptions = ([
 ])
 
 
-const { casinos, link=null, translationStore } = Astro.props
+const { casinos, showCasinoTableHeader=true, link=null, translationStore } = Astro.props
 
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 
 ---
-
+<!-- <script define:vars={{ showCasinoTableHeader }}>
+  console.log("Casino showCasinoTableHeader II", showCasinoTableHeader);
+</script> -->
 <div class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden relative z-[8] mb-5">
 	<table class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse">
 		{
             <>
+            {showCasinoTableHeader &&
                 <thead class="hidden border-l-[12px] border-r-[12px] border-l-casino-table-header-bkg border-r-casino-table-header-bkg md:table-row-group">
                     <tr class="border-b-[12px] border-b-grey-100">
                         <th scope="col" class="px-3">{translationStore?.casinoTableHeadingCasinos}</th>
@@ -39,6 +42,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                         <th scope="col" class="px-3">{translationStore?.casinoTableHeadinRegister}</th>
                     </tr>
                 </thead>
+            }
                 <tbody class="text-casino-table-text">
                     { 
                         casinos && casinos.map((casino: CasinoData | AuthorCasinoAttributes, i: number) => (
