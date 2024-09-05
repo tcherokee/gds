@@ -157,11 +157,21 @@ const extractH2Text = (element: any) => {
 const quickLinks = block
   ? extractH2TextBlock(block)
   : extractH2Text(data.attributes);
+
+// Quicklinks order
+let reorderedQuickLinks: quicklinksObj[] = [];
+const quickLinksMedian = Math.ceil(quickLinks.length / 2);
+for (let i = 0; i < quickLinksMedian; i++) {
+  reorderedQuickLinks.push(quickLinks[i] as quicklinksObj);
+  if (quickLinksMedian + i <= quickLinks.length) {
+    reorderedQuickLinks.push(quickLinks[quickLinksMedian + i] as quicklinksObj);
+  }
+}
 ---
 
 <script>
   const quickLinkNodes = document.querySelectorAll(
-    ".content-block h2, h2.faq-title"
+    ".content-block h2, .howto-container h2, h2.faq-title"
   );
 
   const processQuickLinkNodes = (nodes: any) => {
@@ -179,6 +189,7 @@ const quickLinks = block
   };
   processQuickLinkNodes(quickLinkNodes);
 </script>
+
 <Collapse
   id="quickLinks"
   label={translationStore.quickLinks}
@@ -189,7 +200,7 @@ const quickLinks = block
   <div slot="content" class="flex">
     <ul class="grid capitalize m-0 p-0 pr-4 md:grid-cols-2 w-full gap-2">
       {
-        quickLinks.map((link) => (
+        reorderedQuickLinks.map((link) => (
           <li class="py-0.5 px-0 m-0">
             <Link class="underline underline-offset-4" href={`#${link.id}/`}>
               {link.text}
