@@ -1,20 +1,19 @@
 import type { APIRoute } from "astro";
 
 const rootURL = () => {
-    if (import.meta.env.ROOT_DOMAIN.includes("www")) {
-      return `
+  if (import.meta.env.ROOT_DOMAIN.includes("www")) {
+    return `
 Allow: /
 Disallow: /go/*
 
-        `
-    } else {
-        return `Disallow: /`
-    }
-
-}
+        `;
+  } else {
+    return `Disallow: /`;
+  }
+};
 const customURLS = () => {
-        if (import.meta.env.SITE_ID === 'gds') {
-            return `
+  if (import.meta.env.SITE_ID === "gds") {
+    return `
 Disallow: /it-IT/
 Disallow: /es-MX/
 Disallow: /es-CO/
@@ -38,8 +37,8 @@ Disallow: /it/giri-gratis/p*
 Disallow: /it/casino/recensione/slot-machines/
 Disallow: /it/software-slot-machine/slot-machines/
             `;
-m~÷        }
-}
+  }
+};
 
 const robotsTxt = `
 User-agent: *
