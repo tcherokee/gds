@@ -163,7 +163,7 @@ let reorderedQuickLinks: quicklinksObj[] = [];
 const quickLinksMedian = Math.ceil(quickLinks.length / 2);
 for (let i = 0; i < quickLinksMedian; i++) {
   reorderedQuickLinks.push(quickLinks[i] as quicklinksObj);
-  if (quickLinksMedian + i <= quickLinks.length) {
+  if (quickLinksMedian + i < quickLinks.length) {
     reorderedQuickLinks.push(quickLinks[quickLinksMedian + i] as quicklinksObj);
   }
 }
