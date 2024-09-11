@@ -1,6 +1,9 @@
 # Build the strapi image
 steps:
   - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'docker pull gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}:latest || exit 0']
+  - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'build',
@@ -44,6 +47,8 @@ steps:
         'PUBLIC_SWETRIX_ID=${_PUBLIC_SWETRIX_ID}',
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
+        '--cache-from',
+        'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}:latest',
         '.'
       ]
 
