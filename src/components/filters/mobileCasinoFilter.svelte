@@ -385,11 +385,11 @@
                             <div class="space-y-6 w-full">
                                 {#if $alphabeticProviders}
                                     {#each $alphabeticProviders as provider}
-                                        <h4
+                                        <span
                                             class="flex gap-2 items-center after:bg-grey-300 after:h-px after:content[''] after:w-full"
                                         >
                                             {provider[0]}
-                                        </h4>
+                                        </span>
                                         <div class="grid grid-cols-2 gap-x-2 gap-y-4">
                                             {#each provider[1] as item}
                                                 <div class="flex shrink basis-1/2">
