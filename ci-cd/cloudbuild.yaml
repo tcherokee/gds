@@ -2,7 +2,7 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
-    args: ['-c', 'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}/$COMMIT_SHA:latest || exit 0']
+    args: ['-c', 'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME} || exit 0']
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
@@ -48,7 +48,7 @@ steps:
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '--cache-from',
-        'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}:latest',
+        'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '.'
       ]
 
