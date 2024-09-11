@@ -51,7 +51,11 @@ export const getStaticPaths = (async () => {
 
     prerenderPath.push({
       params: { slug },
-      props: { page: { data: filterBlogs }, isPaginated: true },
+      props: {
+        page: { data: filterBlogs, meta: blogs.meta },
+        isPaginated: true,
+        blogs,
+      },
     });
   }
 
@@ -81,11 +85,11 @@ const { slug } = Astro.params; //get the slug from the page url
 const blogCardquery = qs.stringify(blogcardQs(3, 1), {
   encodeValuesOnly: true,
 });
-const blogCards = await fetchApi<BlogList>({
-  endpoint: "blogs",
-  wrappedByKey: "data",
-  query: `?${blogCardquery}`,
-});
+// const blogCards = await fetchApi<BlogList>({
+//   endpoint: "blogs",
+//   wrappedByKey: "data",
+//   query: `?${blogCardquery}`,
+// });
 
 const metaQuery = qs.stringify(blogmetaQs(), { encodeValuesOnly: true });
 const layoutData = await fetchApi<any>({
@@ -136,6 +140,7 @@ const blogBriefAlternative = page?.attributes?.content1
             path={
               urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]
             }
+            {translationStore}
           />
         </div>
       </div>

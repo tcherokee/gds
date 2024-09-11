@@ -38,6 +38,10 @@ let seo = {
   url: canonical,
 };
 ---
+
+<script define:vars={{ blogCards }}>
+  console.warn(blogCards);
+</script>
 <MainLayout seoData={seo}>
   <div class="bg-blog-list-bkg">
     <div class="xl:container px-2 pb-5 pt-4">
