@@ -45,7 +45,7 @@ steps:
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '--cache-from',
-        'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}:latest'
+        'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}:latest',
         '.'
       ]
 
