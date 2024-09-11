@@ -1,6 +1,9 @@
 # Build the strapi image
 steps:
   - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}:latest || exit 0']
+  - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'build',
