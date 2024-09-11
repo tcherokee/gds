@@ -46,6 +46,7 @@ steps:
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '.'
       ]
+    timeout: 7200
 
   # push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
