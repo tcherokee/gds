@@ -44,9 +44,10 @@ steps:
         'PUBLIC_SWETRIX_ID=${_PUBLIC_SWETRIX_ID}',
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
+        '--cache-from',
+        'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}:latest'
         '.'
       ]
-    timeout: '7200s'
 
   # push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
