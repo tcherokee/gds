@@ -4,8 +4,13 @@ import type { FooterImage } from "../../../interfaces/layout.ts";
 import type { MenuItem } from "../../../interfaces/menu.ts";
 import Image from "../helpers/images.astro";
 
-const { footerContent, footerImages, footerNavigation, footerNavigations } =
-  Astro.props;
+const {
+  footerContent,
+  footerImages,
+  footerNavigation,
+  footerNavigations,
+  translationStore,
+} = Astro.props;
 ---
 
 <footer
@@ -104,7 +109,7 @@ const { footerContent, footerImages, footerNavigation, footerNavigations } =
         <span class="shrink-0"
           >&copy; 2011-<span class="currYear mr-1"></span></span
         >
-        <span>{import.meta.env.FULL_URL} | Tutti i Diritti Riservati</span>
+        <span>{import.meta.env.FULL_URL} | {translationStore.copyright}</span>
       </p>
     </div>
   </div>

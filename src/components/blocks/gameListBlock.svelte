@@ -63,6 +63,7 @@
     const query = qs.stringify(gamesQs($gameVariables), {
       encodeValuesOnly: true,
     });
+    console.log('games-query', query);
     gamesQsStore.set(`?${query}`);
   };
   let genericGame: TUserGame[] = [];

@@ -111,7 +111,6 @@ const HomeBreadcrumSchema = {
 };
 ---
 
-<!doctype html>
 <html lang="it">
   <head>
     <meta charset="UTF-8" />
@@ -167,6 +166,7 @@ const HomeBreadcrumSchema = {
       footerImages={layout?.attributes?.footerImages}
       footerNavigation={processedMenus?.footernavigation}
       footerNavigations={processedMenus.footernavigations}
+      {translationStore}
     />
     <CookiesConsent
       headerText={layout?.attributes?.cookiesHeaderText + ""}
@@ -193,22 +193,23 @@ const HomeBreadcrumSchema = {
       font-size: 10px: !important;
     } */
     </style>
-  </body><script is:inline src="https://swetrix.org/swetrix.js" defer></script>
-  <script define:vars={{ swetrixId: import.meta.env.PUBLIC_SWETRIX_ID }}>
-    document.addEventListener("DOMContentLoaded", function () {
-      swetrix.init(swetrixId, {
-        devMode: false,
-        apiURL: "https://api.stats.kenshomedia.com/log",
+    <script is:inline src="https://swetrix.org/swetrix.js" defer></script>
+    <script define:vars={{ swetrixId: import.meta.env.PUBLIC_SWETRIX_ID }}>
+      document.addEventListener("DOMContentLoaded", function () {
+        swetrix.init(swetrixId, {
+          devMode: false,
+          apiURL: "https://api.stats.kenshomedia.com/log",
+        });
+        swetrix.trackViews();
       });
-      swetrix.trackViews();
-    });
-  </script>
+    </script>
 
-  <noscript is:inline>
-    <img
-      src="https://api.stats.kenshomedia.com/log/noscript?pid=6wNdNPt3U82T"
-      alt="analytics-pixel"
-      referrerpolicy="no-referrer-when-downgrade"
-    />
-  </noscript>
+    <noscript is:inline>
+      <img
+        src="https://api.stats.kenshomedia.com/log/noscript?pid=6wNdNPt3U82T"
+        alt="analytics-pixel"
+        referrerpolicy="no-referrer-when-downgrade"
+      />
+    </noscript>
+  </body>
 </html>
