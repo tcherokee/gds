@@ -1,5 +1,9 @@
 <script lang="ts">
 
+	import type { TranslationData } from "../../../interfaces/common/types.ts";
+
+  	export let translationStore: TranslationData = {};
+
 	type SearchToggleClass = 'open' | ''
 
 	let searchToggleClass: SearchToggleClass = ''
@@ -46,7 +50,7 @@
 		type="text"
 		class="no-animation border-white"
 		id="searchInput"
-		placeholder={inputOpen ? 'Cerca un gioco' : ''}
+		placeholder={inputOpen ? `${translationStore.searchPlaceholder}` : ''}
 		aria-describedby="searchInput"
 		bind:this={searchInput}
 		bind:value={searchInputValue}

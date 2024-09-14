@@ -220,7 +220,7 @@
           <UserSignedOut height="32px" width="32px" class="fill-sign-in" />
         {/if}
       </Link>
-      <Search />
+      <Search {translationStore}/>
     </div>
 
 
