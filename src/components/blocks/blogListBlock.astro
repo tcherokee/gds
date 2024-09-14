@@ -40,9 +40,6 @@ const truncateAndCleanContent = (blogData: Blog[]): Blog[] => {
 const truncatedData = truncateAndCleanContent(data as Blog[]);
 ---
 
-<script define:vars={{ data }}>
-  console.log("Blog block", data);
-</script>
 {
   isFeatured && (
     <div>

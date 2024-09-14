@@ -1,5 +1,5 @@
 ---
-export const prerender = false;
+export const prerender = true;
 import type { GetStaticPaths } from "astro";
 import qs from "qs";
 
@@ -22,6 +22,7 @@ import AuthorCard from "../../components/general/authorCard.astro";
 import Pagination from "../../components/helpers/pagination.astro";
 import Link from "../../components/helpers/link.astro";
 import { getTranslations } from "../../../utils/api-requests";
+import ContentBlock from "../../components/blocks/contentBlock.astro";
 
 const translationStore = await getTranslations();
 
@@ -206,7 +207,8 @@ const blogBriefAlternative = page?.attributes?.content1
                 />
               </div>
               <div class="blog-content">
-                <Fragment set:html={page?.attributes?.content1} />
+                <ContentBlock pageContent={page?.attributes?.content1} />
+                {/* <Fragment set:html={page?.attributes?.content1} /> */}
               </div>
               {page?.attributes?.author?.data && (
                 <div class="mt-10 mb-10 md:mb-0">
@@ -258,25 +260,6 @@ const blogBriefAlternative = page?.attributes?.content1
     :global(h5),
     :global(h6) {
       @apply mb-4 mt-10;
-    }
-
-    :global(ul),
-    :global(ol) {
-      @apply ml-[35px];
-      list-style-image: none;
-    }
-    :global(li) {
-      @apply relative list-none;
-      &:not(:last-child) {
-        @apply mb-4;
-      }
-    }
-    :global(li::before) {
-      @apply absolute -left-5 w-[14px] h-[14px] top-[50%];
-      content: "";
-      background: url("../../assets/circle-chevron-right.svg") no-repeat center
-        center/cover;
-      transform: translate(0, -50%);
     }
   }
 
