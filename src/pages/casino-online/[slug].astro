@@ -5,6 +5,7 @@ import qs from "qs";
 // Types
 import type { GetStaticPaths } from "astro";
 import type { Casinoprovider } from "../../../interfaces/casino-provider";
+import type { Faqs as FaqsType } from "../../../interfaces/common/types";
 
 // Queries
 import { casinoproviderQs } from "../../../qs/casino-provider";
@@ -162,7 +163,7 @@ Astro.response.headers.set(
               <div class="content">
                 <h2 class="mb-4">{translationStore?.faq}</h2>
 
-                {page?.attributes?.faqs.map((faq) => (
+                {page?.attributes?.faqs.map((faq: FaqsType) => (
                   <Faqs data={faq} />
                 ))}
               </div>

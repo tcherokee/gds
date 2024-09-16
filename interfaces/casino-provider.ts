@@ -1,4 +1,4 @@
-import type { Seo, Author, ImageInfo } from "./common/types";
+import type { Seo, Author, ImageInfo, Faqs } from "./common/types";
 
 export type Casinoprovider = {
   id: number;
@@ -32,11 +32,7 @@ type Attributes = {
   author: {
     data: Author;
   };
-  faqs: {
-    answer: string;
-    id: number;
-    question: string;
-  }[];
+  faqs: Faqs[];
   casinoComparison: {
     data: {
       slug: string;
