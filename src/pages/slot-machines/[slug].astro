@@ -6,8 +6,12 @@ import qs from "qs";
 import type { GetStaticPaths } from "astro";
 import type { Gamepage } from "../../../interfaces/game-page";
 import type {
+  HowToGroup,
+  HowTo as HowToType,
   BreadcrumbData,
   TranslationData,
+  Faqs as FaqsType,
+  Block as BlockType,
 } from "../../../interfaces/common/types";
 
 // Helpers
@@ -119,7 +123,7 @@ const breadSchema = {
 pageSchema.push(breadSchema);
 
 // FAQ Schema
-const allFAQs = page?.attributes?.faqs;
+const allFAQs = page?.attributes?.faqs as FaqsType[];
 if (allFAQs.length > 0) {
   const faqSchema = {
     "@context": "https://schema.org",
@@ -138,7 +142,7 @@ if (allFAQs.length > 0) {
   pageSchema.push(faqSchema);
 }
 
-const howTo = page?.attributes?.howTo;
+const howTo = page?.attributes?.howTo as HowToGroup;
 if (howTo) {
   const howToSchema = {
     "@context": "https://schema.org",
@@ -152,7 +156,7 @@ if (howTo) {
         name: "smartphone, PC, tablet, metodo di pagamento",
       },
     ],
-    step: howTo?.howToGroup?.map(({ heading, copy, image }, i) => {
+    step: howTo?.howToGroup?.map(({ heading, copy, image }, i: number) => {
       return {
         "@type": "HowToStep",
         url: `${page?.attributes?.slug}#step0${i + 1}`,
@@ -348,7 +352,7 @@ Astro.response.headers.set(
         {
           //Image carousel block
           __blocks.map(
-            (block, i) =>
+            (block: BlockType, i: number) =>
               block.__component === "shared.image-carousel" && (
                 <ImageCarousel
                   data={page?.attributes.blocks[i]}
@@ -365,7 +369,7 @@ Astro.response.headers.set(
             <div class="faq-content">
               <h2 class="mb-4">{translationStore?.faq}</h2>
               <div>
-                {page?.attributes?.faqs.map((faq: any) => (
+                {page?.attributes?.faqs.map((faq: FaqsType) => (
                   <FaqListBlock data={faq} {translationStore} />
                 ))}
               </div>

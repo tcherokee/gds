@@ -3,6 +3,13 @@ import type { GetStaticPaths } from "astro";
 import { Link } from "astro-link";
 import qs from "qs";
 import type { Casinopage } from "../../../../interfaces/casinopage";
+import type {
+  HowToGroup,
+  HowTo as HowToType,
+  CasinoFeatures,
+  Faqs as FaqsType,
+  ProsConsBlock
+} from "../../../../interfaces/common/types";
 import type { Gamepage } from "../../../../interfaces/game-page";
 import fetchApi from "../../../../lib/strapi";
 import { casinopageQs } from "../../../../qs/casinopage";
@@ -165,6 +172,8 @@ const breadSchema = {
 };
 pageSchema.push(breadSchema);
 
+const prosCons = page?.attributes?.proscons as ProsConsBlock
+
 // Review Schema
 const reviewSchema = {
   "@context": "https://schema.org/",
@@ -202,10 +211,11 @@ const reviewSchema = {
       page?.attributes?.author?.data?.attributes?.firstName
     }.${page?.attributes?.author?.data?.attributes?.lastName}`,
   },
-  ...(page?.attributes?.proscons && {
+  
+  ...(prosCons && {
     positiveNotes: {
       "@type": "ItemList",
-      itemListElement: page?.attributes?.proscons?.pros.map((pro, i) => {
+      itemListElement: prosCons?.pros.map((pro, i: number) => {
         return {
           "@type": "ListItem",
           position: i + 1,
@@ -215,7 +225,7 @@ const reviewSchema = {
     },
     negativeNotes: {
       "@type": "ItemList",
-      itemListElement: page?.attributes?.proscons?.cons.map((con, i) => {
+      itemListElement: prosCons?.cons.map((con, i: number) => {
         return {
           "@type": "ListItem",
           position: i + 1,
@@ -249,7 +259,7 @@ const reviewSchema = {
 pageSchema.push(reviewSchema);
 
 // FAQ Schema
-const allFAQs = page?.attributes?.faqs;
+const allFAQs = page?.attributes?.faqs as FaqsType[];
 if (allFAQs.length > 0) {
   const faqSchema = {
     "@context": "https://schema.org",
@@ -268,7 +278,8 @@ if (allFAQs.length > 0) {
   pageSchema.push(faqSchema);
 }
 
-const howTo = page?.attributes?.howTo;
+const howTo = page?.attributes?.howTo as HowToGroup;
+
 if (howTo) {
   const howToSchema = {
     "@context": "https://schema.org",
@@ -282,7 +293,7 @@ if (howTo) {
         name: "smartphone, PC, tablet, metodo di pagamento",
       },
     ],
-    step: howTo?.howToGroup?.map(({ heading, copy, image }, i) => {
+    step: howTo?.howToGroup?.map(({ heading, copy, image }, i: number) => {
       return {
         "@type": "HowToStep",
         url: `${page?.attributes?.slug}#step0${i + 1}`,
@@ -307,14 +318,13 @@ if (howTo) {
 Astro.response.headers.set(
   "Cache-Control",
   "public, max-age=0, must-revalidate"
-); 
+);
 
 // CDN Cache Control
 Astro.response.headers.set(
   "Cache-Control",
   "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
 );
-
 ---
 
 <MainLayout seoData={seo} schemaData={pageSchema}>
@@ -556,22 +566,23 @@ Astro.response.headers.set(
                     <tbody>
                       <!-- {casinoFeatures &&  -->
                       {
-                        casinoFeatures.map((cf, index) =>
-                          index === casinoFeatures.length - 1 ? (
-                            <tr>
-                              <td class="p-2">
-                                <Icon name="check-circle" height="25px" />
-                              </td>
-                              <td>{cf.feature}</td>
-                            </tr>
-                          ) : (
-                            <tr class="border-b border-black">
-                              <td class="p-2">
-                                <Icon name="check-circle" height="25px" />
-                              </td>
-                              <td>{cf.feature}</td>
-                            </tr>
-                          )
+                        casinoFeatures.map(
+                          (cf: CasinoFeatures, index: number) =>
+                            index === casinoFeatures.length - 1 ? (
+                              <tr>
+                                <td class="p-2">
+                                  <Icon name="check-circle" height="25px" />
+                                </td>
+                                <td>{cf.feature}</td>
+                              </tr>
+                            ) : (
+                              <tr class="border-b border-black">
+                                <td class="p-2">
+                                  <Icon name="check-circle" height="25px" />
+                                </td>
+                                <td>{cf.feature}</td>
+                              </tr>
+                            )
                         )
                       }
                       <!-- } -->
@@ -964,16 +975,18 @@ Astro.response.headers.set(
 
           {
             page?.attributes?.howTo &&
-              page?.attributes?.howTo?.howToGroup.map((howTo, i) => (
-                <HowTo
-                  count={i + 1}
-                  howToImage={howTo?.image?.data?.attributes?.url}
-                  howToWidth={howTo?.image?.data?.attributes?.width}
-                  howToHeight={howTo?.image?.data?.attributes?.height}
-                  howToCopy={howTo.copy}
-                  howToHeading={howTo.heading}
-                />
-              ))
+              page?.attributes?.howTo?.howToGroup.map(
+                (howTo: HowToType, i: number) => (
+                  <HowTo
+                    count={i + 1}
+                    howToImage={howTo?.image?.data?.attributes?.url}
+                    howToWidth={howTo?.image?.data?.attributes?.width}
+                    howToHeight={howTo?.image?.data?.attributes?.height}
+                    howToCopy={howTo.copy}
+                    howToHeading={howTo.heading}
+                  />
+                )
+              )
           }
 
           {
