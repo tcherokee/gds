@@ -37,6 +37,18 @@ let seo = {
   metaDescription: layoutData?.attributes?.blogMeta?.blogDescription,
   url: canonical,
 };
+
+// Tell the browser to always check the freshness of the cache
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+// CDN Cache Control
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
 ---
 
 <script define:vars={{ blogCards }}>
