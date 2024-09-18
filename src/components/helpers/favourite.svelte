@@ -66,6 +66,7 @@
         >
           <div
             class="flex h-full flex-col overflow-y-scroll z-50 bg-white pt-6 shadow-xl"
+            class:justify-between={!$favourite.length}
           >
             <div class="px-4 sm:px-6">
               <div class="flex items-start justify-between">
@@ -87,60 +88,62 @@
                 </div>
               </div>
             </div>
-            <div class="relative mt-6 flex-1 px-4 sm:px-6">
-              {#each $favourite as fav}
-                <div class="col-span-1 flex rounded-md shadow-sm mb-2">
-                  <div
-                    class="flex justify-items-start overflow-hidden w-16 flex-shrink-0 items-center justify-center rounded-l-md border-grey-300 border-l border-t border-b"
-                  >
-                    <Link href={`/slot-machines/${fav?.slug || ""}/`}>
-                      <TransformImage
-                        imageUrl={fav?.images?.url || ""}
-                        imageAlt={fav?.title}
-                        imageWidth={65}
-                        imageHeight={60}
-                      />
-                    </Link>
-                  </div>
-                  <div
-                    class="relative flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-grey-300 bg-white"
-                  >
-                    <Link href={`/slot-machines/${fav?.slug || ""}/`}>
-                      <div
-                        class="flex flex-1 flex-col truncate px-4 py-1 text-sm leading-tight"
-                      >
-                        <div class="font-medium uppercase text-left text-xs">
-                          {fav?.title || ""}
-                        </div>
-                        {#if fav?.categories}
-                          <div class="text-left text-[8px] m-0 mt-px">
-                            <span class="uppercase mr-2">Categorie</span>
-                            {#each fav?.categories as category}
-                              <span class="mr-1">{category?.title}</span>
-                            {:else}
-                              ''
-                            {/each}
-                          </div>
-                        {/if}
-                        <div class="text-left text-[8px] m-0 mt-px">
-                          <span class="uppercase mr-2">software</span>{fav
-                            ?.provider?.title}
-                        </div>
-                        <div class="text-left text-[8px] m-0 mt-px">
-                          <span class="uppercase mr-2">rating</span>1/5
-                        </div>
-                      </div>
-                    </Link>
-                    <button
-                      class="absolute top-1 right-1"
-                      on:click={() => removeFromFavs(fav)}
+            {#if $favourite.length}
+              <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                {#each $favourite as fav}
+                  <div class="col-span-1 flex rounded-md shadow-sm mb-2">
+                    <div
+                      class="flex justify-items-start overflow-hidden w-16 flex-shrink-0 items-center justify-center rounded-l-md border-grey-300 border-l border-t border-b"
                     >
-                      <Xmark class="h-6 w-6" />
-                    </button>
+                      <Link href={`/slot-machines/${fav?.slug || ""}/`}>
+                        <TransformImage
+                          imageUrl={fav?.images?.url || ""}
+                          imageAlt={fav?.title}
+                          imageWidth={65}
+                          imageHeight={60}
+                        />
+                      </Link>
+                    </div>
+                    <div
+                      class="relative flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-grey-300 bg-white"
+                    >
+                      <Link href={`/slot-machines/${fav?.slug || ""}/`}>
+                        <div
+                          class="flex flex-1 flex-col truncate px-4 py-1 text-sm leading-tight"
+                        >
+                          <div class="font-medium uppercase text-left text-xs">
+                            {fav?.title || ""}
+                          </div>
+                          {#if fav?.categories}
+                            <div class="text-left text-[8px] m-0 mt-px">
+                              <span class="uppercase mr-2">Categorie</span>
+                              {#each fav?.categories as category}
+                                <span class="mr-1">{category?.title}</span>
+                              {:else}
+                                ''
+                              {/each}
+                            </div>
+                          {/if}
+                          <div class="text-left text-[8px] m-0 mt-px">
+                            <span class="uppercase mr-2">software</span>{fav
+                              ?.provider?.title}
+                          </div>
+                          <div class="text-left text-[8px] m-0 mt-px">
+                            <span class="uppercase mr-2">rating</span>1/5
+                          </div>
+                        </div>
+                      </Link>
+                      <button
+                        class="absolute top-1 right-1"
+                        on:click={() => removeFromFavs(fav)}
+                      >
+                        <Xmark class="h-6 w-6" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              {/each}
-            </div>
+                {/each}
+              </div>
+            {/if}
             {#if !$user}
               <div class="py-6 space-y-3 px-4 sm:px-6 bg-white sticky bottom-0">
                 <p class="text-center text-sm text-blue-500 !mb-0 px-6">
@@ -160,6 +163,9 @@
                   {translationStore?.signUp}
                 </Link>
               </div>
+            {/if}
+            {#if !$favourite.length}
+              <div></div>
             {/if}
           </div>
         </div>
