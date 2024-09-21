@@ -1,5 +1,5 @@
 // types.ts
-import type { BreadCrumbField, ImageField } from "../common/types"
+import type { BreadCrumbField, ImageField } from "../common/types";
 
 type CasinoField = {
   fields: string[];
@@ -33,6 +33,12 @@ export type LayoutQueryOptions = {
     no_deposit_casinos: CasinoField;
     free_spin_casinos: CasinoField;
     backgroundImage: ImageField;
+    plus18Popup: {
+      fields: string[];
+      populate: {
+        image: ImageField;
+      };
+    };
   };
 };
 
