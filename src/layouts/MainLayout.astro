@@ -29,6 +29,7 @@ import Footer from "../components/layout/footer.astro";
 import Newsletter from "../components/layout/newsletter.astro";
 import CookiesConsent from "../components/general/cookiesConsent.svelte";
 import { getTranslations } from "../../utils/api-requests";
+import Plus18PopUp from "../components/helpers/plus18-pop-up.astro";
 
 const siteID = `${import.meta.env.SITE_ID}`;
 
@@ -109,8 +110,13 @@ const HomeBreadcrumSchema = {
     };
   }),
 };
+
+let showPlus18Popup: boolean = layout?.attributes?.plus18Popup?.activate;
 ---
 
+<script define:vars={{ layout }}>
+  console.log("Layout", layout?.attributes);
+</script>
 <html lang="it">
   <head>
     <meta charset="UTF-8" />
@@ -160,7 +166,9 @@ const HomeBreadcrumSchema = {
       </header>
       <slot />
     </main>
-    <!-- <Newsletter /> -->
+
+    {showPlus18Popup && <Plus18PopUp data={layout?.attributes?.plus18Popup} />}
+
     <Footer
       footerContent={layout?.attributes?.footerContent}
       footerImages={layout?.attributes?.footerImages}
