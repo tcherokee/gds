@@ -30,19 +30,20 @@ const fetchApi = async <T>({
   const res = await fetch(url.toString(), opts);
   let data = await res.json();
 
-  if (isPaginated) {
-    return data;
-  } else {
-    if (wrappedByKey) {
-      data = data[wrappedByKey];
-    }
-
-    if (wrappedByList) {
-      data = data[0];
-    }
-
-    return data;
+  
+  if (wrappedByKey) {
+    data = data[wrappedByKey];
   }
+
+  if (wrappedByList) {
+    data = data[0];
+  }
+
+  console.log('stuff')
+
+  console.log('data', data)
+
+  return data;
 };
 
 export default fetchApi;

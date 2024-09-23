@@ -9,8 +9,6 @@ import sitemap from "@astrojs/sitemap";
 
 dotenv.config();
 
-console.log("enabled", process.env.IS_PROD === "true", process.env.IS_PROD);
-
 // https://astro.build/config
 export default defineConfig({
   site: process.env.PUBLIC_FULL_URL,

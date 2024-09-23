@@ -201,11 +201,14 @@ let pageBreadcrum: BreadcrumbData[] = [
 if (layoutData) {
   pageBreadcrum.unshift(...layoutData?.attributes?.categoriesBreadcrumbs);
 }
+
+console.log("bread", pageBreadcrum)
+
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [...pageBreadcrum]
-    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
+    .filter((elem) => elem?.breadCrumbText?.toLowerCase() !== "home")
     .map((bread, i) => {
       return {
         "@type": "ListItem",
