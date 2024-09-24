@@ -4,15 +4,15 @@ import Image from "../helpers/images.astro";
 const { data } = Astro.props;
 ---
 
-<script define:vars={{ data }}>
+<!-- <script define:vars={{ data }}>
   console.log("+18 pop-up", data, data?.image?.data?.attributes?.url);
-</script>
-<!-- +18 Modal Start-->
+</script> --><!-- +18 Modal Start-->
 <div
   class="relative z-50"
   aria-labelledby="modal-title"
   role="dialog"
   aria-modal="true"
+  id="modal-anchor"
 >
   <!--
     Background backdrop, show/hide based on modal state.
@@ -90,7 +90,7 @@ const { data } = Astro.props;
         <div class="mt-5 sm:mt-6">
           <button
             type="button"
-            class="btn-misc inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            class="agree-btn btn-misc inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >{data?.buttonText}</button
           >
         </div>
@@ -100,3 +100,9 @@ const { data } = Astro.props;
 </div>
 
 <!-- +18 Modal End -->
+
+<script lang="ts">
+  document.querySelector(".agree-btn").addEventListener("click", () => {
+    document.getElementById("modal-anchor").style.display = "none";
+  });
+</script>
