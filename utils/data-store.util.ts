@@ -150,7 +150,7 @@ export const urlTranslate = {
   },
   tgs: {
     "game-pages": "/slot",
-    "casino-pages": "/casino/",
+    "casino-pages": "/casino",
     "blog-pages": "/blog",
     "blog-index": "/blog",
     "author-page": "/author",
