@@ -157,8 +157,8 @@ export const urlTranslate = {
     "category-pages": "/gratis",
     "provider-pages": "/software",
     "casino-providers-page": "/casino-online",
-    "new-games-page": "/slot-machine/nuove",
-    "popular-games-page": "/slot-machine/piu-giocate",
-    "software-page": "/slot-software",
+    "new-games-page": "/gratis/nuove",
+    "popular-games-page": "/gratis/piu-giocate",
+    "software-page": "/gratis",
   },
 };
