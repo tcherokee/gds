@@ -40,15 +40,26 @@ import { getTranslations } from "../../../utils/api-requests";
 import { layoutQs } from "../../../qs/layout";
 import type { LayoutData } from "../../../interfaces/layout";
 
-  const query = qs.stringify(gamepageQs(), { encodeValuesOnly: true });
-  const gamePage = await fetchApi<Gamepage[]>({
+// Set Up Translation Store
+const translationStore = await getTranslations();
+const query = qs.stringify(gamepageQs(), { encodeValuesOnly: true });
+let gamePage: Gamepage[]
+
+try {
+  gamePage = await fetchApi<Gamepage[]>({
     endpoint: "games",
     wrappedByKey: "data",
     query: `?${query}`,
   });
+} catch (error) {
+  console.log("Error", error);
 
-// Set Up Translation Store
-// const translationStore = await getTranslations();
+  return Astro.redirect("/404");
+}
+if (!gamePage) {
+  return Astro.redirect("/404");
+}
+
 
 // export const getStaticPaths = (async () => {
 //   const query = qs.stringify(gamepageQs(), { encodeValuesOnly: true });
@@ -71,10 +82,10 @@ import type { LayoutData } from "../../../interfaces/layout";
 // const { page } = Astro.props;
 // const { slug } = Astro.params; //get the slug from the page url
 
-console.log('page', gamePage)
+console.log("page", gamePage);
 ---
 
-<!-- <MainLayout/>
+<MainLayout/>
 
 
-</MainLayout> -->
+</MainLayout>
