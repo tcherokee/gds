@@ -154,7 +154,7 @@ export const urlTranslate = {
     "blog-pages": "/blog",
     "blog-index": "/blog",
     "author-page": "/author",
-    "category-pages": "/gratis",
+    "category-pages": "/temas",
     "provider-pages": "/software",
     "casino-providers-page": "/casino-online",
     "new-games-page": "/gratis/nuove",
