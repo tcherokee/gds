@@ -159,6 +159,6 @@ export const urlTranslate = {
     "casino-providers-page": "/casino-online",
     "new-games-page": "/gratis/nuove",
     "popular-games-page": "/gratis/piu-giocate",
-    "software-page": "/gratis",
+    "software-page": "/slot-software",
   },
 };
