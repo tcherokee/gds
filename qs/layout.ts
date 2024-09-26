@@ -23,6 +23,14 @@ export const layoutQs = (): LayoutQueryOptions => ({
         },
       },
     },
+    plus18Popup: {
+      fields: ["activate", "title", "message", "buttonText"],
+      populate: {
+        image: {
+          fields: ["url", "width", "height"],
+        },
+      },
+    },
     Logo: {
       fields: ["url", "width", "height"],
     },
