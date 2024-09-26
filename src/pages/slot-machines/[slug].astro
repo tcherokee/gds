@@ -37,6 +37,7 @@ import AuthorCard from "../../components/general/authorCard.astro";
 import { getTranslations } from "../../../utils/api-requests";
 import { layoutQs } from "../../../qs/layout";
 import type { LayoutData } from "../../../interfaces/layout";
+import UserReviews from "../../components/general/userReviews.svelte";
 
 // Set Up Translation Store
 const translationStore = await getTranslations();
@@ -368,6 +369,8 @@ const __blocks = page?.attributes?.blocks;
             <AuthorCard data={page.attributes.author} {translationStore} />
           )
         }
+
+        <UserReviews client:load />
       </div>
       <div class="basis-[315px] shrink-0 order-first order-last">
         <CasinoSideBar {translationStore} />
