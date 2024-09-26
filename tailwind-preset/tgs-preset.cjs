@@ -3,11 +3,11 @@ const COLORS = {
   bodyText: "#475059",
   white: "#fff",
   black: "#000000",
-  primary: "#031634",
+  primary: "#163183",
   secondary: "#e6a100",
   secondaryTint: "#ffb300",
   transparent: "transparent",
-  misc: "#044861",
+  misc: "#B72963",
   miscTint: "#D33372",
   success: "#22C55E",
   warning: "#F59E0B",
@@ -42,9 +42,9 @@ const COLORS = {
   },
   background: {
     1: "#DCE9F3",
-    100: "#044861",
-    500: "#1e627b",
-    700: "#427f95",
+    100: "#2A1587",
+    500: "#070c3f",
+    700: "#163183",
     900: "#101C34",
   },
   accent: {
@@ -55,7 +55,7 @@ const COLORS = {
     500: "#3FE6FC",
     700: "#00BCD4",
     800: "#de7d45",
-    900: "#044861",
+    900: "#9b4e22",
   },
 };
 module.exports = {
@@ -124,11 +124,11 @@ module.exports = {
       "btn-back-to-top": COLORS.blue[500],
       // Custom Theme Colors
       // Extras
-      "background-top-gradient": COLORS.background[700],
-      "background-bottom-gradient": COLORS.background[500],
-      "background-back-curve": COLORS.background[100],
+      "background-top-gradient": COLORS.purple[700],
+      "background-bottom-gradient": COLORS.purple[500],
+      "background-back-curve": COLORS.purple[800],
       // Breadcrumb
-      "breadcrumb-bkg": COLORS.background[100],
+      "breadcrumb-bkg": COLORS.purple[700],
       "breadcrumb-text": COLORS.white,
       "breadcrumb-separator": COLORS.white,
 
@@ -174,11 +174,11 @@ module.exports = {
       "rating-locked-fill": COLORS.danger,
 
       // Navs
-      "navbar-bkg": COLORS.primary,
+      "navbar-bkg": COLORS.purple[500],
       "navbar-text": COLORS.white,
-      "subNavbar-bkg": COLORS.misc,
+      "subNavbar-bkg": COLORS.purple[600],
       "subNavbar-text": COLORS.white,
-      "nav-hover-bkg": COLORS.misc,
+      "nav-hover-bkg": COLORS.purple[300],
 
       // Mobile Nav
       "mobile-nav-bkg": COLORS.primary,
@@ -225,8 +225,8 @@ module.exports = {
       "silver-tag-b-gradient": COLORS.grey[300],
       "bronze-tag-t-gradient": COLORS.accent[800],
       "bronze-tag-b-gradient": COLORS.accent[900],
-      "casino-table-header-bkg": COLORS.primary,
-      "casino-table-header-text": COLORS.black,
+      "casino-table-header-bkg": COLORS.purple[600],
+      "casino-table-header-text": COLORS.white,
       "casino-table-text": COLORS.blue[900],
       "casino-table-row-bkg": COLORS.white,
       "no-deposit-gradient": COLORS.blue[100],
@@ -254,14 +254,14 @@ module.exports = {
       "quicklinks-bkg": COLORS.white,
       "quicklinks-bdr": "",
       "quicklinks-btn-color": COLORS.primary,
-      "quicklinks-btn-bkg": COLORS.primary,
+      "quicklinks-btn-bkg": COLORS.purple[600],
       "quicklinks-btn-active-bkg": "",
 
       // faqs
-      "faq-header": COLORS.primary,
+      "faq-header": COLORS.purple[600],
 
       // Filter Panel
-      "filter-provider-header-bkg": COLORS.primary,
+      "filter-provider-header-bkg": COLORS.purple[600],
       "filter-provider-header-text": COLORS.white,
       "filter-alternate-toggle": COLORS.blue[100],
       "filter-alternate-icon": COLORS.blue[700],
