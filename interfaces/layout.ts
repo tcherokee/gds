@@ -25,7 +25,6 @@ type LayoutAttributes = {
   [key: string | symbol]: any;
   legalText: string;
   footerContent: string;
-  gameInfoText: string;
   cookiesHeaderText: string;
   cookiesDescription: string;
   cookiesUrl: string;
@@ -74,6 +73,6 @@ export type TAuthorPageData = {
       content1: string;
       content2: string;
       content3: string;
-    }
-  }
+    };
+  };
 };

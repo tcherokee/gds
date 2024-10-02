@@ -8,7 +8,6 @@ export const layoutQs = (): LayoutQueryOptions => ({
   fields: [
     "legalText",
     "footerContent",
-    "gameInfoText",
     "cookiesHeaderText",
     "cookiesDescription",
     "cookiesUrl",

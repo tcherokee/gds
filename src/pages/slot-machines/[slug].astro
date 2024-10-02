@@ -20,7 +20,6 @@ import fetchApi from "../../../lib/strapi";
 
 // Queries
 import { gamepageQs } from "../../../qs/game-page";
-import { customPageLayoutAddOnsQs } from "../../../qs/customPages";
 
 // Components
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -69,18 +68,6 @@ export const getStaticPaths = (async () => {
 
 const { page, layoutData } = Astro.props;
 const { slug } = Astro.params; //get the slug from the page url
-
-// Import the QS Query string for custom slugs and prepare it for the API fetch
-const customLayoutQuery = qs.stringify(customPageLayoutAddOnsQs(), {
-  encodeValuesOnly: true,
-});
-
-// Request to the Fetch Function to get the custom page slugs from the API
-const customLayout = await fetchApi<LayoutData>({
-  endpoint: "layout",
-  wrappedByKey: "data",
-  query: `?${customLayoutQuery}`,
-});
 
 //generate page url
 const siteID = import.meta.env.SITE_ID;
@@ -237,7 +224,6 @@ Astro.response.headers.set(
       <GamePlayer
         data={page}
         gamePageURL={siteURL}
-        layout={customLayout}
         translations={translationStore ?? {}}
         client:load
       />
