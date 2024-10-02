@@ -1,14 +1,17 @@
 <script lang="ts">
-  import { plus18 } from "../../../stores/plus18";
+  import { isPlus18 } from "../../../stores/plus18";
   import Images from './images.svelte';
 
   export let data: any;
+
   const acceptPlus18Handler = () => {
-    plus18.set(true);
+    isPlus18.set(true); 
+    console.log(isPlus18.value);
   };
+  
 </script>
 
-{#if !$plus18}
+{#if !$isPlus18}
 <div
   class="relative z-50"
   aria-labelledby="modal-title"
@@ -88,4 +91,4 @@
   </div>
 </div>
 <!-- +18 Modal End -->
-{/if}
+ {/if}
