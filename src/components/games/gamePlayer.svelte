@@ -1,7 +1,6 @@
 <script lang="ts">
   export let data: any;
   export let gamePageURL: string;
-  export let layout: any;
   export let translations: TranslationData = {};
 
   // Svelte Stuff
@@ -249,7 +248,7 @@
                 role="tooltip"
                 class="hidden px-5 text-black -ml-[180px] md:-ml-[0px] opacity-100 bg-grey-100 text-sm z-20 -mt-[11rem] w-[220px] absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
               >
-                {layout?.attributes?.gameInfoText}
+                {translations.gameInfoText}
               </div>
             </button>
           </div>
