@@ -1,11 +1,51 @@
 <script lang="ts">
+  import dayjs from "dayjs";
   import { onMount } from "svelte";
+  import { toast } from "svoast";
+  import type { TranslationData } from "../../../interfaces/common/types";
+  import type {
+    TRatingCounts,
+    TReviewResponse,
+    TUserReview,
+  } from "../../../interfaces/review";
+  import { user } from "../../../stores/authStore";
+  import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
+  import { ratings } from "../../../stores/ratings";
 
-  const userReviews = [1, 2];
+  export let reviewTypeSlug: string;
+  export let reviewTypeName: string;
+  export let reviewTypeId: number;
+  export let reviewType: "GAME" | "CASINO";
+  export let translations: TranslationData = {};
+  
+  let userReviews: TUserReview[] = [];
+  let ratingCounts: TRatingCounts = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+  };
+  let ratingCountsPercentage: TRatingCounts = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+  };
+  let avgRating = 0;
+  let totalReviews = 0;
+  let userReview: string;
+  let userRating = 0;
 
   //   DOM Related
   let reviewModal: HTMLDialogElement;
-  const showReviewModal = () => {
+  const showReviewModal = async () => {
+    if (!$user) {
+      await window.localStorage?.setItem("_reviewSourceType", reviewType);
+      window.location.href = `${import.meta.env.BASE_URL}authentication/login/?review=${reviewTypeSlug}`;
+      return;
+    }
     reviewModal?.showModal();
     document.body.style.overflow = "hidden";
   };
@@ -15,7 +55,62 @@
     document.body.style.overflow = "";
   };
 
+  const getReviews = async () => {
+    const reviewsUrl =
+      reviewType === "GAME"
+        ? `${import.meta.env.BASE_URL}api/games/game-reviews/${reviewTypeId}/`
+        : `${import.meta.env.BASE_URL}api/casinos/casino-reviews/${reviewTypeId}/`;
+    const response = await fetch(reviewsUrl);
+    const res: { data: TReviewResponse } = await response.json();
+
+    userReviews = res.data.reviews;
+    ratingCounts = res.data.ratingCounts;
+    totalReviews = res.data.totalReviews;
+    const totalRating = userReviews.reduce((accumulator, review) => {
+      return accumulator + review.rating;
+    }, 0);
+    if (totalRating) {
+      avgRating = totalRating / totalReviews;
+    }
+    
+    ratingCountsPercentage = {
+      1: totalReviews ? ((ratingCounts[1] ?? 0) / totalReviews) * 100 : 0,
+      2: totalReviews ? ((ratingCounts[2] ?? 0) / totalReviews) * 100 : 0,
+      3: totalReviews ? ((ratingCounts[3] ?? 0) / totalReviews) * 100 : 0,
+      4: totalReviews ? ((ratingCounts[4] ?? 0) / totalReviews) * 100 : 0,
+      5: totalReviews ? ((ratingCounts[5] ?? 0) / totalReviews) * 100 : 0,
+    };
+  };
+
+  const createUserReview = async () => {
+    const reviewsUrl =
+      reviewType === "GAME"
+        ? `${import.meta.env.PUBLIC_FULL_URL}/api/games/game-reviews/`
+        : `${import.meta.env.PUBLIC_FULL_URL}/api/casino/casino-reviews/`;
+    const response = await fetch(reviewsUrl, {
+      method: "POST",
+      body: JSON.stringify({
+        [reviewType === "GAME" ? "gameId" : "casinoId"]: reviewTypeId,
+        rating: 4,
+        review: userReview,
+      }),
+    });
+    userReview = '';
+    closeReviewModal();
+    if (response.ok) {
+      const res = await response.json();
+      if (res.error) {
+        toast.error(res?.error?.message)
+      } else {
+        toast.success(res?.message);
+      }
+    }
+  };
+
   onMount(() => {
+    getReviews();
+    const ratings = [...$ratings];
+    userRating = ratings.find(({id, type}) => id === reviewTypeId && type === `${reviewType.toLocaleLowerCase()}s`)?.ratingValue ?? 0;
     reviewModal = document.querySelector("#review-modal") as HTMLDialogElement;
     // Listen for Esc key press
     document.addEventListener("keydown", function (event) {
@@ -36,70 +131,18 @@
         <div>
           <div class="flex items-center justify-center">
             <!-- Active: "text-yellow-400", Default: "text-gray-300" -->
-            <svg
-              class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <svg
-              class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <svg
-              class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <svg
-              class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <svg
-              class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                clip-rule="evenodd"
-              />
-            </svg>
+            <ReadOnlyRatings
+              {avgRating}
+              ratingCount={totalReviews}
+              showVotes={false}
+              ratingClasses={"flex-row"}
+            />
           </div>
-          <p class="sr-only">4 out of 5 stars</p>
+          <p class="sr-only">{(totalReviews * 100) / 5} out of 5 stars</p>
         </div>
-        <p class="ml-2 text-sm !mb-0 text-center">Based on 1624 reviews</p>
+        <p class="text-sm !mb-0 text-center">
+          Based on {totalReviews} review{totalReviews > 1 ? "s" : ""}
+        </p>
       </div>
       <button
         class="open-review-modal mt-6 inline-flex w-full items-center justify-center rounded-md border border-[#d1d5db] bg-white px-8 py-2 text-sm font-medium text-gray-900 hover:bg-[#f9fafb] sm:w-auto lg:w-full"
@@ -135,14 +178,14 @@
                     class="h-3 rounded-full border border-[#e5e7eb] bg-[#f3f4f6]"
                   ></div>
                   <div
-                    style="width: calc(1019 / 1624 * 100%)"
-                    class="absolute inset-y-0 rounded-full border border-rating-value-fill bg-rating-value-fill"
+                    style="width: {ratingCountsPercentage[5]}%"
+                    class="absolute inset-y-0 rounded-full bg-rating-value-fill"
                   ></div>
                 </div>
               </div>
             </dt>
             <dd class="ml-3 w-10 text-right text-sm tabular-nums text-gray-900">
-              63%
+              {ratingCountsPercentage[5]}%
             </dd>
           </div>
           <div class="flex items-center text-sm">
@@ -169,14 +212,14 @@
                     class="h-3 rounded-full border border-[#e5e7eb] bg-[#f3f4f6]"
                   ></div>
                   <div
-                    style="width: calc(162 / 1624 * 100%)"
-                    class="absolute inset-y-0 rounded-full border border-rating-value-fill bg-rating-value-fill"
+                    style="width: {ratingCountsPercentage[4]}%"
+                    class="absolute inset-y-0 rounded-full bg-rating-value-fill"
                   ></div>
                 </div>
               </div>
             </dt>
             <dd class="ml-3 w-10 text-right text-sm tabular-nums text-gray-900">
-              10%
+              {ratingCountsPercentage[4]}%
             </dd>
           </div>
           <div class="flex items-center text-sm">
@@ -203,14 +246,14 @@
                     class="h-3 rounded-full border border-[#e5e7eb] bg-[#f3f4f6]"
                   ></div>
                   <div
-                    style="width: calc(97 / 1624 * 100%)"
-                    class="absolute inset-y-0 rounded-full border border-rating-value-fill bg-rating-value-fill"
+                    style="width: {ratingCountsPercentage[3]}%"
+                    class="absolute inset-y-0 rounded-full bg-rating-value-fill"
                   ></div>
                 </div>
               </div>
             </dt>
             <dd class="ml-3 w-10 text-right text-sm tabular-nums text-gray-900">
-              6%
+              {ratingCountsPercentage[3]}%
             </dd>
           </div>
           <div class="flex items-center text-sm">
@@ -237,14 +280,14 @@
                     class="h-3 rounded-full border border-[#e5e7eb] bg-[#f3f4f6]"
                   ></div>
                   <div
-                    style="width: calc(199 / 1624 * 100%)"
-                    class="absolute inset-y-0 rounded-full border border-rating-value-fill bg-rating-value-fill"
+                    style="width: {ratingCountsPercentage[2]}%"
+                    class="absolute inset-y-0 rounded-full bg-rating-value-fill"
                   ></div>
                 </div>
               </div>
             </dt>
             <dd class="ml-3 w-10 text-right text-sm tabular-nums text-gray-900">
-              12%
+              {ratingCountsPercentage[2]}%
             </dd>
           </div>
           <div class="flex items-center text-sm">
@@ -271,14 +314,14 @@
                     class="h-3 rounded-full border border-[#e5e7eb] bg-[#f3f4f6]"
                   ></div>
                   <div
-                    style="width: calc(147 / 1624 * 100%)"
-                    class="absolute inset-y-0 rounded-full border border-rating-value-fill bg-rating-value-fill"
+                    style="width: {ratingCountsPercentage[1]}%"
+                    class="absolute inset-y-0 rounded-full bg-rating-value-fill"
                   ></div>
                 </div>
               </div>
             </dt>
             <dd class="ml-3 w-10 text-right text-sm tabular-nums text-gray-900">
-              9%
+              {ratingCountsPercentage[1]}%
             </dd>
           </div>
         </dl>
@@ -293,87 +336,35 @@
         <div class="flex space-x-4 mb-4">
           <div class="flex-none">
             <img
-              src="https://giochigatsby.s3.eu-west-1.amazonaws.com/3_36ad84792c.png"
+              src={userReview.user.photo.url}
               alt=""
               class="h-10 w-10 rounded-full bg-gray-100"
             />
           </div>
           <div class="flex-1 pb-4 border-b border-[#CCCCCC]">
-            <h4 class="text-sm font-medium !my-0">David Adekunle</h4>
+            <h4 class="text-sm font-medium !my-0">
+              {userReview.user.firstName + " " + userReview.user.lastName}
+            </h4>
             <p class="text-xs !mb-0">
-              <time datetime="2021-07-16">July 16, 2021</time>
+              <time datetime="2021-07-16"
+                >{dayjs(userReview.createdAt).format("MMMM D, YYYY")}</time
+              >
             </p>
 
             <div class="mt-4 flex items-center">
-              <!-- Active: "text-yellow-400", Default: "text-gray-300" -->
-              <svg
-                class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <svg
-                class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <svg
-                class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <svg
-                class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <svg
-                class="h-5 w-5 flex-shrink-0 text-rating-value-fill"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <ReadOnlyRatings
+                avgRating={userReview.rating}
+                ratingCount={1}
+                showVotes={false}
+                ratingClasses={"flex-row"}
+                starHeightClass={"h-4"}
+              />
             </div>
-            <p class="sr-only !mb-0">5 out of 5 stars</p>
+            <p class="sr-only !mb-0">{userReview.rating} out of 5 stars</p>
 
-            <div class="prose prose-sm mt-4 max-w-none">
+            <div class="prose prose-sm mt-2.5 max-w-none">
               <p class="text-sm !mb-0">
-                This icon pack is just what I need for my latest project.
-                There's an icon for just about anything I could ever need. Love
-                the playful look!
+                {userReview.review}
               </p>
             </div>
           </div>
@@ -383,25 +374,29 @@
   </div>
 </div>
 
+<!-- Review Modal -->
 <dialog
   class="review-modal p-6 rounded-xl w-full max-w-[440px] space-y-6"
   id="review-modal"
 >
-  <h4 class="!my-0">Supreme 777 Jackpots</h4>
+  <h4 class="!my-0 !text-blue-700">{reviewTypeName}</h4>
   <div class="mt-2">
     <textarea
+      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
       rows="4"
       name="user-review"
       id="user-review"
       placeholder="Write a review"
-      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+      bind:value={userReview}
+      required
     ></textarea>
   </div>
   <div class="bg-gray-50 sm:flex sm:flex-row-reverse">
     <button
+      class="submit-review-btn inline-flex w-full justify-center rounded-md btn-secondary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto"
       type="button"
-      class="inline-flex w-full justify-center rounded-md btn-secondary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto"
-      >Submit</button
+      disabled={!userReview ? true: false}
+      on:click={createUserReview}>Submit</button
     >
     <button
       type="button"
@@ -418,6 +413,12 @@
     box-shadow: 0px 0px 12px 0px rgba(63, 230, 252, 0.6);
     &::backdrop {
       background: rgb(0 0 0 / 0.4);
+    }
+  }
+  button {
+    &.submit-review-btn[disabled] {
+      opacity: .4;
+      cursor: not-allowed;
     }
   }
 </style>

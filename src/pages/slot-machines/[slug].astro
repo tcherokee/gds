@@ -370,7 +370,14 @@ const __blocks = page?.attributes?.blocks;
           )
         }
 
-        <UserReviews client:load />
+        <UserReviews
+          reviewTypeSlug={page.attributes.slug}
+          reviewTypeName={page.attributes.title}
+          reviewTypeId={page.id}
+          reviewType={"GAME"}
+          translations={translationStore ?? {}}
+          client:load
+        />
       </div>
       <div class="basis-[315px] shrink-0 order-first order-last">
         <CasinoSideBar {translationStore} />
@@ -694,5 +701,4 @@ const __blocks = page?.attributes?.blocks;
   :global(h6) {
     @apply mt-10 mb-4;
   }
-</style>} />
-
+</style>

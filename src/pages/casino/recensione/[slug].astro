@@ -41,6 +41,7 @@ import type { BreadcrumbData } from "../../../../interfaces/common/types";
 import Faqs from "../../../components/general/faqs.astro";
 import { layoutQs } from "../../../../qs/layout";
 import type { LayoutData } from "../../../../interfaces/layout";
+import UserReviews from "../../../components/general/userReviews.svelte";
 
 const translationStore = await getTranslations();
 
@@ -1040,6 +1041,14 @@ if (howTo) {
           }
 
           <AuthorCard data={page.attributes.author} {translationStore} />
+          <UserReviews
+            reviewTypeSlug={page.attributes.slug}
+            reviewTypeName={page.attributes.title}
+            reviewTypeId={page.id}
+            reviewType={"CASINO"}
+            translations={translationStore ?? {}}
+            client:load
+          />
         </div>
 
         <div class="col-span-1 hidden md:block">
