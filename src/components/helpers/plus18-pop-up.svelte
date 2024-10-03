@@ -5,13 +5,21 @@
   export let data: any;
 
   const acceptPlus18Handler = () => {
-    isPlus18.set(true); 
-    console.log(isPlus18.value);
+    let currentDate =  `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`
+    isPlus18.set({status:true, statusDate: currentDate}); 
   };
-  
+
+  const checkIfPopupHasBeenShownToday = () => {
+   let currentDay = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+   if($isPlus18.statusDate < currentDay) {
+    isPlus18.set({ status: false, statusDate: currentDay })
+   }
+  }
+
+  checkIfPopupHasBeenShownToday();
 </script>
 
-{#if !$isPlus18}
+{#if !$isPlus18.status}
 <div
   class="relative z-50"
   aria-labelledby="modal-title"
