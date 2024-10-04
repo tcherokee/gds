@@ -30,6 +30,41 @@ export const layoutQs = (): LayoutQueryOptions => ({
         },
       },
     },
+    adPopus: {
+      fields: ["title", "description", "frequency"],
+      populate: {
+        casinos: {
+          populate: {
+            noDepositSection: {
+              fields: ["bonusAmount", "termsConditions"],
+            },
+            freeSpinsSection: {
+              fields: ["bonusAmount", "termsConditions"],
+            },
+            bonusSection: {
+              fields: [
+                "bonusAmount",
+                "termsConditions",
+                "cashBack",
+                "freeSpin",
+              ],
+            },
+            casinoBonus: true,
+            termsAndConditions: true,
+            images: {
+              fields: ["url", "alternativeText"],
+            },
+            providers: {
+              populate: {
+                images: {
+                  fields: ["url"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     Logo: {
       fields: ["url", "width", "height"],
     },
