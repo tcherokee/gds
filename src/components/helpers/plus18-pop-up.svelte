@@ -1,14 +1,25 @@
 <script lang="ts">
-  import { plus18 } from "../../../stores/plus18";
+  import { isPlus18 } from "../../../stores/plus18";
   import Images from './images.svelte';
 
   export let data: any;
+
   const acceptPlus18Handler = () => {
-    plus18.set(true);
+    let currentDate =  `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`
+    isPlus18.set({status:true, statusDate: currentDate}); 
   };
+
+  const checkIfPopupHasBeenShownToday = () => {
+   let currentDay = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+   if($isPlus18.statusDate < currentDay) {
+    isPlus18.set({ status: false, statusDate: currentDay })
+   }
+  }
+
+  checkIfPopupHasBeenShownToday();
 </script>
 
-{#if !$plus18}
+{#if !$isPlus18.status}
 <div
   class="relative z-50"
   aria-labelledby="modal-title"
@@ -88,4 +99,4 @@
   </div>
 </div>
 <!-- +18 Modal End -->
-{/if}
+ {/if}
