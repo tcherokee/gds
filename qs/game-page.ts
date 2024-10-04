@@ -1,4 +1,4 @@
-export const gamepageQs = () => ({
+export const gamepageQs = (slug: string) => ({
   fields: [
     "title",
     "heading",
@@ -98,8 +98,13 @@ export const gamepageQs = () => ({
       },
     },
   },
+  filters: {
+    slug: {
+      $eq: slug
+    }
+  },
   pagination: {
     page: 1,
-    pageSize: 10000,
+    pageSize: 1,
   },
 });

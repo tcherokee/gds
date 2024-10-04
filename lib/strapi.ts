@@ -39,10 +39,6 @@ const fetchApi = async <T>({
     data = data[0];
   }
 
-  console.log('stuff')
-
-  console.log('data', data)
-
   return data;
 };
 

@@ -30,6 +30,7 @@ import type {
   Faqs,
   GameFilters,
   HowTo,
+  HowToGroup,
   TCasinoLiveVideo,
   TGameListBlock,
   TProviderAttributesOnly,
@@ -48,11 +49,11 @@ import AuthorCard from "../components/general/authorCard.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 import MainLayout from "../layouts/MainLayout.astro";
 
+const path = Astro.params.path as string;
+
 const translationStore = await translationResponse();
 const slotProviders = await slotProvidersResponse();
 const slotCategories = await slotCategoriesResponse();
-
-let pageSchema = [];
 
 // Fetch Game Providers Filter
 const gameProviders = await fetchApi<{
@@ -68,124 +69,70 @@ const gameProviders = await fetchApi<{
   query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
 });
 
-export const getStaticPaths = (async () => {
-  // Import the QS Query string for custom slugs and prepare it for the API fetch
-  const query = qs.stringify(customPageQs(), { encodeValuesOnly: true });
+const query = qs.stringify(customPageQs(path), { encodeValuesOnly: true });
 
-  let gamesQueryObj: GameFilters = {
-    limit: 18,
-    sort: "views:desc",
-    page: 1,
-    providers: [],
-    categories: [],
-    author: "",
+let gamesQueryObj: GameFilters = {
+  limit: 18,
+  sort: "views:desc",
+  page: 1,
+  providers: [],
+  categories: [],
+  author: "",
+};
+let prerenderPath: any[] = [];
+
+// Request to the Fetch Function to get the custom page slugs from the API
+const customPage = await fetchApi<CustomPageItem[]>({
+  endpoint: "custom-pages",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
+
+// const path = customPage[0].attributes?.urlPath;
+
+const gameQuery = customPage[0].attributes.blocks.find(
+  (block) => block.__component === "games.games-carousel"
+) as CustomGameList;
+
+let initialGames: TUserGame[] = [];
+
+if (gameQuery) {
+  gamesQueryObj = {
+    ...gamesQueryObj,
+    limit: gameQuery.numberOfGames,
+    sort: sortOptions.get()[gameQuery.sortBy],
   };
-  let prerenderPath: any[] = [];
 
-  // Request to the Fetch Function to get the custom page slugs from the API
-  const customPage = await fetchApi<CustomPageItem[]>({
-    endpoint: "custom-pages",
-    wrappedByKey: "data",
-    query: `?${query}`,
+  const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
+    encodeValuesOnly: true,
   });
 
-  for (let i = 0; i < customPage.length; i++) {
-    const page = customPage[i];
-    const path = page.attributes?.urlPath;
-    const gameQuery = page.attributes.blocks.find(
-      (block) => block.__component === "games.games-carousel"
-    ) as CustomGameList;
-    let initialGames: TUserGame[] = [];
+  const customPageGames = await fetchApi<any[]>({
+    endpoint: "games",
+    wrappedByKey: "data",
+    query: `?${gamesQuery}`,
+  });
 
-    if (gameQuery) {
-      gamesQueryObj = {
-        ...gamesQueryObj,
-        limit: gameQuery.numberOfGames,
-        sort: sortOptions.get()[gameQuery.sortBy],
-      };
-      const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
-        encodeValuesOnly: true,
-      });
-      const customPageGames = await fetchApi<any[]>({
-        endpoint: "games",
-        wrappedByKey: "data",
-        query: `?${gamesQuery}`,
-      });
-
-      initialGames = customPageGames.map((elem) => {
-        return {
-          id: elem.id,
-          ...elem.attributes,
-          images: {
-            url: elem.attributes.images.data.attributes.url,
-          },
-          categories: elem.attributes.categories.data,
-          provider: {
-            slug: elem.attributes.provider.data?.attributes.slug,
-            title: elem.attributes.provider.data?.attributes.title,
-          },
-        };
-      });
-    }
-
-    prerenderPath.push({
-      params: { path },
-      props: {
-        page,
-        initialGames,
+  initialGames = customPageGames.map((elem) => {
+    return {
+      id: elem.id,
+      ...elem.attributes,
+      images: {
+        url: elem.attributes.images.data.attributes.url,
       },
-    });
-  }
+      categories: elem.attributes.categories.data,
+      provider: {
+        slug: elem.attributes.provider.data?.attributes.slug,
+        title: elem.attributes.provider.data?.attributes.title,
+      },
+    };
+  });
+}
 
-  return prerenderPath;
-  // return customPage.map((page) => {
-  //   return {
-  //     params: { path: page?.attributes?.urlPath },
-  //     props: { page },
-  //   };
-  // });
-}) satisfies GetStaticPaths;
-
-const { page, initialGames } = Astro.props;
-const { path } = Astro.params;
-
-// Games Variables
-const sortObj = sortOptions.get();
-
-// Function to determins how to structure the blocks in the custom pages. Based on the structure of the blocks the number of items in the blue section could change.
-const getLoopCounter = (blocks: Block[]): number => {
-  if (!blocks || blocks.length < 2) return 2; // Default value if blocks array is not as expected
-
-  const secondBlockComponent = blocks[1]?.["__component"];
-  const thirdBlockComponent = blocks[2]?.["__component"];
-
-  if (
-    secondBlockComponent === "games.new-and-loved-slots" &&
-    (thirdBlockComponent === "casinos.casino-list" ||
-      thirdBlockComponent === "games.games-carousel")
-  ) {
-    return 3;
-  }
-
-  if (
-    secondBlockComponent?.includes("shared") &&
-    secondBlockComponent !== "shared.provider-list"
-  ) {
-    return 1;
-  }
-
-  return 2;
-};
-
-const loopCounter = getLoopCounter(page?.attributes?.blocks);
-
-// Get the index of the first occurrence of the FAQ
-const faqIndex = page?.attributes?.blocks.findIndex(
-  (block: Block) => block.__component === "shared.faqs"
-);
+let combinedSchema = [];
 
 // FAQs Schema
-const allFAQs = page?.attributes?.blocks.filter(
+const allFAQs = customPage[0]?.attributes?.blocks.filter(
   (block: Block) => block.__component === "shared.faqs"
 ) as Faqs[];
 
@@ -204,13 +151,12 @@ if (allFAQs && allFAQs.length > 0) {
       };
     }),
   };
-  pageSchema.push(faqSchema);
+  // combinedSchema.push(faqSchema);
 }
 
-// HowTo Schema
-const allHowTos = page?.attributes?.blocks.filter(
-  (block: Block) => block.__component === "how-to-group"
-) as { title: string; howToGroup: HowTo[] }[];
+const allHowTos = customPage[0]?.attributes?.blocks.filter(
+  (block: Block) => block.__component === "shared.how-to-group"
+) as unknown as HowToGroup[];
 
 if (allHowTos && allHowTos.length > 0) {
   const howToSchema = allHowTos?.map(({ title, howToGroup }) => {
@@ -229,7 +175,7 @@ if (allHowTos && allHowTos.length > 0) {
       step: howToGroup?.map(({ heading, copy, image }, i: number) => {
         return {
           "@type": "HowToStep",
-          url: `${page?.attributes?.urlPath}#step0${i + 1}`,
+          url: `${customPage[0]?.attributes?.urlPath}#step0${i + 1}`,
           name: heading,
           itemListElement: {
             "@type": "HowToDirection",
@@ -246,14 +192,18 @@ if (allHowTos && allHowTos.length > 0) {
     };
   });
 
-  pageSchema.push(howToSchema);
+  console.log("customPage", ...howToSchema);
+
+  combinedSchema.push(...howToSchema);
 }
 
-// Breadcrum Schema
+// Breadcrumb Schema
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  itemListElement: ([...page?.attributes?.breadcrumbs] as BreadcrumbData[])
+  itemListElement: (
+    [...customPage[0]?.attributes?.breadcrumbs] as BreadcrumbData[]
+  )
     .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
     .map((bread, i) => {
       return {
@@ -264,18 +214,12 @@ const breadSchema = {
       };
     }),
 };
-pageSchema.push(breadSchema);
-
-// First mapping components so I can check them against the svelte extentsion
-const mappedComponents = mapBlocksToDynamicComponents(page.attributes.blocks);
-
-// Dynamically importing the components
-const Components = await loadComponents(mappedComponents);
+combinedSchema.push(breadSchema);
 
 // SEO Object
 const seo = {
-  pageTitle: page?.attributes?.seo?.metaTitle,
-  metaDescription: page?.attributes?.seo?.metaDescription,
+  pageTitle: customPage[0].attributes?.seo?.metaTitle,
+  metaDescription: customPage[0].attributes?.seo?.metaDescription,
   url: `${import.meta.env.FULL_URL}/${path}`,
 };
 
@@ -292,171 +236,6 @@ Astro.response.headers.set(
 );
 ---
 
-<MainLayout seoData={seo} schemaData={pageSchema}>
-  <Breadcrumbs breadcrumbs={page?.attributes?.breadcrumbs} />
-  <div class:list={["featured-background curve pb-[50px]"]}>
-    {
-      Components.map((Component, i) => {
-        if (i < loopCounter) {
-          if (mappedComponents[i].extension === "astro") {
-            return (
-              <div>
-                <Component
-                  data={page.attributes.blocks[i]}
-                  timeDate={page?.attributes?.updatedAt}
-                  authorData={page?.attributes?.author}
-                  isDateEnabled={page?.attributes?.showContentDate}
-                  {...(page?.attributes?.blocks[i]?.__component ===
-                  "casinos.casino-list"
-                    ? { isCustom: true, isTop: true }
-                    : {})}
-                  {translationStore}
-                />
-              </div>
-            );
-          } else {
-            switch (mappedComponents[i].name) {
-              case "casinoTable": {
-                return (
-                  <div class="relative z-50">
-                    <CasinoTable
-                      initialCasinos={
-                        page.attributes.blocks[i] as CasinoListBlock
-                      }
-                      translations={translationStore ?? {}}
-                      {slotProviders}
-                      showCasinoTableHeader={
-                        page.attributes.blocks[i]?.showCasinoTableHeader
-                      }
-                      client:load
-                    />
-                  </div>
-                );
-              }
-              case "gameListBlock": {
-                return (
-                  <div class="relative z-50">
-                    <GameListBlock
-                      data={page.attributes.blocks[i] as TGameListBlock}
-                      {initialGames}
-                      gameProviders={
-                        gameProviders.attributes.filterProviders
-                          ? gameProviders.attributes.filterProviders.data
-                          : []
-                      }
-                      {slotCategories}
-                      translations={translationStore}
-                      {slotProviders}
-                      client:load
-                    />
-                  </div>
-                );
-              }
-              case "casinoLiveVideo": {
-                return (
-                  <div class="relative z-10">
-                    <CasinoLiveVideo
-                      translations={translationStore}
-                      playbackUrl={
-                        (page?.attributes?.blocks[i] as TCasinoLiveVideo)
-                          .playbackUrl
-                      }
-                      client:load
-                    />
-                  </div>
-                );
-              }
-            }
-          }
-        }
-      })
-    }
-    <div></div>
-  </div>
-
-  <div class="xl:container content-auto px-2 pt-5">
-    <div class="flex flex-col md:flex-row gap-x-8">
-      <div class="order-last md:order-first">
-        {
-          Components.map((Component, i) => {
-            if (i >= loopCounter) {
-              if (mappedComponents[i].extension === "astro") {
-                return (
-                  <Component
-                    data={page.attributes.blocks[i]}
-                    timeDate={page?.attributes?.updatedAt}
-                    authorData={page?.attributes?.author}
-                    {...(page?.attributes?.blocks[i]?.__component ===
-                    "shared.quicklinks"
-                      ? { block: page.attributes.blocks }
-                      : {})}
-                    {...(i === faqIndex ? { firstFaq: true } : {})}
-                    {...(page?.attributes?.blocks[i]?.__component ===
-                      "casinos.casino-list" ||
-                    page?.attributes?.blocks[i]?.__component ===
-                      "casinos.casinos-comparison"
-                      ? { isCustom: true }
-                      : {})}
-                    {translationStore}
-                  />
-                );
-              } else {
-                switch (mappedComponents[i].name) {
-                  case "casinoTable": {
-                    return (
-                      <CasinoTable
-                        initialCasinos={
-                          page.attributes.blocks[i] as CasinoListBlock
-                        }
-                        translations={translationStore ?? {}}
-                        {slotProviders}
-                        showCasinoTableHeader={
-                          page.attributes.blocks[i]?.showCasinoTableHeader
-                        }
-                        client:load
-                      />
-                    );
-                  }
-                  case "gameListBlock": {
-                    return (
-                      <GameListBlock
-                        data={page.attributes.blocks[i] as TGameListBlock}
-                        {initialGames}
-                        gameProviders={
-                          gameProviders.attributes.filterProviders
-                            ? gameProviders.attributes.filterProviders.data
-                            : []
-                        }
-                        {slotCategories}
-                        translations={translationStore}
-                        {slotProviders}
-                        client:load
-                      />
-                    );
-                  }
-                  case "casinoLiveVideo": {
-                    return (
-                      <CasinoLiveVideo
-                        translations={translationStore}
-                        playbackUrl={
-                          (page?.attributes?.blocks[i] as TCasinoLiveVideo)
-                            .playbackUrl
-                        }
-                        client:load
-                      />
-                    );
-                  }
-                }
-              }
-            }
-          })
-        }
-
-        <AuthorCard data={page.attributes.author} {translationStore} />
-      </div>
-      <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-        <CasinoSidebar {translationStore} />
-      </div>
-    </div>
-  </div>
+<MainLayout seoData={seo} otherSchema={combinedSchema}>
+  <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
 </MainLayout>

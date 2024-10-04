@@ -5,6 +5,9 @@ import { Tooltips } from "astro-tooltips";
 import { ViewTransitions } from "astro:transitions";
 import LDTag from "../components/helpers/LDTag.svelte";
 
+// Types
+import type { BreadcrumbData } from "../../interfaces/common/types";
+
 // QS Query Strings
 import { layoutQs, menuQs } from "../../qs/layout.ts";
 
@@ -31,6 +34,8 @@ import CookiesConsent from "../components/general/cookiesConsent.svelte";
 import { getTranslations } from "../../utils/api-requests";
 
 const siteID = `${import.meta.env.SITE_ID}`;
+
+const { crumbLocation, crumbTitle, otherSchema } = Astro.props;
 
 const translationStore = await getTranslations();
 
@@ -96,19 +101,54 @@ const favicon = `https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.e
 
 const { seoData, isHomePage = false, schemaData = null } = Astro.props;
 
-// Home Breadcrum Schema
-const HomeBreadcrumSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: layout?.attributes?.homeBreadcrumbs.map((bread, i) => {
-    return {
-      "@type": "ListItem",
-      position: i + 1,
-      name: bread?.breadCrumbText,
-      ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
-    };
-  }),
-};
+// Schema Stuff
+let pageSchema = [];
+
+// Breadcrumbs Schema
+let crumbData: BreadcrumbData[] = crumbTitle
+  ? [
+      {
+        breadCrumbText: crumbTitle,
+        breadCrumbUrl: "",
+      },
+    ]
+  : [];
+
+switch (crumbLocation) {
+  case "games":
+    if (Array.isArray(layout?.attributes?.gamesBreadcrumbs)) {
+      crumbData.unshift(...layout.attributes.gamesBreadcrumbs);
+    }
+    break;
+  case 'home':
+    if (Array.isArray(layout?.attributes?.homeBreadcrumbs)) {
+      crumbData.unshift(...layout.attributes.homeBreadcrumbs);
+    }
+  default:
+    
+}
+
+// Using a if statement here to prevent duplicate breadcrumb schema on custom pages.
+if (crumbLocation) {
+  const BreadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: crumbData?.map((bread, i) => {
+      return {
+        "@type": "ListItem",
+        position: i + 1,
+        name: bread?.breadCrumbText,
+        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+      };
+    }),
+  };
+
+  pageSchema.push(BreadcrumbSchema);
+}
+
+if (otherSchema) {
+  pageSchema.push(...otherSchema);
+}
 ---
 
 <html lang="it">
@@ -140,7 +180,7 @@ const HomeBreadcrumSchema = {
 
     {schemaData && <LDTag schema={schemaData} client:load />}
 
-    {isHomePage && <LDTag schema={HomeBreadcrumSchema} client:load />}
+    <LDTag schema={pageSchema} client:load />
   </head>
   <body>
     <!-- <Analytics client:load /> -->

@@ -1,4 +1,4 @@
-export const customPageQs = () => {
+export const customPageQs = (path: string) => {
   return {
     fields: ["title", "urlPath", "createdAt", "updatedAt", "showContentDate"],
     populate: {
@@ -202,7 +202,12 @@ export const customPageQs = () => {
         },
       },
     },
-    pagination: {
+  filters: {
+    slug: {
+      $eq: path
+    }
+  },
+  pagination: {
       page: 1,
       pageSize: 10000,
     },
