@@ -238,7 +238,6 @@
                           <ReadOnlyRatings
                             avgRating={casino?.attributes?.ratingAvg}
                             ratingCount={casino?.attributes?.ratingCount}
-                            showVotes={true}
                             {translations}
                           />
                         </div>

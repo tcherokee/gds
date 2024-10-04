@@ -13,7 +13,6 @@
   // Recaptcha
   let error = "";
   let recaptchaToken = "";
-  
 
   const validateLoginForm = () => {
     if (!email || !password) {
@@ -31,17 +30,28 @@
       recaptchaToken,
     };
 
-    const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/auth/login/`, {
-      method: "POST",
-      body: JSON.stringify(loginPayload),
-    });
+    const response = await fetch(
+      `${import.meta.env.PUBLIC_FULL_URL}/api/auth/login/`,
+      {
+        method: "POST",
+        body: JSON.stringify(loginPayload),
+      }
+    );
     const res = await response.json();
     logInLoader = false;
     resetCaptcha();
 
     if (res.jwt) {
-      const { id, firstName, lastName, username, email, bio, cover_image, photo } =
-        res.user;
+      const {
+        id,
+        firstName,
+        lastName,
+        username,
+        email,
+        bio,
+        cover_image,
+        photo,
+      } = res.user;
       user.set({
         id,
         firstName,
@@ -52,9 +62,30 @@
         cover_image,
         photo,
       });
-      location.reload();
+      // Parse the URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // Get review param value
+      const paramValue = urlParams.get("review");
+      console.log(paramValue);
+      const reviewSourceType =
+        await window.localStorage?.getItem("_reviewSourceType");
+        window.localStorage?.removeItem("_reviewSourceType")
+      if (paramValue) {
+        if (reviewSourceType === "GAME") {
+          window.location.href = `${import.meta.env.BASE_URL}slot-machines/${paramValue}/`;
+          return;
+        }
+        if (reviewSourceType === "CASINO") {
+           window.location.href = `${import.meta.env.BASE_URL}casino/recensione/${paramValue}/`;
+          return;
+        }
+        location.reload();
+      } else {
+        location.reload();
+      }
     } else {
-      toast.error(res?.error.message)
+      toast.error(res?.error.message);
     }
   };
 

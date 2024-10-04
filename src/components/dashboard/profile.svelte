@@ -30,6 +30,7 @@
     const res = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user/`);
     if (res.ok) {
       userProfile = await res.json();
+      console.log(res, userProfile)
       userFirstName = userProfile.firstName;
       userLastName = userProfile.lastName;
       userBio = userProfile.bio;
@@ -37,6 +38,11 @@
       userCoverImage = userProfile.cover_image?.url;
     }
     userProfileLoader = false;
+    const avatarsRes = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user-avatars/`);
+    if (avatarsRes.ok) {
+      const userAvatars = await res.json();
+      console.log(avatarsRes);
+    }
   });
 
   const handleAvatarFileSelect = (e: any) => {
