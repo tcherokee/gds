@@ -17,7 +17,7 @@
   export let reviewTypeId: number;
   export let reviewType: "GAME" | "CASINO";
   export let translations: TranslationData = {};
-  
+
   let userReviews: TUserReview[] = [];
   let ratingCounts: TRatingCounts = {
     1: 0,
@@ -37,6 +37,7 @@
   let totalReviews = 0;
   let userReview: string;
   let userRating = 0;
+  let starRating: HTMLInputElement;
 
   //   DOM Related
   let reviewModal: HTMLDialogElement;
@@ -72,7 +73,7 @@
     if (totalRating) {
       avgRating = totalRating / totalReviews;
     }
-    
+
     ratingCountsPercentage = {
       1: totalReviews ? ((ratingCounts[1] ?? 0) / totalReviews) * 100 : 0,
       2: totalReviews ? ((ratingCounts[2] ?? 0) / totalReviews) * 100 : 0,
@@ -82,11 +83,15 @@
     };
   };
 
+  const ratingHandler = async () => {
+    userRating = +starRating.value;
+  };
+
   const createUserReview = async () => {
     const reviewsUrl =
       reviewType === "GAME"
         ? `${import.meta.env.PUBLIC_FULL_URL}/api/games/game-reviews/`
-        : `${import.meta.env.PUBLIC_FULL_URL}/api/casino/casino-reviews/`;
+        : `${import.meta.env.PUBLIC_FULL_URL}/api/casinos/casino-reviews/`;
     const response = await fetch(reviewsUrl, {
       method: "POST",
       body: JSON.stringify({
@@ -95,12 +100,12 @@
         review: userReview,
       }),
     });
-    userReview = '';
+    userReview = "";
     closeReviewModal();
     if (response.ok) {
       const res = await response.json();
       if (res.error) {
-        toast.error(res?.error?.message)
+        toast.error(res?.error?.message);
       } else {
         toast.success(res?.message);
       }
@@ -110,7 +115,11 @@
   onMount(() => {
     getReviews();
     const ratings = [...$ratings];
-    userRating = ratings.find(({id, type}) => id === reviewTypeId && type === `${reviewType.toLocaleLowerCase()}s`)?.ratingValue ?? 0;
+    userRating =
+      ratings.find(
+        ({ id, type }) =>
+          id === reviewTypeId && type === `${reviewType.toLocaleLowerCase()}s`
+      )?.ratingValue ?? 0;
     reviewModal = document.querySelector("#review-modal") as HTMLDialogElement;
     // Listen for Esc key press
     document.addEventListener("keydown", function (event) {
@@ -332,7 +341,7 @@
     <h3 class="sr-only">Recent reviews</h3>
 
     <div class="flow-root">
-      {#each userReviews as userReview}
+      {#each userReviews as userReview, index}
         <div class="flex space-x-4 mb-4">
           <div class="flex-none">
             <img
@@ -341,8 +350,8 @@
               class="h-10 w-10 rounded-full bg-gray-100"
             />
           </div>
-          <div class="flex-1 pb-4 border-b border-[#CCCCCC]">
-            <h4 class="text-sm font-medium !my-0">
+          <div class={`flex-1 pb-4 ${index < userReviews.length - 1 ? 'border-b border-[#CCCCCC]' : ''}`}>
+            <h4 class="text-sm !text-blue-700 font-medium !my-0">
               {userReview.user.firstName + " " + userReview.user.lastName}
             </h4>
             <p class="text-xs !mb-0">
@@ -380,6 +389,48 @@
   id="review-modal"
 >
   <h4 class="!my-0 !text-blue-700">{reviewTypeName}</h4>
+  <div class="container flex w-auto p-0 m-0">
+    <div class={"ratings inline-flex relative p-0 m-0"}>
+      <div class="stars relative h-6">
+        <svg viewBox="0 0 1000 200" class="rating inline-flex h-full">
+          <defs>
+            <polygon
+              id="star"
+              points="100,0 131,66 200,76 150,128 162,200 100,166 38,200 50,128 0,76 69,66 "
+            />
+            <clipPath id="stars">
+              <use xlink:href="#star" />
+              <use xlink:href="#star" x="20%" />
+              <use xlink:href="#star" x="40%" />
+              <use xlink:href="#star" x="60%" />
+              <use xlink:href="#star" x="80%" />
+            </clipPath>
+          </defs>
+          <rect
+            class="rating__background fill-rating-fill stroke-rating-stroke w-full h-full stroke-1"
+            clip-path="url(#stars)"
+          />
+
+          <!-- Change the width of this rect to change the rating -->
+          <rect
+            width={`${(userRating * 100) / 5}%`}
+            class="rating__value fill-rating-value-fill h-full"
+            clip-path="url(#stars)"
+          />
+        </svg>
+        <input
+          type="range"
+          class="absolute opacity-0 z-30 w-full left-0 top-0 bottom-0 h-full"
+          min="1"
+          max="5"
+          value={userRating}
+          id="rate-{reviewTypeId}"
+          bind:this={starRating}
+          on:change={ratingHandler}
+        />
+      </div>
+    </div>
+  </div>
   <div class="mt-2">
     <textarea
       class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -395,7 +446,7 @@
     <button
       class="submit-review-btn inline-flex w-full justify-center rounded-md btn-secondary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto"
       type="button"
-      disabled={!userReview ? true: false}
+      disabled={!(userReview && userRating) ? true : false}
       on:click={createUserReview}>Submit</button
     >
     <button
@@ -417,7 +468,7 @@
   }
   button {
     &.submit-review-btn[disabled] {
-      opacity: .4;
+      opacity: 0.4;
       cursor: not-allowed;
     }
   }
