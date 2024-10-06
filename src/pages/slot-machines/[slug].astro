@@ -330,9 +330,9 @@ Astro.response.headers.set(
         }
 
         <UserReviews
-          reviewTypeSlug={page.attributes.slug}
-          reviewTypeName={page.attributes.title}
-          reviewTypeId={page.id}
+          reviewTypeSlug={gamePage[0].attributes.slug}
+          reviewTypeName={gamePage[0].attributes.title}
+          reviewTypeId={gamePage[0].id}
           reviewType={"GAME"}
           translations={translationStore ?? {}}
           client:load
