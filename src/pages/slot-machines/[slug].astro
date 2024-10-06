@@ -32,6 +32,7 @@ import GamePlayer from "../../components/games/gamePlayer.svelte";
 import QuickLinks from "../../components/helpers/quicklinks.astro";
 import AuthorCard from "../../components/general/authorCard.astro";
 import { getTranslations } from "../../../utils/api-requests";
+import UserReviews from "../../components/general/userReviews.svelte";
 
 // Set Up Translation Store
 const translationStore = await getTranslations();
@@ -327,6 +328,15 @@ Astro.response.headers.set(
             />
           )
         }
+
+        <UserReviews
+          reviewTypeSlug={page.attributes.slug}
+          reviewTypeName={page.attributes.title}
+          reviewTypeId={page.id}
+          reviewType={"GAME"}
+          translations={translationStore ?? {}}
+          client:load
+        />
       </div>
       <div class="basis-[315px] shrink-0 order-first order-last">
         <CasinoSideBar {translationStore} />
@@ -650,4 +660,4 @@ Astro.response.headers.set(
   :global(h6) {
     @apply mt-10 mb-4;
   }
-</style>} />
+</style>

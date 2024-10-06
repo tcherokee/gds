@@ -44,6 +44,7 @@ import TimeDate from "../../../components/helpers/timeDate.astro";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
 import type { BreadcrumbData } from "../../../../interfaces/common/types";
 import Faqs from "../../../components/general/faqs.astro";
+import UserReviews from "../../../components/general/userReviews.svelte";
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
@@ -1064,8 +1065,13 @@ Astro.response.headers.set(
           }
 
           <AuthorCard
-            data={casinoPage[0].attributes.author}
-            {translationStore}
+          <UserReviews
+            reviewTypeSlug={casinoPage[0]?.attributes.slug}
+            reviewTypeName={casinoPage[0]?.attributes.title}
+            reviewTypeId={casinoPage[0]?.id}
+            reviewType={"CASINO"}
+            translations={translationStore ?? {}}
+            client:load
           />
         </div>
 
