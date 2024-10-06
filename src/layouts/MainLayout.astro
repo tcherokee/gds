@@ -118,6 +118,7 @@ let crumbData: BreadcrumbData[] = crumbTitle
 
 switch (crumbLocation) {
   case "games":
+    if (Array.isArray(layout?.attributes?.gamesBreadcrumbs)) {
       crumbData.unshift(...layout.attributes.gamesBreadcrumbs);
     }
     break;
