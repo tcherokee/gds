@@ -203,7 +203,7 @@ export const customPageQs = (path: string) => {
       },
     },
   filters: {
-    slug: {
+    urlPath: {
       $eq: path
     }
   },

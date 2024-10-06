@@ -8,7 +8,7 @@ import type {
   HowTo as HowToType,
   CasinoFeatures,
   Faqs as FaqsType,
-  ProsConsBlock
+  ProsConsBlock,
 } from "../../../../interfaces/common/types";
 import type { Gamepage } from "../../../../interfaces/game-page";
 import fetchApi from "../../../../lib/strapi";
@@ -44,43 +44,20 @@ import TimeDate from "../../../components/helpers/timeDate.astro";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
 import type { BreadcrumbData } from "../../../../interfaces/common/types";
 import Faqs from "../../../components/general/faqs.astro";
-import { layoutQs } from "../../../../qs/layout";
-import type { LayoutData } from "../../../../interfaces/layout";
 
+const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
+const casino = qs.stringify(casinopageQs(slug), { encodeValuesOnly: true });
 
-export const getStaticPaths = (async () => {
-  // Import the QS Query string for custom slugs and prepare it for the API fetch
-  const casino = qs.stringify(casinopageQs(), { encodeValuesOnly: true });
-  const layout = qs.stringify(layoutQs(), { encodeValuesOnly: true });
-
-  // Request to the Fetch Function to get page data from API
-  const layoutData = await fetchApi<LayoutData>({
-    endpoint: "layout",
-    wrappedByKey: "data",
-    query: `?${layout}`,
-  });
-
-  const casinoPage = await fetchApi<Casinopage[]>({
-    endpoint: "casinos",
-    wrappedByKey: "data",
-    query: `?${casino}`,
-  });
-
-  return casinoPage.map((page) => {
-    return {
-      params: { slug: page?.attributes?.slug },
-      props: { page, layoutData },
-    };
-  });
-}) satisfies GetStaticPaths;
-
-const { page, layoutData } = Astro.props;
-const { slug } = Astro.params; //get the slug from the page url
+const casinoPage = await fetchApi<Casinopage[]>({
+  endpoint: "casinos",
+  wrappedByKey: "data",
+  query: `?${casino}`,
+});
 
 //get games 10 games for this casino providers
 const providerSlugs = new Array();
-page?.attributes?.providers?.data.map((provider: any) => {
+casinoPage[0]?.attributes?.providers?.data.map((provider: any) => {
   providerSlugs.push(provider?.attributes?.slug);
 });
 
@@ -102,19 +79,19 @@ const games = await fetchApi<Gamepage[]>({
   query: `?${query}`,
 });
 
-const termsAndConditions = `${page?.attributes?.termsAndConditions?.copy}`;
+const termsAndConditions = `${casinoPage[0]?.attributes?.termsAndConditions?.copy}`;
 const termsAndConditionsCleaned = termsAndConditions.replace(
   /(<([^>]+)>)/gi,
   ""
 );
 
-const testimonial = `${page?.attributes?.testimonial?.testimonial}`;
+const testimonial = `${casinoPage[0]?.attributes?.testimonial?.testimonial}`;
 const testimonialCleaned = testimonial.replace(/(<([^>]+)>)/gi, "");
 
-let casinoFeatures = page?.attributes?.casinoFeatures;
+let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures;
 
 //list componets on page
-const __blocks = mapBlocksToDynamicComponents(page?.attributes.blocks);
+const __blocks = mapBlocksToDynamicComponents(casinoPage[0]?.attributes.blocks);
 const Components = await loadComponents(__blocks);
 
 //generate page url
@@ -125,93 +102,66 @@ let canonical: string = `${import.meta.env.FULL_URL}${
 
 // Approved Author
 const approvedAuthorFirstName =
-  page?.attributes?.testimonial?.approvedBy?.data?.attributes?.firstName?.toLowerCase();
+  casinoPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes?.firstName?.toLowerCase();
 const approvedAuthorLastName =
-  page?.attributes?.testimonial?.approvedBy?.data?.attributes?.lastName?.toLowerCase();
+  casinoPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes?.lastName?.toLowerCase();
 const approvedAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${approvedAuthorFirstName}.${approvedAuthorLastName}/`;
 
 // Review Author
 const reviewAuthorFirstName =
-  page?.attributes?.author?.data?.attributes?.firstName?.toLowerCase();
+  casinoPage[0]?.attributes?.author?.data?.attributes?.firstName?.toLowerCase();
 const reviewAuthorLastName =
-  page?.attributes?.author?.data?.attributes?.lastName?.toLowerCase();
+  casinoPage[0]?.attributes?.author?.data?.attributes?.lastName?.toLowerCase();
 const reviewAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${reviewAuthorFirstName}.${reviewAuthorLastName}/`;
 
 let seo = {
-  pageTitle: page?.attributes?.seo?.metaTitle,
-  metaDescription: page?.attributes?.seo?.metaDescription,
+  pageTitle: casinoPage[0]?.attributes?.seo?.metaTitle,
+  metaDescription: casinoPage[0]?.attributes?.seo?.metaDescription,
   url: canonical,
 };
 
-let pageSchema = [];
+let combinedSchema = [];
 
-let pageBreadcrum: BreadcrumbData[] = [
-  {
-    breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: "",
-  },
-];
-
-//Breadcrum Schema
-if (layoutData) {
-  pageBreadcrum.unshift(...layoutData?.attributes?.casinoBreadcrumbs);
-}
-const breadSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [...pageBreadcrum]
-    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
-    .map((bread, i) => {
-      return {
-        "@type": "ListItem",
-        position: i + 1,
-        name: bread?.breadCrumbText,
-        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
-      };
-    }),
-};
-pageSchema.push(breadSchema);
-
-const prosCons = page?.attributes?.proscons as ProsConsBlock
+const prosCons = casinoPage[0]?.attributes?.proscons as ProsConsBlock;
 
 // Review Schema
 const reviewSchema = {
   "@context": "https://schema.org/",
   "@type": "Review",
-  datePublished: `${page?.attributes?.createdAt}`,
-  dateModified: `${page?.attributes?.updatedAt}`,
-  description: `${page?.attributes?.introduction?.replace(/(<([^>]+)>)/gi, "")}`,
+  datePublished: `${casinoPage[0]?.attributes?.createdAt}`,
+  dateModified: `${casinoPage[0]?.attributes?.updatedAt}`,
+  description: `${casinoPage[0]?.attributes?.introduction?.replace(/(<([^>]+)>)/gi, "")}`,
   itemReviewed: {
     "@type": "Organization",
-    image: `${page?.attributes?.images?.data?.attributes?.url}`,
-    name: `${page?.attributes?.title}`,
+    image: `${casinoPage[0]?.attributes?.images?.data?.attributes?.url}`,
+    name: `${casinoPage[0]?.attributes?.title}`,
     makesOffer: [
       {
         "@type": "Offer",
         "@id": `${import.meta.env.PUBLIC_FULL_URL}`,
-        name: `${page?.attributes?.casinoBonus?.bonusLabel}`,
-        description: `${translationStore?.reviewAndBonus} ${page?.attributes?.title}`,
+        name: `${casinoPage[0]?.attributes?.casinoBonus?.bonusLabel}`,
+        description: `${translationStore?.reviewAndBonus} ${casinoPage[0]?.attributes?.title}`,
         url: `${import.meta.env.PUBLIC_FULL_URL}${
-          page?.attributes?.casinoBonus?.bonusUrl
+          casinoPage[0]?.attributes?.casinoBonus?.bonusUrl
         }`,
       },
     ],
   },
   reviewRating: {
     "@type": "Rating",
-    ratingValue: `${page?.attributes?.authorRatings}`,
+    ratingValue: `${casinoPage[0]?.attributes?.authorRatings}`,
     bestRating: "5",
     worstRating: "0",
   },
-  name: `${translationStore?.reviewAndBonus} ${page?.attributes?.title}`,
+  name: `${translationStore?.reviewAndBonus} ${casinoPage[0]?.attributes?.title}`,
   author: {
     "@type": "Person",
-    name: `${page?.attributes?.author?.data?.attributes?.firstName} ${page?.attributes?.author?.data?.attributes?.lastName}`,
+    name: `${casinoPage[0]?.attributes?.author?.data?.attributes?.firstName} ${casinoPage[0]?.attributes?.author?.data?.attributes?.lastName}`,
     url: `${import.meta.env.PUBLIC_FULL_URL}/author/${
-      page?.attributes?.author?.data?.attributes?.firstName
-    }.${page?.attributes?.author?.data?.attributes?.lastName}`,
+      casinoPage[0]?.attributes?.author?.data?.attributes?.firstName
+    }.${casinoPage[0]?.attributes?.author?.data?.attributes?.lastName}`,
   },
-  
+
   ...(prosCons && {
     positiveNotes: {
       "@type": "ItemList",
@@ -236,30 +186,31 @@ const reviewSchema = {
   }),
   contributor: {
     "@type": "Person",
-    name: `${page?.attributes?.testimonial?.approvedBy?.data?.attributes.firstName} ${page?.attributes?.testimonial?.approvedBy?.data?.attributes.lastName}`,
+    name: `${casinoPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes.firstName} ${casinoPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes.lastName}`,
     url: `${import.meta.env.PUBLIC_FULL_URL}/author/${
-      page?.attributes?.testimonial?.approvedBy?.data?.attributes.firstName
-    }.${page?.attributes?.testimonial?.approvedBy?.data?.attributes.lastName}`,
+      casinoPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes
+        .firstName
+    }.${casinoPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes.lastName}`,
     sameAs: [
-      `${page?.attributes?.testimonial?.approvedBy?.data?.attributes?.jobTitle}`,
+      `${casinoPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes?.jobTitle}`,
     ],
     worksFor: {
       "@type": "Organization",
       "@id": `${import.meta.env.PUBLIC_FULL_URL}`,
     },
   },
-  reviewBody: `${page?.attributes?.testimonial?.testimonial}`,
+  reviewBody: `${casinoPage[0]?.attributes?.testimonial?.testimonial}`,
   publisher: {
     "@type": "Organization",
     name: `${import.meta.env.PUBLIC_SITE_ID}`,
     url: `${import.meta.env.PUBLIC_FULL_URL}`,
-    logo: `${page?.attributes?.images?.data?.attributes?.url}`,
+    logo: `${casinoPage[0]?.attributes?.images?.data?.attributes?.url}`,
   },
 };
-pageSchema.push(reviewSchema);
+combinedSchema.push(reviewSchema);
 
 // FAQ Schema
-const allFAQs = page?.attributes?.faqs as FaqsType[];
+const allFAQs = casinoPage[0]?.attributes?.faqs as FaqsType[];
 if (allFAQs.length > 0) {
   const faqSchema = {
     "@context": "https://schema.org",
@@ -275,10 +226,10 @@ if (allFAQs.length > 0) {
       };
     }),
   };
-  pageSchema.push(faqSchema);
+  combinedSchema.push(faqSchema);
 }
 
-const howTo = page?.attributes?.howTo as HowToGroup;
+const howTo = casinoPage[0]?.attributes?.howTo as HowToGroup;
 
 if (howTo) {
   const howToSchema = {
@@ -296,7 +247,7 @@ if (howTo) {
     step: howTo?.howToGroup?.map(({ heading, copy, image }, i: number) => {
       return {
         "@type": "HowToStep",
-        url: `${page?.attributes?.slug}#step0${i + 1}`,
+        url: `${casinoPage[0]?.attributes?.slug}#step0${i + 1}`,
         name: heading,
         itemListElement: {
           "@type": "HowToDirection",
@@ -311,7 +262,7 @@ if (howTo) {
       };
     }),
   };
-  pageSchema.push(howToSchema);
+  combinedSchema.push(howToSchema);
 }
 
 // Tell the browser to always check the freshness of the cache
@@ -327,10 +278,15 @@ Astro.response.headers.set(
 );
 ---
 
-<MainLayout seoData={seo} schemaData={pageSchema}>
+<MainLayout
+  seoData={seo}
+  crumbLocation="casino-page"
+  crumbTitle={casinoPage[0]?.attributes?.title}
+  otherSchema={combinedSchema}
+>
   <Breadcrumb
     breadcrumbs={[
-      { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
+      { breadCrumbText: casinoPage[0]?.attributes?.title, breadCrumbUrl: null },
     ]}
     breadcrumbKey="casinoBreadcrumbs"
   />
@@ -340,14 +296,14 @@ Astro.response.headers.set(
         <div class="row heading-date">
           <div class="text-white">
             <h1 class="font-medium m-0">
-              {page?.attributes?.heading}
+              {casinoPage[0]?.attributes?.heading}
             </h1>
             <div class="md:flex items-center gap-2">
               <TimeDate
-                timeDate={page?.attributes?.updatedAt}
+                timeDate={casinoPage[0]?.attributes?.updatedAt}
                 {translationStore}
               />
-              <HeaderAuthor author={page?.attributes?.author} />
+              <HeaderAuthor author={casinoPage[0]?.attributes?.author} />
             </div>
           </div>
         </div>
@@ -356,14 +312,14 @@ Astro.response.headers.set(
           <div class="bg-white flex flex-col p-3 rounded relative z-10">
             <div>
               <Link
-                href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
+                href={`${casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
                 class="block rounded border border-[transparent]"
                 rel="sponsored"
               >
                 <Image
-                  src={page?.attributes?.images?.data?.attributes?.url}
+                  src={casinoPage[0]?.attributes?.images?.data?.attributes?.url}
                   classes="w-full rounded"
-                  alt={page?.attributes?.title}
+                  alt={casinoPage[0]?.attributes?.title}
                   imageWidth={330}
                   ,
                   imageHeight={150}
@@ -372,19 +328,19 @@ Astro.response.headers.set(
             </div>
             <div class="mt-2 flex items-center justify-center">
               <RatingStar
-                avgRating={page?.attributes?.ratingAvg}
+                avgRating={casinoPage[0]?.attributes?.ratingAvg}
                 ratingClasses="flex-col"
-                ratingCount={page.attributes.ratingCount}
-                itemId={page.id + ""}
+                ratingCount={casinoPage[0].attributes.ratingCount}
+                itemId={casinoPage[0].id + ""}
                 ratingType={"casinos"}
                 translations={translationStore ?? {}}
                 client:load
               />
               <!-- <ReadOnlyRatings
-                avgRating={page?.attributes?.ratingAvg}
+                avgRating={casinoPage[0]?.attributes?.ratingAvg}
                 showVotes={true}
                 ratingClasses="flex-col"
-                ratingCount={page.attributes.ratingCount}
+                ratingCount={casinoPage[0].attributes.ratingCount}
               /> -->
             </div>
             <div class="flex flex-col my-10">
@@ -401,9 +357,9 @@ Astro.response.headers.set(
                   <Link
                     externalInNewTab={true}
                     class="text-decoration-underline text-blue-300"
-                    href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
+                    href={`${casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
                   >
-                    {page?.attributes?.casinoBonus?.bonusLabel}
+                    {casinoPage[0]?.attributes?.casinoBonus?.bonusLabel}
                   </Link>
                 </div>
               </div>
@@ -428,31 +384,34 @@ Astro.response.headers.set(
                     <td>
                       <div class="bonus-value font-bold pl-1">
                         {
-                          page?.attributes?.bonusSection?.bonusAmount
-                            ? `${page?.attributes?.bonusSection?.bonusAmount}€`
+                          casinoPage[0]?.attributes?.bonusSection?.bonusAmount
+                            ? `${casinoPage[0]?.attributes?.bonusSection?.bonusAmount}€`
                             : ""
                         }
                         {
-                          page?.attributes?.bonusSection?.cashBack &&
-                          page?.attributes?.bonusSection?.bonusAmount ? (
+                          casinoPage[0]?.attributes?.bonusSection?.cashBack &&
+                          casinoPage[0]?.attributes?.bonusSection
+                            ?.bonusAmount ? (
                             <br />
                           ) : (
                             ""
                           )
                         }
                         {
-                          page?.attributes?.bonusSection?.cashBack
-                            ? `${page?.attributes?.bonusSection?.cashBack}`
+                          casinoPage[0]?.attributes?.bonusSection?.cashBack
+                            ? `${casinoPage[0]?.attributes?.bonusSection?.cashBack}`
                             : ""
                         }
                         {
-                          (page?.attributes?.bonusSection?.cashBack ||
-                            page?.attributes?.bonusSection?.bonusAmount) &&
-                            page?.attributes?.bonusSection?.freeSpin && <br />
+                          (casinoPage[0]?.attributes?.bonusSection?.cashBack ||
+                            casinoPage[0]?.attributes?.bonusSection
+                              ?.bonusAmount) &&
+                            casinoPage[0]?.attributes?.bonusSection
+                              ?.freeSpin && <br />
                         }
                         {
-                          page?.attributes?.bonusSection?.freeSpin &&
-                            `${page?.attributes?.bonusSection?.freeSpin}`
+                          casinoPage[0]?.attributes?.bonusSection?.freeSpin &&
+                            `${casinoPage[0]?.attributes?.bonusSection?.freeSpin}`
                         }
                       </div>
                     </td>
@@ -476,18 +435,21 @@ Astro.response.headers.set(
                     <td>
                       <div class="bonus-value font-bold pl-1">
                         {
-                          page?.attributes?.noDepositSection?.bonusAmount
+                          casinoPage[0]?.attributes?.noDepositSection
+                            ?.bonusAmount
                             ? `${
-                                page?.attributes?.noDepositSection
+                                casinoPage[0]?.attributes?.noDepositSection
                                   ?.bonusAmount || 0
                               }€ ${translationStore?.withoutDeposit}`
                             : ""
                         }
                         {
-                          page?.attributes?.noDepositSection &&
-                          page?.attributes?.noDepositSection?.bonusAmount &&
-                          page?.attributes?.freeSpinsSection &&
-                          page?.attributes?.freeSpinsSection?.bonusAmount ? (
+                          casinoPage[0]?.attributes?.noDepositSection &&
+                          casinoPage[0]?.attributes?.noDepositSection
+                            ?.bonusAmount &&
+                          casinoPage[0]?.attributes?.freeSpinsSection &&
+                          casinoPage[0]?.attributes?.freeSpinsSection
+                            ?.bonusAmount ? (
                             <>
                               <span>+</span>
                               <br />
@@ -497,10 +459,11 @@ Astro.response.headers.set(
                           )
                         }
                         {
-                          page?.attributes?.freeSpinsSection &&
-                          page?.attributes?.freeSpinsSection?.bonusAmount
+                          casinoPage[0]?.attributes?.freeSpinsSection &&
+                          casinoPage[0]?.attributes?.freeSpinsSection
+                            ?.bonusAmount
                             ? `${
-                                page?.attributes?.freeSpinsSection
+                                casinoPage[0]?.attributes?.freeSpinsSection
                                   ?.bonusAmount || 0
                               } ${translationStore?.freeSpins}`
                             : ""
@@ -515,7 +478,7 @@ Astro.response.headers.set(
               <Link
                 class="btn btn-misc block w-full uppercase"
                 externalInNewTab={true}
-                href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
+                href={`${casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
               >
                 {translationStore?.accessWebsite}
               </Link>
@@ -626,7 +589,10 @@ Astro.response.headers.set(
                           </div>
                         </td>
                         <td class=""
-                          >{page?.attributes?.casinoGeneralInfo?.website}</td
+                          >{
+                            casinoPage[0]?.attributes?.casinoGeneralInfo
+                              ?.website
+                          }</td
                         >
                       </tr>
                       <tr class="border-b-1">
@@ -642,7 +608,12 @@ Astro.response.headers.set(
                             {translationStore?.society}
                           </div>
                         </td>
-                        <td>{page?.attributes?.casinoGeneralInfo?.societa}</td>
+                        <td
+                          >{
+                            casinoPage[0]?.attributes?.casinoGeneralInfo
+                              ?.societa
+                          }</td
+                        >
                       </tr>
                       <tr class="border-b-1">
                         <td>
@@ -659,7 +630,7 @@ Astro.response.headers.set(
                         </td>
                         <td
                           >{
-                            page?.attributes?.casinoGeneralInfo
+                            casinoPage[0]?.attributes?.casinoGeneralInfo
                               ?.regulationLicense
                           }</td
                         >
@@ -677,7 +648,11 @@ Astro.response.headers.set(
                             {translationStore?.phone}
                           </div>
                         </td>
-                        <td>{page?.attributes?.casinoGeneralInfo?.telephone}</td
+                        <td
+                          >{
+                            casinoPage[0]?.attributes?.casinoGeneralInfo
+                              ?.telephone
+                          }</td
                         >
                       </tr>
                       <tr>
@@ -693,7 +668,11 @@ Astro.response.headers.set(
                             {translationStore?.email}
                           </div>
                         </td>
-                        <td>{page?.attributes?.casinoGeneralInfo?.email}</td>
+                        <td
+                          >{
+                            casinoPage[0]?.attributes?.casinoGeneralInfo?.email
+                          }</td
+                        >
                       </tr>
                     </tbody>
                   </table>
@@ -709,8 +688,8 @@ Astro.response.headers.set(
                         <div class="approval-author mr-10">
                           <div class="review_author_img mr-2">
                             <Images
-                              src={page?.attributes?.author?.data?.attributes
-                                ?.photo?.data?.attributes?.url}
+                              src={casinoPage[0]?.attributes?.author?.data
+                                ?.attributes?.photo?.data?.attributes?.url}
                               alt="Reviewer Image"
                               imageWidth={60}
                               imageHeight={60}
@@ -724,18 +703,18 @@ Astro.response.headers.set(
                               <span class="">
                                 <Link href={reviewAuthorPageURL}>
                                   {
-                                    page?.attributes?.author?.data?.attributes
-                                      ?.firstName +
+                                    casinoPage[0]?.attributes?.author?.data
+                                      ?.attributes?.firstName +
                                       " " +
-                                      page?.attributes?.author?.data?.attributes
-                                        ?.lastName
+                                      casinoPage[0]?.attributes?.author?.data
+                                        ?.attributes?.lastName
                                   }
                                 </Link>
                               </span>
                               <span
                                 >{
-                                  page?.attributes?.author?.data?.attributes
-                                    ?.jobTitle
+                                  casinoPage[0]?.attributes?.author?.data
+                                    ?.attributes?.jobTitle
                                 }</span
                               >
                             </div>
@@ -744,9 +723,9 @@ Astro.response.headers.set(
                         <div class="approval-author">
                           <div class="review_author_img mr-2">
                             <Image
-                              src={page?.attributes?.testimonial?.approvedBy
-                                ?.data?.attributes?.photo?.data?.attributes
-                                ?.url}
+                              src={casinoPage[0]?.attributes?.testimonial
+                                ?.approvedBy?.data?.attributes?.photo?.data
+                                ?.attributes?.url}
                               alt="Approver image"
                               imageWidth={60}
                               imageHeight={60}
@@ -760,18 +739,19 @@ Astro.response.headers.set(
                               <span class="">
                                 <Link href={approvedAuthorPageURL}>
                                   {
-                                    page?.attributes?.testimonial?.approvedBy
-                                      ?.data?.attributes?.firstName +
+                                    casinoPage[0]?.attributes?.testimonial
+                                      ?.approvedBy?.data?.attributes
+                                      ?.firstName +
                                       " " +
-                                      page?.attributes?.testimonial?.approvedBy
-                                        ?.data?.attributes?.lastName
+                                      casinoPage[0]?.attributes?.testimonial
+                                        ?.approvedBy?.data?.attributes?.lastName
                                   }
                                 </Link>
                               </span>
                               <span
                                 >{
-                                  page?.attributes?.testimonial?.approvedBy
-                                    ?.data?.attributes?.jobTitle
+                                  casinoPage[0]?.attributes?.testimonial
+                                    ?.approvedBy?.data?.attributes?.jobTitle
                                 }</span
                               >
                             </div>
@@ -784,7 +764,7 @@ Astro.response.headers.set(
                     </div>
                     <div class="mt-3 mb-10 flex justify-start">
                       <ReadOnlyRatings
-                        avgRating={page?.attributes?.authorRatings}
+                        avgRating={casinoPage[0]?.attributes?.authorRatings}
                         showVotes={false}
                         ratingClasses={"flex-row justify-center items-center"}
                         {translationStore}
@@ -811,7 +791,8 @@ Astro.response.headers.set(
                   </div>
                   <div class="flex flex-wrap">
                     {
-                      page?.attributes?.paymentOptions?.wireTransfer && (
+                      casinoPage[0]?.attributes?.paymentOptions
+                        ?.wireTransfer && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/wire"
@@ -823,7 +804,7 @@ Astro.response.headers.set(
                     }
 
                     {
-                      page?.attributes?.paymentOptions?.skrill && (
+                      casinoPage[0]?.attributes?.paymentOptions?.skrill && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/skrill"
@@ -835,7 +816,7 @@ Astro.response.headers.set(
                     }
 
                     {
-                      page?.attributes?.paymentOptions?.postepay && (
+                      casinoPage[0]?.attributes?.paymentOptions?.postepay && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/postepay"
@@ -847,7 +828,7 @@ Astro.response.headers.set(
                     }
 
                     {
-                      page?.attributes?.paymentOptions?.paysafe && (
+                      casinoPage[0]?.attributes?.paymentOptions?.paysafe && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/paysafe"
@@ -859,7 +840,7 @@ Astro.response.headers.set(
                     }
 
                     {
-                      page?.attributes?.paymentOptions?.paypal && (
+                      casinoPage[0]?.attributes?.paymentOptions?.paypal && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/paypal"
@@ -871,7 +852,7 @@ Astro.response.headers.set(
                     }
 
                     {
-                      page?.attributes?.paymentOptions?.neteller && (
+                      casinoPage[0]?.attributes?.paymentOptions?.neteller && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/neteller"
@@ -883,7 +864,7 @@ Astro.response.headers.set(
                     }
 
                     {
-                      page?.attributes?.paymentOptions?.uKash && (
+                      casinoPage[0]?.attributes?.paymentOptions?.uKash && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/ukash"
@@ -895,7 +876,7 @@ Astro.response.headers.set(
                     }
 
                     {
-                      page?.attributes?.paymentOptions?.creditCard && (
+                      casinoPage[0]?.attributes?.paymentOptions?.creditCard && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/debit"
@@ -923,9 +904,11 @@ Astro.response.headers.set(
                   <div class="flex">
                     <div class="provider-img-container">
                       {
-                        page?.attributes?.providers?.data && (
+                        casinoPage[0]?.attributes?.providers?.data && (
                           <ProviderIcons
-                            providers={page?.attributes?.providers?.data}
+                            providers={
+                              casinoPage[0]?.attributes?.providers?.data
+                            }
                             client:load
                           />
                         )
@@ -945,8 +928,8 @@ Astro.response.headers.set(
         <div class="flex justify-between p-2 bg-white">
           <div class="border border-grey-300 rounded-r-lg mr-2">
             <Images
-              src={page?.attributes?.images?.data?.attributes?.url}
-              alt={page?.attributes?.title}
+              src={casinoPage[0]?.attributes?.images?.data?.attributes?.url}
+              alt={casinoPage[0]?.attributes?.title}
               imageWidth={80}
               imageHeight={0}
             />
@@ -954,7 +937,7 @@ Astro.response.headers.set(
           <Link
             class="btn btn-misc block w-full uppercase"
             externalInNewTab={true}
-            href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
+            href={`${casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
           >
             {translationStore?.accessWebsite}
           </Link>
@@ -962,20 +945,29 @@ Astro.response.headers.set(
       </div>
       <div class="grid md:grid-cols-4 gap-8">
         <div class="col-span-1 md:col-span-3">
-          <QuickLinks data={page} {translationStore} />
+          <QuickLinks data={casinoPage[0]} {translationStore} />
 
-          <ImageCarousel data={page?.attributes.blocks[0]} client:visible />
+          <ImageCarousel
+            data={casinoPage[0]?.attributes.blocks[0]}
+            client:visible
+          />
 
           <div class="row qc">
-            <!-- <div class="" set:html={page?.attributes?.introduction} /> -->
-            <ContentBlock pageContent={page?.attributes?.introduction} />
+            <!-- <div class="" set:html={casinoPage[0]?.attributes?.introduction} /> -->
+            <ContentBlock
+              pageContent={casinoPage[0]?.attributes?.introduction}
+            />
           </div>
 
-          {page?.attributes?.howTo && <h2>{page?.attributes?.howTo.title}</h2>}
+          {
+            casinoPage[0]?.attributes?.howTo && (
+              <h2>{casinoPage[0]?.attributes?.howTo.title}</h2>
+            )
+          }
 
           {
-            page?.attributes?.howTo &&
-              page?.attributes?.howTo?.howToGroup.map(
+            casinoPage[0]?.attributes?.howTo &&
+              casinoPage[0]?.attributes?.howTo?.howToGroup.map(
                 (howTo: HowToType, i: number) => (
                   <HowTo
                     count={i + 1}
@@ -990,17 +982,21 @@ Astro.response.headers.set(
           }
 
           {
-            page?.attributes?.content1 && (
+            casinoPage[0]?.attributes?.content1 && (
               <div>
-                <ContentBlock pageContent={page?.attributes?.content1} />
+                <ContentBlock
+                  pageContent={casinoPage[0]?.attributes?.content1}
+                />
               </div>
             )
           }
 
           {
-            page?.attributes?.content2 && (
+            casinoPage[0]?.attributes?.content2 && (
               <div>
-                <ContentBlock pageContent={page?.attributes?.content2} />
+                <ContentBlock
+                  pageContent={casinoPage[0]?.attributes?.content2}
+                />
               </div>
             )
           }
@@ -1014,48 +1010,52 @@ Astro.response.headers.set(
           }
 
           {
-            page?.attributes?.content3 && (
+            casinoPage[0]?.attributes?.content3 && (
               <div class="mt-3">
-                <ContentBlock pageContent={page?.attributes?.content3} />
+                <ContentBlock
+                  pageContent={casinoPage[0]?.attributes?.content3}
+                />
               </div>
             )
           }
 
           {
-            page?.attributes?.proscons && (
+            casinoPage[0]?.attributes?.proscons && (
               <ProsCons
-                heading={page?.attributes?.proscons?.heading}
-                pros={page?.attributes?.proscons?.pros}
-                cons={page?.attributes?.proscons?.cons}
-                prosImage={page?.attributes?.proscons?.proImage}
-                consImage={page?.attributes?.proscons?.conImage}
+                heading={casinoPage[0]?.attributes?.proscons?.heading}
+                pros={casinoPage[0]?.attributes?.proscons?.pros}
+                cons={casinoPage[0]?.attributes?.proscons?.cons}
+                prosImage={casinoPage[0]?.attributes?.proscons?.proImage}
+                consImage={casinoPage[0]?.attributes?.proscons?.conImage}
               />
             )
           }
 
           {
-            page?.attributes?.content4 && (
+            casinoPage[0]?.attributes?.content4 && (
               <div class="mt-3">
-                <ContentBlock pageContent={page?.attributes?.content4} />
+                <ContentBlock
+                  pageContent={casinoPage[0]?.attributes?.content4}
+                />
               </div>
             )
           }
 
           <div class="">
             <CasinoComparison
-              data={page?.attributes?.casinoComparison.data}
+              data={casinoPage[0]?.attributes?.casinoComparison.data}
               {translationStore}
             />
           </div>
           {
-            page?.attributes?.faqs && (
+            casinoPage[0]?.attributes?.faqs && (
               <div class="mt-3 qc">
                 <div class="mb-4">
                   <h2 class="faq-title">{translationStore?.faq}</h2>
                 </div>
 
                 <div class="mb-5">
-                  {page?.attributes?.faqs.map((faq: any) => (
+                  {casinoPage[0]?.attributes?.faqs.map((faq: any) => (
                     <Faqs data={faq} />
                   ))}
                 </div>
@@ -1063,21 +1063,24 @@ Astro.response.headers.set(
             )
           }
 
-          <AuthorCard data={page.attributes.author} {translationStore} />
+          <AuthorCard
+            data={casinoPage[0].attributes.author}
+            {translationStore}
+          />
         </div>
 
         <div class="col-span-1 hidden md:block">
           <div class="bg-white flex flex-col p-3 rounded sticky top-3">
             <div>
               <Link
-                href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
+                href={`${casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
                 class="block rounded border border-[transparent]"
                 externalInNewTab={true}
               >
                 <Image
-                  src={page?.attributes?.images?.data?.attributes?.url}
+                  src={casinoPage[0]?.attributes?.images?.data?.attributes?.url}
                   classes="w-full rounded"
-                  alt={page?.attributes?.title}
+                  alt={casinoPage[0]?.attributes?.title}
                   imageWidth={330}
                   ,
                   imageHeight={150}
@@ -1086,19 +1089,19 @@ Astro.response.headers.set(
             </div>
             <div class="mt-2 flex items-center justify-center">
               <RatingStar
-                avgRating={page?.attributes?.ratingAvg}
+                avgRating={casinoPage[0]?.attributes?.ratingAvg}
                 ratingClasses="flex-col"
-                ratingCount={page.attributes.ratingCount}
-                itemId={page.id + ""}
+                ratingCount={casinoPage[0].attributes.ratingCount}
+                itemId={casinoPage[0].id + ""}
                 ratingType={"casinos"}
                 translations={translationStore ?? {}}
                 client:load
               />
               <!-- <ReadOnlyRatings
-                avgRating={page?.attributes?.ratingAvg}
+                avgRating={casinoPage[0]?.attributes?.ratingAvg}
                 showVotes={true}
                 ratingClasses="flex-col"
-                ratingCount={page.attributes.ratingCount}
+                ratingCount={casinoPage[0].attributes.ratingCount}
               /> -->
             </div>
             <div class="flex flex-col my-10">
@@ -1115,9 +1118,9 @@ Astro.response.headers.set(
                   <Link
                     externalInNewTab={true}
                     class="text-decoration-underline text-blue-300"
-                    href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
+                    href={`${casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
                   >
-                    {page?.attributes?.casinoBonus?.bonusLabel}
+                    {casinoPage[0]?.attributes?.casinoBonus?.bonusLabel}
                   </Link>
                 </div>
               </div>
@@ -1142,31 +1145,34 @@ Astro.response.headers.set(
                     <td>
                       <div class="bonus-value font-bold pl-1">
                         {
-                          page?.attributes?.bonusSection?.bonusAmount
-                            ? `${page?.attributes?.bonusSection?.bonusAmount}€`
+                          casinoPage[0]?.attributes?.bonusSection?.bonusAmount
+                            ? `${casinoPage[0]?.attributes?.bonusSection?.bonusAmount}€`
                             : ""
                         }
                         {
-                          page?.attributes?.bonusSection?.cashBack &&
-                          page?.attributes?.bonusSection?.bonusAmount ? (
+                          casinoPage[0]?.attributes?.bonusSection?.cashBack &&
+                          casinoPage[0]?.attributes?.bonusSection
+                            ?.bonusAmount ? (
                             <br />
                           ) : (
                             ""
                           )
                         }
                         {
-                          page?.attributes?.bonusSection?.cashBack
-                            ? `${page?.attributes?.bonusSection?.cashBack}`
+                          casinoPage[0]?.attributes?.bonusSection?.cashBack
+                            ? `${casinoPage[0]?.attributes?.bonusSection?.cashBack}`
                             : ""
                         }
                         {
-                          (page?.attributes?.bonusSection?.cashBack ||
-                            page?.attributes?.bonusSection?.bonusAmount) &&
-                            page?.attributes?.bonusSection?.freeSpin && <br />
+                          (casinoPage[0]?.attributes?.bonusSection?.cashBack ||
+                            casinoPage[0]?.attributes?.bonusSection
+                              ?.bonusAmount) &&
+                            casinoPage[0]?.attributes?.bonusSection
+                              ?.freeSpin && <br />
                         }
                         {
-                          page?.attributes?.bonusSection?.freeSpin &&
-                            `${page?.attributes?.bonusSection?.freeSpin}`
+                          casinoPage[0]?.attributes?.bonusSection?.freeSpin &&
+                            `${casinoPage[0]?.attributes?.bonusSection?.freeSpin}`
                         }
                       </div>
                     </td>
@@ -1190,18 +1196,21 @@ Astro.response.headers.set(
                     <td>
                       <div class="bonus-value font-bold pl-1">
                         {
-                          page?.attributes?.noDepositSection?.bonusAmount
+                          casinoPage[0]?.attributes?.noDepositSection
+                            ?.bonusAmount
                             ? `${
-                                page?.attributes?.noDepositSection
+                                casinoPage[0]?.attributes?.noDepositSection
                                   ?.bonusAmount || 0
                               }€ ${translationStore?.withoutDeposit}`
                             : ""
                         }
                         {
-                          page?.attributes?.noDepositSection &&
-                          page?.attributes?.noDepositSection?.bonusAmount &&
-                          page?.attributes?.freeSpinsSection &&
-                          page?.attributes?.freeSpinsSection?.bonusAmount ? (
+                          casinoPage[0]?.attributes?.noDepositSection &&
+                          casinoPage[0]?.attributes?.noDepositSection
+                            ?.bonusAmount &&
+                          casinoPage[0]?.attributes?.freeSpinsSection &&
+                          casinoPage[0]?.attributes?.freeSpinsSection
+                            ?.bonusAmount ? (
                             <>
                               <span>+</span>
                               <br />
@@ -1211,10 +1220,11 @@ Astro.response.headers.set(
                           )
                         }
                         {
-                          page?.attributes?.freeSpinsSection &&
-                          page?.attributes?.freeSpinsSection?.bonusAmount
+                          casinoPage[0]?.attributes?.freeSpinsSection &&
+                          casinoPage[0]?.attributes?.freeSpinsSection
+                            ?.bonusAmount
                             ? `${
-                                page?.attributes?.freeSpinsSection
+                                casinoPage[0]?.attributes?.freeSpinsSection
                                   ?.bonusAmount || 0
                               } ${translationStore?.freeSpins}`
                             : ""
@@ -1227,7 +1237,7 @@ Astro.response.headers.set(
             </div>
             <div class="mb-5">
               <Link
-                href={`${page?.attributes?.casinoBonus?.bonusUrl}`}
+                href={`${casinoPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
                 class="btn btn-misc block w-full uppercase"
                 externalInNewTab={true}
               >

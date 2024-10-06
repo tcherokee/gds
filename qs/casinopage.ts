@@ -1,4 +1,4 @@
-export const casinopageQs = () => ({
+export const casinopageQs = (slug:string) => ({
   fields: [
     "title",
     "slug",
@@ -188,6 +188,11 @@ export const casinopageQs = () => ({
           fields: ["url", "caption"],
         },
       },
+    },
+  },
+  filters: {
+    slug: {
+      $eq: slug,
     },
   },
   pagination: {

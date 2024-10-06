@@ -28,45 +28,31 @@ import MainLayout from "../../layouts/MainLayout.astro";
 import { getTranslations } from "../../../utils/api-requests";
 import type { BreadcrumbData } from "../../../interfaces/common/types";
 
+const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
 
-export const getStaticPaths = (async () => {
-  // Import the QS Query string for custom slugs and prepare it for the API fetch
-  const query = qs.stringify(casinoproviderQs(), { encodeValuesOnly: true });
-  // Request to the Fetch Function to get page data from API
-  const casinoProvider = await fetchApi<Casinoprovider[]>({
-    endpoint: "casino-providers",
-    wrappedByKey: "data",
-    query: `?${query}`,
-  });
+// Import the QS Query string for custom slugs and prepare it for the API fetch
+const query = qs.stringify(casinoproviderQs(slug), { encodeValuesOnly: true });
 
-  return casinoProvider.map((page) => {
-    return {
-      params: { slug: page?.attributes?.slug },
-      props: { page },
-    };
-  });
-}) satisfies GetStaticPaths;
-
-const { page } = Astro.props;
-const { slug } = Astro.params; //get the slug from the page url
+// Request to the Fetch Function to get page data from API
+const casinoProvider = await fetchApi<Casinoprovider[]>({
+  endpoint: "casino-providers",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
 
 const block = {
   showCasinoFilters: false,
 };
+
 //generate page url
 let siteID = import.meta.env.SITE_ID;
 let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"]}/${slug}`;
 
-//set page breadcrumb
-let breadcumb = [
-  { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
-];
-
 //set page seo data
 let seo = {
-  pageTitle: page?.attributes?.seo?.metaTitle,
-  metaDescription: page?.attributes?.seo?.metaDescription,
+  pageTitle: casinoProvider[0]?.attributes?.seo?.metaTitle,
+  metaDescription: casinoProvider[0]?.attributes?.seo?.metaDescription,
   url: canonical,
 };
 
@@ -74,7 +60,7 @@ let pageSchema = [];
 
 let pageBreadcrum: BreadcrumbData[] = [
   {
-    breadCrumbText: page?.attributes?.title,
+    breadCrumbText: casinoProvider[0]?.attributes?.title,
     breadCrumbUrl: "",
   },
 ];
@@ -113,57 +99,80 @@ Astro.response.headers.set(
 );
 ---
 
-<MainLayout seoData={seo} schemaData={pageSchema}>
+<MainLayout
+  seoData={seo}
+  crumbLocation="casino-providers"
+  crumbTitle={casinoProvider[0]?.attributes?.title}
+  otherSchema={combinedSchema}
+>
   <Breadcrumb
-    breadcrumbs={breadcumb}
+    breadcrumbs={[
+      {
+        breadCrumbText: casinoProvider[0]?.attributes?.title,
+        breadCrumbUrl: null,
+      },
+    ]}
     breadcrumbKey="casinoProvidersBreadcrumbs"
   />
 
   <div class="featured-background curve">
     <IntroBlock
-      data={page?.attributes?.IntroductionWithImage}
-      timeDate={page?.attributes?.updatedAt}
-      authorData={page?.attributes?.author}
+      data={casinoProvider[0]?.attributes?.IntroductionWithImage}
+      timeDate={casinoProvider[0]?.attributes?.updatedAt}
+      authorData={casinoProvider[0]?.attributes?.author}
       {translationStore}
     />
 
     <div class="mb-[40px] relative z-10">
-      <ProviderCasino slug={page?.attributes?.slug} {translationStore} />
+      <ProviderCasino
+        slug={casinoProvider[0]?.attributes?.slug}
+        {translationStore}
+      />
     </div>
   </div>
 
   <div class="xl:container px-2 pb-5 pt-4">
     {
-      (page?.attributes?.content1 ||
-        page?.attributes?.content2 ||
-        page?.attributes?.content3 ||
-        page?.attributes?.faqs?.length > 0) && (
+      (casinoProvider[0]?.attributes?.content1 ||
+        casinoProvider[0]?.attributes?.content2 ||
+        casinoProvider[0]?.attributes?.content3 ||
+        casinoProvider[0]?.attributes?.faqs?.length > 0) && (
         <div class="flex flex-col md:flex-row gap-x-8">
           <div class="order-last md:order-first">
             <div class="content">
-              {page?.attributes?.content1 && (
-                <ContentBlock pageContent={page?.attributes?.content1} />
+              {casinoProvider[0]?.attributes?.content1 && (
+                <ContentBlock
+                  pageContent={casinoProvider[0]?.attributes?.content1}
+                />
               )}
-              {page?.attributes?.content2 && (
-                <ContentBlock pageContent={page?.attributes?.content2} />
+              {casinoProvider[0]?.attributes?.content2 && (
+                <ContentBlock
+                  pageContent={casinoProvider[0]?.attributes?.content2}
+                />
               )}
-              {page?.attributes?.content3 && (
-                <ContentBlock pageContent={page?.attributes?.content3} />
+              {casinoProvider[0]?.attributes?.content3 && (
+                <ContentBlock
+                  pageContent={casinoProvider[0]?.attributes?.content3}
+                />
               )}
             </div>
 
-            {page?.attributes?.casinoComparison?.data.length > 0 && (
+            {casinoProvider[0]?.attributes?.casinoComparison?.data.length >
+              0 && (
               <CasinoComparison
                 block={{}}
-                data={page?.attributes?.casinoComparison?.data.slice(0, 3)}
+                data={casinoProvider[0]?.attributes?.casinoComparison?.data.slice(
+                  0,
+                  3
+                )}
                 {translationStore}
               />
             )}
-            {page?.attributes?.faqs?.length > 0 && (
+            {casinoProvider[0]?.attributes?.faqs?.length > 0 && (
               <div class="content">
                 <h2 class="mb-4">{translationStore?.faq}</h2>
 
-                {page?.attributes?.faqs.map((faq: FaqsType) => (
+                {casinoProvider[0]?.attributes?.faqs.map((faq: FaqsType) => (
                   <Faqs data={faq} />
                 ))}
               </div>
