@@ -176,7 +176,7 @@
             <tbody class="text-casino-table-text">
               <!-- If the casino store is emty, use customCasinos otherwise use casino store -->
               {#if ($casinos.data?.data ?? customCasinos).length > 0}
-                {#each showLoadMore ? ($casinos.data?.data ?? customCasinos).slice(0, currentCasinosLength) : $casinos.data?.data ?? customCasinos as casino, i}
+                {#each showLoadMore ? ($casinos.data?.data ?? customCasinos).slice(0, currentCasinosLength) : $casinos.data?.data ?? customCasinos as casino, i (casino.id)}
                   <tr
                     class="flex flex-wrap md:table-row border-[12px] border-casino-table-tr-border bg-white"
                   >

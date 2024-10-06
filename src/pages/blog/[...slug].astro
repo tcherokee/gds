@@ -137,6 +137,8 @@ Astro.response.headers.set(
   "Cache-Control",
   "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
 );
+
+console.log("page", page?.attributes?.content1);
 ---
 
 <MainLayout seoData={seo}>
@@ -218,8 +220,7 @@ Astro.response.headers.set(
                 />
               </div>
               <div class="blog-content">
-                <ContentBlock pageContent={page?.attributes?.content1} />
-                {/* <Fragment set:html={page?.attributes?.content1} /> */}
+                {/* <ContentBlock pageContent={page?.attributes?.content1} /> */}
               </div>
               {page?.attributes?.author?.data && (
                 <div class="mt-10 mb-10 md:mb-0">

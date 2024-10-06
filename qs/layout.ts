@@ -8,7 +8,6 @@ export const layoutQs = (): LayoutQueryOptions => ({
   fields: [
     "legalText",
     "footerContent",
-    "gameInfoText",
     "cookiesHeaderText",
     "cookiesDescription",
     "cookiesUrl",
@@ -17,6 +16,14 @@ export const layoutQs = (): LayoutQueryOptions => ({
   populate: {
     footerImages: {
       fields: ["imageName", "imageLink"],
+      populate: {
+        image: {
+          fields: ["url", "width", "height"],
+        },
+      },
+    },
+    plus18Popup: {
+      fields: ["activate", "title", "message", "buttonText"],
       populate: {
         image: {
           fields: ["url", "width", "height"],

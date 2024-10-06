@@ -3,13 +3,9 @@
 import qs from "qs";
 
 // Types
-import type { GetStaticPaths } from "astro";
 import type { Gamepage } from "../../../interfaces/game-page";
 import type {
   HowToGroup,
-  HowTo as HowToType,
-  BreadcrumbData,
-  TranslationData,
   Faqs as FaqsType,
   Block as BlockType,
 } from "../../../interfaces/common/types";
@@ -20,7 +16,6 @@ import fetchApi from "../../../lib/strapi";
 
 // Queries
 import { gamepageQs } from "../../../qs/game-page";
-import { customPageLayoutAddOnsQs } from "../../../qs/customPages";
 
 // Components
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -37,93 +32,35 @@ import GamePlayer from "../../components/games/gamePlayer.svelte";
 import QuickLinks from "../../components/helpers/quicklinks.astro";
 import AuthorCard from "../../components/general/authorCard.astro";
 import { getTranslations } from "../../../utils/api-requests";
-import { layoutQs } from "../../../qs/layout";
-import type { LayoutData } from "../../../interfaces/layout";
 
 // Set Up Translation Store
 const translationStore = await getTranslations();
 
-export const getStaticPaths = (async () => {
-  const query = qs.stringify(gamepageQs(), { encodeValuesOnly: true });
-  const gamePage = await fetchApi<Gamepage[]>({
-    endpoint: "games",
-    wrappedByKey: "data",
-    query: `?${query}`,
-  });
-
-  // Request to the Fetch Function to get layout data from API
-  const layout = qs.stringify(layoutQs(), { encodeValuesOnly: true });
-  const layoutData = await fetchApi<LayoutData>({
-    endpoint: "layout",
-    wrappedByKey: "data",
-    query: `?${layout}`,
-  });
-
-  return gamePage.map((page) => {
-    return {
-      params: { slug: page?.attributes?.slug },
-      props: { page, layoutData },
-    };
-  });
-}) satisfies GetStaticPaths;
-
-const { page, layoutData } = Astro.props;
-const { slug } = Astro.params; //get the slug from the page url
-
-// Import the QS Query string for custom slugs and prepare it for the API fetch
-const customLayoutQuery = qs.stringify(customPageLayoutAddOnsQs(), {
-  encodeValuesOnly: true,
-});
-
-// Request to the Fetch Function to get the custom page slugs from the API
-const customLayout = await fetchApi<LayoutData>({
-  endpoint: "layout",
-  wrappedByKey: "data",
-  query: `?${customLayoutQuery}`,
-});
+const slug = Astro.params.slug as string;
 
 //generate page url
 const siteID = import.meta.env.SITE_ID;
 const siteURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["game-pages"]}/${slug}`;
 
-//set page seo data
+const query = qs.stringify(gamepageQs(slug), { encodeValuesOnly: true });
+
+const gamePage = await fetchApi<Gamepage[]>({
+  endpoint: "games",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
+
+// Set Page SEO DATA
 let seo = {
-  pageTitle: page?.attributes?.seo?.metaTitle,
-  metaDescription: page?.attributes?.seo?.metaDescription,
+  pageTitle: gamePage[0]?.attributes?.seo?.metaTitle,
+  metaDescription: gamePage[0]?.attributes?.seo?.metaDescription,
   url: siteURL,
 };
 
-let pageSchema = [];
-
-let pageBreadcrum: BreadcrumbData[] = [
-  {
-    breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: "",
-  },
-];
-
-//Breadcrum Schema
-if (layoutData) {
-  pageBreadcrum.unshift(...layoutData?.attributes?.gamesBreadcrumbs);
-}
-const breadSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [...pageBreadcrum]
-    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
-    .map((bread, i) => {
-      return {
-        "@type": "ListItem",
-        position: i + 1,
-        name: bread?.breadCrumbText,
-        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
-      };
-    }),
-};
-pageSchema.push(breadSchema);
+let combinedSchema = [];
 
 // FAQ Schema
-const allFAQs = page?.attributes?.faqs as FaqsType[];
+const allFAQs = gamePage[0]?.attributes?.faqs as FaqsType[];
 if (allFAQs.length > 0) {
   const faqSchema = {
     "@context": "https://schema.org",
@@ -139,10 +76,10 @@ if (allFAQs.length > 0) {
       };
     }),
   };
-  pageSchema.push(faqSchema);
+  combinedSchema.push(faqSchema);
 }
 
-const howTo = page?.attributes?.howTo as HowToGroup;
+const howTo = gamePage[0]?.attributes?.howTo as HowToGroup;
 if (howTo) {
   const howToSchema = {
     "@context": "https://schema.org",
@@ -159,7 +96,7 @@ if (howTo) {
     step: howTo?.howToGroup?.map(({ heading, copy, image }, i: number) => {
       return {
         "@type": "HowToStep",
-        url: `${page?.attributes?.slug}#step0${i + 1}`,
+        url: `${gamePage[0]?.attributes?.slug}#step0${i + 1}`,
         name: heading,
         itemListElement: {
           "@type": "HowToDirection",
@@ -174,42 +111,42 @@ if (howTo) {
       };
     }),
   };
-  pageSchema.push(howToSchema);
+  combinedSchema.push(howToSchema);
 }
 
 //Rating schema
 const ratingsSchema = {
   "@context": "http://schema.org",
   "@type": "VideoGame",
-  name: `${page?.attributes?.title}`,
+  name: `${gamePage[0]?.attributes?.title}`,
   // url: `${CanonicalURL}`,
-  image: `${page?.attributes?.images?.data?.attributes?.url}`,
-  description: `${page?.attributes?.introduction.replace(/(<([^>]+)>)/gi, "")}`,
+  image: `${gamePage[0]?.attributes?.images?.data?.attributes?.url}`,
+  description: `${gamePage[0]?.attributes?.introduction.replace(/(<([^>]+)>)/gi, "")}`,
   applicationCategory: ["Game"],
   operatingSystem: "Multi-platform",
   aggregateRating: {
     "@type": "AggregateRating",
-    ratingValue: `${page?.attributes?.ratingAvg}`, //To be Updated
-    reviewCount: `${page?.attributes?.ratingCount}`, // To be Updated
+    ratingValue: `${gamePage[0]?.attributes?.ratingAvg}`, //To be Updated
+    reviewCount: `${gamePage[0]?.attributes?.ratingCount}`, // To be Updated
     bestRating: "5",
     worstRating: "0",
   },
   author: {
     "@type": "Person",
-    name: `${page?.attributes?.author?.data?.attributes?.firstName} ${page?.attributes?.author?.data?.attributes?.lastName}`,
-    url: `${import.meta.env.PUBLIC_FULL_URL}/author/${page?.attributes?.author?.data?.attributes?.firstName}.${page?.attributes?.author?.data?.attributes?.lastName}`,
+    name: `${gamePage[0]?.attributes?.author?.data?.attributes?.firstName} ${gamePage[0]?.attributes?.author?.data?.attributes?.lastName}`,
+    url: `${import.meta.env.PUBLIC_FULL_URL}/author/${gamePage[0]?.attributes?.author?.data?.attributes?.firstName}.${gamePage[0]?.attributes?.author?.data?.attributes?.lastName}`,
     publisher: {
       "@type": "Organization",
       name: `${import.meta.env.PUBLIC_SITE_ID}`,
       url: `${import.meta.env.PUBLIC_FULL_URL}`,
-      logo: `${page?.attributes?.images?.data?.attributes?.url}`,
+      logo: `${gamePage[0]?.attributes?.images?.data?.attributes?.url}`,
     },
   },
 };
-pageSchema.push(ratingsSchema);
+combinedSchema.push(ratingsSchema);
 
 //list componets on page
-const __blocks = page?.attributes?.blocks;
+const __blocks = gamePage[0]?.attributes?.blocks;
 
 // Tell the browser to always check the freshness of the cache
 Astro.response.headers.set(
@@ -224,10 +161,14 @@ Astro.response.headers.set(
 );
 ---
 
-<MainLayout seoData={seo} schemaData={pageSchema}>
-  <Breadcrumb
+<MainLayout
+  seoData={seo}
+  crumbLocation="games"
+  crumbTitle={gamePage[0]?.attributes?.title}
+  otherSchema={combinedSchema}
+  ><Breadcrumb
     breadcrumbs={[
-      { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
+      { breadCrumbText: gamePage[0]?.attributes?.title, breadCrumbUrl: null },
     ]}
     breadcrumbKey="gamesBreadcrumbs"
   />
@@ -235,9 +176,8 @@ Astro.response.headers.set(
   <div class="curve rounded-b-3xl pb-3">
     <div class="section-wrapper relative z-10">
       <GamePlayer
-        data={page}
+        data={gamePage[0]}
         gamePageURL={siteURL}
-        layout={customLayout}
         translations={translationStore ?? {}}
         client:load
       />
@@ -246,7 +186,10 @@ Astro.response.headers.set(
           {translationStore?.gamePageRelatedGamesH2}
         </h2>
         <div class="mt-4">
-          <ProviderGames slug={page?.attributes?.slug} {translationStore} />
+          <ProviderGames
+            slug={gamePage[0]?.attributes?.slug}
+            {translationStore}
+          />
         </div>
       </div>
     </div>
@@ -257,25 +200,24 @@ Astro.response.headers.set(
       <h2 class="mt-8 mb-4 md:mt-16">
         {translationStore?.gamePageRelatedCasinoH2}
       </h2>
-      <RelatedCasino slug={page?.attributes?.slug} {translationStore} />
+      <RelatedCasino slug={gamePage[0]?.attributes?.slug} {translationStore} />
     </div>
 
     <div class="flex flex-col md:flex-row gap-x-8">
       <div class="order-last md:order-first mt-5 md:mt-0">
         <div class="quicklinks mb-5">
-          <QuickLinks data={page} {translationStore} />
+          <QuickLinks data={gamePage[0]} {translationStore} />
         </div>
         <div class="intro-content">
-          <h1 class="text-blue-700 !mt-0">{page?.attributes?.heading}</h1>
-          <!-- <Fragment set:html={page?.attributes?.introduction}></Fragment> -->
-          <ContentBlock pageContent={page?.attributes?.introduction} />
+          <h1 class="text-blue-700 !mt-0">{gamePage[0].attributes?.heading}</h1>
+          <ContentBlock pageContent={gamePage[0]?.attributes?.introduction} />
         </div>
 
         {
-          page?.attributes?.howTo && (
+          gamePage[0]?.attributes?.howTo && (
             <div class="howto-content">
-              <h2>{page?.attributes?.howTo.title}</h2>
-              {page?.attributes?.howTo?.howToGroup.map(
+              <h2>{gamePage[0]?.attributes?.howTo.title}</h2>
+              {gamePage[0]?.attributes?.howTo?.howToGroup.map(
                 (howTo: any, i: number) => (
                   <HowTo
                     count={i + 1}
@@ -292,7 +234,7 @@ Astro.response.headers.set(
         }
 
         {
-          page?.attributes?.gameInfoTable && (
+          gamePage[0]?.attributes?.gameInfoTable && (
             <div class="info-table-content">
               <h2 class="mb-[15px]">{translationStore?.gameInfoTableH2}</h2>
               <figure class="table">
@@ -311,7 +253,7 @@ Astro.response.headers.set(
                   <tbody>
                     <tr>
                       {Object.keys(GameInfoHeader).map((key) => (
-                        <td>{page?.attributes?.gameInfoTable[key]}</td>
+                        <td>{gamePage[0]?.attributes?.gameInfoTable[key]}</td>
                       ))}
                     </tr>
                   </tbody>
@@ -322,25 +264,25 @@ Astro.response.headers.set(
         }
 
         {
-          page?.attributes?.content1 && (
+          gamePage[0]?.attributes?.content1 && (
             <div class="game-content">
               <div>
-                <ContentBlock pageContent={page?.attributes?.content1} />
+                <ContentBlock pageContent={gamePage[0]?.attributes?.content1} />
               </div>
             </div>
           )
         }
 
         {
-          page?.attributes?.proscons && (
+          gamePage[0]?.attributes?.proscons && (
             <div class="procon-content">
               <div>
                 <ProsCons
-                  pros={page?.attributes?.proscons?.pros}
-                  cons={page?.attributes?.proscons?.cons}
-                  heading={page?.attributes?.proscons?.heading}
-                  prosImage={page?.attributes?.proscons?.proImage}
-                  consImage={page?.attributes?.proscons?.conImage}
+                  pros={gamePage[0]?.attributes?.proscons?.pros}
+                  cons={gamePage[0]?.attributes?.proscons?.cons}
+                  heading={gamePage[0]?.attributes?.proscons?.heading}
+                  prosImage={gamePage[0]?.attributes?.proscons?.proImage}
+                  consImage={gamePage[0]?.attributes?.proscons?.conImage}
                 />
               </div>
             </div>
@@ -355,7 +297,7 @@ Astro.response.headers.set(
             (block: BlockType, i: number) =>
               block.__component === "shared.image-carousel" && (
                 <ImageCarousel
-                  data={page?.attributes.blocks[i]}
+                  data={gamePage[0]?.attributes.blocks[i]}
                   client:visible
                 />
               )
@@ -365,11 +307,11 @@ Astro.response.headers.set(
         <!-- End page Blocks -->
 
         {
-          page?.attributes?.faqs.length > 0 && (
+          gamePage[0]?.attributes?.faqs.length > 0 && (
             <div class="faq-content">
               <h2 class="mb-4">{translationStore?.faq}</h2>
               <div>
-                {page?.attributes?.faqs.map((faq: FaqsType) => (
+                {gamePage[0]?.attributes?.faqs.map((faq: FaqsType) => (
                   <FaqListBlock data={faq} {translationStore} />
                 ))}
               </div>
@@ -378,8 +320,11 @@ Astro.response.headers.set(
         }
 
         {
-          page?.attributes?.author?.data && (
-            <AuthorCard data={page.attributes.author} {translationStore} />
+          gamePage[0]?.attributes?.author?.data && (
+            <AuthorCard
+              data={gamePage[0].attributes.author}
+              {translationStore}
+            />
           )
         }
       </div>
@@ -706,4 +651,3 @@ Astro.response.headers.set(
     @apply mt-10 mb-4;
   }
 </style>} />
-

@@ -1,4 +1,4 @@
-export const categoryPagesQs = () => {
+export const categoryPagesQs = (slug:string) => {
     return {
       fields: [
         "id",
@@ -50,6 +50,11 @@ export const categoryPagesQs = () => {
           },
         },
         faqs: true,
+      },
+      filters: {
+        slug: {
+          $eq: slug,
+        },
       },
       pagination: {
         page: 1,
