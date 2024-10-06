@@ -229,7 +229,9 @@ if (allFAQs.length > 0) {
   combinedSchema.push(faqSchema);
 }
 
-const howTo = casinoPage[0]?.attributes?.howTo as HowToGroup;
+const howTo = casinoPage[0]?.attributes?.howTo as unknown as HowToGroup;
+
+console.log(howTo);
 
 if (howTo) {
   const howToSchema = {
@@ -966,19 +968,17 @@ Astro.response.headers.set(
           }
 
           {
-            casinoPage[0]?.attributes?.howTo &&
-              casinoPage[0]?.attributes?.howTo?.howToGroup.map(
-                (howTo: HowToType, i: number) => (
-                  <HowTo
-                    count={i + 1}
-                    howToImage={howTo?.image?.data?.attributes?.url}
-                    howToWidth={howTo?.image?.data?.attributes?.width}
-                    howToHeight={howTo?.image?.data?.attributes?.height}
-                    howToCopy={howTo.copy}
-                    howToHeading={howTo.heading}
-                  />
-                )
-              )
+            howTo &&
+              howTo?.howToGroup.map((howTo: HowToType, i: number) => (
+                <HowTo
+                  count={i + 1}
+                  howToImage={howTo?.image?.data?.attributes?.url}
+                  howToWidth={howTo?.image?.data?.attributes?.width}
+                  howToHeight={howTo?.image?.data?.attributes?.height}
+                  howToCopy={howTo.copy}
+                  howToHeading={howTo.heading}
+                />
+              ))
           }
 
           {
