@@ -1,4 +1,4 @@
-export const blogpageQs = () => ({
+export const blogpageQs = (slug: string) => ({
   fields: [
     "title",
     "slug",
@@ -39,8 +39,9 @@ export const blogpageQs = () => ({
       fields: ["metaTitle", "metaDescription"],
     },
   },
-  pagination: {
-    page: 1,
-    pageSize: 10000,
+  filters: {
+    slug: {
+      $eq: slug,
+    },
   },
 });
