@@ -1,0 +1,12 @@
+---
+import CustomPage from "../../components/general/customPage.astro";
+import { urlTranslate } from "../../../utils/data-store.util";
+
+const siteID = import.meta.env.SITE_ID;
+const path =
+  urlTranslate[siteID as keyof typeof urlTranslate]["popular-games-page"].slice(
+    1
+  );
+---
+
+<CustomPage path={path} />
