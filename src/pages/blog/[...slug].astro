@@ -40,7 +40,7 @@ const query2 = qs.stringify(blogcardQs(12, pageNumber), {
 });
 
 // Data Fetcher
-const blogPage = await fetchApi<Blog[]>({
+const blogPage: BlogList | Blog[] = await fetchApi<BlogList | Blog[]>({
   endpoint: "blogs",
   wrappedByKey: isMatch ? "" : "data",
   query: isMatch ? `?${query2}` : `?${query}`,
@@ -50,6 +50,19 @@ const blogPage = await fetchApi<Blog[]>({
 const siteID = import.meta.env.SITE_ID;
 const siteURL = import.meta.env.FULL_URL;
 
+// holders for the data
+let blogPageList: BlogList = {
+  data: [],
+  meta: { pagination: { page: 1, pageCount: 1 } }};
+
+let singleBlog: Blog[] = [];
+
+if (isMatch) {
+  blogPageList = blogPage as BlogList;
+} else {
+  singleBlog = blogPage as Blog[];
+}
+
 //set page seo data
 const canonical =
   siteURL +
@@ -57,21 +70,21 @@ const canonical =
   `/${slug}`;
 
 const seo = {
-  pageTitle: blogPage[0]?.attributes?.seo?.metaTitle,
-  metaDescription: blogPage[0]?.attributes?.seo?.metaDescription,
+  pageTitle: singleBlog[0]?.attributes?.seo?.metaTitle,
+  metaDescription: singleBlog[0]?.attributes?.seo?.metaDescription,
   url: canonical,
 };
 
-const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${blogPage[0]?.attributes?.author?.data?.attributes?.firstName?.toLowerCase()}.${blogPage[0]?.attributes?.author?.data?.attributes?.lastName?.toLowerCase()}/`;
+const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${singleBlog[0]?.attributes?.author?.data?.attributes?.firstName?.toLowerCase()}.${singleBlog[0]?.attributes?.author?.data?.attributes?.lastName?.toLowerCase()}/`;
 
 dayjs.extend(advancedFormat);
 dayjs.locale(import.meta.env.LANG);
 
-const formattedDate = dayjs(blogPage[0]?.attributes?.createdAt).format(
+const formattedDate = dayjs(singleBlog[0]?.attributes?.createdAt).format(
   "D MMM YYYY"
 );
 
-const blogBriefAlternative = blogPage[0]?.attributes?.content1
+const blogBriefAlternative = singleBlog[0]?.attributes?.content1
   .replace(/(<([^>]+)>)/gi, "")
   .substring(0, 300);
 
@@ -93,11 +106,11 @@ Astro.response.headers.set(
     isMatch ? (
       <div class="bg-blog-list-bkg mb-5">
         <div class="xl:container px-2 pb-5 pt-4">
-          <BlogListBlock data={blogPage?.data} {translationStore} />
+          <BlogListBlock data={blogPageList?.data} {translationStore} />
 
           <Pagination
             currPage={pageNumber}
-            pageCount={blogPage?.meta?.pagination?.pageCount}
+            pageCount={blogPageList.meta?.pagination?.pageCount}
             path={
               urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]
             }
@@ -110,12 +123,12 @@ Astro.response.headers.set(
         <div class="blog-title-section flex justify-center pt-[66px] md:pt-24 pb-[66px] md:pb-48">
           <div class="w-full px-2 md:px-0 md:w-4/6 flex flex-col items-center justify-center text-center text-white">
             <div class="blog-category w-fit text-[10px] mb-3 text-white font-bold rounded-[40px]">
-              {blogPage[0]?.attributes?.blogCategory?.data?.attributes
+              {singleBlog[0]?.attributes?.blogCategory?.data?.attributes
                 ?.blogCategory || "Generale"}
             </div>
-            <h1>{blogPage[0]?.attributes?.title}</h1>
+            <h1>{singleBlog[0]?.attributes?.title}</h1>
             <div class="pt-6 pb-10">
-              {blogPage[0]?.attributes?.blogBrief || blogBriefAlternative}
+              {singleBlog[0]?.attributes?.blogBrief || blogBriefAlternative}
             </div>
             <div class="flex justify-center">
               <div class="flex items-center gap-2 sub-header text-[0.6875em] italic capitalize">
@@ -124,17 +137,17 @@ Astro.response.headers.set(
                     <div class="w-[40px] h-[40px] border border-white rounded-full">
                       <Images
                         src={
-                          blogPage[0]?.attributes?.author?.data?.attributes
+                          singleBlog[0]?.attributes?.author?.data?.attributes
                             ?.photo?.data?.attributes.url
                         }
                         imageWidth={40}
                         imageHeight={40}
                         classes="providerImage rounded-full"
                         alt={
-                          blogPage[0]?.attributes?.author?.data?.attributes
+                          singleBlog[0]?.attributes?.author?.data?.attributes
                             ?.firstName +
                           " " +
-                          blogPage[0]?.attributes?.author?.data?.attributes
+                          singleBlog[0]?.attributes?.author?.data?.attributes
                             ?.lastName +
                           " photo"
                         }
@@ -146,11 +159,11 @@ Astro.response.headers.set(
                     <Link href={authorLink}>
                       <div class="cursor-pointer hover:underline">
                         {
-                          blogPage[0]?.attributes?.author?.data?.attributes
+                          singleBlog[0]?.attributes?.author?.data?.attributes
                             ?.firstName
                         }
                         {
-                          blogPage[0]?.attributes?.author?.data?.attributes
+                          singleBlog[0]?.attributes?.author?.data?.attributes
                             ?.lastName
                         }
                       </div>
@@ -167,8 +180,8 @@ Astro.response.headers.set(
             <div class="w-full md:w-4/6">
               <div class="mb-5 -mt-[33px] md:-mt-24">
                 <Images
-                  src={blogPage[0]?.attributes?.images?.data?.attributes?.url}
-                  alt={blogPage[0]?.attributes?.title}
+                  src={singleBlog[0]?.attributes?.images?.data?.attributes?.url}
+                  alt={singleBlog[0]?.attributes?.title}
                   imageWidth={820}
                   imageHeight={550}
                 />
@@ -176,14 +189,14 @@ Astro.response.headers.set(
               <div class="blog-content">
                 {
                   <ContentBlock
-                    pageContent={blogPage[0]?.attributes?.content1}
+                    pageContent={singleBlog[0]?.attributes?.content1}
                   />
                 }
               </div>
-              {blogPage[0]?.attributes?.author?.data && (
+              {singleBlog[0]?.attributes?.author?.data && (
                 <div class="mt-10 mb-10 md:mb-0">
                   <AuthorCard
-                    data={blogPage[0]?.attributes?.author}
+                    data={singleBlog[0]?.attributes?.author}
                     {translationStore}
                   />
                 </div>
