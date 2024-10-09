@@ -9,9 +9,9 @@ import "dayjs/locale/it";
 import fetchApi from "../../../lib/strapi";
 import MainLayout from "../../layouts/MainLayout.astro";
 import { urlTranslate } from "../../../utils/data-store.util";
-import { blogpageQs } from "../../../qs/blog-page";
 import { blogmetaQs } from "../../../qs/blog-meta";
 import type { Blog, BlogList } from "../../../interfaces/blog";
+import { blogpageQs } from "../../../qs/blog-page";
 import { blogcardQs } from "../../../qs/blog-cards";
 import BlogListBlock from "../../components/blocks/blogListBlock.astro";
 import BlogCard from "../../components/blogs/blogCard.astro";
@@ -25,104 +25,66 @@ import ContentBlock from "../../components/blocks/contentBlock.astro";
 
 const translationStore = await getTranslations();
 
-export const getStaticPaths = (async () => {
-  const query1 = qs.stringify(blogcardQs(12, 1), { encodeValuesOnly: true });
+const slug = Astro.params.slug as string;
+const isMatch = /^p\d+$/.test(slug);
+const pageNumber: number = isMatch ? parseInt(slug.slice(1)) : 1;
 
-  const blogCards = await fetchApi<BlogList>({
-    endpoint: "blogs",
-    isPaginated: true,
-    query: `?${query1}`,
-  });
-
-  let prerenderPath: any[] = [];
-
-  for (let i = 1; i <= blogCards.meta.pagination.pageCount; i++) {
-    const slug = `p${i}`;
-    const query = qs.stringify(blogcardQs(12, i), { encodeValuesOnly: true });
-    const blogs = await fetchApi<any>({
-      endpoint: "blogs",
-      isPaginated: true,
-      query: `?${query}`,
-    });
-
-    const filterBlogs = blogs.data.filter(
-      (blog: Blog) => blog.attributes.content1
-    );
-
-    prerenderPath.push({
-      params: { slug },
-      props: {
-        page: { data: filterBlogs, meta: blogs.meta },
-        isPaginated: true,
-        blogs,
-      },
-    });
-  }
-
-  // Import the QS Query string for custom slugs and prepare it for the API fetch
-  const query = qs.stringify(blogpageQs(), { encodeValuesOnly: true });
-  // Request to the Fetch Function to get page data from API
-  const blog = await fetchApi<Blog[]>({
-    endpoint: "blogs",
-    wrappedByKey: "data",
-    query: `?${query}`,
-  });
-
-  for (const b of blog) {
-    prerenderPath.push({
-      params: { slug: b?.attributes?.slug },
-      props: { page: b, isPaginated: false },
-    });
-  }
-
-  return prerenderPath;
-}) satisfies GetStaticPaths;
-
-const { page, isPaginated } = Astro.props;
-const { slug } = Astro.params; //get the slug from the page url
-
-// get blog cards for side menu
-const blogCardquery = qs.stringify(blogcardQs(3, 1), {
+//query for single blog page
+const query = qs.stringify(blogpageQs(slug), {
   encodeValuesOnly: true,
 });
-// const blogCards = await fetchApi<BlogList>({
-//   endpoint: "blogs",
-//   wrappedByKey: "data",
-//   query: `?${blogCardquery}`,
-// });
 
-const metaQuery = qs.stringify(blogmetaQs(), { encodeValuesOnly: true });
-const layoutData = await fetchApi<any>({
-  endpoint: "layout",
-  wrappedByKey: "data",
-  query: `?${metaQuery}`,
+// queru for paginated blog pages
+const query2 = qs.stringify(blogcardQs(12, pageNumber), {
+  encodeValuesOnly: true,
 });
 
+// Data Fetcher
+const blogPage: BlogList | Blog[] = await fetchApi<BlogList | Blog[]>({
+  endpoint: "blogs",
+  wrappedByKey: isMatch ? "" : "data",
+  query: isMatch ? `?${query2}` : `?${query}`,
+});
+
+// Some Variable Constants
 const siteID = import.meta.env.SITE_ID;
 const siteURL = import.meta.env.FULL_URL;
-const canonical = isPaginated
-  ? `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["blog-index"]}/${slug}`
-  : `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]}/${page?.attributes?.slug}`;
+
+// holders for the data
+let blogPageList: BlogList = {
+  data: [],
+  meta: { pagination: { page: 1, pageCount: 1 } }};
+
+let singleBlog: Blog[] = [];
+
+if (isMatch) {
+  blogPageList = blogPage as BlogList;
+} else {
+  singleBlog = blogPage as Blog[];
+}
 
 //set page seo data
-let seo = {
-  pageTitle:
-    page?.attributes?.seo?.metaTitle ??
-    layoutData?.attributes?.blogMeta?.blogTitle,
-  metaDescription:
-    page?.attributes?.seo?.metaDescription ??
-    layoutData?.attributes?.blogMeta?.blogDescription,
+const canonical =
+  siteURL +
+  urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"] +
+  `/${slug}`;
+
+const seo = {
+  pageTitle: singleBlog[0]?.attributes?.seo?.metaTitle,
+  metaDescription: singleBlog[0]?.attributes?.seo?.metaDescription,
   url: canonical,
 };
 
-const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${page?.attributes?.author?.data?.attributes?.firstName?.toLowerCase()}.${page?.attributes?.author?.data?.attributes?.lastName?.toLowerCase()}/`;
+const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${singleBlog[0]?.attributes?.author?.data?.attributes?.firstName?.toLowerCase()}.${singleBlog[0]?.attributes?.author?.data?.attributes?.lastName?.toLowerCase()}/`;
 
 dayjs.extend(advancedFormat);
 dayjs.locale(import.meta.env.LANG);
 
-const formattedDate = dayjs(page?.attributes?.createdAt).format("D MMM YYYY");
+const formattedDate = dayjs(singleBlog[0]?.attributes?.createdAt).format(
+  "D MMM YYYY"
+);
 
-const blogBriefAlternative = page?.attributes?.content1
+const blogBriefAlternative = singleBlog[0]?.attributes?.content1
   .replace(/(<([^>]+)>)/gi, "")
   .substring(0, 300);
 
@@ -137,20 +99,18 @@ Astro.response.headers.set(
   "Cache-Control",
   "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
 );
-
-console.log("page", page?.attributes?.content1);
 ---
 
 <MainLayout seoData={seo}>
   {
-    isPaginated ? (
+    isMatch ? (
       <div class="bg-blog-list-bkg mb-5">
         <div class="xl:container px-2 pb-5 pt-4">
-          <BlogListBlock data={page.data} {translationStore} />
+          <BlogListBlock data={blogPageList?.data} {translationStore} />
 
           <Pagination
-            currPage={page?.meta?.pagination?.page}
-            pageCount={page?.meta?.pagination?.pageCount}
+            currPage={pageNumber}
+            pageCount={blogPageList.meta?.pagination?.pageCount}
             path={
               urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]
             }
@@ -163,12 +123,12 @@ console.log("page", page?.attributes?.content1);
         <div class="blog-title-section flex justify-center pt-[66px] md:pt-24 pb-[66px] md:pb-48">
           <div class="w-full px-2 md:px-0 md:w-4/6 flex flex-col items-center justify-center text-center text-white">
             <div class="blog-category w-fit text-[10px] mb-3 text-white font-bold rounded-[40px]">
-              {page?.attributes?.blogCategory?.data?.attributes?.blogCategory ||
-                "Generale"}
+              {singleBlog[0]?.attributes?.blogCategory?.data?.attributes
+                ?.blogCategory || "Generale"}
             </div>
-            <h1>{page?.attributes?.title}</h1>
+            <h1>{singleBlog[0]?.attributes?.title}</h1>
             <div class="pt-6 pb-10">
-              {page?.attributes?.blogBrief || blogBriefAlternative}
+              {singleBlog[0]?.attributes?.blogBrief || blogBriefAlternative}
             </div>
             <div class="flex justify-center">
               <div class="flex items-center gap-2 sub-header text-[0.6875em] italic capitalize">
@@ -177,17 +137,18 @@ console.log("page", page?.attributes?.content1);
                     <div class="w-[40px] h-[40px] border border-white rounded-full">
                       <Images
                         src={
-                          page?.attributes?.author?.data?.attributes?.photo
-                            ?.data?.attributes.url
+                          singleBlog[0]?.attributes?.author?.data?.attributes
+                            ?.photo?.data?.attributes.url
                         }
                         imageWidth={40}
                         imageHeight={40}
                         classes="providerImage rounded-full"
                         alt={
-                          page?.attributes?.author?.data?.attributes
+                          singleBlog[0]?.attributes?.author?.data?.attributes
                             ?.firstName +
                           " " +
-                          page?.attributes?.author?.data?.attributes?.lastName +
+                          singleBlog[0]?.attributes?.author?.data?.attributes
+                            ?.lastName +
                           " photo"
                         }
                         imageResponsive={false}
@@ -197,8 +158,14 @@ console.log("page", page?.attributes?.content1);
                   <div class="flex flex-col justify-center text-start">
                     <Link href={authorLink}>
                       <div class="cursor-pointer hover:underline">
-                        {page?.attributes?.author?.data?.attributes?.firstName}
-                        {page?.attributes?.author?.data?.attributes?.lastName}
+                        {
+                          singleBlog[0]?.attributes?.author?.data?.attributes
+                            ?.firstName
+                        }
+                        {
+                          singleBlog[0]?.attributes?.author?.data?.attributes
+                            ?.lastName
+                        }
                       </div>
                     </Link>
                     <div>{formattedDate}</div>
@@ -213,19 +180,23 @@ console.log("page", page?.attributes?.content1);
             <div class="w-full md:w-4/6">
               <div class="mb-5 -mt-[33px] md:-mt-24">
                 <Images
-                  src={page?.attributes?.images?.data?.attributes?.url}
-                  alt={page?.attributes?.title}
+                  src={singleBlog[0]?.attributes?.images?.data?.attributes?.url}
+                  alt={singleBlog[0]?.attributes?.title}
                   imageWidth={820}
                   imageHeight={550}
                 />
               </div>
               <div class="blog-content">
-                {/* <ContentBlock pageContent={page?.attributes?.content1} /> */}
+                {
+                  <ContentBlock
+                    pageContent={singleBlog[0]?.attributes?.content1}
+                  />
+                }
               </div>
-              {page?.attributes?.author?.data && (
+              {singleBlog[0]?.attributes?.author?.data && (
                 <div class="mt-10 mb-10 md:mb-0">
                   <AuthorCard
-                    data={page?.attributes?.author}
+                    data={singleBlog[0]?.attributes?.author}
                     {translationStore}
                   />
                 </div>

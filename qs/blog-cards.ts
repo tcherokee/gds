@@ -1,6 +1,6 @@
 export const blogcardQs = (
   pageSize: number | undefined,
-  page: number | undefined
+  page: number | undefined,
 ) => ({
   fields: [
     "title",

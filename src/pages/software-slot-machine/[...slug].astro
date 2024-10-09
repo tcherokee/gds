@@ -42,6 +42,8 @@ import {
 
 const slug = Astro.params.slug as string;
 
+const strippedSlug = slug.replace(/\/p\d+$/, '');
+
 const translationStore = await getTranslations();
 const slotCategories = await slotCategoriesResponse();
 const slotProviders = await slotProvidersResponse();
@@ -60,7 +62,7 @@ const gameProviders = await fetchApi<{
   query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
 });
 
-const query = qs.stringify(slotProvidersQs(slug), { encodeValuesOnly: true });
+const query = qs.stringify(slotProvidersQs(strippedSlug), { encodeValuesOnly: true });
 
 // let gamesQueryObj: GameFilters = {
 //   limit: 18,

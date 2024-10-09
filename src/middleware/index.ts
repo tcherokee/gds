@@ -14,7 +14,13 @@ const CACHE_DURATION: number = 7 * 24 * 60 * 60 * 1000; // Cache Redirects for 7
 // `context` and `next` are automatically typed
 export const onRequest = defineMiddleware(async (context, next) => {
     try {
-      // Redirection
+        // Redirection
+        const url = new URL(context.request.url);
+        
+        if (!url.pathname.endsWith("/") && !url.pathname.includes(".")) {
+          return context.redirect(`${url.pathname}/${url.search}`, 308);
+        }
+
       if (!cachedRedirects || Date.now() - cacheTimestamp > CACHE_DURATION) {
         const redirects = await fetchApi<TRedirects[]>({
           endpoint: "redirects",
