@@ -1,8 +1,11 @@
 import { persistentAtom } from "@nanostores/persistent";
 
-export const isPlus18 = persistentAtom<{ status: boolean; statusDate: string }>(
-  "plus18Status",
-  { status: false, statusDate: `${new Date().toLocaleDateString()}` },
+export const adPopup = persistentAtom<{ status: boolean; statusDate: string }>(
+  "adPopupStatus",
+  {
+    status: false,
+    statusDate: `${new Date().toLocaleDateString()}`,
+  },
   {
     encode(value) {
       return JSON.stringify(value);

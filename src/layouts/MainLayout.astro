@@ -31,6 +31,7 @@ import CookiesConsent from "../components/general/cookiesConsent.svelte";
 import { getTranslations } from "../../utils/api-requests";
 import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 import { isPlus18 } from "../../stores/plus18";
+import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 
 const siteID = `${import.meta.env.SITE_ID}`;
 
@@ -113,6 +114,7 @@ const HomeBreadcrumSchema = {
 };
 
 let showPlus18Popup: boolean = layout?.attributes?.plus18Popup?.activate;
+let showAdPopup: boolean = layout?.attributes?.adPopup?.activate;
 ---
 
 <script define:vars={{ layout }}>
@@ -169,8 +171,18 @@ let showPlus18Popup: boolean = layout?.attributes?.plus18Popup?.activate;
     </main>
 
     {
-      showPlus18Popup && (
-        <Plus18PopUp data={layout?.attributes?.plus18Popup} client:load />
+      (
+        <Plus18PopUp
+          showPopUp={showPlus18Popup}
+          data={layout?.attributes?.plus18Popup}
+          client:load
+        />
+      )
+    }
+
+    {
+      showAdPopup && (
+        <AdPopUp data={layout?.attributes?.plus18Popup} client:load />
       )
     }
 

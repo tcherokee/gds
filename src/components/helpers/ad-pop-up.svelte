@@ -1,32 +1,26 @@
 <script lang="ts">
-  import { isPlus18 } from "../../../stores/plus18";
+  import { adPopup } from "../../../stores/ad-popup";
   import Images from './images.svelte';
 
   export let data: any;
-  export let showPopUp:any;
 
   const acceptPlus18Handler = () => {
     let currentDate =  `${new Date().toLocaleDateString()}`
-    isPlus18.set({status:true, statusDate: currentDate}); 
-    document.cookie = `verify-age=true; expires=${new Date(new Date().setFullYear(new Date().getFullYear() + 1))};path=/`
+    adPopup.set({status:true, statusDate: currentDate}); 
   };
 
   const checkIfPopupHasBeenShownToday = () => {
-    // const ageVerify = cookies.get('verify-age');
-
-    // console.log('age verify', ageVerify);
-    
-  //  let currentDay = `${new Date().toLocaleDateString()}`;
-  //  if($isPlus18.statusDate < currentDay) {
-  //   isPlus18.set({ status: false, statusDate: currentDay })
-  //  }
+   let currentDay = `${new Date().toLocaleDateString()}`;
+   
+   if($adPopup.statusDate < currentDay) {
+    adPopup.set({ status: false, statusDate: currentDay })
+   }
   }
 
   checkIfPopupHasBeenShownToday();
 </script>
 
-{#if !$isPlus18.status && showPopUp}
-
+{#if !$adPopup.status}
 <div
   class="relative z-50"
   aria-labelledby="modal-title"
@@ -34,16 +28,6 @@
   aria-modal="true"
   id="modal-anchor"
 >
-  <!--
-    Background backdrop, show/hide based on modal state.
-
-    Entering: "ease-out duration-300"
-      From: "opacity-0"
-      To: "opacity-100"
-    Leaving: "ease-in duration-200"
-      From: "opacity-100"
-      To: "opacity-0"
-  -->
   <div
     class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity bg-primary opacity-100"
     aria-hidden="true"
@@ -54,16 +38,6 @@
     <div
       class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
     >
-      <!--
-        Modal panel, show/hide based on modal state.
-
-        Entering: "ease-out duration-300"
-          From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          To: "opacity-100 translate-y-0 sm:scale-100"
-        Leaving: "ease-in duration-200"
-          From: "opacity-100 translate-y-0 sm:scale-100"
-          To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      -->
       <div
         class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
       >
@@ -105,5 +79,4 @@
     </div>
   </div>
 </div>
-<!-- +18 Modal End -->
  {/if}

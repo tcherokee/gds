@@ -2,6 +2,7 @@
 import type {
   BreadCrumbField,
   CasinoAttributes,
+  CasinoData,
   ImageField,
 } from "../common/types";
 
@@ -43,9 +44,34 @@ export type LayoutQueryOptions = {
         image: ImageField;
       };
     };
-    adPopus: {
+    adPopup: {
+      fields: string[];
       populate: {
-        casinos: CasinoAttributes[];
+        casinos: {
+          populate: {
+            noDepositSection: {
+              fields: string[];
+            };
+            freeSpinsSection: {
+              fields: string[];
+            };
+            bonusSection: {
+              fields: string[];
+            };
+            casinoBonus: boolean;
+            termsAndConditions: boolean;
+            images: {
+              fields: string[];
+            };
+            providers: {
+              populate: {
+                images: {
+                  fields: string[];
+                };
+              };
+            };
+          };
+        };
       };
     };
   };
