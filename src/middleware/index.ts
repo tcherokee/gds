@@ -18,7 +18,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         const url = new URL(context.request.url);
         
         if (!url.pathname.endsWith("/") && !url.pathname.includes(".")) {
-          return context.redirect(`${url.pathname}/${url.search}`);
+          return context.redirect(`${url.pathname}/${url.search}`, 308);
         }
 
       if (!cachedRedirects || Date.now() - cacheTimestamp > CACHE_DURATION) {
