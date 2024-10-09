@@ -12,13 +12,13 @@ const CACHE_DURATION: number = 7 * 24 * 60 * 60 * 1000; // Cache Redirects for 7
 
 
 // `context` and `next` are automatically typed
-export const onRequest = defineMiddleware(async (request, redirect, context, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
     try {
         // Redirection
-        const url = new URL(request.url);
+        const url = new URL(context.request.url);
         
         if (!url.pathname.endsWith("/") && !url.pathname.includes(".")) {
-          return redirect(`${url.pathname}/${url.search}`);
+          return context.redirect(`${url.pathname}/${url.search}`);
         }
 
       if (!cachedRedirects || Date.now() - cacheTimestamp > CACHE_DURATION) {
