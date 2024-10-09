@@ -3,29 +3,16 @@
   import Images from './images.svelte';
 
   export let data: any;
-  export let showPopUp:any;
+  export let showPopUp: boolean = false;
+  
 
   const acceptPlus18Handler = () => {
-    let currentDate =  `${new Date().toLocaleDateString()}`
-    isPlus18.set({status:true, statusDate: currentDate}); 
-    document.cookie = `verify-age=true; expires=${new Date(new Date().setFullYear(new Date().getFullYear() + 1))};path=/`
+    isPlus18.set(true);
   };
 
-  const checkIfPopupHasBeenShownToday = () => {
-    // const ageVerify = cookies.get('verify-age');
-
-    // console.log('age verify', ageVerify);
-    
-  //  let currentDay = `${new Date().toLocaleDateString()}`;
-  //  if($isPlus18.statusDate < currentDay) {
-  //   isPlus18.set({ status: false, statusDate: currentDay })
-  //  }
-  }
-
-  checkIfPopupHasBeenShownToday();
 </script>
 
-{#if !$isPlus18.status && showPopUp}
+{#if !$isPlus18}
 
 <div
   class="relative z-50"
@@ -34,16 +21,6 @@
   aria-modal="true"
   id="modal-anchor"
 >
-  <!--
-    Background backdrop, show/hide based on modal state.
-
-    Entering: "ease-out duration-300"
-      From: "opacity-0"
-      To: "opacity-100"
-    Leaving: "ease-in duration-200"
-      From: "opacity-100"
-      To: "opacity-0"
-  -->
   <div
     class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity bg-primary opacity-100"
     aria-hidden="true"

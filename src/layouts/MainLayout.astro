@@ -30,7 +30,6 @@ import Newsletter from "../components/layout/newsletter.astro";
 import CookiesConsent from "../components/general/cookiesConsent.svelte";
 import { getTranslations } from "../../utils/api-requests";
 import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
-import { isPlus18 } from "../../stores/plus18";
 import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 
 const siteID = `${import.meta.env.SITE_ID}`;
@@ -180,11 +179,7 @@ let showAdPopup: boolean = layout?.attributes?.adPopup?.activate;
       )
     }
 
-    {
-      showAdPopup && (
-        <AdPopUp data={layout?.attributes?.plus18Popup} client:load />
-      )
-    }
+    {(<AdPopUp data={layout?.attributes?.plus18Popup} client:load />)}
 
     <CookiesConsent
       headerText={layout?.attributes?.cookiesHeaderText + ""}
