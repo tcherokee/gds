@@ -3,8 +3,6 @@
   import dayjs from "dayjs";
   import qs from "qs";
 
-  import { urlTranslate } from "../../../utils/data-store.util";
-
   // Import Types
   import type {
     BonusSectionOnly,
@@ -14,8 +12,8 @@
     TProviderAttributesOnly,
     TranslationData,
   } from "../../../interfaces/common/types";
-  
   // Import Stores
+
   import {
     bonusAmount,
     casinoQsStore,
@@ -30,7 +28,8 @@
   import DesktopCasinoFilter from "../filters/desktopCasinoFilter.svelte";
   import MobileCasinoFilter from "../filters/mobileCasinoFilter.svelte";
 
-  // Import Helpers
+  // Helpers
+  import { urlTranslate } from "../../../utils/data-store.util";
   import { noDepositBonus, welcomeBonus } from "../../../lib/casinoBonusLayout";
   import { sortOptions } from "../../../stores/sortFilters";
   import Image from "../helpers/images.svelte";
@@ -51,6 +50,12 @@
   export let slotProviders: TProviderAttributesOnly[] = [];
   export let showCasinoTableHeader:boolean;
 
+  const siteID = import.meta.env.PUBLIC_SITE_ID;
+  // const siteURL: string = `${siteID === 'gds' ? '/it' : ''}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
+  const siteURL: string = `${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
+
+  console.log('siteURL', siteURL)
+
   const {
     showLoadMore,
     showCasinoFilters,
@@ -62,7 +67,6 @@
 
   if(showCasinoTableHeader === null) showCasinoTableHeader = true; //ensures that when this flag is null the table header shows
   
-  let siteID = import.meta.env.PUBLIC_SITE_ID;
 
   let currentCasinosLength = numberPerLoadMore;
 
@@ -138,9 +142,10 @@
     const query = qs.stringify(casinosQs($casinoVariables), {
       encodeValuesOnly: true,
     });
-  };
 
-  const casinoURL = urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]
+    // Set Qs Store to Query Value
+    // casinoQsStore.set(`?${query}`);
+  };
 </script>
 
 <div>
@@ -252,7 +257,7 @@
                         <div class="flex items-center">
                           <Link
                             classes="casino-name text-[14px] text-grey-500 mr-[11px]"
-                            href={`${casinoURL}/${casino?.attributes?.slug}/`}
+                            href={`${siteURL}${casino?.attributes?.slug}/`}
                           >
                             <span class="hidden sm:inline-flex sm:pr-1"
                               >{casino?.attributes?.title}</span
