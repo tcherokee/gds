@@ -49,7 +49,7 @@
 
   const closeUserAvatarDialog = () => {
     selectedAvatarImageId = 0;
-    previewImg.src = $user?.photo.url + "";
+    previewImg.src = $user?.photo?.url + "" || '';
     avatarDialog.close();
     document.body.style.overflow = "";
   };
@@ -91,7 +91,7 @@
       userBio = userProfile.bio;
       userPhoto = userProfile.photo?.url;
       userCoverImage = userProfile.cover_image?.url;
-      previewImg.src = $user?.photo.url + "";
+      previewImg.src = $user?.photo?.url + "" || "";
     }
     userProfileLoader = false;
   }
@@ -121,7 +121,7 @@
       if ($user?.photo) {
         fetch(
           `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/delete-user-image/?` +
-            new URLSearchParams(`id=${$user?.photo.id}`),
+            new URLSearchParams(`id=${$user?.photo?.id}`),
           {
             method: "DELETE",
           }
@@ -328,7 +328,7 @@
             <div
               class="w-[128px] h-[128px] flex justify-center items-center mx-auto rounded-full bg-purple-700"
             >
-              {#if $user?.photo.url || userPhoto}
+              {#if $user?.photo?.url || userPhoto}
                 <img
                   class="w-full h-full object-cover rounded-full"
                   src={$user?.photo?.url || userPhoto}
