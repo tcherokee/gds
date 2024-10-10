@@ -38,6 +38,7 @@
   let userReview: string;
   let userRating = 0;
   let starRating: HTMLInputElement;
+  let userReviewData;
 
   //   DOM Related
   let reviewModal: HTMLDialogElement;
@@ -54,6 +55,16 @@
   const closeReviewModal = () => {
     reviewModal?.close();
     document.body.style.overflow = "";
+  };
+
+  const getUserReview = async () => {
+    const reviewsUrl =
+      reviewType === "GAME"
+        ? `${import.meta.env.BASE_URL}api/games/user-game-review/${reviewTypeId}/`
+        : `${import.meta.env.BASE_URL}api/casinos/user-casino-review/${reviewTypeId}/`;
+    const response = await fetch(reviewsUrl);
+    const res: { data: TUserReview } = await response.json();
+    userReviewData = res.data;
   };
 
   const getReviews = async () => {
@@ -101,6 +112,7 @@
       }),
     });
     userReview = "";
+    getUserReview();
     closeReviewModal();
     if (response.ok) {
       const res = await response.json();
@@ -112,14 +124,14 @@
     }
   };
 
+  $: {
+    handleUserRatingReactivity();
+  }
+
   onMount(() => {
+    getUserReview();
     getReviews();
-    const ratings = [...$ratings];
-    userRating =
-      ratings.find(
-        ({ id, type }) =>
-          id === reviewTypeId && type === `${reviewType.toLocaleLowerCase()}s`
-      )?.ratingValue ?? 0;
+    handleUserRatingReactivity();
     reviewModal = document.querySelector("#review-modal") as HTMLDialogElement;
     // Listen for Esc key press
     document.addEventListener("keydown", function (event) {
@@ -128,12 +140,21 @@
       }
     });
   });
+
+  const handleUserRatingReactivity = () => {
+    const ratings = [...$ratings];
+    userRating =
+      ratings.find(
+        ({ id, type }) =>
+          id === reviewTypeId && type === `${reviewType.toLocaleLowerCase()}s`
+      )?.ratingValue ?? 0;
+  };
 </script>
 
 <div class="bg-white rounded-lg p-3 my-6">
   <h2 class="text-2xl font-bold !mt-0">User Reviews</h2>
   <div
-    class="md:flex items-center gap-x-3 pb-6 mb-6 border-b border-b-[#CCCCCC]"
+    class={`md:flex items-center gap-x-3 pb-6 mb-6 ${userReviews.length ? 'border-b border-b-[#CCCCCC]' : ''}`}
   >
     <div class="md:w-1/3">
       <div class="space-y-2.5">
@@ -153,10 +174,12 @@
           Based on {totalReviews} review{totalReviews > 1 ? "s" : ""}
         </p>
       </div>
-      <button
-        class="open-review-modal mt-6 inline-flex w-full items-center justify-center rounded-md border border-[#d1d5db] bg-white px-8 py-2 text-sm font-medium text-gray-900 hover:bg-[#f9fafb] sm:w-auto lg:w-full"
-        on:click={showReviewModal}>Write a review</button
-      >
+      {#if !userReviewData}
+        <button
+          class="open-review-modal mt-6 inline-flex w-full items-center justify-center rounded-md border border-[#d1d5db] bg-white px-8 py-2 text-sm font-medium text-gray-900 hover:bg-[#f9fafb] sm:w-auto lg:w-full"
+          on:click={showReviewModal}>Write a review</button
+        >
+      {/if}
     </div>
     <div class="md:w-2/3">
       <div class="mt-6">
@@ -350,7 +373,9 @@
               class="h-10 w-10 rounded-full bg-gray-100"
             />
           </div>
-          <div class={`flex-1 pb-4 ${index < userReviews.length - 1 ? 'border-b border-[#CCCCCC]' : ''}`}>
+          <div
+            class={`flex-1 pb-4 ${index < userReviews.length - 1 ? "border-b border-[#CCCCCC]" : ""}`}
+          >
             <h4 class="text-sm !text-blue-700 font-medium !my-0">
               {userReview.user.firstName + " " + userReview.user.lastName}
             </h4>
