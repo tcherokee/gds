@@ -23,27 +23,84 @@
   let coverImage = "";
   let avatarFile: File;
   let coverImageFile: File;
-  
+  let userAvatarMode: "AVATAR" | "NEW_IMAGE" = "AVATAR";
+  let preloadedAvatarList: {
+    avatar: {
+      url: string;
+      id: number;
+    };
+  }[] = [];
+
+  //   DOM Related
+  let avatarDialog: HTMLDialogElement;
+  let previewImg: HTMLImageElement;
+  let selectedAvatarImageId: number;
+
+  const userAvatarModeSelectionHandler = (mode: "AVATAR" | "NEW_IMAGE") => {
+    if (userAvatarMode !== mode) {
+      userAvatarMode = mode;
+    }
+  };
+
+  const showUserAvatarDialog = async () => {
+    avatarDialog?.showModal();
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeUserAvatarDialog = () => {
+    selectedAvatarImageId = 0;
+    previewImg.src = $user?.photo.url + "";
+    avatarDialog.close();
+    document.body.style.overflow = "";
+  };
+
+  const userAvatarHandler = () => {
+    avatarDialog = document.querySelector("#avatarDialog") as HTMLDialogElement;
+    previewImg = document.getElementById("previewImg") as HTMLImageElement;
+    // Listen for Esc key press
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && avatarDialog.open) {
+        closeUserAvatarDialog();
+      }
+    });
+  };
 
   onMount(async () => {
+    getUserProfileHandler();
+    userAvatarHandler();
+    const avatarsRes = await fetch(
+      `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user-avatars/`
+    );
+    if (avatarsRes.ok) {
+      const userAvatars = await avatarsRes.json();
+      preloadedAvatarList = userAvatars.data;
+    }
+  });
+
+  // Handle User Profile
+  const getUserProfileHandler = async () => {
     userProfileLoader = true;
-    const res = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user/`);
+    const res = await fetch(
+      `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user/`
+    );
     if (res.ok) {
       userProfile = await res.json();
-      console.log(res, userProfile)
+      user.set({ ...userProfile });
       userFirstName = userProfile.firstName;
       userLastName = userProfile.lastName;
       userBio = userProfile.bio;
       userPhoto = userProfile.photo?.url;
       userCoverImage = userProfile.cover_image?.url;
+      previewImg.src = $user?.photo.url + "";
     }
     userProfileLoader = false;
-    const avatarsRes = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user-avatars/`);
-    if (avatarsRes.ok) {
-      const userAvatars = await res.json();
-      console.log(avatarsRes);
-    }
-  });
+  }
+
+  // Select an avatar
+  const selectAvatar = (avatar: string, avatarId: number) => {
+    previewImg.src = avatar;
+    selectedAvatarImageId = avatarId;
+  };
 
   const handleAvatarFileSelect = (e: any) => {
     const { acceptedFiles } = e.detail;
@@ -70,17 +127,19 @@
           }
         );
       }
-      // return;
       const formData = new FormData();
       formData.append("files", avatarFile, `avatar-${userProfile.id}`);
       formData.append("path", "users/avatar");
       formData.append("ref", "plugin::users-permissions.user");
       formData.append("refId", `${userProfile.id}`);
       formData.append("field", "photo");
-      const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/update-user-image/`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/update-user-image/`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       const responseData = await response.json();
       if (Array.isArray(responseData)) {
         user.set({
@@ -110,10 +169,13 @@
           }
         );
       }
-      const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/update-user-image/`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/update-user-image/`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       const responseData = await response.json();
       if (Array.isArray(responseData)) {
         user.set({
@@ -136,9 +198,17 @@
         lastName: userLastName,
         bio: userBio,
       };
-      const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user/`, {
+      await updateUserProfile(userUpdatePayload);
+    }
+
+    toast.success(translations.profileUpdateSuccessToast);
+    updateProfileLoader = false;
+  };
+
+  const updateUserProfile = async (payload: any) => {
+    const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user/`, {
         method: "PATCH",
-        body: JSON.stringify(userUpdatePayload),
+        body: JSON.stringify(payload),
       });
       const responseData = await response.json();
       if (responseData?.id) {
@@ -149,11 +219,23 @@
           bio: responseData.bio,
         });
       }
-    }
+  }
 
+  const avatarUpdateHandler = async () => {
+    if (userAvatarMode === 'AVATAR') {
+      await updateUserAvatar();
+    } else {
+      await updateProfileHandler();
+    }
+    closeUserAvatarDialog();
+  }
+
+  const updateUserAvatar = async () => {
+    updateProfileLoader = true;
+    await updateUserProfile({photo: selectedAvatarImageId});
+    getUserProfileHandler();
     updateProfileLoader = false;
-    toast.success(translations.profileUpdateSuccessToast);
-  };
+  }
 
   const avatarChangeHandler = (event: any) => {
     avatarFile = event.target.files[0];
@@ -173,6 +255,7 @@
         const result = (e.target as FileReader).result;
         if (type === "PROFILE") {
           avatar = result as string;
+          previewImg.src = avatar;
         } else {
           coverImage = result as string;
         }
@@ -245,11 +328,11 @@
             <div
               class="w-[128px] h-[128px] flex justify-center items-center mx-auto rounded-full bg-purple-700"
             >
-              {#if avatar || userPhoto}
+              {#if $user?.photo.url || userPhoto}
                 <img
                   class="w-full h-full object-cover rounded-full"
-                  src={avatar ? avatar : userPhoto}
-                  alt={userProfile.firstName + " avatar"}
+                  src={$user?.photo?.url || userPhoto}
+                  alt={userProfile?.firstName + " avatar"}
                 />
               {:else}
                 <UserPlaceholderSvg class="w-[100px] h-[100px]" />
@@ -258,28 +341,13 @@
             <div
               class="relative w-full px-6 py-4 rounded-xl border border-[#EAECF0] cursor-pointer"
             >
-              <Dropzone
-                containerClasses="absolute top-0 left-0 w-full h-full opacity-0 z-30"
-                on:drop={handleAvatarFileSelect}
-                accept="image/*"
-                multiple={false}
-              />
-              <div
-                class="w-10 h-10 flex justify-center items-center mx-auto rounded-full border-[6px] border-[#F9FAFB] bg-[#F2F4F7]"
-              >
-                <UploadCloud2Svg class="w-5 h-5" />
+              <button
+                class="absolute top-0 left-0 w-full h-full opacity-0 z-30"
+                on:click={showUserAvatarDialog}
+              ></button>
+              <div class="text-sm text-black text-center">
+                Edit your avatar or upload an image
               </div>
-              <div class="text-sm text-black text-center mt-3">
-                <span class="text-purple-500 font-bold">Click to upload</span>
-                or drag and drop<br /> SVG, PNG, JPG or GIF (max. 800x400px)
-              </div>
-              <!-- <input
-								class="cursor-pointer z-10 absolute top-0 opacity-0 h-full w-full"
-								type="file"
-								name="profileImage"
-								accept="image/*"
-								on:change={avatarChangeHandler.bind(this)}
-							/> -->
             </div>
           </div>
           <div class="w-full space-y-4 md:w-1/2">
@@ -364,3 +432,123 @@
     </div>
   </div>
 </div>
+
+<dialog class="avatar-dialog rounded-xl min-h-[478px]" id="avatarDialog">
+  <div class="h-full flex flex-col justify-between">
+    <div class="p-4 space-y-5">
+      <div class="text-lg font-bold !text-blue-700">Avatar image</div>
+      <div class="tabs flex justify-between mb-2.5">
+        <div
+          class={`tab cursor-pointer p-2.5 bg-[#f0f0f0] rounded-[5px] mr-[5px] ${userAvatarMode === "AVATAR" ? "!bg-[#007bff] text-white" : ""}`}
+          on:click={() => {
+            userAvatarModeSelectionHandler("AVATAR");
+          }}
+        >
+          Preloaded Avatars
+        </div>
+        <div
+          class={`tab cursor-pointer p-2.5 bg-[#f0f0f0] rounded-[5px] mr-[5px] ${userAvatarMode === "NEW_IMAGE" ? "!bg-[#007bff] text-white" : ""}`}
+          on:click={() => {
+            userAvatarModeSelectionHandler("NEW_IMAGE");
+          }}
+        >
+          Upload Your Own
+        </div>
+      </div>
+
+      <div class={`${userAvatarMode === "AVATAR" ? "block" : "hidden"}`}>
+        <div class="avatars flex flex-wrap gap-2.5">
+          {#each preloadedAvatarList as preloadedAvatarItem, index}
+            <img
+              class={`w-[60px] h-[60px] rounded-full cursor-pointer border-[2px] border-transparent transition-border duration-300 ${preloadedAvatarItem.avatar.id === selectedAvatarImageId ? "!border-[#007bff]" : ""}`}
+              src={preloadedAvatarItem.avatar.url}
+              alt={`Preloaded avatar ${preloadedAvatarItem.avatar.id}`}
+              on:click={() =>
+                selectAvatar(
+                  preloadedAvatarItem.avatar.url,
+                  preloadedAvatarItem.avatar.id
+                )}
+            />
+          {/each}
+        </div>
+      </div>
+
+      <div class={`${userAvatarMode === "NEW_IMAGE" ? "block" : "hidden"}`}>
+        <div class="flex justify-center">
+          <div
+            class="relative w-full px-6 py-4 rounded-xl border border-[#EAECF0] cursor-pointer"
+          >
+            <Dropzone
+              containerClasses="absolute top-0 left-0 w-full h-full opacity-0 z-30"
+              on:drop={handleAvatarFileSelect}
+              accept="image/*"
+              multiple={false}
+            />
+            <div
+              class="w-10 h-10 flex justify-center items-center mx-auto rounded-full border-[6px] border-[#F9FAFB] bg-[#F2F4F7]"
+            >
+              <UploadCloud2Svg class="w-5 h-5" />
+            </div>
+            <div class="text-sm text-black text-center mt-3">
+              <span class="text-purple-500 font-bold">Click to upload</span>
+              or drag and drop<br /> SVG, PNG, JPG or GIF (max. 800x400px)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 w-full text-center" id="avatarPreview">
+        <p>Avatar Preview</p>
+        {#if !previewImg?.src}
+          <div
+            class="mx-auto w-20 h-20 flex justify-center items-center mx-auto rounded-full bg-purple-700"
+          >
+            <UserPlaceholderSvg class="w-18 h-18" />
+          </div>
+        {/if}
+        <img
+          class="{`mx-auto w-20 h-20 rounded-full object-cover ${previewImg?.src ? "block" : "hidden"}`}"
+          bind:this={previewImg}
+          alt="Preview"
+          id="previewImg"
+        />
+      </div>
+    </div>
+    <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+      <button
+        type="button"
+        class="register-btn inline-flex w-full justify-center items-center px-3 py-2 sm:ml-3 sm:w-auto"
+        disabled={!selectedAvatarImageId && userAvatarMode === "AVATAR" ? true : !avatar && userAvatarMode === "NEW_IMAGE" ? true : false}
+        on:click={avatarUpdateHandler}
+      >
+        {#if updateProfileLoader}
+          <span class="custom-spinner mr-2" aria-hidden="true" />
+        {/if}
+        <span>{updateProfileLoader ? "Please wait..." : "Save"}</span>
+      </button>
+      <button
+        type="button"
+        class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+        on:click={closeUserAvatarDialog}>Cancel</button
+      >
+    </div>
+  </div>
+</dialog>
+
+<style lang="scss">
+  .avatar-dialog {
+    width: min(95vw, 400px);
+    max-height: min(660px, 90vh);
+    &::backdrop {
+      backdrop-filter: blur(10px); /* Apply blur effect */
+      background-color: rgba(0, 0, 0, 0.5); /* Optional: darken the backdrop */
+    }
+
+    button {
+      &.register-btn[disabled] {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+  }
+</style>
