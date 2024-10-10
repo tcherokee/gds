@@ -160,6 +160,12 @@ Astro.response.headers.set(
   "Cache-Control",
   "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
 );
+
+let gamePageRelatedCasinoTitle =
+  translationStore?.gamePageRelatedCasinoH2.replace(
+    "{title}",
+    gamePage[0]?.attributes?.title
+  );
 ---
 
 <MainLayout
@@ -167,7 +173,8 @@ Astro.response.headers.set(
   crumbLocation="games"
   crumbTitle={gamePage[0]?.attributes?.title}
   otherSchema={combinedSchema}
-  ><Breadcrumb
+>
+  <Breadcrumb
     breadcrumbs={[
       { breadCrumbText: gamePage[0]?.attributes?.title, breadCrumbUrl: null },
     ]}
@@ -199,7 +206,7 @@ Astro.response.headers.set(
   <div class="w-full xl:container px-2">
     <div class="mb-10">
       <h2 class="mt-8 mb-4 md:mt-16">
-        {translationStore?.gamePageRelatedCasinoH2}
+        {gamePageRelatedCasinoTitle}
       </h2>
       <RelatedCasino slug={gamePage[0]?.attributes?.slug} {translationStore} />
     </div>
