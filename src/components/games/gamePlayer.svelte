@@ -194,7 +194,7 @@
           </div>
 
           <div class="age-warning">
-            Premendo "Gioco Gratis", confermi di avere almeno 18 anni.
+            {translations?.ageWarning}
           </div>
         {/if}
       </div>
