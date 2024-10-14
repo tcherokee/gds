@@ -21,7 +21,6 @@ import {
 } from "../../../utils/api-requests";
 
 //types and typeguards
-import type { GetStaticPaths } from "astro";
 import type {
   Block,
   BreadcrumbData,
@@ -29,7 +28,6 @@ import type {
   CustomGameList,
   Faqs,
   GameFilters,
-  HowTo,
   HowToGroup,
   TCasinoLiveVideo,
   TGameListBlock,
@@ -44,10 +42,10 @@ import CasinoLiveVideo from "../general/casinoLiveVideo.svelte";
 
 // Astro Layouts & Components
 import type { TUserGame } from "../../../interfaces/games";
-import CasinoSidebar from "../casino/casinoSidebar.astro";
-import AuthorCard from "./authorCard.astro";
-import Breadcrumbs from "../layout/breadcrumbs.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
+import CasinoSidebar from "../casino/casinoSidebar.astro";
+import Breadcrumbs from "../layout/breadcrumbs.astro";
+import AuthorCard from "./authorCard.astro";
 
 // const path = Astro.params.path as string;
 const { path } = Astro.props;
