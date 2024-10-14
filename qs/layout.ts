@@ -111,7 +111,7 @@ export const menuQs = (): MenuQueryOptions => ({
       fields: ["title", "url", "order"],
       populate: {
         images: {
-          fields: ["url"],
+          fields: ["url", "height", "width"],
         },
         children: {
           fields: ["title"],
