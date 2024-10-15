@@ -45,6 +45,13 @@
   const showReviewModal = async () => {
     if (!$user) {
       await window.localStorage?.setItem("_reviewSourceType", reviewType);
+      await window.localStorage?.setItem(
+        "_reviewDialogDeets",
+        JSON.stringify({
+          slug: reviewTypeSlug,
+          type: reviewType,
+        })
+      );
       window.location.href = `${import.meta.env.BASE_URL}authentication/login/?review=${reviewTypeSlug}`;
       return;
     }
@@ -53,6 +60,7 @@
   };
 
   const closeReviewModal = () => {
+    userReview = "";
     reviewModal?.close();
     document.body.style.overflow = "";
   };
@@ -119,7 +127,7 @@
       if (res.error) {
         toast.error(res?.error?.message);
       } else {
-        toast.success(res?.message);
+        toast.success(transitions.reviewSuccessMessage);
       }
     }
   };
@@ -128,18 +136,34 @@
     handleUserRatingReactivity();
   }
 
-  onMount(() => {
-    getUserReview();
-    getReviews();
-    handleUserRatingReactivity();
-    reviewModal = document.querySelector("#review-modal") as HTMLDialogElement;
+  onMount(async () => {
     // Listen for Esc key press
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape" && reviewModal.open) {
         closeReviewModal();
       }
     });
+
+    getUserReview();
+    await getReviews();
+    if (!userReviewData && $user) {
+      handleReviewDialogDeets();
+    }
+    handleUserRatingReactivity();
+    reviewModal = document.querySelector("#review-modal") as HTMLDialogElement;
   });
+
+  const handleReviewDialogDeets = async () => {
+    const reviewDialogDeets = JSON.parse(
+      await window.localStorage?.getItem("_reviewDialogDeets")
+    );
+    window.localStorage?.removeItem("_reviewDialogDeets")
+    console.log("REVIEW_DIALOG_DEETS:", reviewDialogDeets);
+    const { type, slug } = reviewDialogDeets;
+    if (type && type === reviewType && slug && slug === reviewTypeSlug) {
+      showReviewModal();
+    }
+  };
 
   const handleUserRatingReactivity = () => {
     const ratings = [...$ratings];
@@ -152,14 +176,14 @@
 </script>
 
 <div class="bg-white rounded-lg p-3 my-6">
-  <h2 class="text-2xl font-bold !mt-0">User Reviews</h2>
+  <h2 class="text-2xl font-bold !mt-0">{translations.userReviews}</h2>
   <div
-    class={`md:flex items-center gap-x-3 pb-6 mb-6 ${userReviews.length ? 'border-b border-b-[#CCCCCC]' : ''}`}
+    class={`md:flex items-center gap-x-3 pb-6 mb-6 ${userReviews.length ? "border-b border-b-[#CCCCCC]" : ""}`}
   >
     <div class="md:w-1/3">
       <div class="space-y-2.5">
         <div>
-          <div class="flex items-center justify-center">
+          <div class="flex items-center justify-center" on:click={showReviewModal}>
             <!-- Active: "text-yellow-400", Default: "text-gray-300" -->
             <ReadOnlyRatings
               {avgRating}
@@ -171,13 +195,13 @@
           <p class="sr-only">{(totalReviews * 100) / 5} out of 5 stars</p>
         </div>
         <p class="text-sm !mb-0 text-center">
-          Based on {totalReviews} review{totalReviews > 1 ? "s" : ""}
+          {translations.basedOn} {totalReviews} {totalReviews > 1 ? translations.reviews : translations.review}
         </p>
       </div>
       {#if !userReviewData}
         <button
           class="open-review-modal mt-6 inline-flex w-full items-center justify-center rounded-md border border-[#d1d5db] bg-white px-8 py-2 text-sm font-medium text-gray-900 hover:bg-[#f9fafb] sm:w-auto lg:w-full"
-          on:click={showReviewModal}>Write a review</button
+          on:click={showReviewModal}>{translations.writeAReview}</button
         >
       {/if}
     </div>

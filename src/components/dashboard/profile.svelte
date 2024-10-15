@@ -346,7 +346,7 @@
                 on:click={showUserAvatarDialog}
               ></button>
               <div class="text-sm text-black text-center">
-                Edit your avatar or upload an image
+                {translations.editAvatar}
               </div>
             </div>
           </div>
@@ -372,9 +372,13 @@
               >
                 <UploadCloud2Svg class="w-5 h-5" />
               </div>
-              <div class="text-sm text-black text-center">
+              <!-- <div class="text-sm text-black text-center">
                 <span class="text-purple-500 font-bold">Click to upload</span>
                 or drag and drop<br /> SVG, PNG, JPG or GIF (max. 800x400px)
+              </div> -->
+              <div class="text-sm text-black text-center">
+                <span class="text-purple-500 font-bold">{translations.clickToUpload}</span>
+                {translations.dragAndDrop}<br /> SVG, PNG, JPG or GIF (max. 800x400px)
               </div>
               <Dropzone
                 containerClasses="absolute top-0 left-0 w-full h-full opacity-0 z-30"
@@ -423,7 +427,7 @@
                 <span class="custom-spinner mr-2" aria-hidden="true" />
               {/if}
               <span
-                >{updateProfileLoader ? "Please wait..." : "Save changes"}</span
+                >{updateProfileLoader ? translations.pleaseWait+'...' : translations.saveChanges}</span
               >
             </button>
           </div>
