@@ -1,4 +1,4 @@
-export const authorPageQs = () => {
+export const authorPageQs = (slug: string) => {
   return {
     fields: [
       "id",
@@ -111,6 +111,9 @@ export const authorPageQs = () => {
       },
     },
     filters: {
+      slug: {
+        $eq: slug,
+      },
       isAnAuthor: {
         $eq: true,
       },

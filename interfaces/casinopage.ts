@@ -9,8 +9,11 @@ import type {
   CasinoGeneralInfo,
   CasinoComparison,
   ProsConsBlock,
+  Faqs,
   BreadcrumbData,
   CasinoData,
+  CasinoFeatures,
+  HowToGroup
 } from "./common/types";
 
 export type Casinopage = {
@@ -38,7 +41,7 @@ type Attributes = {
   noDepositSection: BonusSection;
   freeSpinsSection: BonusSection;
   termsAndConditions: TermsAndConditions;
-  casinoFeatures: any[];
+  casinoFeatures: CasinoFeatures[];
   casinoGeneralInfo: CasinoGeneralInfo;
   testimonial: {
     approvedBy: {
@@ -62,7 +65,7 @@ type Attributes = {
   introduction: string;
   howTo: {
     title: string;
-    howToGroup: any[];
+    howToGroup: HowToGroup;
   };
   content1: string;
   content2: string;
@@ -72,9 +75,5 @@ type Attributes = {
   casinoComparison: {
     data: CasinoComparison;
   };
-  faqs: {
-    answer: string;
-    id: number;
-    question: string;
-  }[];
+  faqs: Faqs[];
 };

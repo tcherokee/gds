@@ -1,6 +1,4 @@
 ---
-export const prerender = true;
-
 // First Party and Third Party Plugins
 import qs from "qs";
 
@@ -44,8 +42,11 @@ import {
 import { layoutQs } from "../../../qs/layout";
 import type { LayoutData } from "../../../interfaces/layout";
 
+const slug = Astro.params.slug as string;
+
 const translationStore = await translationResponse();
 const slotProviders = await slotProvidersResponse();
+
 // Fetch Game Providers Filter
 const gameProviders = await fetchApi<{
   id: number;
@@ -60,107 +61,88 @@ const gameProviders = await fetchApi<{
   query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
 });
 
-export const getStaticPaths = (async () => {
-  // Import the QS Query string for custom slugs and prepare it for the API fetch
-  const query = qs.stringify(categoryPagesQs(), { encodeValuesOnly: true });
+const query = qs.stringify(categoryPagesQs(slug), { encodeValuesOnly: true });
 
-  // Request to the Fetch Function to get the custom page slugs from the API
-  const categoryPage = await fetchApi<CategoryPageItem[]>({
-    endpoint: "slot-categories",
-    wrappedByKey: "data",
-    query: `?${query}`,
-  });
+let gamesQueryObj: GameFilters = {
+  limit: 18,
+  sort: "views:desc",
+  page: 1,
+  providers: [],
+  categories: [],
+  author: "",
+};
 
-  // Request to the Fetch Function to get layout data from API
-  const layout = qs.stringify(layoutQs(), { encodeValuesOnly: true });
-  const layoutData = await fetchApi<LayoutData>({
-    endpoint: "layout",
-    wrappedByKey: "data",
-    query: `?${layout}`,
-  });
+// Request to the Fetch Function to get the custom page slugs from the API
+const categoryPage = await fetchApi<CategoryPageItem[]>({
+  endpoint: "slot-categories",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
 
-  // // Get Category Slugs
-  // const categorySlugs = data?.gameCategories.map(
-  //   (game: any) => game.slotCategories.data.attributes.slug
-  // );
+let slotCategories: TUserGameProvider[] = [];
 
-  let gamesQueryObj: GameFilters = {
-    limit: 18,
-    sort: "views:desc",
-    page: 1,
-    providers: [],
-    categories: [],
-    author: "",
+slotCategories.push({ title: categoryPage[0]?.attributes?.slug, slug });
+
+gamesQueryObj = {
+  ...gamesQueryObj,
+  categories: [slug],
+};
+
+const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
+  encodeValuesOnly: true,
+});
+
+const slotCategoriesGames = await fetchApi<any[]>({
+  endpoint: "games",
+  wrappedByKey: "data",
+  query: `?${gamesQuery}`,
+});
+
+const modifiedGames: TUserGame[] = slotCategoriesGames.map((elem) => {
+  return {
+    id: elem.id,
+    ...elem.attributes,
+    images: {
+      url: elem.attributes.images.data.attributes.url,
+    },
+    provider: {
+      slug: elem.attributes.provider.data.attributes.slug,
+      title: elem.attributes.provider.data.attributes.title,
+    },
   };
+});
 
-  let slotCategories: TUserGameProvider[] = [];
+let combinedSchema = [];
 
-  let prerenderPath: any[] = [];
-
-  for (let i = 0; i < categoryPage.length; i++) {
-    const slug = categoryPage[i]?.attributes?.slug;
-    slotCategories.push({ title: categoryPage[i]?.attributes?.slug, slug });
-    gamesQueryObj = {
-      ...gamesQueryObj,
-      categories: [slug],
-    };
-    const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
-      encodeValuesOnly: true,
-    });
-
-    const slotCategoriesGames = await fetchApi<any[]>({
-      endpoint: "games",
-      wrappedByKey: "data",
-      query: `?${gamesQuery}`,
-    });
-
-    const modifiedGames: TUserGame[] = slotCategoriesGames.map((elem) => {
-      return {
-        id: elem.id,
-        ...elem.attributes,
-        images: {
-          url: elem.attributes.images.data.attributes.url,
-        },
-        provider: {
-          slug: elem.attributes.provider.data.attributes.slug,
-          title: elem.attributes.provider.data.attributes.title,
-        },
-      };
-    });
-
-    prerenderPath.push({
-      params: { slug },
-      props: {
-        page: categoryPage[i],
-        modifiedGames,
-        slotCategories,
-        layoutData,
-      },
-    });
-  }
-
-  return prerenderPath;
-  // return categoryPage.map((page) => {
-  //   return {
-  //     params: { slug: page?.attributes?.slug },
-  //     props: { page },
-  //   };
-  // });
-}) satisfies GetStaticPaths;
-
-const { page, modifiedGames, slotCategories, layoutData } = Astro.props;
-const { slug } = Astro.params;
-
-// const translationStore: TranslationData = getTranslations.get();
-
-// Setting SITE ID
-const SITE_ID = import.meta.env.SITE_ID;
+// FAQs Schema
+if (
+  categoryPage[0]?.attributes?.faqs &&
+  categoryPage[0]?.attributes?.faqs.length > 0
+) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: categoryPage[0]?.attributes?.faqs?.map(
+      ({ answer, question }) => {
+        return {
+          "@type": "Question",
+          name: `${question}`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `${answer}`,
+          },
+        };
+      }
+    ),
+  };
+  combinedSchema.push(faqSchema);
+}
 
 // Create block variable for GameList Component
 const introBlock = {
-  heading: page?.attributes?.IntroductionWithImage?.heading,
-  introduction: page?.attributes?.IntroductionWithImage?.introduction,
-  image: page?.attributes?.IntroductionWithImage?.image,
+  heading: categoryPage[0]?.attributes?.IntroductionWithImage?.heading,
+  introduction: categoryPage[0]?.attributes?.IntroductionWithImage?.introduction,
+  image: categoryPage[0]?.attributes?.IntroductionWithImage?.image,
 };
 
 const gameBlock = {
@@ -181,77 +163,46 @@ const gameBlock = {
   ],
   gameProviders: [],
 };
-const siteID = `${import.meta.env.SITE_ID}`;
 
 // SEO Object
 const seo = {
-  pageTitle: page?.attributes?.seo?.metaTitle,
-  metaDescription: page?.attributes?.seo?.metaDescription,
-  url: `${import.meta.env.FULL_URL}${urlTranslate[SITE_ID as keyof typeof urlTranslate]["category-pages"]}/${slug}`,
+  pageTitle: categoryPage[0]?.attributes?.seo?.metaTitle,
+  metaDescription: categoryPage[0]?.attributes?.seo?.metaDescription,
+  url: `${import.meta.env.FULL_URL}${urlTranslate[import.meta.env.SITE_ID as keyof typeof urlTranslate]["category-pages"]}/${slug}`,
 };
 
-let pageSchema = [];
+// Tell the browser to always check the freshness of the cache
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
 
-let pageBreadcrum: BreadcrumbData[] = [
-  {
-    breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: "",
-  },
-];
-
-//Breadcrum Schema
-if (layoutData) {
-  pageBreadcrum.unshift(...layoutData?.attributes?.categoriesBreadcrumbs);
-}
-const breadSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [...pageBreadcrum]
-    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
-    .map((bread, i) => {
-      return {
-        "@type": "ListItem",
-        position: i + 1,
-        name: bread?.breadCrumbText,
-        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
-      };
-    }),
-};
-pageSchema.push(breadSchema);
-
-// FAQ Schema
-if (page?.attributes?.faqs && page?.attributes?.faqs.length > 0) {
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: (page?.attributes?.faqs as Faqs[]).map(
-      ({ answer, question }) => {
-        return {
-          "@type": "Question",
-          name: `${question}`,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: `${answer}`,
-          },
-        };
-      }
-    ),
-  };
-  pageSchema.push(faqSchema);
-}
+// CDN Cache Control
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
 ---
 
-<MainLayout seoData={seo} schemaData={pageSchema}>
+<MainLayout
+  seoData={seo}
+  crumbLocation="categories"
+  crumbTitle={categoryPage[0]?.attributes?.title}
+  otherSchema={combinedSchema}
+>
   <Breadcrumbs
     breadcrumbs={[
-      { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
+      {
+        breadCrumbText: categoryPage[0]?.attributes?.title,
+        breadCrumbUrl: null,
+      },
     ]}
     breadcrumbKey="categoriesBreadcrumbs"
   />
   <div class="featured-background curve">
     <IntroWithImage
       data={introBlock}
-      timeDate={page?.attributes?.updatedAt}
+      timeDate={categoryPage[0]?.attributes?.updatedAt}
       authorData={undefined}
       {translationStore}
     />
@@ -270,29 +221,29 @@ if (page?.attributes?.faqs && page?.attributes?.faqs.length > 0) {
   <div class="relative xl:container px-2">
     <div class="flex flex-col gap-x-8 mt-10 md:flex-row">
       <div class="slot-machine-content order-last md:order-first">
-        <Quicklinks data={page} {translationStore} />
+        <Quicklinks data={categoryPage[0]} {translationStore} />
         {
-          page?.attributes?.content1 && (
-            <ContentBlock pageContent={page?.attributes?.content1} />
+          categoryPage[0]?.attributes?.content1 && (
+            <ContentBlock pageContent={categoryPage[0]?.attributes?.content1} />
           )
         }
         {
-          page?.attributes?.content2 && (
-            <ContentBlock pageContent={page?.attributes?.content2} />
+          categoryPage[0]?.attributes?.content2 && (
+            <ContentBlock pageContent={categoryPage[0]?.attributes?.content2} />
           )
         }
 
         {
-          page?.attributes?.content3 && (
-            <ContentBlock pageContent={page?.attributes?.content3} />
+          categoryPage[0]?.attributes?.content3 && (
+            <ContentBlock pageContent={categoryPage[0]?.attributes?.content3} />
           )
         }
         {
-          page?.attributes?.faqs.length > 0 && (
+          categoryPage[0]?.attributes?.faqs.length > 0 && (
             <div class="content">
               <h2 class="mb-4">{translationStore?.faq}</h2>
 
-              {page?.attributes?.faqs.map((faq: Faqs) => (
+              {categoryPage[0]?.attributes?.faqs.map((faq: Faqs) => (
                 <FaqListBlock data={faq} />
               ))}
             </div>

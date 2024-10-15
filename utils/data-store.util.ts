@@ -81,6 +81,7 @@ export const urlTranslate = {
     "casino-providers-page": "/casino-online",
     "new-games-page": "/slot-machine/nuove",
     "popular-games-page": "/slot-machine/piu-giocate",
+    "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
   },
   gr: {
@@ -92,8 +93,9 @@ export const urlTranslate = {
     "category-pages": "/giochi-casino",
     "provider-pages": "/software",
     "casino-providers-page": "/casino-online",
-    "new-games": "/gioco",
+    "new-games-page": "/gioco",
     "popular-games-page": "/piu-giocati",
+    "top-rated-page": "/miglori",
     "software-page": "/slot-software",
   },
   sm: {
@@ -107,6 +109,7 @@ export const urlTranslate = {
     "casino-providers-page": "/casino-online",
     "new-games-page": "/slot-machine/nuove",
     "popular-games-page": "/slot-machine/piu-giocate",
+    "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
   },
   csi: {
@@ -120,6 +123,7 @@ export const urlTranslate = {
     "casino-providers-page": "/casino-online",
     "new-games-page": "/slot-machine/nuove",
     "popular-games-page": "/slot-machine/piu-giocate",
+    "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
   },
   csco: {
@@ -133,6 +137,7 @@ export const urlTranslate = {
     "casino-providers-page": "/casino-online",
     "new-games-page": "/slot-machine/nuove",
     "popular-games-page": "/slot-machine/piu-giocate",
+    "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
   },
   csmx: {
@@ -146,19 +151,21 @@ export const urlTranslate = {
     "casino-providers-page": "/casino-online",
     "new-games-page": "/slot-machine/nuove",
     "popular-games-page": "/slot-machine/piu-giocate",
+    "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
   },
   tgs: {
     "game-pages": "/slot",
-    "casino-pages": "/casino",
+    "casino-pages": "/casino-resena",
     "blog-pages": "/blog",
     "blog-index": "/blog",
     "author-page": "/author",
     "category-pages": "/temas",
     "provider-pages": "/software",
     "casino-providers-page": "/casino-online",
-    "new-games-page": "/gratis/nuove",
-    "popular-games-page": "/gratis/piu-giocate",
-    "software-page": "/slot-software",
+    "new-games-page": "/gratis/nuevas",
+    "popular-games-page": "/gratis/mas-jugadas",
+    "top-rated-page": "/gratis/mejores",
+    "software-page": "/proveedores",
   },
 };

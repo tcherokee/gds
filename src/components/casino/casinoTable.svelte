@@ -2,6 +2,7 @@
   // Import First Party and Third Party Plugins
   import dayjs from "dayjs";
   import qs from "qs";
+
   // Import Types
   import type {
     BonusSectionOnly,
@@ -22,19 +23,24 @@
     wageringReqAmount,
   } from "../../../stores/casinos";
   import { bonusLabels } from "../../../stores/filters";
+
   // Import Components
   import DesktopCasinoFilter from "../filters/desktopCasinoFilter.svelte";
   import MobileCasinoFilter from "../filters/mobileCasinoFilter.svelte";
-  // Import Helpers
+
+  // Helpers
+  import { urlTranslate } from "../../../utils/data-store.util";
   import { noDepositBonus, welcomeBonus } from "../../../lib/casinoBonusLayout";
   import { sortOptions } from "../../../stores/sortFilters";
   import Image from "../helpers/images.svelte";
   import Link from "../helpers/link.svelte";
   import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
+
   // Images
   import Angle from "~icons/kensho-icons/angle";
   import ArrowRight from "~icons/kensho-icons/arrow-right";
   import CircleInfo from "~icons/kensho-icons/circle-info";
+
   // Query String
   import { casinosQs } from "../../../qs/casinos";
   import { getTranslations } from "../../../stores/addTranslations";
@@ -43,6 +49,12 @@
   export let translations: TranslationData;
   export let slotProviders: TProviderAttributesOnly[] = [];
   export let showCasinoTableHeader:boolean;
+
+  const siteID = import.meta.env.PUBLIC_SITE_ID;
+  // const siteURL: string = `${siteID === 'gds' ? '/it' : ''}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
+  const siteURL: string = `${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
+
+  console.log('siteURL', siteURL)
 
   const {
     showLoadMore,
@@ -245,7 +257,7 @@
                         <div class="flex items-center">
                           <Link
                             classes="casino-name text-[14px] text-grey-500 mr-[11px]"
-                            href={`/casino/recensione/${casino?.attributes?.slug}/`}
+                            href={`${siteURL}${casino?.attributes?.slug}/`}
                           >
                             <span class="hidden sm:inline-flex sm:pr-1"
                               >{casino?.attributes?.title}</span

@@ -1,6 +1,4 @@
 ---
-export const prerender = true;
-
 // First and Third Party Plugins
 import qs from "qs";
 
@@ -9,6 +7,7 @@ import type { GetStaticPaths } from "astro";
 import type {
   BreadcrumbData,
   Faqs,
+  GameFilters,
   TProviderAttributesOnly,
 } from "../../../interfaces/common/types";
 import type { Slotprovider } from "../../../interfaces/slot-provider";
@@ -41,10 +40,15 @@ import {
   getTranslations,
 } from "../../../utils/api-requests";
 
+const slug = Astro.params.slug as string;
+
+const strippedSlug = slug.replace(/\/p\d+$/, '');
+
 const translationStore = await getTranslations();
 const slotCategories = await slotCategoriesResponse();
 const slotProviders = await slotProvidersResponse();
 
+// Fetch Game Providers Filter
 const gameProviders = await fetchApi<{
   id: number;
   attributes: {
@@ -58,145 +62,100 @@ const gameProviders = await fetchApi<{
   query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
 });
 
-export const getStaticPaths = (async () => {
-  // Import the QS Query string for custom slugs and prepare it for the API fetch
-  const slotProvidersQuery = qs.stringify(slotProvidersQs(), {
-    encodeValuesOnly: true,
-  });
-  // Request to the Fetch Function to get page data from API
-  const slotProviders = await fetchApi<Slotprovider[]>({
-    endpoint: "slot-providers",
-    wrappedByKey: "data",
-    query: `?${slotProvidersQuery}`,
-  });
+const query = qs.stringify(slotProvidersQs(strippedSlug), { encodeValuesOnly: true });
 
-  // Request to the Fetch Function to get layout data from API
-  const layout = qs.stringify(layoutQs(), { encodeValuesOnly: true });
-  const layoutData = await fetchApi<LayoutData>({
-    endpoint: "layout",
-    wrappedByKey: "data",
-    query: `?${layout}`,
-  });
+// let gamesQueryObj: GameFilters = {
+//   limit: 18,
+//   sort: "views:desc",
+//   page: 1,
+//   providers: [],
+//   categories: [],
+//   author: "",
+// };
 
-  let prerenderPath: any[] = [];
-  for (let i = 0; i < slotProviders.length; i++) {
-    const slug = slotProviders[i]?.attributes?.slug;
-    const query = qs.stringify(gamesQs(slug, "views:desc", 1), {
-      encodeValuesOnly: true,
-    });
-    const games = await fetchApi<any>({
-      endpoint: "games",
-      isPaginated: true,
-      query: `?${query}`,
-    });
+// Request to the Fetch Function to get the custom page slugs from the API
+const slotProvider = await fetchApi<Slotprovider[]>({
+  endpoint: "slot-providers",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
 
-    prerenderPath.push({
-      params: { slug },
-      props: { page: slotProviders[i], layoutData },
-    });
+const providerQuery = qs.stringify(gamesQs(slug, "views:desc", 1), {
+  encodeValuesOnly: true,
+});
 
-    if (
-      games &&
-      games.meta?.pagination &&
-      games.meta?.pagination.pageCount > 1
-    ) {
-      for (let p = 1; p <= games.meta?.pagination?.pageCount; p++) {
-        prerenderPath.push({
-          params: { slug: `${slug}/p${p}` },
-          props: { page: slotProviders[i], layoutData },
-        });
-      }
-    }
-  }
+const games = await fetchApi<any>({
+  endpoint: "games",
+  isPaginated: true,
+  query: `?${providerQuery}`,
+});
 
-  return prerenderPath;
+let combinedSchema = [];
 
-  //   return slotProviders.map((page) => {
-  //     return {
-  //       params: { slug: page?.attributes?.slug },
-  //       props: { page },
-  //     };
-  //   });
-}) satisfies GetStaticPaths;
-
-// Set Up Translation Store
-// const translationStore: TranslationData = getTranslations.get();
-
-const { page, layoutData } = Astro.props;
-const { slug } = Astro.params;
-
-let siteID = import.meta.env.SITE_ID;
-let siteURL = import.meta.env.FULL_URL;
-let canonical = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["provider-pages"]}/${slug}`;
-
-const seo = {
-  pageTitle: page?.attributes?.seo?.metaTitle,
-  metaDescription: page?.attributes?.seo?.metaDescription,
-  url: canonical,
-};
-
-let pageSchema = [];
-
-let pageBreadcrum: BreadcrumbData[] = [
-  {
-    breadCrumbText: page?.attributes?.title,
-    breadCrumbUrl: "",
-  },
-];
-
-//Breadcrum Schema
-if (layoutData) {
-  pageBreadcrum.unshift(...layoutData?.attributes?.providersBreadcrumbs);
-}
-const breadSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [...pageBreadcrum]
-    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
-    .map((bread, i) => {
-      return {
-        "@type": "ListItem",
-        position: i + 1,
-        name: bread?.breadCrumbText,
-        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
-      };
-    }),
-};
-pageSchema.push(breadSchema);
-
-// FAQ Schema
-const allFAQs: Faqs[] = page?.attributes?.faqs;
-if (allFAQs.length > 0) {
+// FAQs Schema
+if (
+  slotProvider[0]?.attributes?.faqs &&
+  slotProvider[0]?.attributes?.faqs.length > 0
+) {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: allFAQs.map(({ answer, question }) => {
-      return {
-        "@type": "Question",
-        name: `${question}`,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: `${answer}`,
-        },
-      };
-    }),
+    mainEntity: slotProvider[0]?.attributes?.faqs?.map(
+      ({ answer, question }) => {
+        return {
+          "@type": "Question",
+          name: `${question}`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `${answer}`,
+          },
+        };
+      }
+    ),
   };
-  pageSchema.push(faqSchema);
+  combinedSchema.push(faqSchema);
 }
+
+// SEO Object
+const seo = {
+  pageTitle: slotProvider[0]?.attributes?.seo?.metaTitle,
+  metaDescription: slotProvider[0]?.attributes?.seo?.metaDescription,
+  url: `${import.meta.env.FULL_URL}${urlTranslate[import.meta.env.SITE_ID as keyof typeof urlTranslate]["provider-pages"]}/${slug}`,
+};
+
+// Tell the browser to always check the freshness of the cache
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+// CDN Cache Control
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
 ---
 
-<MainLayout seoData={seo} schemaData={pageSchema}>
+<MainLayout
+  seoData={seo}
+  crumbLocation="providers"
+  crumbTitle={slotProvider[0]?.attributes?.title}
+  otherSchema={combinedSchema}
+>
   <Breadcrumb
     breadcrumbs={[
-      { breadCrumbText: page?.attributes?.title, breadCrumbUrl: null },
+      {
+        breadCrumbText: slotProvider[0]?.attributes?.title,
+        breadCrumbUrl: null,
+      },
     ]}
     breadcrumbKey="providersBreadcrumbs"
   />
   <div class="featured-background curve pb-5">
     <IntroBlock
-      data={page?.attributes?.IntroductionWithImage}
-      timeDate={page?.attributes?.dateCreated}
-      authorData={page?.attributes?.author}
+      data={slotProvider[0]?.attributes?.IntroductionWithImage}
+      timeDate={slotProvider[0]?.attributes?.dateCreated}
+      authorData={slotProvider[0]?.attributes?.author}
       {translationStore}
     />
 
@@ -216,44 +175,53 @@ if (allFAQs.length > 0) {
     <div class="flex flex-col md:flex-row gap-x-8">
       <div class="order-last md:order-first mt-5 md:mt-0">
         {
-          page?.attributes?.content1 && (
+          slotProvider[0]?.attributes?.content1 && (
             <div class="content-1">
-              <ContentBlock pageContent={page?.attributes?.content1} />
+              <ContentBlock
+                pageContent={slotProvider[0]?.attributes?.content1}
+              />
             </div>
           )
         }
 
         {
-          page?.attributes?.content2 && (
+          slotProvider[0]?.attributes?.content2 && (
             <div class="content-2">
-              <ContentBlock pageContent={page?.attributes?.content2} />
+              <ContentBlock
+                pageContent={slotProvider[0]?.attributes?.content2}
+              />
             </div>
           )
         }
 
         {
-          page?.attributes?.relatedCasinos?.data.length > 0 && (
+          slotProvider[0]?.attributes?.relatedCasinos?.data.length > 0 && (
             <CasinoComparison
-              data={page?.attributes?.relatedCasinos?.data.slice(0, 3)}
+              data={slotProvider[0]?.attributes?.relatedCasinos?.data.slice(
+                0,
+                3
+              )}
               {translationStore}
             />
           )
         }
 
         {
-          page?.attributes?.content3 && (
+          slotProvider[0]?.attributes?.content3 && (
             <div class="content-3">
-              <ContentBlock pageContent={page?.attributes?.content3} />
+              <ContentBlock
+                pageContent={slotProvider[0]?.attributes?.content3}
+              />
             </div>
           )
         }
 
         {
-          page?.attributes?.faqs.length > 0 && (
+          slotProvider[0]?.attributes?.faqs.length > 0 && (
             <div class="content mt-4">
               <h2 class="mb-4">{translationStore?.faq}</h2>
 
-              {page?.attributes?.faqs.map((faq: { data: Faqs }) => (
+              {slotProvider[0]?.attributes?.faqs.map((faq: Faqs) => (
                 <FaqsComponent data={faq} />
               ))}
             </div>

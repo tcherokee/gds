@@ -4,7 +4,6 @@ import { Link } from "astro-link";
 
 // Helpers
 import Images from "../helpers/images.astro";
-import { Image } from "astro:assets";
 
 // Components
 import Navigation from "../navigation/navigation.svelte";
@@ -48,11 +47,16 @@ const { mainNavigation, logo, subNavigation, translationStore } = Astro.props;
           class="bg-gray-900 text-navbar-text uppercase rounded-md py-2 px-3 inline-flex items-center text-xs font-medium gap-2"
           aria-current="page"
         >
-          <Image
+          <Images
+            classes={
+              import.meta.env.SITE_ID === "csi" ? "w-[130px] md:w-fit" : ""
+            }
             src={`${nav.attributes.images.data?.attributes.url}`}
-            width={i === 0 ? 19 : 15}
-            height={15}
             alt={nav?.attributes?.title + "  image"}
+            originalHeight={nav.attributes.images.data?.attributes?.height}
+            originalWidth={nav.attributes.images.data?.attributes?.width}
+            imageHeight={15}
+            imageWidth={i === 0 ? 19 : 15}
           />
           {nav?.attributes?.title}
         </Link>

@@ -103,6 +103,23 @@
     hoverEl = document.getElementById(elementID);
     hoverEl.classList.add("hidden");
   };
+
+  console.log('iframe', JSON.stringify(data?.attributes?.embedCode?.desktopEmbedCode))
+
+  // const iframeData = {JSON.stringify(data?.attributes?.embedCode?.desktopEmbedCode)};
+
+  // const onIframeLoad = () => {
+  //   const container = document.getElementById('iframe-container');
+  //   const iframe = document.createElement('iframe');
+    
+  //   // Set iframe attributes from iframeData
+  //   iframe.src = iframeData.src;
+  //   iframe.width = iframeData.width;
+  //   iframe.height = iframeData.height;
+  //   // Add any other attributes as needed
+    
+  //   container.appendChild(iframe);
+  // }
 </script>
 
 <div class="flex flex-col justify-center rounded-t-lg -mx-3 md:mx-0">
@@ -173,11 +190,11 @@
             class="btn btn-secondary free-play uppercase my-5"
             on:click={startGameHandler}
           >
-            Gioco Gratis
+            {translations?.playFunBtn}
           </div>
 
           <div class="age-warning">
-            Premendo "Gioco Gratis", confermi di avere almeno 18 anni.
+            {translations?.ageWarning}
           </div>
         {/if}
       </div>
@@ -248,7 +265,7 @@
                 role="tooltip"
                 class="hidden px-5 text-black -ml-[180px] md:-ml-[0px] opacity-100 bg-grey-100 text-sm z-20 -mt-[11rem] w-[220px] absolute transition duration-150 ease-in-out shadow-lg p-2 rounded"
               >
-                {translations.gameInfoText}
+                {translations?.gameInfoText}
               </div>
             </button>
           </div>

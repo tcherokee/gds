@@ -1,6 +1,4 @@
 ---
-export const prerender = true;
-
 // First and Third Party Plugins
 import qs from "qs";
 
@@ -32,7 +30,6 @@ import { blogsQs } from "../../qs/blogs.ts";
 // Components
 import MainLayout from "../layouts/MainLayout.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
-import OverviewListBlock from "../components/blocks/overviewListBlock.astro";
 import { getTranslations } from "../../utils/api-requests";
 
 const sortStore = sortOptions.get();
@@ -46,8 +43,6 @@ const homepage = await fetchApi<Homepage>({
   wrappedByKey: "data",
   query: `?${query}`,
 });
-
-// const metaQuery = qs.stringify(blogmetaQs(), { encodeValuesOnly: true });
 
 //Type Guards for the find functions
 const isBlogBlockTypes = (block: Block): block is BlogBlockTypes => {
@@ -83,6 +78,7 @@ const gamesQuery =
       { encodeValuesOnly: true }
     )
   );
+
 const blogsQuery = qs.stringify(
   blogsQs(undefined, blogBlock?.numOfBlogs ?? 6, "createdAt:desc"),
   { encodeValuesOnly: true }
@@ -140,23 +136,26 @@ const Components = await loadComponents(
   mapBlocksToDynamicComponents(homepage?.attributes?.blocks)
 );
 
-const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
-const PUBLIC_FULL_URL = import.meta.env.FULL_URL;
-
-let canonical: string = `${PUBLIC_FULL_URL}`;
-
 let seo = {
   pageTitle: homepage?.attributes?.seo?.metaTitle,
   metaDescription: homepage?.attributes?.seo?.metaDescription,
-  url: canonical,
+  url: import.meta.env.FULL_URL,
 };
+
+// Tell the browser to always check the freshness of the cache
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+// CDN Cache Control
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
 ---
 
-<!-- 
-<script define:vars={{ homepage }}>
-  console.log("Home page", homepage);
-</script> -->
-<MainLayout seoData={seo} isHomePage={true}>
+<MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 
   <div

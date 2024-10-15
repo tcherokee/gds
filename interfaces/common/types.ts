@@ -331,6 +331,13 @@ export type HowToBlockTypes = BlockBase & {
   description: string;
 };
 
+export type HowToGroup = {
+  id: number;
+  title: string;
+  description: string;
+  howToGroup: HowTo[];
+}
+
 export type HowTo = {
   id: number;
   heading: string;
@@ -361,6 +368,11 @@ export type ImageWithParagraphTypes = BlockBase & {
   imageWithParagraph: imageWithParagraph[];
 };
 
+export type CasinoFeatures = {
+  id: number;
+  feature: string;
+}
+
 export type CasinoListBlock = BlockBase & {
   casinoSort: string;
   casinoFilters: string;
@@ -368,7 +380,7 @@ export type CasinoListBlock = BlockBase & {
   showLoadMore: boolean;
   numberPerLoadMore: number;
   casinosList: CasinoListData[];
-  showTableHeader: boolean;
+  showCasinoTableHeader: boolean;
 };
 
 export type TGameListBlock = BlockBase & CustomGameList;

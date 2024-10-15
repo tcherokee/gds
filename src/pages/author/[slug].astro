@@ -1,11 +1,8 @@
 ---
-export const prerender = true;
-
 // First and Third Party Plugins
 import qs from "qs";
 
 // Types and TypeGuards
-import type { GetStaticPaths } from "astro";
 import type { GameFilters } from "../../../interfaces/common/types";
 import type { TAuthor } from "../../../interfaces/users";
 
@@ -21,10 +18,6 @@ import {
   slotCategories as slotCategoriesResponse,
 } from "../../../utils/api-requests";
 
-const translationStore = await getTranslations();
-const slotCategories = await slotCategoriesResponse();
-const slotProviders = await slotProvidersResponse();
-
 // Layouts
 import MainLayout from "../../layouts/MainLayout.astro";
 
@@ -36,89 +29,63 @@ import BlogCard from "../../components/blogs/blogCard.astro";
 import CasinoTable from "../../components/casino/casinoTable.astro";
 import AuthorCard from "../../components/general/authorCardAlt.astro";
 
-export const getStaticPaths = (async () => {
-  // Import the QS Query string for custom slugs and prepare it for the API fetch
-  const query = qs.stringify(authorPageQs(), { encodeValuesOnly: true });
+const slug = Astro.params.slug as string;
+// Import the QS Query string for custom slugs and prepare it for the API fetch
+const query = qs.stringify(authorPageQs(slug.split(".")[0]), {
+  encodeValuesOnly: true,
+});
 
-  // Request to the Fetch Function to get the custom page slugs from the API
-  const authorPage = await fetchApi<TAuthor[]>({
-    endpoint: "users",
-    wrappedByKey: "",
-    query: `?${query}`,
-  });
-  let gamesQueryObj: GameFilters = {
-    limit: 18,
-    sort: "createdAt:desc",
-    page: 1,
-    providers: [],
-    categories: [],
-    author: "",
+// Request to the Fetch Function to get the custom page slugs from the API
+const authorPage = await fetchApi<TAuthor[]>({
+  endpoint: "users",
+  wrappedByKey: "",
+  query: `?${query}`,
+});
+
+const gamesQueryObj: GameFilters = {
+  limit: 18,
+  sort: "createdAt:desc",
+  page: 1,
+  providers: [],
+  categories: [],
+  author: authorPage[0].slug,
+};
+
+const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
+  encodeValuesOnly: true,
+});
+
+const authorGames = await fetchApi<any[]>({
+  endpoint: "games",
+  wrappedByKey: "data",
+  query: `?${gamesQuery}`,
+});
+
+const initialGames: TUserGame[] = authorGames.map((elem) => {
+  return {
+    id: elem.id,
+    ...elem.attributes,
+    images: {
+      url: elem.attributes.images.data.attributes.url,
+    },
+    provider: {
+      slug: elem.attributes.provider.data.attributes.slug,
+      title: elem.attributes.provider.data.attributes.title,
+    },
   };
+});
 
-  let prerenderPath: any[] = [];
-  for (let i = 0; i < authorPage.length; i++) {
-    const page = authorPage[i];
-    gamesQueryObj = {
-      ...gamesQueryObj,
-      author: page.slug,
-    };
-    const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
-      encodeValuesOnly: true,
-    });
-
-    const authorGames = await fetchApi<any[]>({
-      endpoint: "games",
-      wrappedByKey: "data",
-      query: `?${gamesQuery}`,
-    });
-
-    const initialGames: TUserGame[] = authorGames.map((elem) => {
-      return {
-        id: elem.id,
-        ...elem.attributes,
-        images: {
-          url: elem.attributes.images.data.attributes.url,
-        },
-        provider: {
-          slug: elem.attributes.provider.data.attributes.slug,
-          title: elem.attributes.provider.data.attributes.title,
-        },
-      };
-    });
-
-    prerenderPath.push({
-      params: {
-        slug: `${page?.firstName.toLowerCase()}.${page?.lastName.toLowerCase()}`,
-      },
-      props: {
-        page,
-        initialGames,
-      },
-    });
-  }
-
-  return prerenderPath;
-
-  //   return authorPage.map(async (page) => {
-  //     return {
-  //       params: {
-  //         slug: `${page?.firstName.toLowerCase()}.${page?.lastName.toLowerCase()}`,
-  //       },
-  //       props: { page },
-  //     };
-  //   });
-}) satisfies GetStaticPaths;
-
-const { page, initialGames } = Astro.props;
-const { slug } = Astro.params;
+const translationStore = await getTranslations();
+const slotCategories = await slotCategoriesResponse();
+const slotProviders = await slotProvidersResponse();
 
 // Setting SITE ID
 const SITE_ID = import.meta.env.SITE_ID;
 
 // Create SEO Object
 const seo = {
-  pageTitle: `${page.firstName} ${page.firstName}`,
-  metaDescription: page?.content1,
+  pageTitle: `${authorPage[0].firstName} ${authorPage[0].lastName}`,
+  metaDescription: authorPage[0]?.content1,
   url: `${import.meta.env.FULL_URL}${urlTranslate[SITE_ID as keyof typeof urlTranslate]["author-page"]}/${slug}`,
 };
 
@@ -135,7 +102,7 @@ const gameBlockObj = {
 };
 
 // Truncate and Clean Blog Object
-const truncatedBlogObj = page.blogs.map((item: any) => {
+const truncatedBlogObj = authorPage[0].blogs.map((item: any) => {
   if (item && item.content1) {
     // Remove HTML tags
     const plainText = item.content1.replace(/<[^>]*>/g, "");
@@ -154,6 +121,18 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
   }
   return item;
 });
+
+// Tell the browser to always check the freshness of the cache
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+// CDN Cache Control
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
 ---
 
 <MainLayout seoData={seo}>
@@ -161,11 +140,11 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
     <div class="w-full pt-5 px-3 author-upper-section pb-[65px]">
       <div class="xl:container">
         <div>
-          <AuthorCard data={page} isFlat={true} {translationStore} />
+          <AuthorCard data={authorPage[0]} isFlat={true} {translationStore} />
         </div>
 
         {
-          page.games.length > 0 && (
+          authorPage[0]?.games.length > 0 && (
             <>
               <div class="">
                 <h2 class="text-white">Ultimi giochi recensiti dall'autore</h2>
@@ -174,7 +153,7 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
                 <GameListBlock
                   data={gameBlockObj}
                   {initialGames}
-                  author={page.slug}
+                  author={authorPage[0].slug}
                   translations={translationStore}
                   {slotProviders}
                   {slotCategories}
@@ -189,7 +168,7 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
   </div>
   <div class="relative xl:container px-2 pb-5">
     {
-      page?.blogs.length > 0 && (
+      authorPage[0]?.blogs.length > 0 && (
         <div class="mt-6 md:mt-8">
           <h2 class="!mb-5 !md:mb-6">Articoli recenti dell'autore</h2>
           <div class="grid md:grid-cols-3 gap-3 md:gap-8">
@@ -199,27 +178,26 @@ const truncatedBlogObj = page.blogs.map((item: any) => {
       )
     }
     {
-      page?.casinos.length > 0 && (
+      authorPage[0]?.casinos.length > 0 && (
         <div class="mt-5">
           <h2>Casino recensiti dall'autore</h2>
           <div class="mb-5">
-            <CasinoTable casinos={page?.casinos} {translationStore} />
+            <CasinoTable casinos={authorPage[0]?.casinos} {translationStore} />
           </div>
         </div>
       )
     }
   </div>
+  <style lang="scss">
+    .author-upper-section {
+      background: var(
+        --Gradients-BG-Blue,
+        linear-gradient(
+          180deg,
+          theme("colors.background-top-gradient") 0%,
+          theme("colors.background-bottom-gradient") 100%
+        )
+      );
+    }
+  </style>
 </MainLayout>
-
-<style lang="scss">
-  .author-upper-section {
-    background: var(
-      --Gradients-BG-Blue,
-      linear-gradient(
-        180deg,
-        theme("colors.background-top-gradient") 0%,
-        theme("colors.background-bottom-gradient") 100%
-      )
-    );
-  }
-</style>
