@@ -157,11 +157,12 @@
     const reviewDialogDeets = JSON.parse(
       await window.localStorage?.getItem("_reviewDialogDeets")
     );
-    window.localStorage?.removeItem("_reviewDialogDeets")
-    console.log("REVIEW_DIALOG_DEETS:", reviewDialogDeets);
-    const { type, slug } = reviewDialogDeets;
-    if (type && type === reviewType && slug && slug === reviewTypeSlug) {
-      showReviewModal();
+    if (reviewDialogDeets) {
+      window.localStorage?.removeItem("_reviewDialogDeets");
+      const { type, slug } = reviewDialogDeets;
+      if (type && type === reviewType && slug && slug === reviewTypeSlug) {
+        showReviewModal();
+      }
     }
   };
 
@@ -183,7 +184,10 @@
     <div class="md:w-1/3">
       <div class="space-y-2.5">
         <div>
-          <div class="flex items-center justify-center" on:click={showReviewModal}>
+          <div
+            class="flex items-center justify-center"
+            on:click={showReviewModal}
+          >
             <!-- Active: "text-yellow-400", Default: "text-gray-300" -->
             <ReadOnlyRatings
               {avgRating}
@@ -195,7 +199,9 @@
           <p class="sr-only">{(totalReviews * 100) / 5} out of 5 stars</p>
         </div>
         <p class="text-sm !mb-0 text-center">
-          {translations.basedOn} {totalReviews} {totalReviews > 1 ? translations.reviews : translations.review}
+          {translations.basedOn}
+          {totalReviews}
+          {totalReviews > 1 ? translations.reviews : translations.review}
         </p>
       </div>
       {#if !userReviewData}
