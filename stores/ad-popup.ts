@@ -1,10 +1,14 @@
 import { persistentAtom } from "@nanostores/persistent";
+import dayjs from "dayjs";
 
-export const adPopup = persistentAtom<{ status: boolean; statusDate: string }>(
+export const adPopup = persistentAtom<{
+  status: boolean;
+  expiryDate: string;
+}>(
   "adPopupStatus",
   {
     status: false,
-    statusDate: `${new Date().toLocaleDateString()}`,
+    expiryDate: `${dayjs().format("YYYY-MM-DD")}`,
   },
   {
     encode(value) {

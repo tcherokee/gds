@@ -1,18 +1,41 @@
 <script lang="ts">
+  import dayjs from "dayjs";
   import { isPlus18 } from "../../../stores/plus18";
   import Images from './images.svelte';
+  import { onMount } from "svelte";
 
   export let data: any;
   export let showPopUp: boolean = false;
-  
 
+  let today:string;
+  let hasPopupExpired:boolean;
+  
+  
   const acceptPlus18Handler = () => {
-    isPlus18.set(true);
+    let expiryDate = dayjs().add(1, 'year').format('YYYY-MM-DD');
+    isPlus18.set({status:true, expiryDate}); 
   };
 
+  $: {
+    today = dayjs().format("YYYY-MM-DD");
+    hasPopupExpired = dayjs($isPlus18.expiryDate).isAfter(dayjs(today));
+  }
+
+  // const checkIfPopupHasBeenShownToday = () => {
+  //   if(data.activate) {
+  //     let currentDay = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+  //     if($isPlus18.statusDate < currentDay) {
+  //      isPlus18.set({ status: false, statusDate: currentDay })
+  //     }
+  //   }
+  // }
+//  onMount(() => {
+//   showPopUp = true;
+//   checkIfPopupHasBeenShownToday();
+// })
 </script>
 
-{#if !$isPlus18}
+{#if data.activate && !hasPopupExpired}
 
 <div
   class="relative z-50"
@@ -31,16 +54,6 @@
     <div
       class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
     >
-      <!--
-        Modal panel, show/hide based on modal state.
-
-        Entering: "ease-out duration-300"
-          From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          To: "opacity-100 translate-y-0 sm:scale-100"
-        Leaving: "ease-in duration-200"
-          From: "opacity-100 translate-y-0 sm:scale-100"
-          To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      -->
       <div
         class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
       >
