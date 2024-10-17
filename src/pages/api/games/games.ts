@@ -36,3 +36,33 @@ export const GET: APIRoute = async ({ url }) => {
     });
   }
 };
+
+export const PUT: APIRoute = async ({ url }) => {
+  const id = url.searchParams.get("id");
+  const views = url.searchParams.get("views");
+
+  console.log("GAME_VIEWS_PAYLOAD:", id, views);
+  const body = {
+    data: {
+      views,
+    },
+  };
+
+  const opts = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${import.meta.env.PUBLIC_API_TOKEN}`,
+    },
+    body: JSON.stringify(body),
+  };
+
+  const res = await fetch(
+    `${import.meta.env.PUBLIC_API_URL}/api/games/${id}`,
+    opts
+  );
+  const data = await res.json();
+
+  return new Response(JSON.stringify(data), { status: 200 });
+};

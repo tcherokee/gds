@@ -162,7 +162,7 @@ export const urlTranslate = {
     "author-page": "/author",
     "category-pages": "/temas",
     "provider-pages": "/software",
-    "casino-providers-page": "/casino-online",
+    "casino-providers-page": "/casino-proveedor",
     "new-games-page": "/gratis/nuevas",
     "popular-games-page": "/gratis/mas-jugadas",
     "top-rated-page": "/gratis/mejores",
