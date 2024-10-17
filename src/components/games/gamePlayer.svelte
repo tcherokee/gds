@@ -44,7 +44,18 @@
     mostPlayedGamesHandler();
   };
 
+  console.log(data);
+
   const mostPlayedGamesHandler = async () => {
+    const gameViewVariables = {
+      id: data.id,
+      views: 1
+    };
+    const res = await fetch(
+        `${import.meta.env.PUBLIC_FULL_URL}/api/games/games?` +
+          new URLSearchParams(gameViewVariables),
+        { method: "PUT" }
+      );
     const user = await window.localStorage.getItem("_user:");
     if (user) {
       const payload = {
