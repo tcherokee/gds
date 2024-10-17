@@ -44,8 +44,6 @@
     mostPlayedGamesHandler();
   };
 
-  console.log(data);
-
   const mostPlayedGamesHandler = async () => {
     const gameViewVariables = {
       id: data.id,
