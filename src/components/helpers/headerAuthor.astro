@@ -6,9 +6,12 @@ import Link from "./link.astro";
 
 const siteID = import.meta.env.SITE_ID;
 const siteURL = import.meta.env.FULL_URL;
-const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${author?.data?.attributes?.firstName?.toLowerCase()}.${author?.data?.attributes?.lastName?.toLowerCase()}`;
+const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${author?.data?.attributes?.firstName?.toLowerCase()}.${author?.data?.attributes?.lastName?.toLowerCase()}/`;
 ---
 
+<script define:vars={{ authorLink }}>
+  console.log("authorLink", authorLink);
+</script>
 <div
   class="flex items-center gap-2 sub-header text-[0.6875em] italic capitalize"
 >
