@@ -18,11 +18,13 @@
     Weekly: 7
   };
 
-  let frequencyValue = frequencyType[data.frequency];
+  let frequencyValue = (data.activate) ? frequencyType[data.frequency] : null;
 
   const saveNextPopup = () => {
-    let expiryDate = dayjs().add(frequencyValue, 'day').format('YYYY-MM-DD');
-    adPopup.set({status:true, expiryDate}); 
+    if(data.activate) {
+      let expiryDate = dayjs().add(frequencyValue, 'day').format('YYYY-MM-DD');
+      adPopup.set({status:true, expiryDate}); 
+    }
   };
 
 
@@ -33,7 +35,7 @@
   
 </script>
 
-{#if data.activate && !hasPopupExpired}
+{#if !hasPopupExpired}
  <div
       class="relative z-50"
       aria-labelledby="modal-title"
