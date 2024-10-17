@@ -31,7 +31,13 @@ export const layoutQs = (): LayoutQueryOptions => ({
       },
     },
     adPopup: {
-      fields: ["title", "description", "frequency", "activate"],
+      fields: [
+        "title",
+        "description",
+        "frequency",
+        "activate",
+        "minutesToShow",
+      ],
       populate: {
         casinos: {
           populate: {

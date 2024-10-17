@@ -219,7 +219,7 @@ if (otherSchema) {
     </main>
 
     {
-      (
+      layout?.attributes?.adPopup?.activate && (
         <AdPopUp
           data={layout?.attributes?.adPopup}
           {translationStore}
@@ -228,7 +228,11 @@ if (otherSchema) {
       )
     }
 
-    {(<Plus18PopUp data={layout?.attributes?.plus18Popup} client:load />)}
+    {
+      layout?.attributes?.plus18Popup?.activate && (
+        <Plus18PopUp data={layout?.attributes?.plus18Popup} client:load />
+      )
+    }
 
     <CookiesConsent
       headerText={layout?.attributes?.cookiesHeaderText + ""}

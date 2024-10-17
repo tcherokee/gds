@@ -5,37 +5,28 @@
   import { onMount } from "svelte";
 
   export let data: any;
-  export let showPopUp: boolean = false;
 
   let today:string;
-  let hasPopupExpired:boolean;
+  let hasPopupExpired:boolean = true;
   
   
   const acceptPlus18Handler = () => {
-    let expiryDate = dayjs().add(1, 'year').format('YYYY-MM-DD');
-    isPlus18.set({status:true, expiryDate}); 
+    if(data.activate) {
+      let expiryDate = dayjs().add(1, 'year').format('YYYY-MM-DD');
+      isPlus18.set({status:true, expiryDate}); 
+    }
   };
 
   $: {
-    today = dayjs().format("YYYY-MM-DD");
-    hasPopupExpired = dayjs($isPlus18.expiryDate).isAfter(dayjs(today));
+    setTimeout(() => {
+      today = dayjs().format("YYYY-MM-DD");
+      hasPopupExpired = dayjs($isPlus18.expiryDate).isAfter(dayjs(today));
+    }, 2000);
   }
 
-  // const checkIfPopupHasBeenShownToday = () => {
-  //   if(data.activate) {
-  //     let currentDay = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
-  //     if($isPlus18.statusDate < currentDay) {
-  //      isPlus18.set({ status: false, statusDate: currentDay })
-  //     }
-  //   }
-  // }
-//  onMount(() => {
-//   showPopUp = true;
-//   checkIfPopupHasBeenShownToday();
-// })
 </script>
 
-{#if data.activate && !hasPopupExpired}
+{#if !hasPopupExpired}
 
 <div
   class="relative z-50"
