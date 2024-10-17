@@ -6,7 +6,7 @@ import Link from "./link.astro";
 
 const siteID = import.meta.env.SITE_ID;
 const siteURL = import.meta.env.FULL_URL;
-const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${author?.data?.attributes?.firstName?.toLowerCase()}.${author?.data?.attributes?.lastName?.toLowerCase()}`;
+const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${author?.data?.attributes?.firstName?.toLowerCase()}.${author?.data?.attributes?.lastName?.toLowerCase()}/`;
 ---
 
 <div
