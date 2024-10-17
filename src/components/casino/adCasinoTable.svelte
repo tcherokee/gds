@@ -21,11 +21,6 @@ export let translations
     "bg-gradient-to-b from-bronze-tag-t-gradient to-bronze-tag-b-gradient",
   ];
 
-const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
-
-console.log('casinos', casinos);
-
-
 </script>
 
 <div class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden relative z-[8] mb-5">
@@ -93,68 +88,15 @@ console.log('casinos', casinos);
                       <div
                         class="flex flex-col items-center justify-center h-full px-3 py-3"
                       >
-                        <div
-                          class="text-[#7C838D] text-center text-sm leading-[18px] font-bold mb-2 md:hidden"
-                        >
-                          {translations?.withoutDeposit}
-                        </div>
-                        {#if noDepositBonus(casino)?.bonus}
-                          <Link
-                            href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
-                            classes="flex underline text-center font-lato"
-                            type="external"
-                            rel="sponsored"
-                          >
-                            {@html noDepositBonus(casino, {
-                              withoutDeposit: translations?.withoutDeposit,
-                              freeSpins: translations?.freeSpins,
-                            })?.bonus}
-                          </Link>
-                          <span
-                            class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                            title={noDepositBonus(casino, {withoutDeposit: translations?.withoutDeposit,
-                              freeSpins: translations?.freeSpins,})?.terms}
-                            data-tooltip-placement="left"
-                          >
-                            {translations?.wageringRequirement}
-                            <CircleInfo
-                              width="12px"
-                              height="12px"
-                              class="fill-text-grey-500 ml-1"
-                            />
-                          </span>
-                          <div class="wrap-collabsible w-full md:hidden mt-2">
-                            <input
-                              id={`noDepositBonus${i}`}
-                              class="toggle hidden peer"
-                              type="checkbox"
-                            />
-                            <label
-                              for={`noDepositBonus${i}`}
-                              class="flex items-center justify-between text-sm text-grey-500 group peer-checked:open"
-                              tabindex="0"
+                        <div class="flex ml-5 font-bold">
+                            <Link
+                              externalInNewTab={true}
+                              class="text-decoration-underline text-blue-300"
+                              href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
                             >
-                              {translations?.wageringRequirement}
-                              <Angle
-                                class="fill-grey-500 group-[.open]:rotate-180"
-                                height="20px"
-                                width="18px"
-                              />
-                            </label>
-                            <div
-                              class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max"
-                            >
-                              <div class="content-inner text-grey-500 mt-4">
-                                {@html noDepositBonus(casino, {
-                                  withoutDeposit: translations?.withoutDeposit,
-                                  freeSpins: translations?.freeSpins,
-                                })?.terms}
-                              </div>
-                            </div>
+                              {casino?.attributes?.casinoBonus?.bonusLabel}
+                            </Link>
                           </div>
-                        {:else}
-                          <span> - </span>
-                        {/if}
                       </div>
                     </td>
                     <td class="w-full !border-l-0 md:w-auto">
@@ -229,8 +171,6 @@ console.log('casinos', casinos);
                 {/each}
               {/if}
             </tbody>
-            
-		
     </table>
 </div>
 

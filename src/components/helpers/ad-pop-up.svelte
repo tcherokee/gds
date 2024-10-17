@@ -11,27 +11,33 @@
   export let translationStore;
 
   let today:string;
-  let hasPopupExpired:boolean;
+  let hasPopupExpired:boolean = true;
+  let showAdPopup:boolean;
 
   let frequencyType = {
     Daily: 1,
     Weekly: 7
   };
 
-  let frequencyValue = (data.activate) ? frequencyType[data.frequency] : null;
+  let minutesToShow = (data?.minutesToShow * 60) * 1000; //get minutes to show in milliseconds
+
+
+  let frequencyValue = (data?.activate) ? frequencyType[data?.frequency] : null;
 
   const saveNextPopup = () => {
-    if(data.activate) {
+    if(data?.activate) {
       let expiryDate = dayjs().add(frequencyValue, 'day').format('YYYY-MM-DD');
       adPopup.set({status:true, expiryDate}); 
     }
   };
 
-
   $: {
-    today = dayjs().format("YYYY-MM-DD");
-    hasPopupExpired = dayjs($adPopup.expiryDate).isAfter(dayjs(today));
+    setTimeout(() => {
+      today = dayjs().format("YYYY-MM-DD");
+      hasPopupExpired = dayjs($adPopup.expiryDate).isAfter(dayjs(today));
+    }, minutesToShow);
   }
+  
   
 </script>
 

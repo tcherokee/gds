@@ -54,8 +54,6 @@
   // const siteURL: string = `${siteID === 'gds' ? '/it' : ''}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
   const siteURL: string = `${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
 
-  console.log('siteURL', siteURL)
-
   const {
     showLoadMore,
     showCasinoFilters,
