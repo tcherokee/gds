@@ -27,8 +27,8 @@
   const saveNextPopup = () => {
     if(data?.activate) {
       let expiryDate = dayjs().add(frequencyValue, 'day').format('YYYY-MM-DD');
-      adPopup.set({status:true, expiryDate});
-      hasPopupExpired = true;
+      adPopup.set({status:true, expiryDate}); 
+      hasPopupExpired = true //tis will close the pop-up
     }
   };
 
