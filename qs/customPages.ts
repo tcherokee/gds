@@ -39,6 +39,14 @@ export const customPageQs = (path: string) => {
           slot_providers: {
             fields: ["title", "slug"],
           },
+          overviews: {
+            fields: ["title", "url"],
+            populate: {
+              card_img: {
+                fields: ["url"],
+              },
+            },
+          },
           casinosList: {
             fields: ["id"],
             populate: {
@@ -202,12 +210,12 @@ export const customPageQs = (path: string) => {
         },
       },
     },
-  filters: {
-    urlPath: {
-      $eq: path
-    }
-  },
-  pagination: {
+    filters: {
+      urlPath: {
+        $eq: path,
+      },
+    },
+    pagination: {
       page: 1,
       pageSize: 10000,
     },
