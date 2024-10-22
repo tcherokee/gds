@@ -1,8 +1,11 @@
 import { persistentAtom } from "@nanostores/persistent";
 import dayjs from "dayjs";
 
-export const isPlus18 = persistentAtom<{ status: boolean; expiryDate: string }>(
-  "plus18Status",
+export const adPopup = persistentAtom<{
+  status: boolean;
+  expiryDate: string;
+}>(
+  "adPopupStatus",
   {
     status: false,
     expiryDate: `${dayjs().format("YYYY-MM-DD")}`,

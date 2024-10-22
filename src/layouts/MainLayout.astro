@@ -28,12 +28,12 @@ import {
 //Components
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
-import Footer from "../components/layout/footer.astro";
-import Newsletter from "../components/layout/newsletter.astro";
+// import Footer from "../components/layout/footer.astro";
+// import Newsletter from "../components/layout/newsletter.astro";
 import CookiesConsent from "../components/general/cookiesConsent.svelte";
 import { getTranslations } from "../../utils/api-requests";
 import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
-import { plus18 } from "../../stores/plus18";
+import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 
 const siteID = `${import.meta.env.SITE_ID}`;
 
@@ -145,8 +145,6 @@ switch (crumbLocation) {
   default:
 }
 
-let showPlus18Popup: boolean = layout?.attributes?.plus18Popup?.activate;
-
 // Using a if statement here to prevent duplicate breadcrumb schema on custom pages.
 if (crumbLocation) {
   const BreadcrumbSchema = {
@@ -221,18 +219,21 @@ if (otherSchema) {
     </main>
 
     {
-      showPlus18Popup && (
+      layout?.attributes?.adPopup?.activate && (
+        <AdPopUp
+          data={layout?.attributes?.adPopup}
+          {translationStore}
+          client:load
+        />
+      )
+    }
+
+    {
+      layout?.attributes?.plus18Popup?.activate && (
         <Plus18PopUp data={layout?.attributes?.plus18Popup} client:load />
       )
     }
 
-    <Footer
-      footerContent={layout?.attributes?.footerContent}
-      footerImages={layout?.attributes?.footerImages}
-      footerNavigation={processedMenus?.footernavigation}
-      footerNavigations={processedMenus.footernavigations}
-      {translationStore}
-    />
     <CookiesConsent
       headerText={layout?.attributes?.cookiesHeaderText + ""}
       description={layout?.attributes?.cookiesDescription + ""}
