@@ -32,15 +32,12 @@
     }
   };
 
-  // $: {
-  //   setTimeout(() => {
-  //     today = dayjs().format("YYYY-MM-DD");
-  //     hasPopupExpired = dayjs($adPopup.expiryDate).isAfter(dayjs(today));
-  //   }, minutesToShow);
-  // }
-
-  today = dayjs().format("YYYY-MM-DD");
-  hasPopupExpired = dayjs($adPopup.expiryDate).isAfter(dayjs(today));
+  $: {
+    setTimeout(() => {
+      today = dayjs().format("YYYY-MM-DD");
+      hasPopupExpired = dayjs($adPopup.expiryDate).isAfter(dayjs(today));
+    }, minutesToShow);
+  }
   
   
 </script>
