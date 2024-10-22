@@ -107,7 +107,7 @@ export const GET: APIRoute = async (context: APIContext) => {
         .map(
           (url) => `
         <url>
-          <loc>${context.site?.href}${url}</loc>
+          <loc>${import.meta.env.PUBLIC_FULL_URL}/${url}</loc>
           <changefreq>daily</changefreq>
           <priority>0.8</priority>
         </url>
