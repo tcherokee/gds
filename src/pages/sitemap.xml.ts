@@ -54,48 +54,49 @@ async function getDynamicRoutes(endpoint: string, baseUrl: string) {
 }
 
 export const GET: APIRoute = async (context: APIContext) => {
-  const authorPageRoutes = await getDynamicRoutes("users", "author");
-  const blogPageRoutes = await getDynamicRoutes("blogs", "blog");
-  const casinoPageRoutes = await getDynamicRoutes(
-    "casinos",
-    "casino/recensione"
-  );
-  const casinoProviderPageRoutes = await getDynamicRoutes(
-    "casino-providers",
-    "casino-online"
-  );
-  const slotCategoryRoutes = await getDynamicRoutes(
-    "slot-categories",
-    "slot-machine"
-  );
-  const gamePageRoutes = await getDynamicRoutes("games", "slot-machines");
-  const slotProviderRoutes = await getDynamicRoutes(
-    "slot-providers",
-    "software-slot-machine"
-  );
+    console.log("CONTEXT_SITE:", context.site?.href);
+    const authorPageRoutes = await getDynamicRoutes("users", "author");
+    const blogPageRoutes = await getDynamicRoutes("blogs", "blog");
+    const casinoPageRoutes = await getDynamicRoutes(
+      "casinos",
+      "casino/recensione"
+    );
+    const casinoProviderPageRoutes = await getDynamicRoutes(
+      "casino-providers",
+      "casino-online"
+    );
+    const slotCategoryRoutes = await getDynamicRoutes(
+      "slot-categories",
+      "slot-machine"
+    );
+    const gamePageRoutes = await getDynamicRoutes("games", "slot-machines");
+    const slotProviderRoutes = await getDynamicRoutes(
+      "slot-providers",
+      "software-slot-machine"
+    );
 
-  const staticRoutes = [
-    "",
-    "author/",
-    "blog/",
-    "contact-us/",
-    "slot-machine/miglori/",
-    "slot-machine/nuove/",
-    "slot-machine/piu-giocate/",
-  ];
+    const staticRoutes = [
+      "",
+      "author/",
+      "blog/",
+      "contact-us/",
+      "slot-machine/miglori/",
+      "slot-machine/nuove/",
+      "slot-machine/piu-giocate/",
+    ];
 
-  const allRoutes = [
-    ...staticRoutes,
-    ...authorPageRoutes,
-    ...blogPageRoutes,
-    ...casinoPageRoutes,
-    ...casinoProviderPageRoutes,
-    ...slotCategoryRoutes,
-    ...gamePageRoutes,
-    ...slotProviderRoutes,
-  ];
+    const allRoutes = [
+      ...staticRoutes,
+      ...authorPageRoutes,
+      ...blogPageRoutes,
+      ...casinoPageRoutes,
+      ...casinoProviderPageRoutes,
+      ...slotCategoryRoutes,
+      ...gamePageRoutes,
+      ...slotProviderRoutes,
+    ];
 
-  const sitemap = `
+    const sitemap = `
     <?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
             xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
@@ -106,7 +107,7 @@ export const GET: APIRoute = async (context: APIContext) => {
         .map(
           (url) => `
         <url>
-          <loc>${context.site}${url}</loc>
+          <loc>${context.site?.href}${url}</loc>
           <changefreq>daily</changefreq>
           <priority>0.8</priority>
         </url>
