@@ -86,7 +86,7 @@ const customPage = await fetchApi<CustomPageItem[]>({
   query: `?${query}`,
 });
 
-const gameQuery = customPage[0].attributes.blocks.find(
+const gameQuery = customPage[0]?.attributes.blocks.find(
   (block) => block.__component === "games.games-carousel"
 ) as CustomGameList;
 

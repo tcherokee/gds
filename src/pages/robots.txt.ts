@@ -45,7 +45,7 @@ User-agent: *
 ${rootURL().trim()}
 ${import.meta.env.IS_PROD === true ? customURLS()?.trim() : ""}
 
-Sitemap: ${new URL("sitemap-index.xml", import.meta.env.SITE).href}
+Sitemap: ${new URL("sitemap.xml", import.meta.env.SITE).href}
 `.trim();
 
 export const GET: APIRoute = () => {
