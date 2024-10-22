@@ -155,6 +155,9 @@ Astro.response.headers.set(
 );
 ---
 
+<script define:vars={{ loopCounter }}>
+  console.log("loopCounter home age", loopCounter);
+</script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 
