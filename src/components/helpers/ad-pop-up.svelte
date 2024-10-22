@@ -78,7 +78,7 @@
                 >
                   {data?.title}
                 </h2>
-                <div class="mt-2">
+                <div class="mt-5">
                   <p class="text-sm text-gray-500">{data?.description}</p>
                 </div>
                 <div class="mt-2">
