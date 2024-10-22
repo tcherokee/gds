@@ -1,18 +1,52 @@
 <script lang="ts">
-import dayjs from "dayjs";
-import { noDepositBonus } from '../../../lib/casinoBonusLayout'
+  // Import First Party and Third Party Plugins
+  import dayjs from "dayjs";
+  import qs from "qs";
 
-// Components
-import Image from "../helpers/images.svelte";
-import Link from "../helpers/link.svelte";
+  // Import Types
+  import type {
+    BonusSectionOnly,
+    CasinoData,
+    CasinoListBlock,
+    CasinoListData,
+    TProviderAttributesOnly,
+    TranslationData,
+  } from "../../../interfaces/common/types";
+  // Import Stores
+
+  // Import Components
+  import DesktopCasinoFilter from "../filters/desktopCasinoFilter.svelte";
+  import MobileCasinoFilter from "../filters/mobileCasinoFilter.svelte";
+
+  // Helpers
+  import { urlTranslate } from "../../../utils/data-store.util";
+  import { noDepositBonus, welcomeBonus } from "../../../lib/casinoBonusLayout";
+  import { sortOptions } from "../../../stores/sortFilters";
+  import Image from "../helpers/images.svelte";
+  import Link from "../helpers/link.svelte";
+  import ReadOnlyRatings from "../helpers/readOnlyRatings.svelte";
 
   // Images
   import Angle from "~icons/kensho-icons/angle";
   import ArrowRight from "~icons/kensho-icons/arrow-right";
   import CircleInfo from "~icons/kensho-icons/circle-info";
 
-export let casinos
-export let translations
+  // Query String
+  import { casinosQs } from "../../../qs/casinos";
+  import { getTranslations } from "../../../stores/addTranslations";
+
+  export let initialCasinos: CasinoListBlock;
+  export let translations: TranslationData;
+  export let slotProviders: TProviderAttributesOnly[] = [];
+  export let showCasinoTableHeader:boolean;
+
+  export let casinos
+
+  const siteID = import.meta.env.PUBLIC_SITE_ID;
+  // const siteURL: string = `${siteID === 'gds' ? '/it' : ''}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
+  const siteURL: string = `${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
+
+
 
   // Tailwind Gradient Object for Dynamic Classes
   const badgesOptions = [
@@ -21,11 +55,20 @@ export let translations
     "bg-gradient-to-b from-bronze-tag-t-gradient to-bronze-tag-b-gradient",
   ];
 
+
 </script>
 
-<div class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden relative z-[8] mb-5">
-	<table class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse">
-		 <tbody class="text-casino-table-text">
+<div>
+  <div class="relative xl:container px-2 pb-5">
+    <div class="mb-5 pt-2.5">
+      <div>
+        <div
+          class="table-wrapper bg-casino-table-bkg rounded-[6px] overflow-hidden"
+        >
+          <table
+            class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse"
+          >
+            <tbody class="text-casino-table-text">
               <!-- If the casino store is emty, use customCasinos otherwise use casino store -->
               {#if casinos.data.length > 0}
                 {#each casinos.data as casino, i (casino.id)}
@@ -82,21 +125,15 @@ export let translations
                         </Link>
                       </div>
                     </td>
-                    <td
-                      class="w-full md:w-auto bg-gradient-to-r from-no-deposit-gradient/20 via-white/30 via-[percentage:30%_70%] to-no-deposit-gradient/20"
-                    >
-                      <div
-                        class="flex flex-col items-center justify-center h-full px-3 py-3"
-                      >
-                        <div class="flex ml-5 font-bold">
-                            <Link
-                              externalInNewTab={true}
-                              class="text-decoration-underline text-blue-300"
-                              href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
-                            >
-                              {casino?.attributes?.casinoBonus?.bonusLabel}
-                            </Link>
-                          </div>
+                    <td class="w-full md:w-auto bg-white">
+                      <div class="flex ml-5 font-bold">
+                        <Link
+                          externalInNewTab={true}
+                          class="text-decoration-underline text-blue-300"
+                          href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
+                        >
+                          {casino?.attributes?.casinoBonus?.bonusLabel}
+                        </Link>
                       </div>
                     </td>
                     <td class="w-full !border-l-0 md:w-auto">
@@ -169,58 +206,86 @@ export let translations
                     </td>
                   </tr>
                 {/each}
+              {:else}
+                <tr class="border-b-[12px] border-b-grey-100">
+                  <td colspan="5">
+                    <div
+                      class="flex p-5 bg-transparent sm:glowy-bkg sm:shadow-none items-center justify-center flex-col mt-5 rounded-[4px] shadow-[0_0.125rem_0.25rem_rgba($black,0.075)]"
+                    >
+                      <h6 class="!mb-5">
+                        Nessun risultato trovato per i tuoi criteri di ricerca
+                      </h6>
+
+                      <button
+                        class="btn bg-[#EF4444] rounded-[6px]"
+                        on:click={resetCasinoFilters}
+                      >
+                        CANCELLA TUTTI I FILTRI
+                      </button>
+                    </div>
+                  </td>
+                </tr>
               {/if}
             </tbody>
-    </table>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-
 <style lang="postcss">
-    table {
-        thead {
-            th {
-                @apply text-white text-base text-center bg-casino-table-header-bkg font-bold capitalize py-[11px]
-            }
-        }
-
-        tbody {
-            tr {
-                td {
-                    @apply rounded-none md:rounded-lg p-0 h-auto md:h-[120px] md:max-w-[256px] xl:min-w-[170px] first:bg-grey-100 last:bg-grey-100;
-                    &.casino-logo {
-                        :global(a) {
-                            @apply border border-[transparent];
-                        }
-                        .casino-logo__first {
-							:global(a) {
-								background: linear-gradient(to bottom, #ffd976, #ffbb38);
-							}
-							.casino-logo__tag {
-								background: linear-gradient(to bottom, #ffd976, #ffbb38);
-								box-shadow: 0px 0px 4px #ffbd3b, 0px 1px 6px rgba(16, 24, 40, 0.1);
-							}
-						}
-                        .casino-logo__second {
-							:global(a) {
-								background: linear-gradient(to bottom, #dbe5ef, #b1bbc6);
-							}
-							.casino-logo__tag {
-								background: linear-gradient(to bottom, #dbe5ef, #b1bbc6);
-								box-shadow: 0px 0px 4px #d7e1eb, 0px 1px 6px rgba(16, 24, 40, 0.1);
-							}
-						}
-						.casino-logo__third {
-							:global(a) {
-								background: linear-gradient(to bottom, #de7d45, #9b4e22);
-							}
-							.casino-logo__tag {
-								background: linear-gradient(to bottom, #de7d45, #9b4e22);
-								box-shadow: 0px 0px 4px #d77842, 0px 1px 6px rgba(16, 24, 40, 0.1);
-							}
-						}
-                    }
-                }
-            }
-        }
+  table {
+    thead {
+      th {
+        @apply text-white text-base text-center bg-casino-table-header-bkg font-bold capitalize py-[11px];
+      }
     }
+
+    tbody {
+      tr {
+        td {
+          @apply rounded-none md:rounded-lg p-0 h-auto md:h-[120px] md:max-w-[256px] xl:min-w-[170px] first:bg-grey-100 last:bg-grey-100;
+          &.casino-logo {
+            :global(a) {
+              @apply border border-[transparent];
+            }
+            .casino-logo__first {
+              :global(a) {
+                background: linear-gradient(to bottom, #ffd976, #ffbb38);
+              }
+              .casino-logo__tag {
+                background: linear-gradient(to bottom, #ffd976, #ffbb38);
+                box-shadow:
+                  0px 0px 4px #ffbd3b,
+                  0px 1px 6px rgba(16, 24, 40, 0.1);
+              }
+            }
+            .casino-logo__second {
+              :global(a) {
+                background: linear-gradient(to bottom, #dbe5ef, #b1bbc6);
+              }
+              .casino-logo__tag {
+                background: linear-gradient(to bottom, #dbe5ef, #b1bbc6);
+                box-shadow:
+                  0px 0px 4px #d7e1eb,
+                  0px 1px 6px rgba(16, 24, 40, 0.1);
+              }
+            }
+            .casino-logo__third {
+              :global(a) {
+                background: linear-gradient(to bottom, #de7d45, #9b4e22);
+              }
+              .casino-logo__tag {
+                background: linear-gradient(to bottom, #de7d45, #9b4e22);
+                box-shadow:
+                  0px 0px 4px #d77842,
+                  0px 1px 6px rgba(16, 24, 40, 0.1);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 </style>
