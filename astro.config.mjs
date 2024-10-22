@@ -12,7 +12,7 @@ dotenv.config();
 // https://astro.build/config
 export default defineConfig({
   site: process.env.PUBLIC_FULL_URL,
-  integrations: [tailwind(), svelte(), sitemap()],
+  integrations: [tailwind(), svelte()],
   base: process.env.PUBLIC_SITE_ID === "gds" ? "/it" : "",
   trailingSlash: "always",
   vite: {
