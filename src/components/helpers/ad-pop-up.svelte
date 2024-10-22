@@ -32,12 +32,15 @@
     }
   };
 
-  $: {
-    setTimeout(() => {
-      today = dayjs().format("YYYY-MM-DD");
-      hasPopupExpired = dayjs($adPopup.expiryDate).isAfter(dayjs(today));
-    }, minutesToShow);
-  }
+  // $: {
+  //   setTimeout(() => {
+  //     today = dayjs().format("YYYY-MM-DD");
+  //     hasPopupExpired = dayjs($adPopup.expiryDate).isAfter(dayjs(today));
+  //   }, minutesToShow);
+  // }
+
+  today = dayjs().format("YYYY-MM-DD");
+  hasPopupExpired = dayjs($adPopup.expiryDate).isAfter(dayjs(today));
   
   
 </script>
@@ -68,13 +71,13 @@
               />
             </div>
             <div>
-              <div class="mt-3 text-center sm:mt-5">
-                <h3
-                  class="text-base font-semibold leading-6 text-gray-900"
+              <div class="text-center mt-5 md:mt-0">
+                <h2
+                  class="font-semibold leading-6 text-gray-900"
                   id="modal-title"
                 >
                   {data?.title}
-                </h3>
+                </h2>
                 <div class="mt-2">
                   <p class="text-sm text-gray-500">{data?.description}</p>
                 </div>
