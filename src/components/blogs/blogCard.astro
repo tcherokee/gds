@@ -54,10 +54,14 @@ const { data, translationStore, isFeatured = false } = Astro.props;
             </div>
             <div class="flex justify-between items-center">
               <div class="flex items-center">
-                <div class="blog-category text-[10px] mr-2 text-white font-bold rounded-[40px]">
-                  {(blog as Blog)?.attributes?.blogCategory?.data?.attributes
-                    ?.blogCategory || "Generale"}
-                </div>
+                <Link
+                  href={`/blog/${(blog as Blog)?.attributes?.blogCategory?.data?.attributes?.slug}/`}
+                >
+                  <div class="blog-category text-[10px] mr-2 text-white font-bold rounded-[40px] cursor-pointer">
+                    {(blog as Blog)?.attributes?.blogCategory?.data?.attributes
+                      ?.blogCategory || "Generale"}
+                  </div>
+                </Link>
                 {(blog as Blog)?.attributes?.minutesRead && (
                   <div>
                     {(blog as Blog)?.attributes?.minutesRead + " mins read"}
@@ -90,7 +94,7 @@ const { data, translationStore, isFeatured = false } = Astro.props;
       >
         <h4 class="line-clamp-2 mt-3">
           <Link
-            href={`/blog/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}
+            href={`/blog/${(blog as Blog)?.attributes?.blogCategory?.data?.attributes?.slug}/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}
           >
             {(blog as Blog)?.attributes?.title ??
               (blog as AuthorBlogAttributes)?.title}
@@ -111,7 +115,7 @@ const { data, translationStore, isFeatured = false } = Astro.props;
           ]}
         >
           <Link
-            href={`/blog/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}
+            href={`/blog/${(blog as Blog)?.attributes?.blogCategory?.data?.attributes?.slug}/${(blog as Blog)?.attributes?.slug ?? (blog as AuthorBlogAttributes)?.slug}/`}
           >
             {translationStore?.readMore} &gt;
           </Link>
