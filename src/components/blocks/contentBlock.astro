@@ -1,44 +1,44 @@
 ---
-    const { data, pageContent } = Astro.props
+const { data, pageContent } = Astro.props;
 ---
 
 <div class="content-block">
-    <Fragment set:html={ pageContent || data.content } />
+  <Fragment set:html={pageContent || data.content} />
 </div>
-
 <style lang="scss">
-	.content-block {
-		:global(ul),
-		:global(ol) {
-			@apply ml-[35px];
-			list-style-image: none;
-		}
-		:global(li) {
-			@apply relative list-none;
-			&:not(:last-child) {
-				@apply mb-4;
-			}
-		}
-		:global(li::before) {
-			@apply absolute -left-5 w-[14px] h-[14px] top-[50%];
-			content: '';
-			background: url('../../icons/circle-chevron-right.svg') no-repeat center center/cover;
-			transform: translate(0, -50%);
-		}
-		:global(h1),
-		:global(h2),
-		:global(h3),
-		:global(h4),
-		:global(h5),
-		:global(h6) {
-			@apply mb-4 mt-10;
-		}
-		:global(p),
-		:global(ul) {
-			@apply mb-6;
-		}
-		:global(a) {
-			@apply text-quicklinks-btn-color;
-		}
-	}
+  .content-block {
+    :global(ul),
+    :global(ol) {
+      @apply ml-[35px];
+      list-style-image: none;
+    }
+    :global(li) {
+      @apply relative list-none;
+      &:not(:last-child) {
+        @apply mb-4;
+      }
+    }
+    :global(li::before) {
+      @apply absolute -left-5 w-[14px] h-[14px] top-[50%];
+      content: "";
+      background: url("../../icons/circle-chevron-right.svg") no-repeat center
+        center/cover;
+      transform: translate(0, -50%);
+    }
+    :global(h1),
+    :global(h2),
+    :global(h3),
+    :global(h4),
+    :global(h5),
+    :global(h6) {
+      @apply mb-4 mt-10;
+    }
+    :global(p),
+    :global(ul) {
+      @apply mb-6;
+    }
+    :global(a) {
+      @apply text-quicklinks-btn-color;
+    }
+  }
 </style>
