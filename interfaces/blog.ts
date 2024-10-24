@@ -10,9 +10,33 @@ export type BlogList = {
   };
 };
 
+export type CategoryList = {
+  data: Category[];
+  meta: {
+    pagination: {
+      page: number;
+      pageCount: number;
+    };
+  };
+};
+
 export type Blog = {
   id: number;
   attributes: BlogAttributes;
+};
+
+export type Category = {
+  id: number;
+  attributes: CategoryAttributes;
+};
+
+export type CategoryAttributes = {
+  blogCategory: string;
+  slug: string;
+  seo: {
+    metaTitle: string;
+    metaDescription: string;
+  };
 };
 
 export type BlogAttributes = {
@@ -32,6 +56,10 @@ export type BlogAttributes = {
       attributes: {
         blogCategory: string;
         slug: string;
+        seo: {
+          metaTitle: string;
+          metaDescription: string;
+        };
       };
     };
   };
