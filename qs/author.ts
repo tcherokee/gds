@@ -171,3 +171,16 @@ export const authorIndexQs = () => {
     },
   };
 };
+
+export const authorPageOnlySlugQs = () => ({
+  fields: ["firstName", "lastName"],
+  filters: {
+    isAnAuthor: {
+      $eq: true,
+    },
+  },
+  pagination: {
+    page: 1,
+    pageSize: 10000,
+  },
+});

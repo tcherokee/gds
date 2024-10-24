@@ -27,7 +27,7 @@ export const gamesQs = (slug: string = "", sort: string = "", page: number = 1) 
   sort: sort,
 });
 
-export const slotProvidersQs = (slug:string) => ({
+export const slotProvidersQs = (slug: string) => ({
   fields: [
     "title",
     "heading",
@@ -94,6 +94,14 @@ export const slotProvidersQs = (slug:string) => ({
       $eq: slug,
     },
   },
+  pagination: {
+    page: 1,
+    pageSize: 1,
+  },
+});
+
+export const slotProvidersOnluSlugQs = () => ({
+  fields: ["slug"],
   pagination: {
     page: 1,
     pageSize: 10000,
