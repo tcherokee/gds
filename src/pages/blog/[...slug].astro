@@ -8,10 +8,6 @@ const slug = slugParts.length > 1 ? slugParts[1] : slugParts[0];
 const isMatch = slugParts.length === 1 ? /^p\d+$/.test(slug) : null; // check if the route url matches for pagination
 ---
 
-<script define:vars={{ slugParts }}>
-  console.log("ab", slugParts);
-</script>
-
 {
   slugParts.length === 2 || isMatch ? (
     <BlogPage {slug} />
