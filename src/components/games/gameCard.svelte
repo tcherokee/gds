@@ -79,7 +79,7 @@
         <div class="text-white text-sm font-bold !m-0">
           <Link href={`${gameURL}/`}>{game?.title}</Link>
         </div>
-        <AddToFav game={game} classes="w-4 h-[14px]" />
+        <AddToFav game={game} {translations} classes="w-4 h-[14px]" />
       </div>
       <div
         class="flex items-center opacity-0 transition-all duration-[0.3s] sm:group-hover:opacity-100"
