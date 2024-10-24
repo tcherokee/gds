@@ -28,7 +28,7 @@ import {
 //Components
 import Legal from "../components/layout/legal.astro";
 import Header from "../components/layout/header.astro";
-// import Footer from "../components/layout/footer.astro";
+import Footer from "../components/layout/footer.astro";
 // import Newsletter from "../components/layout/newsletter.astro";
 import CookiesConsent from "../components/general/cookiesConsent.svelte";
 import { getTranslations } from "../../utils/api-requests";
@@ -233,6 +233,14 @@ if (otherSchema) {
         <Plus18PopUp data={layout?.attributes?.plus18Popup} client:load />
       )
     }
+
+    <Footer
+      footerContent={layout?.attributes?.footerContent}
+      footerImages={layout?.attributes?.footerImages}
+      footerNavigation={processedMenus?.footernavigation}
+      footerNavigations={processedMenus.footernavigations}
+      {translationStore}
+    />
 
     <CookiesConsent
       headerText={layout?.attributes?.cookiesHeaderText + ""}
