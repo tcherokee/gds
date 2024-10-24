@@ -1,6 +1,6 @@
 export const blogcardQs = (
   pageSize: number | undefined,
-  page: number | undefined,
+  page: number | undefined
 ) => ({
   fields: [
     "title",
@@ -18,6 +18,11 @@ export const blogcardQs = (
     },
     blogCategory: {
       fields: ["blogCategory", "slug"],
+      populate: {
+        seo: {
+          fields: ["metaTitle", "metaDescription"],
+        },
+      },
     },
     author: {
       fields: ["firstName", "lastName"],

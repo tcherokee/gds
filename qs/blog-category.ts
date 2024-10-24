@@ -1,33 +1,12 @@
-export const blogcardCategoryQs = (
+import { populate } from "dotenv";
+
+export const blogCategoryQs = (
   pageSize: number | undefined,
   page: number | undefined,
   slug: string
 ) => ({
-  fields: [
-    "title",
-    "slug",
-    "blogBrief",
-    "createdAt",
-    "updatedAt",
-    "content1",
-    "publishedAt",
-    "minutesRead",
-  ],
+  fields: ["blogCategory", "slug", "createdAt", "updatedAt"],
   populate: {
-    images: {
-      fields: ["url"],
-    },
-    blogCategory: {
-      fields: ["blogCategory", "slug"],
-    },
-    author: {
-      fields: ["firstName", "lastName"],
-      populate: {
-        photo: {
-          fields: ["url"],
-        },
-      },
-    },
     seo: {
       fields: ["metaTitle", "metaDescription"],
     },
@@ -38,10 +17,8 @@ export const blogcardCategoryQs = (
     pageSize: pageSize,
   },
   filters: {
-    blogCategory: {
-      slug: {
-        $eq: slug,
-      },
+    slug: {
+      $eq: slug,
     },
   },
 });
