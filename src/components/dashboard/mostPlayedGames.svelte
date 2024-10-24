@@ -15,7 +15,7 @@
 
   onMount(async () => {
     mostPlayedGamesLoader = true;
-    const res = await fetch(`${import.meta.env.PUBLIC_FULL_URL}api/dashboard/most-played-games/`);
+    const res = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/most-played-games/`);
     if (res.ok) {
       mostPlayedGames = await res.json();
     }

@@ -7,7 +7,6 @@
     getUserFavouriteGames,
   } from "../../../stores/authStore";
   import Heart from "~icons/kensho-icons/heart";
-    // import { getTranslations } from "../../../stores/addTranslations.ts";
   import { toast } from "svoast";
   import type { TranslationData } from "../../../interfaces/common/types.ts";
 
