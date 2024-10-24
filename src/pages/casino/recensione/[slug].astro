@@ -1067,10 +1067,11 @@ Astro.response.headers.set(
           <AuthorCard
             data={casinoPage[0].attributes.author}
             {translationStore}
+          />
           <UserReviews
-            reviewTypeSlug={page.attributes.slug}
-            reviewTypeName={page.attributes.title}
-            reviewTypeId={page.id}
+            reviewTypeSlug={casinoPage[0].attributes.slug}
+            reviewTypeName={casinoPage[0].attributes.title}
+            reviewTypeId={casinoPage[0].id}
             reviewType={"CASINO"}
             translations={translationStore ?? {}}
             client:load

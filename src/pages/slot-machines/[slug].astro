@@ -339,9 +339,9 @@ let gamePageRelatedCasinoTitle =
         }
 
         <UserReviews
-          reviewTypeSlug={page.attributes.slug}
-          reviewTypeName={page.attributes.title}
-          reviewTypeId={page.id}
+          reviewTypeSlug={gamePage[0].attributes.slug}
+          reviewTypeName={gamePage[0].attributes.title}
+          reviewTypeId={gamePage[0].id}
           reviewType={"GAME"}
           translations={translationStore ?? {}}
           client:load
@@ -669,8 +669,4 @@ let gamePageRelatedCasinoTitle =
   :global(h6) {
     @apply mt-10 mb-4;
   }
-<<<<<<< HEAD
-</style>} />
-=======
 </style>
->>>>>>> feat/reviews
