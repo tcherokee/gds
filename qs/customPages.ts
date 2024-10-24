@@ -261,3 +261,13 @@ export const customPageLayoutAddOnsQs = () => ({
     },
   },
 });
+
+export const customPageOnlySlugQs = () => {
+  return {
+    fields: ["urlPath"],
+    pagination: {
+      page: 1,
+      pageSize: 10000,
+    },
+  };
+};

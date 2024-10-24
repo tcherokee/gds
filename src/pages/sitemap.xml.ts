@@ -3,6 +3,7 @@ import type { APIContext, APIRoute } from "astro";
 import qs from "qs";
 import fetchApi from "../../lib/strapi";
 import { authorPageOnlySlugQs } from "../../qs/author";
+import { customPageOnlySlugQs } from "../../qs/customPages";
 
 export const dynamicPageQs = () => ({
   fields: ["slug"],
@@ -31,6 +32,11 @@ const getPageQuery = (endpoint: string): string => {
         encodeValuesOnly: true,
       });
       break;
+    case "custom-pages":
+      pageQuery = qs.stringify(customPageOnlySlugQs(), {
+        encodeValuesOnly: true,
+      });
+      break;
     default:
       break;
   }
@@ -49,54 +55,56 @@ async function getDynamicRoutes(endpoint: string, baseUrl: string) {
   });
   return dynamicPages.map(
     (res) =>
-      `${baseUrl}/${endpoint !== "users" ? res.attributes.slug : res.firstName.toLowerCase() + "." + res.lastName.toLowerCase()}/`
+      `${baseUrl ? `${baseUrl}/` : ""}${endpoint !== "users" && endpoint !== "custom-pages" ? res.attributes.slug : endpoint === "users" ? res.firstName.toLowerCase() + "." + res.lastName.toLowerCase() : res.attributes.urlPath}/`
   );
 }
 
 export const GET: APIRoute = async (context: APIContext) => {
-    console.log("CONTEXT_SITE:", context.site?.href);
-    const authorPageRoutes = await getDynamicRoutes("users", "author");
-    const blogPageRoutes = await getDynamicRoutes("blogs", "blog");
-    const casinoPageRoutes = await getDynamicRoutes(
-      "casinos",
-      "casino/recensione"
-    );
-    const casinoProviderPageRoutes = await getDynamicRoutes(
-      "casino-providers",
-      "casino-online"
-    );
-    const slotCategoryRoutes = await getDynamicRoutes(
-      "slot-categories",
-      "slot-machine"
-    );
-    const gamePageRoutes = await getDynamicRoutes("games", "slot-machines");
-    const slotProviderRoutes = await getDynamicRoutes(
-      "slot-providers",
-      "software-slot-machine"
-    );
+  console.log("CONTEXT_SITE:", context.site?.href);
+  const authorPageRoutes = await getDynamicRoutes("users", "author");
+  const blogPageRoutes = await getDynamicRoutes("blogs", "blog");
+  const casinoPageRoutes = await getDynamicRoutes(
+    "casinos",
+    "casino/recensione"
+  );
+  const casinoProviderPageRoutes = await getDynamicRoutes(
+    "casino-providers",
+    "casino-online"
+  );
+  const slotCategoryRoutes = await getDynamicRoutes(
+    "slot-categories",
+    "slot-machine"
+  );
+  const gamePageRoutes = await getDynamicRoutes("games", "slot-machines");
+  const slotProviderRoutes = await getDynamicRoutes(
+    "slot-providers",
+    "software-slot-machine"
+  );
+  const customPageRoutes = await getDynamicRoutes("custom-pages", "");
 
-    const staticRoutes = [
-      "",
-      "author/",
-      "blog/",
-      "contact-us/",
-      "slot-machine/miglori/",
-      "slot-machine/nuove/",
-      "slot-machine/piu-giocate/",
-    ];
+  const staticRoutes = [
+    "",
+    "author/",
+    "blog/",
+    "contact-us/",
+    "slot-machine/miglori/",
+    "slot-machine/nuove/",
+    "slot-machine/piu-giocate/",
+  ];
 
-    const allRoutes = [
-      ...staticRoutes,
-      ...authorPageRoutes,
-      ...blogPageRoutes,
-      ...casinoPageRoutes,
-      ...casinoProviderPageRoutes,
-      ...slotCategoryRoutes,
-      ...gamePageRoutes,
-      ...slotProviderRoutes,
-    ];
+  const allRoutes = [
+    ...staticRoutes,
+    ...authorPageRoutes,
+    ...blogPageRoutes,
+    ...casinoPageRoutes,
+    ...casinoProviderPageRoutes,
+    ...slotCategoryRoutes,
+    ...gamePageRoutes,
+    ...slotProviderRoutes,
+    ...customPageRoutes,
+  ];
 
-    const sitemap = `
+  const sitemap = `
     <?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
             xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
