@@ -1,7 +1,6 @@
 <script lang="ts">
   export let data: any;
   export let gamePageURL: string;
-  export let slug: string;
   export let translations: TranslationData = {};
 
   // Helpers
@@ -36,6 +35,8 @@
   let gamesData: any = null;
   let loading: boolean = true;
   let error: string | null = null;
+
+  console.log('data', data)
 
   let hoverEl: any;
 
@@ -155,13 +156,11 @@
 
   onMount(async () => {
     try {
-      gamesData = await gamesAPI(slug);
+      gamesData = await gamesAPI(data.attributes.slug);
       if (gamesData && gamesData.iframeURL) {
         const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
         iframeElement.src = updatedURL;
       }
-
-      console.log(gamesData)
     } catch (err) {
       error = "Failed to fetch games data";
     }
@@ -246,7 +245,7 @@
       </div>
     {:else}
       <div class="flex h-full w-full" bind:this={iframeWrapper}>
-        {#if gamesData && gamesData.iframeURL}
+        {#if gamesData && gamesData.iframeURL && data.attributes.gamesApiOverride != true}
           <iframe src={gamesData.iframeURL} width="100%" height="100%" name={data?.attributes?.title} title="gamesapi" bind:this={iframeElement} />
         {:else}
           {@html data?.attributes?.embedCode?.desktopEmbedCode}
