@@ -10,6 +10,7 @@ export const gamepageQs = (slug: string) => ({
     "views",
     "isGameDisabled",
     "gameDisableText",
+    "gamesApiOverride",
   ],
   populate: {
     author: {
@@ -100,8 +101,8 @@ export const gamepageQs = (slug: string) => ({
   },
   filters: {
     slug: {
-      $eq: slug
-    }
+      $eq: slug,
+    },
   },
   pagination: {
     page: 1,
