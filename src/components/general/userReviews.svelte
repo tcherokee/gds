@@ -492,7 +492,7 @@
       rows="4"
       name="user-review"
       id="user-review"
-      placeholder="Write a review"
+      placeholder={translations.reviewInputPlaceHolder}
       bind:value={userReview}
       required
     ></textarea>
@@ -502,12 +502,12 @@
       class="submit-review-btn inline-flex w-full justify-center rounded-md btn-secondary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto"
       type="button"
       disabled={!(userReview && userRating) ? true : false}
-      on:click={createUserReview}>Submit</button
+      on:click={createUserReview}>{translations.submitForm}</button
     >
     <button
       type="button"
       class="close-review-modal mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-      on:click={closeReviewModal}>Cancel</button
+      on:click={closeReviewModal}>{translations.cancel}</button
     >
   </div>
 </dialog>

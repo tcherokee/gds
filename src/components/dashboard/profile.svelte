@@ -49,7 +49,7 @@
 
   const closeUserAvatarDialog = () => {
     selectedAvatarImageId = 0;
-    previewImg.src = $user?.photo.url + "";
+    previewImg.src = $user?.photo ? $user?.photo.url + "" : "";
     avatarDialog.close();
     document.body.style.overflow = "";
   };
@@ -91,10 +91,10 @@
       userBio = userProfile.bio;
       userPhoto = userProfile.photo?.url;
       userCoverImage = userProfile.cover_image?.url;
-      previewImg.src = $user?.photo.url + "";
+      previewImg.src = $user?.photo ? $user?.photo?.url + "" : "";
     }
     userProfileLoader = false;
-  }
+  };
 
   // Select an avatar
   const selectAvatar = (avatar: string, avatarId: number) => {
@@ -206,36 +206,39 @@
   };
 
   const updateUserProfile = async (payload: any) => {
-    const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user/`, {
+    const response = await fetch(
+      `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user/`,
+      {
         method: "PATCH",
         body: JSON.stringify(payload),
-      });
-      const responseData = await response.json();
-      if (responseData?.id) {
-        user.set({
-          ...($user as TUser),
-          firstName: responseData.firstName,
-          lastName: responseData.lastName,
-          bio: responseData.bio,
-        });
       }
-  }
+    );
+    const responseData = await response.json();
+    if (responseData?.id) {
+      user.set({
+        ...($user as TUser),
+        firstName: responseData.firstName,
+        lastName: responseData.lastName,
+        bio: responseData.bio,
+      });
+    }
+  };
 
   const avatarUpdateHandler = async () => {
-    if (userAvatarMode === 'AVATAR') {
+    if (userAvatarMode === "AVATAR") {
       await updateUserAvatar();
     } else {
       await updateProfileHandler();
     }
     closeUserAvatarDialog();
-  }
+  };
 
   const updateUserAvatar = async () => {
     updateProfileLoader = true;
-    await updateUserProfile({photo: selectedAvatarImageId});
+    await updateUserProfile({ photo: selectedAvatarImageId });
     getUserProfileHandler();
     updateProfileLoader = false;
-  }
+  };
 
   const avatarChangeHandler = (event: any) => {
     avatarFile = event.target.files[0];
@@ -328,7 +331,7 @@
             <div
               class="w-[128px] h-[128px] flex justify-center items-center mx-auto rounded-full bg-purple-700"
             >
-              {#if $user?.photo.url || userPhoto}
+              {#if $user?.photo || userPhoto}
                 <img
                   class="w-full h-full object-cover rounded-full"
                   src={$user?.photo?.url || userPhoto}
@@ -377,7 +380,9 @@
                 or drag and drop<br /> SVG, PNG, JPG or GIF (max. 800x400px)
               </div> -->
               <div class="text-sm text-black text-center">
-                <span class="text-purple-500 font-bold">{translations.clickToUpload}</span>
+                <span class="text-purple-500 font-bold"
+                  >{translations.clickToUpload}</span
+                >
                 {translations.dragAndDrop}<br /> SVG, PNG, JPG or GIF (max. 800x400px)
               </div>
               <Dropzone
@@ -427,7 +432,9 @@
                 <span class="custom-spinner mr-2" aria-hidden="true" />
               {/if}
               <span
-                >{updateProfileLoader ? translations.pleaseWait+'...' : translations.saveChanges}</span
+                >{updateProfileLoader
+                  ? translations.pleaseWait + "..."
+                  : translations.saveChanges}</span
               >
             </button>
           </div>
@@ -440,7 +447,7 @@
 <dialog class="avatar-dialog rounded-xl min-h-[478px]" id="avatarDialog">
   <div class="h-full flex flex-col justify-between">
     <div class="p-4 space-y-5">
-      <div class="text-lg font-bold !text-blue-700">Avatar image</div>
+      <div class="text-lg font-bold !text-blue-700">{translations.avatarImage}</div>
       <div class="tabs flex justify-between mb-2.5">
         <div
           class={`tab cursor-pointer p-2.5 bg-[#f0f0f0] rounded-[5px] mr-[5px] ${userAvatarMode === "AVATAR" ? "!bg-[#007bff] text-white" : ""}`}
@@ -448,7 +455,7 @@
             userAvatarModeSelectionHandler("AVATAR");
           }}
         >
-          Preloaded Avatars
+          {translations.preloadedAvatars}
         </div>
         <div
           class={`tab cursor-pointer p-2.5 bg-[#f0f0f0] rounded-[5px] mr-[5px] ${userAvatarMode === "NEW_IMAGE" ? "!bg-[#007bff] text-white" : ""}`}
@@ -456,12 +463,12 @@
             userAvatarModeSelectionHandler("NEW_IMAGE");
           }}
         >
-          Upload Your Own
+          {translations.uploadYourOwn}
         </div>
       </div>
 
       <div class={`${userAvatarMode === "AVATAR" ? "block" : "hidden"}`}>
-        <div class="avatars flex flex-wrap gap-2.5">
+        <div class="avatars flex flex-wrap gap-2.5 min-h-[120px]">
           {#each preloadedAvatarList as preloadedAvatarItem, index}
             <img
               class={`w-[60px] h-[60px] rounded-full cursor-pointer border-[2px] border-transparent transition-border duration-300 ${preloadedAvatarItem.avatar.id === selectedAvatarImageId ? "!border-[#007bff]" : ""}`}
@@ -494,16 +501,18 @@
               <UploadCloud2Svg class="w-5 h-5" />
             </div>
             <div class="text-sm text-black text-center mt-3">
-              <span class="text-purple-500 font-bold">Click to upload</span>
-              or drag and drop<br /> SVG, PNG, JPG or GIF (max. 800x400px)
+              <span class="text-purple-500 font-bold"
+                >{translations.clickToUpload}</span
+              >
+              {translations.dragAndDrop}<br /> SVG, PNG, JPG or GIF (max. 800x400px)
             </div>
           </div>
         </div>
       </div>
 
       <div class="mt-5 w-full text-center" id="avatarPreview">
-        <p>Avatar Preview</p>
-        {#if !previewImg?.src}
+        <p>{translations.avatarPreview}</p>
+        {#if !previewImg?.getAttribute("src")}
           <div
             class="mx-auto w-20 h-20 flex justify-center items-center mx-auto rounded-full bg-purple-700"
           >
@@ -511,7 +520,7 @@
           </div>
         {/if}
         <img
-          class="{`mx-auto w-20 h-20 rounded-full object-cover ${previewImg?.src ? "block" : "hidden"}`}"
+          class={`mx-auto w-20 h-20 rounded-full object-cover ${previewImg?.getAttribute("src") ? "block" : "hidden"}`}
           bind:this={previewImg}
           alt="Preview"
           id="previewImg"
@@ -522,18 +531,22 @@
       <button
         type="button"
         class="register-btn inline-flex w-full justify-center items-center px-3 py-2 sm:ml-3 sm:w-auto"
-        disabled={!selectedAvatarImageId && userAvatarMode === "AVATAR" ? true : !avatar && userAvatarMode === "NEW_IMAGE" ? true : false}
+        disabled={!selectedAvatarImageId && userAvatarMode === "AVATAR"
+          ? true
+          : !avatar && userAvatarMode === "NEW_IMAGE"
+            ? true
+            : false}
         on:click={avatarUpdateHandler}
       >
         {#if updateProfileLoader}
           <span class="custom-spinner mr-2" aria-hidden="true" />
         {/if}
-        <span>{updateProfileLoader ? "Please wait..." : "Save"}</span>
+        <span>{updateProfileLoader ? translations.pleaseWait+"..." : translations.submitForm}</span>
       </button>
       <button
         type="button"
         class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-        on:click={closeUserAvatarDialog}>Cancel</button
+        on:click={closeUserAvatarDialog}>{translations.cancel}</button
       >
     </div>
   </div>
