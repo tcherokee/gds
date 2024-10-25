@@ -16,8 +16,15 @@ dayjs.extend(advancedFormat);
 dayjs.locale(import.meta.env.LANG);
 
 const { data, translationStore, isFeatured = false } = Astro.props;
+
+const categoryLangOptions: any = { it: "categoria", es: "categoría" };
+
+let categoryLang: any = categoryLangOptions[import.meta.env.LANG];
 ---
 
+<script define:vars={{ categoryLang }}>
+  console.log("categoryLang", categoryLang);
+</script>
 {
   data.map((blog: Blog | AuthorBlogAttributes) => (
     <div class="blog-wrapper mb-[20px]">
@@ -55,7 +62,7 @@ const { data, translationStore, isFeatured = false } = Astro.props;
             <div class="flex justify-between items-center">
               <div class="flex items-center">
                 <Link
-                  href={`/blog/categoría/${(blog as Blog)?.attributes?.blogCategory?.data?.attributes?.slug}/`}
+                  href={`/blog/${categoryLang}/${(blog as Blog)?.attributes?.blogCategory?.data?.attributes?.slug}/`}
                 >
                   <div class="blog-category text-[10px] mr-2 text-white font-bold rounded-[40px] cursor-pointer">
                     {(blog as Blog)?.attributes?.blogCategory?.data?.attributes
