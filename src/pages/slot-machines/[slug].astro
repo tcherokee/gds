@@ -148,6 +148,8 @@ combinedSchema.push(ratingsSchema);
 //list componets on page
 const __blocks = gamePage[0]?.attributes?.blocks;
 
+console.log("game", gamePage[0]);
+
 // Tell the browser to always check the freshness of the cache
 Astro.response.headers.set(
   "Cache-Control",
@@ -186,7 +188,6 @@ let gamePageRelatedCasinoTitle =
         data={gamePage[0]}
         gamePageURL={siteURL}
         translations={translationStore ?? {}}
-        slug={slug}
         client:load
       />
       <div class="mt-6 mb-6 md:mt-8">
