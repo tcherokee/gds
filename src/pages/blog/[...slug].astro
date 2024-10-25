@@ -5,13 +5,13 @@ import BlogCategory from "../../components/blogs/blogCategory.astro";
 const slugParts = (Astro.params.slug as string).split("/");
 const slug = slugParts.length > 1 ? slugParts[1] : slugParts[0];
 
-const isMatch = slugParts.length === 1 ? /^p\d+$/.test(slug) : null; // check if the route url matches for pagination
+const isMatch = slugParts.length === 2 ? /^p\d+$/.test(slug) : null; // check if the route url matches for pagination
 ---
 
 {
   slugParts.length === 2 || isMatch ? (
-    <BlogPage {slug} />
-  ) : (
     <BlogCategory categorySlug={slug} />
+  ) : (
+    <BlogPage {slug} />
   )
 }
