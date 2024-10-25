@@ -137,11 +137,28 @@
     hoverEl.classList.add("hidden");
   };
 
+  //function to update iframe url with the sites language code
+
+  function updateURLWithLang(url, lang) {
+    const parsedUrl = new URL(url);
+    const searchParams = new URLSearchParams(parsedUrl.search);
+    
+    if (searchParams.has('language')) {
+      searchParams.set('language', lang);
+    } else if (searchParams.has('lang')) {
+      searchParams.set('lang', lang);
+    }
+    
+    parsedUrl.search = searchParams.toString();
+    return parsedUrl.toString();
+  }
+
   onMount(async () => {
     try {
       gamesData = await gamesAPI(slug);
-      if (gamesData && gamesData.desktopEmebedCode) {
-        iframeElement.src = gamesData.desktopEmebedCode;
+      if (gamesData && gamesData.iframeURL) {
+        const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
+        iframeElement.src = updatedURL;
       }
     } catch (err) {
       error = "Failed to fetch games data";
@@ -228,9 +245,9 @@
     {:else}
       <div class="flex h-full w-full" bind:this={iframeWrapper}>
         {#if gamesData}
-          <iframe src={gamesData.desktopEmbedCode} width="100%" height="100%" title="gamesapi" bind:this={iframeElement} />
+          <iframe src={gamesData.iframeURL} width="100%" height="100%" name={data?.attributes?.title} title="gamesapi" bind:this={iframeElement} />
         {:else}
-          {@html data?.attributes?.embedCode?.desktopEmbedCode}
+          {@html data?.attributes?.embedCode?.iframeURL}
         {/if}
       </div>
     {/if}
