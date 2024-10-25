@@ -74,8 +74,11 @@ const seo = {
   url: canonical,
 };
 
+const categoryLangOptions: any = { it: "categoria", es: "categoría" };
+let categoryLang: any = categoryLangOptions[import.meta.env.LANG];
+
 const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${singleBlog[0]?.attributes?.author?.data?.attributes?.firstName?.toLowerCase()}.${singleBlog[0]?.attributes?.author?.data?.attributes?.lastName?.toLowerCase()}/`;
-const blogCategoryLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]}/categoría/${singleBlog[0]?.attributes?.blogCategory?.data?.attributes?.slug}/`;
+const blogCategoryLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]}/${categoryLang}/${singleBlog[0]?.attributes?.blogCategory?.data?.attributes?.slug}/`;
 
 dayjs.extend(advancedFormat);
 dayjs.locale(import.meta.env.LANG);
