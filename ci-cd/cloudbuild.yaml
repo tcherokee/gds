@@ -32,6 +32,8 @@ steps:
         '--build-arg',
         'LANG=${_LANG}',
         '--build-arg',
+        'PUBLIC_LANG=${_PUBLIC_LANG}',
+        '--build-arg',
         'PUBLIC_SITE_ID=${_PUBLIC_SITE_ID}',
         '--build-arg',
         'PUBLIC_IMAGE_URL=${_PUBLIC_IMAGE_URL}',
@@ -100,6 +102,8 @@ steps:
       - '--set-env-vars'
       - 'LANG=${_LANG}'
       - '--set-env-vars'
+      - 'PUBLIC_LANG=${_PUBLIC_LANG}'
+      - '--set-env-vars'
       - 'PUBLIC_SITE_ID=${_PUBLIC_SITE_ID}'
       - '--set-env-vars'
       - 'PUBLIC_IMAGE_URL=${_PUBLIC_IMAGE_URL}'
@@ -133,6 +137,7 @@ substitutions:
   _HOSTNAME: ''
   _FULL_URL: ''
   _LANG: ''
+  _PUBLIC_LANG: ''
   _PUBLIC_RECAPTCHA_SITE_KEY: ''
   _PUBLIC_IMAGE_URL: ''
   _PUBLIC_ROOT_DOMAIN: ''
