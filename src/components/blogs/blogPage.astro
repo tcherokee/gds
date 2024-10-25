@@ -1,0 +1,256 @@
+---
+import qs from "qs";
+
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import "dayjs/locale/it";
+
+import fetchApi from "../../../lib/strapi";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { urlTranslate } from "../../../utils/data-store.util";
+import type { Blog, BlogList } from "../../../interfaces/blog";
+import { blogpageQs } from "../../../qs/blog-page";
+import { blogcardQs } from "../../../qs/blog-cards";
+import BlogListBlock from "../../components/blocks/blogListBlock.astro";
+import Images from "../../components/helpers/images.astro";
+import AuthorCard from "../../components/general/authorCard.astro";
+import Pagination from "../../components/helpers/pagination.astro";
+import Link from "../../components/helpers/link.astro";
+import { getTranslations } from "../../../utils/api-requests";
+import ContentBlock from "../../components/blocks/contentBlock.astro";
+
+const translationStore = await getTranslations();
+
+const { slug } = Astro.props;
+
+// const slug = (Astro.params.slug as string).split("/")[1]; // split off the category from the slug
+const isMatch = /^p\d+$/.test(slug);
+const pageNumber: number = isMatch ? parseInt(slug.slice(1)) : 1;
+
+//query for single blog page
+const query = qs.stringify(blogpageQs(slug), {
+  encodeValuesOnly: true,
+});
+
+// queru for paginated blog pages
+const query2 = qs.stringify(blogcardQs(12, pageNumber), {
+  encodeValuesOnly: true,
+});
+
+// Data Fetcher
+const blogPage: BlogList | Blog[] = await fetchApi<BlogList | Blog[]>({
+  endpoint: "blogs",
+  wrappedByKey: isMatch ? "" : "data",
+  query: isMatch ? `?${query2}` : `?${query}`,
+});
+
+// Some Variable Constants
+const siteID = import.meta.env.SITE_ID;
+const siteURL = import.meta.env.FULL_URL;
+
+// holders for the data
+let blogPageList: BlogList = {
+  data: [],
+  meta: { pagination: { page: 1, pageCount: 1 } },
+};
+
+let singleBlog: Blog[] = [];
+
+if (isMatch) {
+  blogPageList = blogPage as BlogList;
+} else {
+  singleBlog = blogPage as Blog[];
+}
+
+//set page seo data
+const canonical =
+  siteURL +
+  urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"] +
+  `/${slug}`;
+
+const seo = {
+  pageTitle: singleBlog[0]?.attributes?.seo?.metaTitle,
+  metaDescription: singleBlog[0]?.attributes?.seo?.metaDescription,
+  url: canonical,
+};
+
+const authorLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${singleBlog[0]?.attributes?.author?.data?.attributes?.firstName?.toLowerCase()}.${singleBlog[0]?.attributes?.author?.data?.attributes?.lastName?.toLowerCase()}/`;
+const blogCategoryLink = `${siteURL}${urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]}/${singleBlog[0]?.attributes?.blogCategory?.data?.attributes?.slug}/`;
+
+dayjs.extend(advancedFormat);
+dayjs.locale(import.meta.env.LANG);
+
+const formattedDate = dayjs(singleBlog[0]?.attributes?.createdAt).format(
+  "D MMM YYYY"
+);
+
+const blogBriefAlternative = singleBlog[0]?.attributes?.content1
+  .replace(/(<([^>]+)>)/gi, "")
+  .substring(0, 300);
+
+// Tell the browser to always check the freshness of the cache
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+// CDN Cache Control
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
+---
+
+<MainLayout seoData={seo}>
+  {
+    isMatch ? (
+      <div class="bg-blog-list-bkg mb-5">
+        <div class="xl:container px-2 pb-5 pt-4">
+          <BlogListBlock data={blogPageList?.data} {translationStore} />
+
+          <Pagination
+            currPage={pageNumber}
+            pageCount={blogPageList.meta?.pagination?.pageCount}
+            path={
+              urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"]
+            }
+            {translationStore}
+          />
+        </div>
+      </div>
+    ) : (
+      <div class="relative after:content-[''] bg-blog-list-bkg">
+        <div class="blog-title-section flex justify-center pt-[66px] md:pt-24 pb-[66px] md:pb-48">
+          <div class="w-full px-2 md:px-0 md:w-4/6 flex flex-col items-center justify-center text-center text-white">
+            <Link href={blogCategoryLink}>
+              <div class="blog-category w-fit text-[10px] mb-3 text-white font-bold rounded-[40px] cursor-pointer">
+                {singleBlog[0]?.attributes?.blogCategory?.data?.attributes
+                  ?.blogCategory || "Generale"}
+              </div>
+            </Link>
+            <h1>{singleBlog[0]?.attributes?.title}</h1>
+            <div class="pt-6 pb-10">
+              {singleBlog[0]?.attributes?.blogBrief || blogBriefAlternative}
+            </div>
+            <div class="flex justify-center">
+              <div class="flex items-center gap-2 sub-header text-[0.6875em] italic capitalize">
+                <div class="flex gap-2 items-center">
+                  <Link href={authorLink}>
+                    <div class="w-[40px] h-[40px] border border-white rounded-full">
+                      <Images
+                        src={
+                          singleBlog[0]?.attributes?.author?.data?.attributes
+                            ?.photo?.data?.attributes.url
+                        }
+                        imageWidth={40}
+                        imageHeight={40}
+                        classes="providerImage rounded-full"
+                        alt={
+                          singleBlog[0]?.attributes?.author?.data?.attributes
+                            ?.firstName +
+                          " " +
+                          singleBlog[0]?.attributes?.author?.data?.attributes
+                            ?.lastName +
+                          " photo"
+                        }
+                        imageResponsive={false}
+                      />
+                    </div>
+                  </Link>
+                  <div class="flex flex-col justify-center text-start">
+                    <Link href={authorLink}>
+                      <div class="cursor-pointer hover:underline">
+                        {
+                          singleBlog[0]?.attributes?.author?.data?.attributes
+                            ?.firstName
+                        }
+                        {
+                          singleBlog[0]?.attributes?.author?.data?.attributes
+                            ?.lastName
+                        }
+                      </div>
+                    </Link>
+                    <div>{formattedDate}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="relative xl:container px-2 pb-5">
+          <div class="flex justify-center md:-mx-3 [&>*]:px-3">
+            <div class="w-full md:w-4/6">
+              <div class="mb-5 -mt-[33px] md:-mt-24">
+                <Images
+                  src={singleBlog[0]?.attributes?.images?.data?.attributes?.url}
+                  alt={singleBlog[0]?.attributes?.title}
+                  imageWidth={820}
+                  imageHeight={550}
+                />
+              </div>
+              <div class="blog-content">
+                {
+                  <ContentBlock
+                    pageContent={singleBlog[0]?.attributes?.content1}
+                  />
+                }
+              </div>
+              {singleBlog[0]?.attributes?.author?.data && (
+                <div class="mt-10 mb-10 md:mb-0">
+                  <AuthorCard
+                    data={singleBlog[0]?.attributes?.author}
+                    {translationStore}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+</MainLayout>
+
+<style lang="scss">
+  :global(figure.center-image) {
+    @apply flex justify-center;
+  }
+  .blog-title-section {
+    background: var(
+      --Gradients-BG-Blue,
+      linear-gradient(
+        180deg,
+        theme("colors.background-top-gradient") 0%,
+        theme("colors.background-bottom-gradient") 100%
+      )
+    );
+    // background: linear-gradient(to top, theme('colors.background-bottom-gradient'), theme('colors.background-top-gradient') 300px, theme('colors.body-bg') 900px, theme('colors.body-bg'));
+  }
+  .blog-category {
+    background: linear-gradient(180deg, #3fe6fc 0%, #00bcd4 100%);
+    box-shadow: 0px 2px 8px rgba(0, 188, 212, 0.4);
+    padding: 1px 6px;
+  }
+  :global(.blog-content) {
+    img {
+      @apply w-full;
+    }
+    :global(a) {
+      @apply text-quicklinks-btn-color;
+    }
+    :global(h1),
+    :global(h2),
+    :global(h3),
+    :global(h4),
+    :global(h5),
+    :global(h6) {
+      @apply mb-4 mt-10;
+    }
+  }
+
+  :global(.sidebar) {
+    :global(.blog-card) {
+      @apply mb-[10px];
+    }
+  }
+</style>

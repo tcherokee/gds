@@ -1,6 +1,10 @@
 import { populate } from "dotenv";
 
-export const blogpageQs = (slug: string) => ({
+export const categoryBlogsQs = (
+  pageSize: number | undefined,
+  page: number | undefined,
+  slug: string
+) => ({
   fields: [
     "title",
     "slug",
@@ -8,6 +12,7 @@ export const blogpageQs = (slug: string) => ({
     "createdAt",
     "updatedAt",
     "content1",
+    "publishedAt",
     "minutesRead",
   ],
   populate: {
@@ -23,19 +28,7 @@ export const blogpageQs = (slug: string) => ({
       },
     },
     author: {
-      fields: [
-        "firstName",
-        "lastName",
-        "linkedInLink",
-        "twitterLink",
-        "facebookLink",
-        "jobTitle",
-        "content1",
-        "experience",
-        "areaOfWork",
-        "specialization",
-        "minutesRead",
-      ],
+      fields: ["firstName", "lastName"],
       populate: {
         photo: {
           fields: ["url"],
@@ -46,9 +39,16 @@ export const blogpageQs = (slug: string) => ({
       fields: ["metaTitle", "metaDescription"],
     },
   },
+  sort: ["createdAt:desc"],
+  pagination: {
+    page: page,
+    pageSize: pageSize,
+  },
   filters: {
-    slug: {
-      $eq: slug,
+    blogCategory: {
+      slug: {
+        $eq: slug,
+      },
     },
   },
 });
