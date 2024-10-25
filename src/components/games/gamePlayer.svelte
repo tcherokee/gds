@@ -160,6 +160,8 @@
         const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
         iframeElement.src = updatedURL;
       }
+
+      console.log(gamesData)
     } catch (err) {
       error = "Failed to fetch games data";
     }
@@ -244,10 +246,10 @@
       </div>
     {:else}
       <div class="flex h-full w-full" bind:this={iframeWrapper}>
-        {#if gamesData}
+        {#if gamesData && gamesData.iframeURL}
           <iframe src={gamesData.iframeURL} width="100%" height="100%" name={data?.attributes?.title} title="gamesapi" bind:this={iframeElement} />
         {:else}
-          {@html data?.attributes?.embedCode?.iframeURL}
+          {@html data?.attributes?.embedCode?.desktopEmbedCode}
         {/if}
       </div>
     {/if}
