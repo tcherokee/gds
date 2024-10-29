@@ -226,64 +226,64 @@ const mappedComponents = mapBlocksToDynamicComponents(
 const Components = await loadComponents(mappedComponents);
 
 // Function to determins how to structure the blocks in the custom pages. Based on the structure of the blocks the number of items in the blue section could change.
-// const getLoopCounter = (blocks: Block[]): number => {
-//   if (!blocks || blocks.length < 2) return 2; // Default value if blocks array is not as expected
+const getLoopCounter = (blocks: Block[]): number => {
+  if (!blocks || blocks.length < 2) return 2; // Default value if blocks array is not as expected
 
-//   const secondBlockComponent = blocks[1]?.["__component"];
-//   const thirdBlockComponent = blocks[2]?.["__component"];
+  const secondBlockComponent = blocks[1]?.["__component"];
+  const thirdBlockComponent = blocks[2]?.["__component"];
 
-//   if (
-//     secondBlockComponent === "games.new-and-loved-slots" &&
-//     (thirdBlockComponent === "casinos.casino-list" ||
-//       thirdBlockComponent === "games.games-carousel")
-//   ) {
-//     return 4;
-//   }
+  if (
+    secondBlockComponent === "games.new-and-loved-slots" &&
+    (thirdBlockComponent === "casinos.casino-list" ||
+      thirdBlockComponent === "games.games-carousel")
+  ) {
+    return 3;
+  }
 
-//   if (
-//     secondBlockComponent?.includes("shared") &&
-//     secondBlockComponent !== "shared.provider-list"
-//   ) {
-//     return 1;
-//   }
+  if (
+    secondBlockComponent?.includes("shared") &&
+    secondBlockComponent !== "shared.provider-list"
+  ) {
+    return 1;
+  }
 
-//   return 2;
-// };
+  return 2;
+};
 
-// let loopCounter = getLoopCounter(customPage[0]?.attributes?.blocks);
-let loopCounter = 2;
+let loopCounter = getLoopCounter(customPage[0]?.attributes?.blocks);
+// let loopCounter = 1;
 
-if (
-  customPage[0]?.attributes?.blocks.find(
-    (block) => block.__component === "shared.overview-block"
-  )
-) {
-  loopCounter += 1;
-}
+// if (
+//   customPage[0]?.attributes?.blocks.find(
+//     (block) => block.__component === "shared.overview-block"
+//   )
+// ) {
+//   loopCounter += 1;
+// }
 
-if (
-  customPage[0]?.attributes?.blocks.find(
-    (block) => block.__component === "games.new-and-loved-slots"
-  )
-) {
-  loopCounter += 1;
-}
+// if (
+//   customPage[0]?.attributes?.blocks.find(
+//     (block) => block.__component === "games.new-and-loved-slots"
+//   )
+// ) {
+//   loopCounter += 1;
+// }
 
-if (
-  customPage[0]?.attributes?.blocks.find(
-    (block) => block.__component === "casinos.casino-list"
-  )
-) {
-  loopCounter += 1;
-}
+// if (
+//   customPage[0]?.attributes?.blocks.find(
+//     (block) => block.__component === "casinos.casino-list"
+//   )
+// ) {
+//   loopCounter += 1;
+// }
 
-if (
-  customPage[0]?.attributes?.blocks.find(
-    (block) => block.__component === "games.games-carousel"
-  )
-) {
-  loopCounter += 1;
-}
+// if (
+//   customPage[0]?.attributes?.blocks.find(
+//     (block) => block.__component === "games.games-carousel"
+//   )
+// ) {
+//   loopCounter += 1;
+// }
 
 // Get the index of the first occurrence of the FAQ
 const faqIndex = customPage[0]?.attributes?.blocks.findIndex(

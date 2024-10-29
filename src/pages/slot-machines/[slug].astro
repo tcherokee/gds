@@ -11,7 +11,7 @@ import type {
 } from "../../../interfaces/common/types";
 
 // Helpers
-import { urlTranslate, GameInfoHeader } from "../../../utils/data-store.util";
+import { urlTranslate, GameInfoTable } from "../../../utils/data-store.util";
 import fetchApi from "../../../lib/strapi";
 
 // Queries
@@ -151,8 +151,6 @@ combinedSchema.push(ratingsSchema);
 //list componets on page
 const __blocks = gamePage[0]?.attributes?.blocks;
 
-console.log("game", gamePage[0]);
-
 // Tell the browser to always check the freshness of the cache
 Astro.response.headers.set(
   "Cache-Control",
@@ -172,6 +170,9 @@ let gamePageRelatedCasinoTitle =
   );
 ---
 
+<script define:vars={{ translationStore }}>
+  console.log("translationStore", translationStore);
+</script>
 <MainLayout
   seoData={seo}
   crumbLocation="games"
@@ -253,19 +254,31 @@ let gamePageRelatedCasinoTitle =
                 <table class="inner-content-table table table-primary">
                   <thead class="">
                     <tr>
-                      {Object.values(GameInfoHeader).map((key) =>
-                        key === "rtp" ? (
-                          <th class="uppercase">{key}</th>
+                      {Object.values(GameInfoTable).map((value) =>
+                        value.infoTitle === "gameInfoHeaderRtp" ? (
+                          <th class="uppercase">
+                            {translationStore &&
+                              translationStore[value.infoTitle]}
+                          </th>
                         ) : (
-                          <th class="capitalize">{key}</th>
+                          <th class="capitalize">
+                            {translationStore &&
+                              translationStore[value.infoTitle]}
+                          </th>
                         )
                       )}
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      {Object.keys(GameInfoHeader).map((key) => (
-                        <td>{gamePage[0]?.attributes?.gameInfoTable[key]}</td>
+                      {Object.values(GameInfoTable).map((values) => (
+                        <td>
+                          {
+                            gamePage[0]?.attributes?.gameInfoTable[
+                              values.infoValue
+                            ]
+                          }
+                        </td>
                       ))}
                     </tr>
                   </tbody>
