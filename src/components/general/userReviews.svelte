@@ -127,7 +127,7 @@
       if (res.error) {
         toast.error(res?.error?.message);
       } else {
-        toast.success(transitions.reviewSuccessMessage);
+        toast.success(translations.reviewSuccessMessage);
       }
     }
   };
