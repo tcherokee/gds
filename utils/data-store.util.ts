@@ -57,16 +57,43 @@ export const DataStore = {
   gamesSortOptions,
 };
 
-export const GameInfoHeader = {
-  rtp: "rtp",
-  volatilita: "volatilità",
-  layout: "layout",
-  lineeDiPuntata: "linee Di Puntata",
-  puntataMinima: "puntata Minima",
-  puntataMassima: "puntata Massima",
-  jackpot: "jackpot",
-  freeSpins: "Giri Gratis",
-  bonusGame: "bonus Game",
+export const GameInfoTable = {
+  rtp: {
+    infoTitle: "gameInfoHeaderRtp",
+    infoValue: "rtp",
+  },
+  volatility: {
+    infoTitle: "gameInfoHeaderVolatility",
+    infoValue: "volatilita",
+  },
+  layout: {
+    infoTitle: "gameInfoHeaderLayout",
+    infoValue: "layout",
+  },
+  bettingLines: {
+    infoTitle: "gameInfoHeaderBettingLines",
+    infoValue: "lineeDiPuntata",
+  },
+  minimumBet: {
+    infoTitle: "gameInfoHeaderMinimumBet",
+    infoValue: "puntataMinima",
+  },
+  maximumBet: {
+    infoTitle: "gameInfoHeaderMaximumBet",
+    infoValue: "puntataMassima",
+  },
+  jackpot: {
+    infoTitle: "gameInfoHeaderJackpot",
+    infoValue: "jackpot",
+  },
+  freeSpins: {
+    infoTitle: "gameInfoHeaderFreespins",
+    infoValue: "freeSpins",
+  },
+  bonusGame: {
+    infoTitle: "gameInfoHeaderBonusGame",
+    infoValue: "bonusGame",
+  },
 };
 
 export const urlTranslate = {
