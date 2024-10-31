@@ -138,7 +138,7 @@
 
   //function to update iframe url with the sites language code
 
-  function updateURLWithLang(data) {
+  function updateURLWithLang(url, lang) {
     const parsedUrl = new URL(url);
     const searchParams = new URLSearchParams(parsedUrl.search);
     
