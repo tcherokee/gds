@@ -23,8 +23,6 @@ const fetchGamesApi = async <T>({
       import.meta.env.PUBLIC_GAMES_API_URL ?? process.env.PUBLIC_GAMES_API_URL
     }/api/${modifiedEndpoint}${query}`
   );
-    
-console.log('url', url)
 
   const res = await fetch(url.toString(), opts);
   let data = await res.json();
