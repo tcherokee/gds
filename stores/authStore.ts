@@ -33,3 +33,15 @@ export const getUserFavouriteGames = async () => {
   const userGames = await userFavGamesRes.json();
   userFavouriteGames.set(userGames);
 };
+
+export const getUserProfile = async (): Promise<TUser | null> => {
+  const res = await fetch(
+    `${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user/`
+  );
+  if (res.ok) {
+    const userProfile = await res.json();
+    user.set({ ...userProfile });
+    return userProfile;
+  }
+  return null;
+};
