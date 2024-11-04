@@ -353,14 +353,16 @@ let gamePageRelatedCasinoTitle =
           )
         }
 
-        <UserReviews
-          reviewTypeSlug={gamePage[0].attributes.slug}
-          reviewTypeName={gamePage[0].attributes.title}
-          reviewTypeId={gamePage[0].id}
-          reviewType={"GAME"}
-          translations={translationStore ?? {}}
-          client:load
-        />
+        <div id="game-review">
+          <UserReviews
+            reviewTypeSlug={gamePage[0].attributes.slug}
+            reviewTypeName={gamePage[0].attributes.title}
+            reviewTypeId={gamePage[0].id}
+            reviewType={"GAME"}
+            translations={translationStore ?? {}}
+            client:load
+          />
+        </div>
       </div>
       <div class="basis-[315px] shrink-0 order-first order-last">
         <CasinoSideBar {translationStore} />
