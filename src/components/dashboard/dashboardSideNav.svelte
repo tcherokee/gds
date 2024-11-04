@@ -6,6 +6,7 @@
   import SignoutSvg from "~icons/kensho-dashboard-icons/signout";
   import type { TranslationData } from "../../../interfaces/common/types";
   import DashboardNav from "./dashboardNav.svelte";
+  import UserAvatar from "./userAvatar.svelte";
   import type { TUser } from "../../../interfaces/auth";
 
   let activeRoute = "home";
@@ -13,6 +14,7 @@
   export let pageUrl: string;
   export let slotMachineURL: string;
   let dashboardUser: TUser;
+  let requestLoader = false;
   
 
   const fetchData = async (endpoint: string) => {
@@ -25,6 +27,7 @@
 	}
 
   onMount(async () => {
+    requestLoader = true;
     slotMachineUrl.set(slotMachineURL);
     const authEndpoints = [
 		`${import.meta.env.PUBLIC_FULL_URL}/api/dashboard/user/`,
@@ -43,6 +46,7 @@
       logoutHandler();
       return;
     }
+    requestLoader = false;
 
     dashboardUser = {...userProfile};
     user.set({ ...userProfile });
@@ -105,3 +109,7 @@
     </div>
   </nav>
 </aside>
+
+{#if !requestLoader && !dashboardUser?.photo}
+  <UserAvatar {translations}/>
+{/if}
