@@ -47,6 +47,10 @@ steps:
         'SITE_NAME=${_SITE_NAME}',
         '--build-arg',
         'PUBLIC_SWETRIX_ID=${_PUBLIC_SWETRIX_ID}',
+        '--build-arg',
+        'PUBLIC_GAMES_API_URL=${_PUBLIC_GAMES_API_URL}',
+        '--build-arg',
+        'PUBLIC_GAMES_API_TOKEN=${_PUBLIC_GAMES_API_TOKEN}',
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '--cache-from',
@@ -117,6 +121,10 @@ steps:
       - 'SITE_NAME=${_SITE_NAME}'
       - '--set-env-vars'
       - 'PUBLIC_SWETRIX_ID=${_PUBLIC_SWETRIX_ID}'
+      - '--set-env-vars'
+      - 'PUBLIC_GAMES_API_URL=${_PUBLIC_GAMES_API_URL}'
+      - '--set-env-vars'
+      - 'PUBLIC_GAMES_API_TOKEN=${_PUBLIC_GAMES_API_TOKEN}'
 
 substitutions:
   _OUTPUT_DIST_PATH: '/'
@@ -133,6 +141,8 @@ substitutions:
   _PUBLIC_MEILISEARCH_HOST: ''
   _PUBLIC_MEILISEARCH_SEARCH_KEY: ''
   _PUBLIC_MEILISEARCH_INDEX_NAME: ''
+  _PUBLIC_GAMES_API_URL: ''
+  _PUBLIC_GAMES_API_TOKEN: ''
   _ROOT_DOMAIN: ''
   _HOSTNAME: ''
   _FULL_URL: ''
