@@ -138,11 +138,8 @@
 
   //function to update iframe url with the sites language code
 
-  function updateURLWithLang(url:string, lang:string) {
-  try {
-    // Encode the URL to handle special characters
-    const encodedUrl = encodeURI(url);
-    const parsedUrl = new URL(encodedUrl);
+ function updateURLWithLang(url, lang) {
+    const parsedUrl = new URL(url);
     const searchParams = new URLSearchParams(parsedUrl.search);
     
     if (searchParams.has('language')) {
@@ -154,7 +151,6 @@
     parsedUrl.search = searchParams.toString();
     iframeElement = parsedUrl.toString();
   }
-}
 
   const formatGamesURL = () => {
 
