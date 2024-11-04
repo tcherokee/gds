@@ -260,7 +260,7 @@
             {translations?.ageWarning}
           </div>
 
-          <a class="mt-3 !text-white" href="#game-review">{translations.writeAReview}</a>
+          <a class="mt-3 !text-white" href="#game-review">{translations.userComments}</a>
         {/if}
       </div>
     {:else}
