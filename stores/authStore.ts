@@ -41,12 +41,6 @@ export const getUserProfile = async (): Promise<TUser | null> => {
   if (res.ok) {
     const userProfile = await res.json();
     user.set({ ...userProfile });
-    // userFirstName = userProfile.firstName;
-    // userLastName = userProfile.lastName;
-    // userBio = userProfile.bio;
-    // userPhoto = userProfile.photo?.url;
-    // userCoverImage = userProfile.cover_image?.url;
-    // previewImg.src = $user?.photo ? $user?.photo?.url + "" : "";
     return userProfile;
   }
   return null;
