@@ -155,20 +155,32 @@
       const encodedUrl = encodeURI(url);
       const parsedUrl = new URL(encodedUrl);
       const searchParams = new URLSearchParams(parsedUrl.search);
+
+      console.log('searchParms', searchParams)
       
       if (searchParams.has('language')) {
         searchParams.set('language', langComparison(searchParams.get('language'), lang));
-      } else if (searchParams.has('lang')) {
+      }
+      
+      if (searchParams.has('lang')) {
         searchParams.set('lang', langComparison(searchParams.get('lang'), lang));
-      } else if (searchParams.has('countrycode')) {
+      }
+      
+      if (searchParams.has('countrycode')) {
         searchParams.set('countrycode', lang);
-      } else if (searchParams.has('currency')) {
+      }
+      
+      if (searchParams.has('currency')) {
         searchParams.set('currency', 'EUR');
-      } else if (searchParams.has('cur')) {
+      }
+      
+      if (searchParams.has('cur')) {
         searchParams.set('cur', 'EUR');
       }
       
       parsedUrl.search = searchParams.toString();
+
+      console.log('url', parsedUrl.search)
 
       return parsedUrl.toString();
     } catch (error) {
@@ -178,7 +190,9 @@
   }
 
   $: if (gamesData && gamesData.iframeURL && iframeElement) {
+    console.log('gamesURL', gamesData.iframeURL)
     const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
+    console.log('updatedURL', updatedURL)
     iframeElement.src = updatedURL;
   }
 
