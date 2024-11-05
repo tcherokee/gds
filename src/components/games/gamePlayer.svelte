@@ -138,6 +138,17 @@
 
   //function to update iframe url with the sites language code
 
+  const langComparison = (params, lang) => {
+    // Handle other cases
+    if (params.includes('_')) {
+      // If it's just a language code, append _UPPERCASE
+      return `${lang}_${lang.toUpperCase()}`;
+    } else {
+      // If it's a language format, return as is
+      return lang;
+    }
+  }
+
   function updateURLWithLang(url:string, lang:string) {
   try {
     // Encode the URL to handle special characters
@@ -146,12 +157,19 @@
     const searchParams = new URLSearchParams(parsedUrl.search);
     
     if (searchParams.has('language')) {
-      searchParams.set('language', lang);
+      searchParams.set('language', langComparison(searchParams.get('language'), lang));
     } else if (searchParams.has('lang')) {
-      searchParams.set('lang', lang);
+      searchParams.set('lang', langComparison(searchParams.get('lang'), lang));
+    } else if (searchParams.has('countrycode')) {
+      searchParams.set('countrycode', lang);
+    } else if (searchParams.has('currency')) {
+      searchParams.set('currency', 'EUR');
+    } else if (searchParams.has('cur')) {
+      searchParams.set('countrycode', 'EUR');
     }
     
     parsedUrl.search = searchParams.toString();
+
     return parsedUrl.toString();
   } catch (error) {
     console.error('Error updating URL with lang:', error);
