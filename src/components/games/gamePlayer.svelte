@@ -165,7 +165,7 @@
       } else if (searchParams.has('currency')) {
         searchParams.set('currency', 'EUR');
       } else if (searchParams.has('cur')) {
-        searchParams.set('countrycode', 'EUR');
+        searchParams.set('cur', 'EUR');
       }
       
       parsedUrl.search = searchParams.toString();
