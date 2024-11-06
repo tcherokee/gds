@@ -35,6 +35,7 @@
   let gamesData: any = null;
   let loading: boolean = true;
   let error: string | null = null;
+  const public_lang: string = import.meta.env.PUBLIC_LANG
 
   let hoverEl: any;
 
@@ -191,8 +192,7 @@
 
   $: if (gamesData && gamesData.iframeURL && iframeElement) {
     console.log('gamesURL', gamesData.iframeURL)
-    const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
-    console.log('updatedURL', updatedURL)
+    const updatedURL = updateURLWithLang(gamesData.iframeURL, public_lang);
     iframeElement.src = updatedURL;
   }
 
