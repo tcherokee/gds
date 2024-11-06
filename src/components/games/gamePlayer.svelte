@@ -35,6 +35,7 @@
   let gamesData: any = null;
   let loading: boolean = true;
   let error: string | null = null;
+  const public_lang: string = import.meta.env.PUBLIC_LANG
 
   let hoverEl: any;
 
@@ -138,22 +139,61 @@
 
   //function to update iframe url with the sites language code
 
-  function updateURLWithLang(url, lang) {
-    const parsedUrl = new URL(url);
-    const searchParams = new URLSearchParams(parsedUrl.search);
-    
-    if (searchParams.has('language')) {
-      searchParams.set('language', lang);
-    } else if (searchParams.has('lang')) {
-      searchParams.set('lang', lang);
+  const langComparison = (params, lang) => {
+    // Handle other cases
+    if (params.includes('_')) {
+      // If it's just a language code, append _UPPERCASE
+      return `${lang}_${lang.toUpperCase()}`;
+    } else {
+      // If it's a language format, return as is
+      return lang;
     }
-    
-    parsedUrl.search = searchParams.toString();
-    iframeElement = parsedUrl.toString();
   }
 
-  const formatGamesURL = () => {
+  const updateURLWithLang = (url:string, lang:string) => {
+    try {
+      // Encode the URL to handle special characters
+      const encodedUrl = encodeURI(url);
+      const parsedUrl = new URL(encodedUrl);
+      const searchParams = new URLSearchParams(parsedUrl.search);
 
+      console.log('searchParms', searchParams)
+      
+      if (searchParams.has('language')) {
+        searchParams.set('language', langComparison(searchParams.get('language'), lang));
+      }
+      
+      if (searchParams.has('lang')) {
+        searchParams.set('lang', langComparison(searchParams.get('lang'), lang));
+      }
+      
+      if (searchParams.has('countrycode')) {
+        searchParams.set('countrycode', lang);
+      }
+      
+      if (searchParams.has('currency')) {
+        searchParams.set('currency', 'EUR');
+      }
+      
+      if (searchParams.has('cur')) {
+        searchParams.set('cur', 'EUR');
+      }
+      
+      parsedUrl.search = searchParams.toString();
+
+      console.log('url', parsedUrl.search)
+
+      return parsedUrl.toString();
+    } catch (error) {
+      console.error('Error updating URL with lang:', error);
+      return url; // Return the original URL if there's an error
+    }
+  }
+
+  $: if (gamesData && gamesData.iframeURL && iframeElement) {
+    console.log('gamesURL', gamesData.iframeURL)
+    const updatedURL = updateURLWithLang(gamesData.iframeURL, public_lang);
+    iframeElement.src = updatedURL;
   }
 
   onMount(() => {
@@ -161,12 +201,6 @@
       try {
         console.log('Fetching games data');
         gamesData = await gamesAPI(data.attributes.slug);
-        if (gamesData && gamesData.iframeURL) {
-          const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
-          if (iframeElement) {
-            iframeElement.src = updatedURL;
-          }
-        }
       } catch (err) {
         console.error('Error fetching games data:', err);
         error = "Failed to fetch games data";
@@ -174,10 +208,6 @@
     };
 
     fetchData();
-
-    return () => {
-      // Any cleanup code if needed
-    };
   });
 </script>
 
@@ -256,13 +286,13 @@
             {translations?.ageWarning}
           </div>
 
-          <a class="mt-3 !text-white" href="#game-review">{translations.writeAReview}</a>
+          <a class="mt-3 !text-white" href="#game-review">{translations.userComments}</a>
         {/if}
       </div>
     {:else}
       <div class="flex h-full w-full" bind:this={iframeWrapper}>
         {#if gamesData && gamesData.iframeURL && data.attributes.gamesApiOverride != true}
-          <iframe src={gamesData.iframeURL} width="100%" height="100%" name={data?.attributes?.title} title="gamesapi" bind:this={iframeElement} />
+          <iframe width="100%" height="100%" name={data?.attributes?.title} title="gamesapi" bind:this={iframeElement} />
         {:else if error}
           <NoGameImage height="100px" />
           <h3 class="mt-5 text-white mb-4">
