@@ -35,7 +35,6 @@
   let gamesData: any = null;
   let loading: boolean = true;
   let error: string | null = null;
-  const public_lang: string = import.meta.env.PUBLIC_LANG
 
   let hoverEl: any;
 
@@ -150,14 +149,12 @@
     }
   }
 
-  const updateURLWithLang = (url:string, lang:string) => {
+   const updateURLWithLang = (url:string, lang:string) => {
     try {
       // Encode the URL to handle special characters
       const encodedUrl = encodeURI(url);
       const parsedUrl = new URL(encodedUrl);
       const searchParams = new URLSearchParams(parsedUrl.search);
-
-      console.log('searchParms', searchParams)
       
       if (searchParams.has('language')) {
         searchParams.set('language', langComparison(searchParams.get('language'), lang));
@@ -181,8 +178,6 @@
       
       parsedUrl.search = searchParams.toString();
 
-      console.log('url', parsedUrl.search)
-
       return parsedUrl.toString();
     } catch (error) {
       console.error('Error updating URL with lang:', error);
@@ -190,24 +185,30 @@
     }
   }
 
-  const fetchData = async () => {
-    try {
-      console.log('Fetching games data');
-      gamesData = await gamesAPI(data.attributes.slug);
-      if (gamesData && gamesData.iframeURL) {
-        const updatedURL = updateURLWithLang(gamesData.iframeURL, public_lang);
-        if (iframeElement) {
-          iframeElement.src = updatedURL;
-        }
-      }
-    } catch (err) {
-      console.error('Error fetching games data:', err);
-      error = "Failed to fetch games data";
-    }
-  };
 
   onMount(() => {
+    const fetchData = async () => {
+      try {
+        console.log('Fetching games data');
+        gamesData = await gamesAPI(data.attributes.slug);
+        if (gamesData && gamesData.iframeURL) {
+          const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
+          
+          if (iframeElement) {
+            iframeElement.src = updatedURL;
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching games data:', err);
+        error = "Failed to fetch games data";
+      }
+    };
+
     fetchData();
+
+    return () => {
+      // Any cleanup code if needed
+    };
   });
 </script>
 
@@ -292,7 +293,7 @@
     {:else}
       <div class="flex h-full w-full" bind:this={iframeWrapper}>
         {#if gamesData && gamesData.iframeURL && data.attributes.gamesApiOverride != true}
-          <iframe width="100%" height="100%" name={data?.attributes?.title} title="gamesapi" bind:this={iframeElement} />
+          <iframe src={gamesData.iframeURL} width="100%" height="100%" name={data?.attributes?.title} title="gamesapi" bind:this={iframeElement} />
         {:else if error}
           <NoGameImage height="100px" />
           <h3 class="mt-5 text-white mb-4">
