@@ -190,23 +190,23 @@
     }
   }
 
-  $: if (gamesData && gamesData.iframeURL && iframeElement) {
-    console.log('gamesURL', gamesData.iframeURL)
-    const updatedURL = updateURLWithLang(gamesData.iframeURL, public_lang);
-    iframeElement.src = updatedURL;
-  }
+  const fetchData = async () => {
+    try {
+      console.log('Fetching games data');
+      gamesData = await gamesAPI(data.attributes.slug);
+      if (gamesData && gamesData.iframeURL) {
+        const updatedURL = updateURLWithLang(gamesData.iframeURL, public_lang);
+        if (iframeElement) {
+          iframeElement.src = updatedURL;
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching games data:', err);
+      error = "Failed to fetch games data";
+    }
+  };
 
   onMount(() => {
-    const fetchData = async () => {
-      try {
-        console.log('Fetching games data');
-        gamesData = await gamesAPI(data.attributes.slug);
-      } catch (err) {
-        console.error('Error fetching games data:', err);
-        error = "Failed to fetch games data";
-      }
-    };
-
     fetchData();
   });
 </script>
