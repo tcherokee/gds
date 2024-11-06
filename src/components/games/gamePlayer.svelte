@@ -38,6 +38,8 @@
 
   $: iframeURL = 'test'
 
+  const PUBLIC_LANG = import.meta.env.PUBLIC_LANG
+
   let hoverEl: any;
 
   let siteID = import.meta.env.PUBLIC_SITE_ID;
@@ -193,8 +195,8 @@
       console.log('Fetching games data');
       gamesData = await gamesAPI(data.attributes.slug);
       if (gamesData && gamesData.iframeURL) {
-        console.log(import.meta.env.PUBLIC_LANG)
-        const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
+        console.log('lang', import.meta.env.PUBLIC_LANG, PUBLIC_LANG)
+        const updatedURL = updateURLWithLang(gamesData.iframeURL, PUBLIC_LANG);
         
         iframeURL = updatedURL;
       }
