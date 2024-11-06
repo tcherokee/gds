@@ -36,6 +36,8 @@
   let loading: boolean = true;
   let error: string | null = null;
 
+  $: iframeURL = 'test'
+
   let hoverEl: any;
 
   let siteID = import.meta.env.PUBLIC_SITE_ID;
@@ -186,26 +188,25 @@
   }
 
 
-  onMount(() => {
-    const fetchData = async () => {
-      try {
-        console.log('Fetching games data');
-        gamesData = await gamesAPI(data.attributes.slug);
-        if (gamesData && gamesData.iframeURL) {
-          const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
-          
-          if (iframeElement) {
-            iframeElement.src = updatedURL;
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching games data:', err);
-        error = "Failed to fetch games data";
+  const fetchData = async () => {
+    try {
+      console.log('Fetching games data');
+      gamesData = await gamesAPI(data.attributes.slug);
+      if (gamesData && gamesData.iframeURL) {
+        console.log(import.meta.env.PUBLIC_LANG)
+        const updatedURL = updateURLWithLang(gamesData.iframeURL, import.meta.env.PUBLIC_LANG);
+        
+        iframeURL = updatedURL;
       }
-    };
+    } catch (err) {
+      console.error('Error fetching games data:', err);
+      error = "Failed to fetch games data";
+    }
+  };
+
+  onMount(() => {
 
     fetchData();
-
     return () => {
       // Any cleanup code if needed
     };
@@ -293,7 +294,7 @@
     {:else}
       <div class="flex h-full w-full" bind:this={iframeWrapper}>
         {#if gamesData && gamesData.iframeURL && data.attributes.gamesApiOverride != true}
-          <iframe src={gamesData.iframeURL} width="100%" height="100%" name={data?.attributes?.title} title="gamesapi" bind:this={iframeElement} />
+          <iframe src={iframeURL} width="100%" height="100%" name={data?.attributes?.title} title="gamesapi" bind:this={iframeElement} />
         {:else if error}
           <NoGameImage height="100px" />
           <h3 class="mt-5 text-white mb-4">
