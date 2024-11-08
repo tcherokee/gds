@@ -52,6 +52,16 @@ export const homepageQs = () => ({
             },
           },
         },
+        introWithSlider: {
+          populate: {
+            // slideBtn: {
+            //   fields: ["btnText", "btnLink", "btnType"],
+            // },
+            image: {
+              fields: ["url"],
+            },
+          },
+        },
         homeTestimonies: {
           fields: ["title", "testimony", "testifierName", "testifierTitle"],
           populate: {
