@@ -281,6 +281,27 @@ export type IntroductionWithImageBlock = BlockBase & {
   image: ImageInfo;
 };
 
+export type SlideBtn = {
+  btnText: string;
+  btnLink: string;
+  btnType: string;
+};
+
+export type IntroWithSlides = {
+  introduction: string;
+  heading: string;
+  neaderType: string;
+  image: ImageInfo;
+  showBtn: boolean;
+  btnText: string;
+  btnLink: string;
+  btnType: string;
+};
+
+export type IntroductionWithSliderBlock = BlockBase & {
+  introWithSlides: IntroWithSlides;
+};
+
 export type SingleContentBlock = BlockBase & {
   content: string;
 };
@@ -336,7 +357,7 @@ export type HowToGroup = {
   title: string;
   description: string;
   howToGroup: HowTo[];
-}
+};
 
 export type HowTo = {
   id: number;
@@ -371,7 +392,7 @@ export type ImageWithParagraphTypes = BlockBase & {
 export type CasinoFeatures = {
   id: number;
   feature: string;
-}
+};
 
 export type CasinoListBlock = BlockBase & {
   casinoSort: string;
@@ -387,6 +408,7 @@ export type TGameListBlock = BlockBase & CustomGameList;
 
 export type Block =
   | IntroductionWithImageBlock
+  | IntroductionWithSliderBlock
   | CasinoComparisonBlock
   | HomeGameListBlock
   | SingleContentBlock
