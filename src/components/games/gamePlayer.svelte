@@ -288,7 +288,7 @@
             {translations?.ageWarning}
           </div>
 
-          <a class="mt-3 text-[11px] !text-white" href="#game-review">{translations.userComments}</a>
+          <a class="mt-3 text-[11px] !text-white italic underline" href="#game-review">{translations.userComments}</a>
         {/if}
       </div>
     {:else}
