@@ -15,7 +15,7 @@ const { data } = Astro.props;
     <!-- Flickity HTML init -->
     <div
       class="carousel js-flickity"
-      data-flickity='{"autoPlay":5000, "pauseAutoPlayOnHover": true}'
+      data-flickity='{"autoPlay":5000, "pauseAutoPlayOnHover": true, "wrapAround": true}'
     >
       {
         data?.introWithSlider.map((data: any, index: number) => (
