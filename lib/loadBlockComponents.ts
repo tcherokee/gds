@@ -28,6 +28,12 @@ export const mapBlocksToDynamicComponents = (
             name: "providerTestimonyBlock",
             extension: "astro",
           };
+        case "shared.intro-with-slider":
+          return {
+            location: "blocks",
+            name: "introWithSlideBlock",
+            extension: "astro",
+          };
         case "homepage.home-blog-list":
           return {
             location: "blocks",

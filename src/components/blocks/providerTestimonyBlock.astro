@@ -31,7 +31,7 @@ const softwareListURL =
   <!-- Flickity HTML init -->
   <div
     class="gap-8 gallery js-flickity"
-    data-flickity-options='{ "wrapAround": true}'
+    data-flickity-options='{ "wrapAround": true,  "pageDots":false}'
   >
     {
       data?.homeTestimonies.map((testimony: ProviderData) => (
@@ -57,11 +57,11 @@ const softwareListURL =
     overflow: visible !important;
   }
 
-  :global(.flickity-page-dots) {
+  /* :global(.flickity-page-dots) {
     text-align: left !important;
     width: fit-content;
     bottom: -50px;
-  }
+  } */
 
   :global(.flickity-prev-next-button) {
     top: 110%;
@@ -70,7 +70,6 @@ const softwareListURL =
 
   :global(.flickity-prev-next-button.previous) {
     @apply md:left-[90%] left-[70%];
-    /* left: 90%; */
   }
 
   .slider {

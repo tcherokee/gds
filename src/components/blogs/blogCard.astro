@@ -22,9 +22,6 @@ const categoryLangOptions: any = { it: "categoria", es: "categoría" };
 let categoryLang: any = categoryLangOptions[import.meta.env.LANG];
 ---
 
-<script define:vars={{ categoryLang }}>
-  console.log("categoryLang", categoryLang);
-</script>
 {
   data.map((blog: Blog | AuthorBlogAttributes) => (
     <div class="blog-wrapper mb-[20px]">

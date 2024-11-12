@@ -1,0 +1,78 @@
+---
+// Types
+import type { SlideBtn } from "../../../interfaces/common/types";
+// Helpers
+import TransformImage from "../helpers/images.astro";
+import Link from "../helpers/link.astro";
+const { data, translationStore, index } = Astro.props;
+---
+
+<!-- 
+<script define:vars={{ data }}>
+  console.log("Intro With Slider", data.slideBtn);
+</script> -->
+<div class="intro-content relative z-20">
+  <div
+    class:list={[
+      "relative grid grid-cols-12 gap-1 pb-5 pt-0 px-2 lg:pt-10 xl:container",
+      { "pt-5": !data?.image?.data?.attributes?.url },
+    ]}
+  >
+    <div
+      class="stars relative order-2 col-span-12 lg:order-1 lg:col-span-7 lg:only-of-type:col-span-12 lg:z-20"
+    >
+      <div class="mx-auto {!transformHero && 'pt-10 lg:pt-0'} lg:mx-0">
+        {
+          data?.headerType === "h1" ? (
+            <h1>{data?.heading}</h1>
+          ) : (
+            <h2>{data?.heading}</h2>
+          )
+        }
+        <div class="flex flex-col-reverse mt-4 mb-2 lg:mb-0">
+          <span class="peer-checked:*:-mb-4">
+            <Fragment set:html={data?.introduction} />
+          </span>
+        </div>
+        {
+          data?.showBtn && (
+            <div class="flex gap-3">
+              <Link href={data?.btnLink}>
+                <button
+                  class={`btn btn-${data?.btnType} my-5 self-center min-w-[200px]`}
+                >
+                  {data?.btnText}
+                </button>
+              </Link>
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    {
+      data?.image?.data?.attributes?.url && (
+        <div class="relative flex items-center justify-center lg:justify-end mix-blend-lighten mb-8 md:mb-0 order-1 col-span-12 lg:order-2 lg:col-span-5 lg:aspect-[720/269] lg:absolute lg:z-10 lg:right-0 lg:top-0 lg:bottom-0">
+          <TransformImage
+            src={data?.image?.data?.attributes?.url}
+            alt={
+              data?.image?.data?.attributes?.alternativeText ?? data?.heading
+            }
+            imageWidth={515}
+            imageHeight={200}
+            imageQuality={100}
+          />
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<style lang="postcss">
+	.clamped {
+		:global(p) {
+			/* margin: 0; */
+			padding: 0;
+		}
+	}
+</style>
