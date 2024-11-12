@@ -1,6 +1,7 @@
 ---
 import IntroWithSlide from "../../components/general/introWithSlide.astro";
 import { getTranslations } from "../../../utils/api-requests";
+import IntroWithImage from "../../components/general/introWithImage.astro";
 
 const translationStore = await getTranslations();
 
@@ -19,7 +20,7 @@ const { data } = Astro.props;
     >
       {
         data?.introWithSlider.map((data: any, index: number) => (
-          <div class="gallery-cell">
+          <div class="carousel-cell">
             <IntroWithSlide {data} {translationStore} {index} />
           </div>
         ))
@@ -45,7 +46,7 @@ const { data } = Astro.props;
 
   .carousel-cell {
     width: 100%;
-    height: 200px;
+    /* height: 200px; */
     margin-right: 10px;
     background: transparent !important;
     border-radius: 5px;
@@ -53,14 +54,14 @@ const { data } = Astro.props;
   }
 
   /* cell number */
-  .carousel-cell:before {
+  /* .carousel-cell:before {
     display: block;
     text-align: center;
     content: counter(gallery-cell);
     line-height: 200px;
     font-size: 80px;
     color: white;
-  }
+  } */
 
   :global(.flickity-page-dots) {
     text-align: left !important;
