@@ -66,13 +66,18 @@
   };
 
   const getUserReview = async () => {
-    const reviewsUrl =
-      reviewType === "GAME"
-        ? `${import.meta.env.BASE_URL}api/games/user-game-review/${reviewTypeId}/`
-        : `${import.meta.env.BASE_URL}api/casinos/user-casino-review/${reviewTypeId}/`;
-    const response = await fetch(reviewsUrl);
-    const res: { data: TUserReview } = await response.json();
-    userReviewData = res.data;
+    // Call the API route to get auth cookie
+    const authCookieResponse = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/get-auth-cookie/`);
+    const { hasAuthCookkie } = await authCookieResponse.json();
+    if (hasAuthCookkie) {
+      const reviewsUrl =
+        reviewType === "GAME"
+          ? `${import.meta.env.BASE_URL}api/games/user-game-review/${reviewTypeId}/`
+          : `${import.meta.env.BASE_URL}api/casinos/user-casino-review/${reviewTypeId}/`;
+      const response = await fetch(reviewsUrl);
+      const res: { data: TUserReview } = await response.json();
+      userReviewData = res.data;
+    }
   };
 
   const getReviews = async () => {

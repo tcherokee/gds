@@ -153,11 +153,9 @@
     }
   }
 
-   const updateURLWithLang = (url:string, lang:string) => {
+   const updateURLWithLang = (url, lang) => {
     try {
-      // Encode the URL to handle special characters
-      const encodedUrl = encodeURI(url);
-      const parsedUrl = new URL(encodedUrl);
+      const parsedUrl = new URL(url);
       const searchParams = new URLSearchParams(parsedUrl.search);
       
       if (searchParams.has('language')) {
@@ -185,7 +183,7 @@
       return parsedUrl.toString();
     } catch (error) {
       console.error('Error updating URL with lang:', error);
-      return url; // Return the original URL if there's an error
+      return url; 
     }
   }
 
@@ -290,7 +288,7 @@
             {translations?.ageWarning}
           </div>
 
-          <a class="mt-3 text-[11px] !text-white" href="#game-review">{translations.userComments}</a>
+          <a class="mt-3 text-[11px] !text-white italic underline" href="#game-review">{translations.userComments}</a>
         {/if}
       </div>
     {:else}
