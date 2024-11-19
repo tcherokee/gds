@@ -1,13 +1,12 @@
 ---
-import type { GetStaticPaths } from "astro";
 import { Link } from "astro-link";
 import qs from "qs";
 import type { Casinopage } from "../../../../interfaces/casinopage";
 import type {
-  HowToGroup,
-  HowTo as HowToType,
   CasinoFeatures,
   Faqs as FaqsType,
+  HowToGroup,
+  HowTo as HowToType,
   ProsConsBlock,
 } from "../../../../interfaces/common/types";
 import type { Gamepage } from "../../../../interfaces/game-page";
@@ -27,9 +26,11 @@ import ContentBlock from "../../../components/blocks/contentBlock.astro";
 import GameListBlock from "../../../components/blocks/gameListBlock.astro";
 import CasinoComparison from "../../../components/casino/casinoComparison.astro";
 import AuthorCard from "../../../components/general/authorCard.astro";
+import Faqs from "../../../components/general/faqs.astro";
 import HowTo from "../../../components/general/howTo.astro";
 import ImageCarousel from "../../../components/general/imageCarousel.svelte";
 import ProsCons from "../../../components/general/proCons.astro";
+import UserReviews from "../../../components/general/userReviews.svelte";
 import Collapse from "../../../components/helpers/collapse.astro";
 import HeaderAuthor from "../../../components/helpers/headerAuthor.astro";
 import {
@@ -42,11 +43,6 @@ import RatingStar from "../../../components/helpers/ratingStar.svelte";
 import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
 import TimeDate from "../../../components/helpers/timeDate.astro";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
-import type { BreadcrumbData } from "../../../../interfaces/common/types";
-import Faqs from "../../../components/general/faqs.astro";
-import { layoutQs } from "../../../../qs/layout";
-import type { LayoutData } from "../../../../interfaces/layout";
-import UserReviews from "../../../components/general/userReviews.svelte";
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();

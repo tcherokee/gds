@@ -157,14 +157,17 @@ const extractH2Text = (element: any) => {
 const quickLinks = block
   ? extractH2TextBlock(block)
   : extractH2Text(data.attributes);
+const filterQuickLinks = quickLinks.filter((elem) => elem.text);
 
 // Quicklinks order
 let reorderedQuickLinks: quicklinksObj[] = [];
-const quickLinksMedian = Math.ceil(quickLinks.length / 2);
+const quickLinksMedian = Math.ceil(filterQuickLinks.length / 2);
 for (let i = 0; i < quickLinksMedian; i++) {
-  reorderedQuickLinks.push(quickLinks[i] as quicklinksObj);
-  if (quickLinksMedian + i < quickLinks.length) {
-    reorderedQuickLinks.push(quickLinks[quickLinksMedian + i] as quicklinksObj);
+  reorderedQuickLinks.push(filterQuickLinks[i] as quicklinksObj);
+  if (quickLinksMedian + i < filterQuickLinks.length) {
+    reorderedQuickLinks.push(
+      filterQuickLinks[quickLinksMedian + i] as quicklinksObj
+    );
   }
 }
 ---
