@@ -1,3 +1,6 @@
+import { populate } from "dotenv";
+import { slotCategories } from "../utils/api-requests";
+
 export const customPageQs = (path: string) => {
   return {
     fields: ["title", "urlPath", "createdAt", "updatedAt", "showContentDate"],
@@ -164,11 +167,35 @@ export const customPageQs = (path: string) => {
               },
             },
           },
+          homeCategoriesList: {
+            populate: {
+              slot_categories: {
+                fields: ["title", "slug"],
+                populate: {
+                  images: {
+                    fields: ["url"],
+                  },
+                },
+              },
+            },
+          },
           providers: {
             fields: ["title", "slug"],
             populate: {
               images: {
                 fields: ["url"],
+              },
+            },
+          },
+          categoriesList: {
+            populate: {
+              slot_categories: {
+                fields: ["title", "slug"],
+                populate: {
+                  images: {
+                    fields: ["url"],
+                  },
+                },
               },
             },
           },

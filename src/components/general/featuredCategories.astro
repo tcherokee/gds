@@ -1,0 +1,47 @@
+---
+import Link from "../helpers/link.astro";
+import Images from "../../components/helpers/images.astro";
+import { urlTranslate } from "../../../utils/data-store.util";
+
+const { data } = Astro.props;
+
+const siteID = import.meta.env.PUBLIC_SITE_ID;
+const categoryBaseURL = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["category-pages"]}`;
+---
+
+<div
+  class="relative flex flex-col justify-center items-center gap-10 xl:container z-10"
+>
+  {
+    data?.title && (
+      <div class="text-white text-2xl font-bold mt-[40px]">{data?.title}</div>
+    )
+  }
+  <div class="flex gap-5 justify-center flex-wrap w-full">
+    {
+      data?.homeCategoriesList?.slot_categories?.data.map((item: any) => (
+        <Link href={`${categoryBaseURL}/${item.attributes.slug}/`}>
+          <div class="provider-img bg-white rounded-lg">
+            <Images
+              src={item?.attributes?.images?.data?.attributes.url}
+              imageWidth={110}
+              imageHeight={48}
+              classes="rounded-lg"
+              alt={item?.attributes?.title + " photo"}
+            />
+          </div>
+        </Link>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .provider-img {
+    box-shadow: 0 0px 12px 0 theme("colors.testimony-box-shadow");
+  }
+
+  .provider-img:hover {
+    box-shadow: none;
+  }
+</style>
