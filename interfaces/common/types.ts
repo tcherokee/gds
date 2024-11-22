@@ -86,6 +86,7 @@ export type GameProvider = {
 export type CategoryAttributes = {
   title?: string;
   slug: string;
+  images?: ImageInfo;
 };
 
 export type Category = {

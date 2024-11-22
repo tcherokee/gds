@@ -52,6 +52,12 @@ export const mapBlocksToDynamicComponents = (
             name: "providerListBlock",
             extension: "astro",
           };
+        case "homepage.home-featured-categories":
+          return {
+            location: "general",
+            name: "featuredCategories",
+            extension: "astro",
+          };
         case "games.new-and-loved-slots":
           return {
             location: "games",
@@ -150,6 +156,12 @@ export const mapBlocksToDynamicComponents = (
           return {
             location: "games",
             name: "gameProviders",
+            extension: "astro",
+          };
+        case "shared.categories":
+          return {
+            location: "games",
+            name: "gameCategories",
             extension: "astro",
           };
         case "casinos.casino-live-video":
