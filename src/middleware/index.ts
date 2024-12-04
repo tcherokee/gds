@@ -14,12 +14,19 @@ const CACHE_DURATION: number = 7 * 24 * 60 * 60 * 1000; // Cache Redirects for 7
 // `context` and `next` are automatically typed
 export const onRequest = defineMiddleware(async (context, next) => {
     try {
-        // Redirection
-        const url = new URL(context.request.url);
-        
-        if (!url.pathname.endsWith("/") && !url.pathname.includes(".")) {
-          return context.redirect(`${url.pathname}/${url.search}`, 308);
-        }
+      // Redirection
+      const url = new URL(context.request.url);
+
+      // Check for cache-clearing trigger
+      if (url.searchParams.get("clearCache") === "true") {
+        cachedRedirects = null;
+        cacheTimestamp = 0; // Reset timestamp
+        return new Response("Redirects cache cleared.", { status: 200 });
+      }
+
+      if (!url.pathname.endsWith("/") && !url.pathname.includes(".")) {
+        return context.redirect(`${url.pathname}/${url.search}`, 308);
+      }
 
       if (!cachedRedirects || Date.now() - cacheTimestamp > CACHE_DURATION) {
         const redirects = await fetchApi<TRedirects[]>({
@@ -27,33 +34,32 @@ export const onRequest = defineMiddleware(async (context, next) => {
           wrappedByKey: "data",
           query: `?pagination[pageSize]=1000`,
         });
-          
-          cachedRedirects = redirects
+
+        cachedRedirects = redirects;
         cacheTimestamp = Date.now();
       }
 
       // Loop through each item in the data array
-        for (const item of cachedRedirects ?? []) {
-          //Destructure Attributes
-          const { redirectUrl, redirectTarget, redirectMethod } =
-            item.attributes;
+      for (const item of cachedRedirects ?? []) {
+        //Destructure Attributes
+        const { redirectUrl, redirectTarget, redirectMethod } = item.attributes;
 
-          // Check if the current URL matches the redirectUrl
-          if (context.url.pathname === redirectUrl) {
-            // Determine the status code for the redirect
-            const statusCode = redirectMethod === "permanent" ? 308 : 307;
+        // Check if the current URL matches the redirectUrl
+        if (context.url.pathname === redirectUrl) {
+          // Determine the status code for the redirect
+          const statusCode = redirectMethod === "permanent" ? 308 : 307;
 
-            // Redirect to the target URL
-            return Response.redirect(
-              redirectTarget.includes("http://") ||
-                redirectTarget.includes("https://") ||
-                redirectTarget.includes("www")
-                ? redirectTarget
-                : `${context.url.origin}${redirectTarget}`,
-              statusCode
-            );
-          }
+          // Redirect to the target URL
+          return Response.redirect(
+            redirectTarget.includes("http://") ||
+              redirectTarget.includes("https://") ||
+              redirectTarget.includes("www")
+              ? redirectTarget
+              : `${context.url.origin}${redirectTarget}`,
+            statusCode
+          );
         }
+      }
 
       // Authentication logic
       const authCookie = context.cookies.get("_token")?.value;
