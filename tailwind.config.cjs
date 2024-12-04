@@ -1,17 +1,11 @@
+
 import forms from "@tailwindcss/forms";
-import * as dotenv from "dotenv";
 
 /** @type {import('tailwindcss').Config} */
 
-dotenv.config();
-
-export default {
+module.exports = {
   content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
-  presets: [
-    await import(
-      `./tailwind-preset/${import.meta.env.PUBLIC_SITE_ID}-preset.cjs`
-    ).then((m) => m.default),
-  ],
+  presets: [require('./tailwind-preset/gds-preset.cjs')],
 
   theme: {
     fontSize: {

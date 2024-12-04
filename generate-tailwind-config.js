@@ -1,17 +1,19 @@
-import forms from "@tailwindcss/forms";
+import fs from "fs";
+import path from "path";
 import * as dotenv from "dotenv";
-
-/** @type {import('tailwindcss').Config} */
 
 dotenv.config();
 
-export default {
+const siteId = process.env.SITE_ID || "default"; // Fallback to 'default' if not set
+
+const configContent = `
+import forms from "@tailwindcss/forms";
+
+/** @type {import('tailwindcss').Config} */
+
+module.exports = {
   content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
-  presets: [
-    await import(
-      `./tailwind-preset/${import.meta.env.PUBLIC_SITE_ID}-preset.cjs`
-    ).then((m) => m.default),
-  ],
+  presets: [require('./tailwind-preset/${siteId}-preset.cjs')],
 
   theme: {
     fontSize: {
@@ -70,3 +72,10 @@ export default {
   },
   plugins: [forms],
 };
+`;
+
+fs.writeFileSync(
+  path.join(process.cwd(), "tailwind.config.cjs"),
+  configContent
+);
+console.log(`Tailwind config generated for SITE_ID: ${siteId}`);
