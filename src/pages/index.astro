@@ -32,7 +32,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 import { getTranslations } from "../../utils/api-requests";
 
-const ipAddress = Astro.clientAddress;
+// const ipAddress = Astro.clientAddress;
 
 const sortStore = sortOptions.get();
 
@@ -157,9 +157,9 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ ipAddress }}>
+<!-- <script define:vars={{ ipAddress }}>
   console.log("IP Address", ipAddress);
-</script>
+</script> -->
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 
