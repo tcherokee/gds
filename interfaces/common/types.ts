@@ -511,6 +511,27 @@ export type Casino = {
   };
 };
 
+export type Sport = {
+  id: number;
+  attributes: {
+    slug: string;
+    title: string;
+    logoIcon: {
+      data: ImageData;
+    };
+    freeSpinsSection?: {
+      id: number;
+      bonusAmount: number;
+      availability: string;
+      speed: string;
+      termsConditions: string;
+      cashBack?: any;
+      freeSpin?: any;
+    };
+    [key: string]: any;
+  };
+};
+
 // Components
 export type ComponentLink = {
   text?: string;

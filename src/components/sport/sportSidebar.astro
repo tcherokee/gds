@@ -30,23 +30,23 @@ const layout = await fetchApi<LayoutData>({
 });
 
 const {
-  attributes: { most_loved_casinos, no_deposit_casinos, free_spin_casinos },
+  attributes: { most_loved_sports, no_deposit_sports, free_spin_sports },
 } = layout;
 
 // created a casino array so I only need to write the HTML once.
-const casinoArray = [
+const sportArray = [
   {
-    casino: most_loved_casinos,
+    sport: most_loved_sports,
     title: translationStore?.bestWelcomeBonus,
     bonus: "bonusSection",
   },
   {
-    casino: no_deposit_casinos,
+    sport: no_deposit_sports,
     title: translationStore?.bestNoDepositBonus,
     bonus: "noDepositSection",
   },
   {
-    casino: free_spin_casinos,
+    sport: free_spin_sports,
     title: translationStore?.bestFreeSpins,
     bonus: "freeSpinsSection",
   },
@@ -54,44 +54,42 @@ const casinoArray = [
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 ---
 
-<div class="sticky top-2">
+<script define:vars={{ sportArray }}>
+  console.log(sportArray);
+</script>
+
+<!-- <div class="sticky top-2">
   {
-    casinoArray.map(
-      (casinoObj) =>
-        casinoObj.casino.data.length > 0 && (
+    sportArray.map(
+      (sportObj) =>
+        sportObj.sport.data.length > 0 && (
           <div class="side-casino-table">
             <div class="rounded-t-[6px] py-[11px] px-3 bg-casino-table-header-bkg text-white text-[19px] leading-[24px] font-bold">
-              {casinoObj.title}
+              {sportObj.title}
             </div>
             <table class="border-separate border-spacing-[11px] rounded-b-[6px]">
               <tbody>
-                {casinoObj.casino.data.map((casino) => (
+                {sportObj.sport.data.map((sport) => (
                   <tr class="*:border-b *:border-b-black *:p-0 *:last:border-0">
                     <td>
                       <div class="flex items-center justify-between">
                         <div class="flex items-center pb-3">
                           <Images
-                            alt={casino?.attributes?.title}
+                            alt={sport?.attributes?.title}
                             imageWidth={50}
                             imageHeight={50}
                             src={
-                              casino?.attributes?.logoIcon?.data?.attributes
-                                ?.url
+                              sport?.attributes?.logoIcon?.data?.attributes?.url
                             }
                             classes="rounded-[4px] mr-[10px]"
                           />
                           <div class="">
                             <div class="line-clamp-1">
-                              {casino?.attributes?.title}
+                              {sport?.attributes?.title}
                             </div>
                             <div>
-                              {
-                                casino?.attributes?.[casinoObj.bonus]
-                                  ?.bonusAmount
-                              }
-                              {casinoObj.bonus !== "freeSpinsSection"
-                                ? "€"
-                                : ""}
+                              {sport?.attributes?.[sportObj.bonus]?.bonusAmount}
+                              {sportObj.bonus !== "freeSpinsSection" ? "€" : ""}
                             </div>
                           </div>
                         </div>
@@ -102,7 +100,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                               PUBLIC_SITE_ID as keyof typeof urlTranslate
                             ]["sport-pages"] +
                             "/" +
-                            casino.attributes?.slug +
+                            sport.attributes?.slug +
                             "/"
                           }
                         >
@@ -118,4 +116,4 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
         )
     )
   }
-</div>
+</div> -->

@@ -1,6 +1,13 @@
 export const customPageQs = (path: string) => {
   return {
-    fields: ["title", "urlPath", "createdAt", "updatedAt", "showContentDate"],
+    fields: [
+      "title",
+      "urlPath",
+      "createdAt",
+      "updatedAt",
+      "showContentDate",
+      "sideBarToShow",
+    ],
     populate: {
       seo: {
         fields: ["metaTitle", "metaDescription"],
@@ -251,6 +258,33 @@ export const customPageLayoutAddOnsQs = () => ({
       },
     },
     free_spin_casinos: {
+      fields: ["slug", "title"],
+      populate: {
+        logoIcon: {
+          fields: ["url"],
+        },
+        freeSpinsSection: true,
+      },
+    },
+    most_loved_sports: {
+      fields: ["slug", "title"],
+      populate: {
+        logoIcon: {
+          fields: ["url"],
+        },
+        bonusSection: true,
+      },
+    },
+    no_deposit_sports: {
+      fields: ["slug", "title"],
+      populate: {
+        logoIcon: {
+          fields: ["url"],
+        },
+        noDepositSection: true,
+      },
+    },
+    free_spin_sports: {
       fields: ["slug", "title"],
       populate: {
         logoIcon: {
