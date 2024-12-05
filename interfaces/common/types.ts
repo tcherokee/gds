@@ -220,9 +220,49 @@ export type AuthorCasinoAttributes = {
   freeSpinsSection?: AuthorBonusSection;
 };
 
+export type AuthorSportAttributes = {
+  title: string;
+  slug: string;
+  ratingAvg: number;
+  ratingCount: number;
+  publishedAt: string;
+  Badges?: string | null;
+  images: {
+    id: number;
+    url: string;
+  };
+  provider: {
+    title: string;
+    slug?: string;
+    images: {
+      id: number;
+      url: string;
+    };
+  };
+  bonusSection: AuthorBonusSection;
+  sportBonus: {
+    id: number;
+    bonusUrl: string;
+    bonusLabel: string;
+    bonusCode: string;
+  };
+  termsAndConditions: {
+    id: number;
+    copy: string;
+    gambleResponsibly: string;
+  };
+  noDepositSection?: AuthorBonusSection;
+  freeSpinsSection?: AuthorBonusSection;
+};
+
 export type CasinoData = {
   id: number;
   attributes: CasinoAttributes;
+};
+
+export type SportData = {
+  id: number;
+  attributes: SportAttributes;
 };
 
 export type BreadCrumbField = {
@@ -326,6 +366,13 @@ export type CasinoComparison = {
   };
 };
 
+export type SportComparison = {
+  id: number;
+  sport: {
+    data: SportData;
+  };
+};
+
 export type CasinoComparisonBlock = BlockBase & {
   casinos: CasinoComparison[];
 };
@@ -334,6 +381,13 @@ export type CasinoListData = {
   id: number;
   casino: {
     data: CasinoData[];
+  };
+};
+
+export type SportListData = {
+  id: number;
+  sport: {
+    data: SportData[];
   };
 };
 
@@ -405,6 +459,16 @@ export type CasinoListBlock = BlockBase & {
   showCasinoTableHeader: boolean;
 };
 
+export type SportListBlock = BlockBase & {
+  sportSort: string;
+  sportFilters: string;
+  showSportFilters: boolean;
+  showLoadMore: boolean;
+  numberPerLoadMore: number;
+  sportsList: SportListData[];
+  showSportTableHeader: boolean;
+};
+
 export type TGameListBlock = BlockBase & CustomGameList;
 
 export type Block =
@@ -428,6 +492,27 @@ export type TCasinoLiveVideo = BlockBase & {
 };
 
 export type Casino = {
+  id: number;
+  attributes: {
+    slug: string;
+    title: string;
+    logoIcon: {
+      data: ImageData;
+    };
+    freeSpinsSection?: {
+      id: number;
+      bonusAmount: number;
+      availability: string;
+      speed: string;
+      termsConditions: string;
+      cashBack?: any;
+      freeSpin?: any;
+    };
+    [key: string]: any;
+  };
+};
+
+export type Sport = {
   id: number;
   attributes: {
     slug: string;
@@ -495,6 +580,18 @@ export type FilterStore = {
 export type BadgesStore = string[];
 
 export type CasinoFilters = {
+  limit: number | undefined;
+  sort: string | undefined;
+  providers: string[] | undefined;
+  ids: number[];
+  bonusKey: string;
+  condition: string | undefined;
+  amount: string | undefined;
+  wagering: string | undefined;
+  speed: string | undefined;
+};
+
+export type SportFilters = {
   limit: number | undefined;
   sort: string | undefined;
   providers: string[] | undefined;
@@ -586,4 +683,26 @@ export type TRedirects = {
 export type TBreadcrumbs = {
   breadcrumbs: string;
   breadcrumbKey: string;
+};
+
+export type SportAttributes = {
+  title: string;
+  slug: string;
+  ratingAvg: number;
+  ratingCount: number;
+  publishedAt: string;
+  Badges?: string | null;
+  images: ImageInfo;
+  providers: {
+    data: ProviderData[];
+  };
+  bonusSection: BonusSection;
+  sportBonus: CasinoBonus;
+  termsAndConditions: TermsAndConditions;
+  noDepositSection?: BonusSection;
+  freeSpinsSection?: BonusSection;
+  sportGeneralInfo?: {
+    id: number;
+    wageringRequirements: number;
+  };
 };

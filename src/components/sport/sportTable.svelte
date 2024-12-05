@@ -6,9 +6,9 @@
   // Import Types
   import type {
     BonusSectionOnly,
-    CasinoData,
-    CasinoListBlock,
-    CasinoListData,
+    SportData,
+    SportListBlock,
+    SportListData,
     TProviderAttributesOnly,
     TranslationData,
   } from "../../../interfaces/common/types";
@@ -16,17 +16,15 @@
 
   import {
     bonusAmount,
-    casinoQsStore,
-    casinoVariables,
-    casinos,
-    providers,
+    sportVariables,
+    sports,
     wageringReqAmount,
-  } from "../../../stores/casinos";
+  } from "../../../stores/sports";
   import { bonusLabels } from "../../../stores/filters";
 
   // Import Components
-  import DesktopCasinoFilter from "../filters/desktopCasinoFilter.svelte";
-  import MobileCasinoFilter from "../filters/mobileCasinoFilter.svelte";
+  import DesktopSportFilter from "../filters/desktopSportFilter.svelte";
+  import MobileSportFilter from "../filters/mobileSportFilter.svelte";
 
   // Helpers
   import { urlTranslate } from "../../../utils/data-store.util";
@@ -42,38 +40,36 @@
   import CircleInfo from "~icons/kensho-icons/circle-info";
 
   // Query String
-  import { casinosQs } from "../../../qs/casinos";
+  import { sportsQs } from "../../../qs/sports";
   import { getTranslations } from "../../../stores/addTranslations";
 
-  export let initialCasinos: CasinoListBlock;
+  export let initialSports: SportListBlock;
   export let translations: TranslationData;
-  export let slotProviders: TProviderAttributesOnly[] = [];
-  export let showCasinoTableHeader: boolean;
+  export let showSportTableHeader: boolean;
 
   const siteID = import.meta.env.PUBLIC_SITE_ID;
-  // const siteURL: string = `${siteID === 'gds' ? '/it' : ''}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
-  const siteURL: string = `${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
+  const siteURL: string = `${urlTranslate[siteID as keyof typeof urlTranslate]["sport-pages"]}/`;
 
   const {
     showLoadMore,
-    showCasinoFilters,
+    showSportFilters,
     numberPerLoadMore,
-    casinosList,
-    casinoSort,
-    casinoFilters,
-  } = initialCasinos;
+    sportsList,
+    sportSort,
+    sportFilters,
+  } = initialSports;
 
-  if (showCasinoTableHeader === null) showCasinoTableHeader = true; //ensures that when this flag is null the table header shows
+  if (showSportTableHeader === null) showSportTableHeader = true; //ensures that when this flag is null the table header shows
 
   let currentCasinosLength = numberPerLoadMore;
 
   // Set Sort Key in Casino Variables Store
-  casinoVariables.setKey("sort", $sortOptions[casinoSort] || "ratingAvg:desc");
+  sportVariables.setKey("sort", $sortOptions[sportSort] || "ratingAvg:desc");
 
   // Set bonusKey Key in Casino Variables Store
-  casinoVariables.setKey(
+  sportVariables.setKey(
     "bonusKey",
-    $bonusLabels[casinoFilters]?.value || "bonusSection"
+    $bonusLabels[sportFilters]?.value || "bonusSection"
   );
 
   // Tailwind Gradient Object for Dynamic Classes
@@ -84,20 +80,18 @@
   ];
 
   // Flatten Casinos
-  const customCasinos: CasinoData[] = casinosList
-    .flatMap((casino: CasinoListData) => casino.casino.data)
+  const customSports: SportData[] = sportsList
+    .flatMap((sport: SportListData) => sport.sport.data)
     .filter((elem) => elem);
 
+  // Get Casino Amounts
   $: {
     getTranslations.set(translations);
-    providers.set(slotProviders);
-    // Get Casino Amounts
-    const bonusAmounts = ($casinos.data?.data ?? customCasinos)
+    const bonusAmounts = ($sports.data?.data ?? customSports)
       .map(
-        (casino) =>
-          casino?.attributes[
-            $casinoVariables.bonusKey as keyof BonusSectionOnly
-          ]?.bonusAmount
+        (sport) =>
+          sport?.attributes[$sportVariables.bonusKey as keyof BonusSectionOnly]
+            ?.bonusAmount
       ) // Extract bonus amount
       .filter(
         (amount): amount is number =>
@@ -105,34 +99,38 @@
       ) // Remove null, undefined, and 0
       .filter((amount, index, self) => self.indexOf(amount) === index) // Remove duplicates
       .sort((a, b) => a - b); //Sort from smallest to largest
+
+    // Set bonusAmounts value to bonusAmount store
     bonusAmount.set(bonusAmounts);
 
-    // Get Casino Wagering
-    const wageringReq = ($casinos.data?.data ?? customCasinos)
-    .map((casino) => casino?.attributes.casinoGeneralInfo?.wageringRequirements)
-    .filter(
-      (amount): amount is number =>
-        amount !== null && amount !== undefined && amount !== 0
-    )
-    .filter((amount, index, self) => self.indexOf(amount) === index) // Remove duplicates
-    .sort((a, b) => a - b); //Sort from smallest to largest
+    const wageringReq = ($sports.data?.data ?? customSports)
+      .map(
+        (casino) => casino?.attributes.sportGeneralInfo?.wageringRequirements
+      )
+      .filter(
+        (amount): amount is number =>
+          amount !== null && amount !== undefined && amount !== 0
+      )
+      .filter((amount, index, self) => self.indexOf(amount) === index) // Remove duplicates
+      .sort((a, b) => a - b); //Sort from smallest to largest
+
+    // Set Wagering Requirements value to Wagering Requirements Store
     wageringReqAmount.set(wageringReq);
   }
 
   // Reset Casino Filters
   const resetCasinoFilters = () => {
-    casinoVariables.setKey("limit", 1000);
-    casinoVariables.setKey("sort", "ratingAvg:desc");
-    // casinoVariables.setKey("providers", []);
-    casinoVariables.setKey("ids", []);
-    casinoVariables.setKey("bonusKey", "");
-    casinoVariables.setKey("condition", "");
-    casinoVariables.setKey("amount", "");
-    casinoVariables.setKey("wagering", "");
-    casinoVariables.setKey("speed", "");
+    sportVariables.setKey("limit", 1000);
+    sportVariables.setKey("sort", "ratingAvg:desc");
+    sportVariables.setKey("ids", []);
+    sportVariables.setKey("bonusKey", "");
+    sportVariables.setKey("condition", "");
+    sportVariables.setKey("amount", "");
+    sportVariables.setKey("wagering", "");
+    sportVariables.setKey("speed", "");
 
-    // Set QS Query String to Get Updated Casinos
-    const query = qs.stringify(casinosQs($casinoVariables), {
+    // Set QS Query String to Get Updated Sports
+    const query = qs.stringify(sportsQs($sportVariables), {
       encodeValuesOnly: true,
     });
 
@@ -146,8 +144,8 @@
     <div class="mb-5 pt-2.5">
       <div>
         <div class="text-black relative mb-10 z-20">
-          <MobileCasinoFilter translationStore={translations} />
-          <DesktopCasinoFilter translationStore={translations} />
+          <MobileSportFilter translationStore={translations} />
+          <DesktopSportFilter translationStore={translations} />
         </div>
       </div>
       <div>
@@ -157,45 +155,45 @@
           <table
             class="w-full mb-2.5 overflow-hidden rounded-[6px] border-spacing-0 border-collapse"
           >
-            {#if showCasinoTableHeader}
+            {#if showSportTableHeader}
               <thead
                 class="hidden border-l-[12px] border-r-[12px] border-l-casino-table-header-bkg border-r-casino-table-header-bkg md:table-row-group"
               >
                 <tr class="border-b-[12px] border-b-grey-100">
                   <th scope="col" class="px-3"
-                    >{translations?.casinoTableHeadingCasinos}</th
+                    >{translations?.sportTableHeadingCasinos}</th
                   >
                   <th scope="col" class="px-3"
-                    >{translations?.casinoTableHeadingRating}</th
+                    >{translations?.sportTableHeadingRating}</th
                   >
                   <th scope="col" class="px-3"
-                    >{translations?.casinoTableHeadingBonus}</th
+                    >{translations?.sportTableHeadingBonus}</th
                   >
                   <th scope="col" class="px-3"
                     >{translations?.withoutDeposit}</th
                   >
                   <th scope="col" class="px-3"
-                    >{translations?.casinoTableHeadinRegister}</th
+                    >{translations?.sportTableHeadinRegister}</th
                   >
                 </tr>
               </thead>
             {/if}
             <tbody class="text-casino-table-text">
               <!-- If the casino store is emty, use customCasinos otherwise use casino store -->
-              {#if ($casinos.data?.data ?? customCasinos).length > 0}
-                {#each showLoadMore ? ($casinos.data?.data ?? customCasinos).slice(0, currentCasinosLength) : $casinos.data?.data ?? customCasinos as casino, i (casino.id)}
+              {#if ($sports.data?.data ?? customSports).length > 0}
+                {#each showLoadMore ? ($sports.data?.data ?? customSports).slice(0, currentCasinosLength) : $sports.data?.data ?? customSports as sport, i (sport.id)}
                   <tr
                     class="flex flex-wrap md:table-row border-[12px] border-casino-table-tr-border bg-white"
                   >
                     <td
                       class="casino-logo w-1/2 md:w-auto relative overflow-hidden md:w-[210px] md:max-w-[210px]"
                     >
-                      {#if casino?.attributes?.Badges}
+                      {#if sport?.attributes?.Badges}
                         <span
                           class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
                           >{translations?.exclusive}</span
                         >
-                      {:else if casino?.attributes?.publishedAt && dayjs().diff(casino?.attributes?.publishedAt, "day") <= 14}
+                      {:else if sport?.attributes?.publishedAt && dayjs().diff(sport?.attributes?.publishedAt, "day") <= 14}
                         <span
                           class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
                           >{translations?.newCasino}</span
@@ -220,17 +218,17 @@
                         {/if}
 
                         <Link
-                          href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
+                          href={`${sport?.attributes?.sportBonus?.bonusUrl}`}
                           classes="block rounded border border-[transparent] {i <=
                             2 && badgesOptions[i]}"
                           type="external"
                           rel="sponsored"
                         >
                           <Image
-                            imageUrl={casino?.attributes?.images?.data
+                            imageUrl={sport?.attributes?.images?.data
                               ?.attributes.url}
                             imageClass="w-full rounded"
-                            imageAlt={casino?.attributes?.title}
+                            imageAlt={sport?.attributes?.title}
                             imageWidth={206}
                             imageHeight={88}
                           />
@@ -243,18 +241,18 @@
                       >
                         <div class="ratings">
                           <ReadOnlyRatings
-                            avgRating={casino?.attributes?.ratingAvg}
-                            ratingCount={casino?.attributes?.ratingCount}
+                            avgRating={sport?.attributes?.ratingAvg}
+                            ratingCount={sport?.attributes?.ratingCount}
                             {translations}
                           />
                         </div>
                         <div class="flex items-center">
                           <Link
                             classes="casino-name text-[14px] text-grey-500 mr-[11px]"
-                            href={`${siteURL}${casino?.attributes?.slug}/`}
+                            href={`${siteURL}${sport?.attributes?.slug}/`}
                           >
                             <span class="hidden sm:inline-flex sm:pr-1"
-                              >{casino?.attributes?.title}</span
+                              >{sport?.attributes?.title}</span
                             >
                             <span class="underline">{translations?.review}</span
                             >
@@ -273,19 +271,16 @@
                           {translations?.casinoTableHeadingBonus}
                         </div>
                         <Link
-                          href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
+                          href={`${sport?.attributes?.sportBonus?.bonusUrl}`}
                           classes="flex underline text-center  font-lato"
                           type="external"
                           rel="sponsored"
                         >
-                          {@html welcomeBonus(
-                            casino,
-                            translations?.reloadBonus
-                          )}
+                          {@html welcomeBonus(sport, translations?.reloadBonus)}
                         </Link>
                         <span
                           class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                          title={casino?.attributes?.bonusSection
+                          title={sport?.attributes?.bonusSection
                             ?.termsConditions}
                           data-tooltip-placement="left"
                         >
@@ -318,7 +313,7 @@
                             class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max"
                           >
                             <div class="content-inner text-grey-500 mt-4">
-                              {@html casino?.attributes?.bonusSection
+                              {@html sport?.attributes?.bonusSection
                                 ?.termsConditions}
                             </div>
                           </div>
@@ -336,21 +331,21 @@
                         >
                           {translations?.withoutDeposit}
                         </div>
-                        {#if noDepositBonus(casino)?.bonus}
+                        {#if noDepositBonus(sport)?.bonus}
                           <Link
-                            href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
+                            href={`${sport?.attributes?.sportBonus?.bonusUrl}`}
                             classes="flex underline text-center font-lato"
                             type="external"
                             rel="sponsored"
                           >
-                            {@html noDepositBonus(casino, {
+                            {@html noDepositBonus(sport, {
                               withoutDeposit: translations?.withoutDeposit,
                               freeSpins: translations?.freeSpins,
                             })?.bonus}
                           </Link>
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                            title={noDepositBonus(casino, {
+                            title={noDepositBonus(sport, {
                               withoutDeposit: translations?.withoutDeposit,
                               freeSpins: translations?.freeSpins,
                             })?.terms}
@@ -385,7 +380,7 @@
                               class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max"
                             >
                               <div class="content-inner text-grey-500 mt-4">
-                                {@html noDepositBonus(casino, {
+                                {@html noDepositBonus(sport, {
                                   withoutDeposit: translations?.withoutDeposit,
                                   freeSpins: translations?.freeSpins,
                                 })?.terms}
@@ -404,28 +399,28 @@
                         <div
                           class="h-full px-3 flex flex-col justify-end items-center sm:justify-center"
                         >
-                          {#if casino?.attributes?.casinoBonus?.bonusCode}
+                          {#if sport?.attributes?.sportBonus?.bonusCode}
                             <div
                               class="mb-[7px] text-[#212529] text-[14px] font-bold"
                             >
                               {translations?.bonusCode}
                             </div>
                           {/if}
-                          {#if casino?.attributes?.casinoBonus?.bonusUrl}
+                          {#if sport?.attributes?.sportBonus?.bonusUrl}
                             <Link
-                              href={`${casino?.attributes?.casinoBonus?.bonusUrl}`}
+                              href={`${sport?.attributes?.sportBonus?.bonusUrl}`}
                               classes="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
                               type="external"
                               rel="sponsored"
                             >
-                              {casino?.attributes?.casinoBonus?.bonusCode
-                                ? casino?.attributes?.casinoBonus?.bonusCode
+                              {sport?.attributes?.sportBonus?.bonusCode
+                                ? sport?.attributes?.sportBonus?.bonusCode
                                 : translations?.visitSite}
                             </Link>
                           {/if}
                           <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                            title={casino?.attributes?.termsAndConditions?.copy}
+                            title={sport?.attributes?.termsAndConditions?.copy}
                             data-tooltip-placement="left"
                           >
                             {translations?.termsConditions}
@@ -457,7 +452,7 @@
                               class="max-h-0 overflow-hidden transition-all peer-checked:max-h-max"
                             >
                               <div class="content-inner text-grey-500 mt-4">
-                                {@html casino?.attributes?.termsAndConditions
+                                {@html sport?.attributes?.termsAndConditions
                                   ?.copy}
                               </div>
                             </div>
@@ -495,7 +490,7 @@
   </div>
 
   <!-- Load More Button -->
-  {#if showLoadMore && ($casinos.data?.data ?? customCasinos).length > currentCasinosLength}
+  {#if showLoadMore && ($sports.data?.data ?? customSports).length > currentCasinosLength}
     <div class="d-grid gap-2 d-md-block flex w-full justify-center mb-10">
       <button
         class="btn capitalize btn-secondary min-w-[300px] md:min-w-[500px]"

@@ -1,4 +1,4 @@
-import type { BreadcrumbData } from "./common/types";
+import type { BreadcrumbData, Sport } from "./common/types";
 import type {
   TProviderAttributesOnly,
   ImageData,
@@ -52,6 +52,15 @@ type LayoutAttributes = {
   };
   free_spin_casinos: {
     data: Casino[];
+  };
+  most_loved_sports: {
+    data: Sport[];
+  };
+  no_deposit_sports: {
+    data: Sport[];
+  };
+  free_spin_sports: {
+    data: Sport[];
   };
   backgroundImage: {
     data: ImageData;

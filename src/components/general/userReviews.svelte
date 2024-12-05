@@ -15,7 +15,7 @@
   export let reviewTypeSlug: string;
   export let reviewTypeName: string;
   export let reviewTypeId: number;
-  export let reviewType: "GAME" | "CASINO";
+  export let reviewType: "GAME" | "CASINO" | "SPORT";
   export let translations: TranslationData = {};
 
   let userReviews: TUserReview[] = [];
@@ -73,7 +73,9 @@
       const reviewsUrl =
         reviewType === "GAME"
           ? `${import.meta.env.BASE_URL}api/games/user-game-review/${reviewTypeId}/`
-          : `${import.meta.env.BASE_URL}api/casinos/user-casino-review/${reviewTypeId}/`;
+          : reviewType === "CASINO" ?
+          `${import.meta.env.BASE_URL}api/casinos/user-casino-review/${reviewTypeId}/`
+          : `${import.meta.env.BASE_URL}api/sports/user-sport-review/${reviewTypeId}/`;
       const response = await fetch(reviewsUrl);
       const res: { data: TUserReview } = await response.json();
       userReviewData = res.data;
@@ -84,7 +86,9 @@
     const reviewsUrl =
       reviewType === "GAME"
         ? `${import.meta.env.BASE_URL}api/games/game-reviews/${reviewTypeId}/`
-        : `${import.meta.env.BASE_URL}api/casinos/casino-reviews/${reviewTypeId}/`;
+        : reviewType === "CASINO"
+        ? `${import.meta.env.BASE_URL}api/casinos/casino-reviews/${reviewTypeId}/`
+        : `${import.meta.env.BASE_URL}api/sports/sport-reviews/${reviewTypeId}/`;
     const response = await fetch(reviewsUrl);
     const res: { data: TReviewResponse } = await response.json();
 
@@ -115,7 +119,9 @@
     const reviewsUrl =
       reviewType === "GAME"
         ? `${import.meta.env.PUBLIC_FULL_URL}/api/games/game-reviews/`
-        : `${import.meta.env.PUBLIC_FULL_URL}/api/casinos/casino-reviews/`;
+        : reviewType === "CASINO"
+        ? `${import.meta.env.PUBLIC_FULL_URL}/api/casinos/casino-reviews/`
+        :  `${import.meta.env.PUBLIC_FULL_URL}/api/sports/sport-reviews/`;
     const response = await fetch(reviewsUrl, {
       method: "POST",
       body: JSON.stringify({

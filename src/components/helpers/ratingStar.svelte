@@ -6,7 +6,7 @@
   export let ratingClasses: string;
   export let ratingCount = 0;
   export let itemId = "";
-  export let ratingType: 'games' | 'casinos';
+  export let ratingType: 'games' | 'casinos' | 'sports';
   export let translations: TranslationData;
 
   let starRating: HTMLInputElement;
