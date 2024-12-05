@@ -9,21 +9,14 @@ import type {
   HowTo as HowToType,
   ProsConsBlock,
 } from "../../../interfaces/common/types";
-import type { Gamepage } from "../../../interfaces/game-page";
 import fetchApi from "../../../lib/strapi";
 import { sportPageQs } from "../../../qs/sport-page";
-import { gamesQs } from "../../../qs/games";
 import { urlTranslate } from "../../../utils/data-store.util";
 import MainLayout from "../../layouts/MainLayout.astro";
 
 import Icon from "astro-icon";
-import {
-  loadComponents,
-  mapBlocksToDynamicComponents,
-} from "../../../lib/loadBlockComponents";
 import { getTranslations } from "../../../utils/api-requests";
 import ContentBlock from "../../components/blocks/contentBlock.astro";
-import GameListBlock from "../../components/blocks/gameListBlock.astro";
 import CasinoComparison from "../../components/casino/casinoComparison.astro";
 import AuthorCard from "../../components/general/authorCard.astro";
 import Faqs from "../../components/general/faqs.astro";
@@ -46,36 +39,12 @@ import UserReviews from "../../components/general/userReviews.svelte";
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
-const casino = qs.stringify(sportPageQs(slug), { encodeValuesOnly: true });
+const sport = qs.stringify(sportPageQs(slug), { encodeValuesOnly: true });
 
 const sportPage = await fetchApi<SportPage[]>({
-  endpoint: "casinos",
+  endpoint: "sports",
   wrappedByKey: "data",
-  query: `?${casino}`,
-});
-
-//get games 10 games for this casino providers
-const providerSlugs = new Array();
-sportPage[0]?.attributes?.providers?.data.map((provider: any) => {
-  providerSlugs.push(provider?.attributes?.slug);
-});
-
-const query = qs.stringify(
-  gamesQs({
-    limit: 12,
-    sort: "ratingAvg:desc",
-    page: 1,
-    providers: providerSlugs,
-    categories: [],
-    author: "",
-  }),
-  { encodeValuesOnly: true }
-);
-
-const games = await fetchApi<Gamepage[]>({
-  endpoint: "games",
-  wrappedByKey: "data",
-  query: `?${query}`,
+  query: `?${sport}`,
 });
 
 const termsAndConditions = `${sportPage[0]?.attributes?.termsAndConditions?.copy}`;
@@ -88,10 +57,6 @@ const testimonial = `${sportPage[0]?.attributes?.testimonial?.testimonial}`;
 const testimonialCleaned = testimonial.replace(/(<([^>]+)>)/gi, "");
 
 let casinoFeatures = sportPage[0]?.attributes?.sportFeatures;
-
-//list componets on page
-const __blocks = mapBlocksToDynamicComponents(sportPage[0]?.attributes.blocks);
-const Components = await loadComponents(__blocks);
 
 //generate page url
 let siteID = import.meta.env.SITE_ID;
@@ -991,14 +956,6 @@ Astro.response.headers.set(
                 <ContentBlock
                   pageContent={sportPage[0]?.attributes?.content2}
                 />
-              </div>
-            )
-          }
-
-          {
-            games.length > 0 && (
-              <div class="p-2 backdrop-blur-[6px] shadow-[0px_0px_12px_rgba(63,230,252,0.6)] bg-[rgba(255,255,255,0.3)] border border-[rgba(255,255,255,0.3)] rounded-lg">
-                <GameListBlock data={games} {translationStore} />
               </div>
             )
           }
