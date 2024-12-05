@@ -303,9 +303,6 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ loopCounter, customPage }}>
-  console.log("loopCounter", loopCounter, customPage[0]?.attributes?.blocks);
-</script>
 <MainLayout seoData={seo} otherSchema={combinedSchema}>
   <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
 

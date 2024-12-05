@@ -1,0 +1,1863 @@
+---
+import { Link } from "astro-link";
+import qs from "qs";
+import type { SportPage } from "../../../interfaces/sport-page";
+import type {
+  CasinoFeatures,
+  Faqs as FaqsType,
+  HowToGroup,
+  HowTo as HowToType,
+  ProsConsBlock,
+} from "../../../interfaces/common/types";
+import type { Gamepage } from "../../../interfaces/game-page";
+import fetchApi from "../../../lib/strapi";
+import { sportPageQs } from "../../../qs/sport-page";
+import { gamesQs } from "../../../qs/games";
+import { urlTranslate } from "../../../utils/data-store.util";
+import MainLayout from "../../layouts/MainLayout.astro";
+
+import Icon from "astro-icon";
+import {
+  loadComponents,
+  mapBlocksToDynamicComponents,
+} from "../../../lib/loadBlockComponents";
+import { getTranslations } from "../../../utils/api-requests";
+import ContentBlock from "../../components/blocks/contentBlock.astro";
+import GameListBlock from "../../components/blocks/gameListBlock.astro";
+import CasinoComparison from "../../components/casino/casinoComparison.astro";
+import AuthorCard from "../../components/general/authorCard.astro";
+import Faqs from "../../components/general/faqs.astro";
+import HowTo from "../../components/general/howTo.astro";
+import ImageCarousel from "../../components/general/imageCarousel.svelte";
+import ProsCons from "../../components/general/proCons.astro";
+import Collapse from "../../components/helpers/collapse.astro";
+import HeaderAuthor from "../../components/helpers/headerAuthor.astro";
+import {
+  default as Image,
+  default as Images,
+} from "../../components/helpers/images.astro";
+import ProviderIcons from "../../components/helpers/providerIcons.svelte";
+import QuickLinks from "../../components/helpers/quicklinks.astro";
+import RatingStar from "../../components/helpers/ratingStar.svelte";
+import ReadOnlyRatings from "../../components/helpers/readOnlyRatings.astro";
+import TimeDate from "../../components/helpers/timeDate.astro";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+import UserReviews from "../../components/general/userReviews.svelte";
+
+const slug = Astro.params.slug as string;
+const translationStore = await getTranslations();
+const casino = qs.stringify(sportPageQs(slug), { encodeValuesOnly: true });
+
+const sportPage = await fetchApi<SportPage[]>({
+  endpoint: "casinos",
+  wrappedByKey: "data",
+  query: `?${casino}`,
+});
+
+//get games 10 games for this casino providers
+const providerSlugs = new Array();
+sportPage[0]?.attributes?.providers?.data.map((provider: any) => {
+  providerSlugs.push(provider?.attributes?.slug);
+});
+
+const query = qs.stringify(
+  gamesQs({
+    limit: 12,
+    sort: "ratingAvg:desc",
+    page: 1,
+    providers: providerSlugs,
+    categories: [],
+    author: "",
+  }),
+  { encodeValuesOnly: true }
+);
+
+const games = await fetchApi<Gamepage[]>({
+  endpoint: "games",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
+
+const termsAndConditions = `${sportPage[0]?.attributes?.termsAndConditions?.copy}`;
+const termsAndConditionsCleaned = termsAndConditions.replace(
+  /(<([^>]+)>)/gi,
+  ""
+);
+
+const testimonial = `${sportPage[0]?.attributes?.testimonial?.testimonial}`;
+const testimonialCleaned = testimonial.replace(/(<([^>]+)>)/gi, "");
+
+let casinoFeatures = sportPage[0]?.attributes?.sportFeatures;
+
+//list componets on page
+const __blocks = mapBlocksToDynamicComponents(sportPage[0]?.attributes.blocks);
+const Components = await loadComponents(__blocks);
+
+//generate page url
+let siteID = import.meta.env.SITE_ID;
+let canonical: string = `${import.meta.env.FULL_URL}${
+  urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]
+}/${slug}`;
+
+// Approved Author
+const approvedAuthorFirstName =
+  sportPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes?.firstName?.toLowerCase();
+const approvedAuthorLastName =
+  sportPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes?.lastName?.toLowerCase();
+const approvedAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${approvedAuthorFirstName}.${approvedAuthorLastName}/`;
+
+// Review Author
+const reviewAuthorFirstName =
+  sportPage[0]?.attributes?.author?.data?.attributes?.firstName?.toLowerCase();
+const reviewAuthorLastName =
+  sportPage[0]?.attributes?.author?.data?.attributes?.lastName?.toLowerCase();
+const reviewAuthorPageURL: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["author-page"]}/${reviewAuthorFirstName}.${reviewAuthorLastName}/`;
+
+let seo = {
+  pageTitle: sportPage[0]?.attributes?.seo?.metaTitle,
+  metaDescription: sportPage[0]?.attributes?.seo?.metaDescription,
+  url: canonical,
+};
+
+let combinedSchema = [];
+
+const prosCons = sportPage[0]?.attributes?.proscons as ProsConsBlock;
+
+// Review Schema
+const reviewSchema = {
+  "@context": "https://schema.org/",
+  "@type": "Review",
+  datePublished: `${sportPage[0]?.attributes?.createdAt}`,
+  dateModified: `${sportPage[0]?.attributes?.updatedAt}`,
+  description: `${sportPage[0]?.attributes?.introduction?.replace(/(<([^>]+)>)/gi, "")}`,
+  itemReviewed: {
+    "@type": "Organization",
+    image: `${sportPage[0]?.attributes?.images?.data?.attributes?.url}`,
+    name: `${sportPage[0]?.attributes?.title}`,
+    makesOffer: [
+      {
+        "@type": "Offer",
+        "@id": `${import.meta.env.PUBLIC_FULL_URL}`,
+        name: `${sportPage[0]?.attributes?.casinoBonus?.bonusLabel}`,
+        description: `${translationStore?.reviewAndBonus} ${sportPage[0]?.attributes?.title}`,
+        url: `${import.meta.env.PUBLIC_FULL_URL}${
+          sportPage[0]?.attributes?.casinoBonus?.bonusUrl
+        }`,
+      },
+    ],
+  },
+  reviewRating: {
+    "@type": "Rating",
+    ratingValue: `${sportPage[0]?.attributes?.authorRatings}`,
+    bestRating: "5",
+    worstRating: "0",
+  },
+  name: `${translationStore?.reviewAndBonus} ${sportPage[0]?.attributes?.title}`,
+  author: {
+    "@type": "Person",
+    name: `${sportPage[0]?.attributes?.author?.data?.attributes?.firstName} ${sportPage[0]?.attributes?.author?.data?.attributes?.lastName}`,
+    url: `${import.meta.env.PUBLIC_FULL_URL}/author/${
+      sportPage[0]?.attributes?.author?.data?.attributes?.firstName
+    }.${sportPage[0]?.attributes?.author?.data?.attributes?.lastName}`,
+  },
+
+  ...(prosCons && {
+    positiveNotes: {
+      "@type": "ItemList",
+      itemListElement: prosCons?.pros.map((pro, i: number) => {
+        return {
+          "@type": "ListItem",
+          position: i + 1,
+          name: `${pro.list}`,
+        };
+      }),
+    },
+    negativeNotes: {
+      "@type": "ItemList",
+      itemListElement: prosCons?.cons.map((con, i: number) => {
+        return {
+          "@type": "ListItem",
+          position: i + 1,
+          name: `${con.list}`,
+        };
+      }),
+    },
+  }),
+  contributor: {
+    "@type": "Person",
+    name: `${sportPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes.firstName} ${sportPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes.lastName}`,
+    url: `${import.meta.env.PUBLIC_FULL_URL}/author/${
+      sportPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes
+        .firstName
+    }.${sportPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes.lastName}`,
+    sameAs: [
+      `${sportPage[0]?.attributes?.testimonial?.approvedBy?.data?.attributes?.jobTitle}`,
+    ],
+    worksFor: {
+      "@type": "Organization",
+      "@id": `${import.meta.env.PUBLIC_FULL_URL}`,
+    },
+  },
+  reviewBody: `${sportPage[0]?.attributes?.testimonial?.testimonial}`,
+  publisher: {
+    "@type": "Organization",
+    name: `${import.meta.env.PUBLIC_SITE_ID}`,
+    url: `${import.meta.env.PUBLIC_FULL_URL}`,
+    logo: `${sportPage[0]?.attributes?.images?.data?.attributes?.url}`,
+  },
+};
+combinedSchema.push(reviewSchema);
+
+// FAQ Schema
+const allFAQs = sportPage[0]?.attributes?.faqs as FaqsType[];
+if (allFAQs.length > 0) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allFAQs.map(({ answer, question }) => {
+      return {
+        "@type": "Question",
+        name: `${question}`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${answer}`,
+        },
+      };
+    }),
+  };
+  combinedSchema.push(faqSchema);
+}
+
+const howTo = sportPage[0]?.attributes?.howTo as unknown as HowToGroup;
+
+if (howTo) {
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `${howTo?.title}`,
+    totalTime: "PT15M",
+    description: `${howTo?.title}`,
+    tool: [
+      {
+        "@type": "HowToTool",
+        name: "smartphone, PC, tablet, metodo di pagamento",
+      },
+    ],
+    step: howTo?.howToGroup?.map(({ heading, copy, image }, i: number) => {
+      return {
+        "@type": "HowToStep",
+        url: `${sportPage[0]?.attributes?.slug}#step0${i + 1}`,
+        name: heading,
+        itemListElement: {
+          "@type": "HowToDirection",
+          text: copy,
+        },
+        ...(image?.data?.attributes && {
+          image: {
+            "@type": "ImageObject",
+            url: image?.data?.attributes.url,
+          },
+        }),
+      };
+    }),
+  };
+  combinedSchema.push(howToSchema);
+}
+
+// Tell the browser to always check the freshness of the cache
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+// CDN Cache Control
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
+---
+
+<MainLayout
+  seoData={seo}
+  crumbLocation="casino-page"
+  crumbTitle={sportPage[0]?.attributes?.title}
+  otherSchema={combinedSchema}
+>
+  <Breadcrumb
+    breadcrumbs={[
+      { breadCrumbText: sportPage[0]?.attributes?.title, breadCrumbUrl: null },
+    ]}
+    breadcrumbKey="casinoBreadcrumbs"
+  />
+  <div class="casino-page">
+    <div class="iframe-bkg curve rounded-b-3xl pb-3">
+      <div class="section-wrapper">
+        <div class="row heading-date">
+          <div class="text-white">
+            <h1 class="font-medium m-0">
+              {sportPage[0]?.attributes?.heading}
+            </h1>
+            <div class="md:flex items-center gap-2">
+              <TimeDate
+                timeDate={sportPage[0]?.attributes?.updatedAt}
+                {translationStore}
+              />
+              <HeaderAuthor author={sportPage[0]?.attributes?.author} />
+            </div>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-4 gap-5 mt-5 md:mt-12">
+          <div class="bg-white flex flex-col p-3 rounded relative z-10">
+            <div>
+              <Link
+                href={`${sportPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
+                class="block rounded border border-[transparent]"
+                rel="sponsored"
+              >
+                <Image
+                  src={sportPage[0]?.attributes?.images?.data?.attributes?.url}
+                  classes="w-full rounded"
+                  alt={sportPage[0]?.attributes?.title}
+                  imageWidth={330}
+                  ,
+                  imageHeight={150}
+                />
+              </Link>
+            </div>
+            <div class="mt-2 flex items-center justify-center">
+              <RatingStar
+                avgRating={sportPage[0]?.attributes?.ratingAvg}
+                ratingClasses="flex-col"
+                ratingCount={sportPage[0].attributes.ratingCount}
+                itemId={sportPage[0].id + ""}
+                ratingType={"casinos"}
+                translations={translationStore ?? {}}
+                client:load
+              />
+            </div>
+            <div class="flex justify-center">
+              <a class="mt-1 text-xs italic underline" href="#sport-review">
+                {translationStore?.userComments}
+              </a>
+            </div>
+            <div class="flex flex-col my-5">
+              <div class="flex items-center mb-3">
+                <span class="block"
+                  ><Icon
+                    name="pounds-img"
+                    height="25px"
+                    width="40px"
+                    class="inline-block m-[2px]"
+                  /></span
+                >
+                <div class="flex ml-5 font-bold">
+                  <Link
+                    externalInNewTab={true}
+                    class="text-sm text-decoration-underline text-blue-300"
+                    href={`${sportPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
+                  >
+                    {sportPage[0]?.attributes?.casinoBonus?.bonusLabel}
+                  </Link>
+                </div>
+              </div>
+              <table class="casino-details-box">
+                <tbody>
+                  <tr class="border-b-0">
+                    <td>
+                      <div class="flex items-center">
+                        <span class="block mr-5"
+                          ><Icon
+                            name="money-bag-black"
+                            height="25px"
+                            width="40px"
+                            class="inline-block m-[2px]"
+                          /></span
+                        >
+                        <span class="bonus-heading"
+                          >{translationStore?.reloadBonus}</span
+                        >
+                      </div>
+                    </td>
+                    <td>
+                      <div class="bonus-value font-bold pl-1">
+                        {
+                          sportPage[0]?.attributes?.bonusSection?.bonusAmount
+                            ? `${sportPage[0]?.attributes?.bonusSection?.bonusAmount}€`
+                            : ""
+                        }
+                        {
+                          sportPage[0]?.attributes?.bonusSection?.cashBack &&
+                          sportPage[0]?.attributes?.bonusSection
+                            ?.bonusAmount ? (
+                            <br />
+                          ) : (
+                            ""
+                          )
+                        }
+                        {
+                          sportPage[0]?.attributes?.bonusSection?.cashBack
+                            ? `${sportPage[0]?.attributes?.bonusSection?.cashBack}`
+                            : ""
+                        }
+                        {
+                          (sportPage[0]?.attributes?.bonusSection?.cashBack ||
+                            sportPage[0]?.attributes?.bonusSection
+                              ?.bonusAmount) &&
+                            sportPage[0]?.attributes?.bonusSection
+                              ?.freeSpin && <br />
+                        }
+                        {
+                          sportPage[0]?.attributes?.bonusSection?.freeSpin &&
+                            `${sportPage[0]?.attributes?.bonusSection?.freeSpin}`
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="border-b-0">
+                    <td>
+                      <div class="flex items-center">
+                        <span class="block mr-5"
+                          ><Icon
+                            name="gift-bag-black"
+                            height="25px"
+                            width="40px"
+                            class="inline-block m-[2px]"
+                          /></span
+                        >
+                        <span class="bonus-heading"
+                          >{translationStore?.withoutDeposit}</span
+                        >
+                      </div>
+                    </td>
+                    <td>
+                      <div class="bonus-value font-bold pl-1">
+                        {
+                          sportPage[0]?.attributes?.noDepositSection
+                            ?.bonusAmount
+                            ? `${
+                                sportPage[0]?.attributes?.noDepositSection
+                                  ?.bonusAmount || 0
+                              }€ ${translationStore?.withoutDeposit}`
+                            : ""
+                        }
+                        {
+                          sportPage[0]?.attributes?.noDepositSection &&
+                          sportPage[0]?.attributes?.noDepositSection
+                            ?.bonusAmount &&
+                          sportPage[0]?.attributes?.freeSpinsSection &&
+                          sportPage[0]?.attributes?.freeSpinsSection
+                            ?.bonusAmount ? (
+                            <>
+                              <span>+</span>
+                              <br />
+                            </>
+                          ) : (
+                            ""
+                          )
+                        }
+                        {
+                          sportPage[0]?.attributes?.freeSpinsSection &&
+                          sportPage[0]?.attributes?.freeSpinsSection
+                            ?.bonusAmount
+                            ? `${
+                                sportPage[0]?.attributes?.freeSpinsSection
+                                  ?.bonusAmount || 0
+                              } ${translationStore?.freeSpins}`
+                            : ""
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="mb-5">
+              <Link
+                class="btn btn-misc block w-full uppercase"
+                externalInNewTab={true}
+                href={`${sportPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
+              >
+                {translationStore?.accessWebsite}
+              </Link>
+            </div>
+            <Collapse
+              id="termsConditions"
+              label={translationStore?.termsConditions}
+              containerClass="mt-1 text-[12px]"
+              labelClass="ml-3 font-bold text-[16px] cursor-pointer"
+              checked={true}
+            >
+              <Icon
+                slot="icon"
+                name="up-arrow"
+                width="15px"
+                id="terms-toggle-icon"
+                class="inline-block m-[2px] peer-checked:group-[]:rotate-180"
+              />
+              <span slot="content">{termsAndConditionsCleaned}</span>
+            </Collapse>
+          </div>
+
+          <div class="md:col-span-3">
+            <div class="bg-white p-3 casino-summary-wrapper rounded">
+              <div class="grid md:grid-cols-2 gap-3 mb-5">
+                <div
+                  class="casino-table-div p-2 features-div bg-white rounded-lg"
+                >
+                  <table class="sc-9ded7dbe-10 jWaRDy characteristics w-full">
+                    <thead>
+                      <tr>
+                        <th colspan="2" class="p-0 text-white">
+                          <div class="summary-table-heading tb-summary-heading">
+                            <span class="block mr-4 bg-white rounded-full p-1">
+                              <Icon
+                                name="globe"
+                                width="25px"
+                                class="inline-block m-[2px]"
+                              />
+                            </span>
+                            <div class="font-bold">
+                              {translationStore?.features}
+                            </div>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- {casinoFeatures &&  -->
+                      {
+                        casinoFeatures.map(
+                          (cf: CasinoFeatures, index: number) =>
+                            index === casinoFeatures.length - 1 ? (
+                              <tr>
+                                <td class="p-2">
+                                  <Icon name="check-circle" height="25px" />
+                                </td>
+                                <td>{cf.feature}</td>
+                              </tr>
+                            ) : (
+                              <tr class="border-b border-black">
+                                <td class="p-2">
+                                  <Icon name="check-circle" height="25px" />
+                                </td>
+                                <td>{cf.feature}</td>
+                              </tr>
+                            )
+                        )
+                      }
+                      <!-- } -->
+                    </tbody>
+                  </table>
+                </div>
+                <div
+                  class="casino-table-div p-2 general-div bg-white rounded-lg"
+                >
+                  <table class="sc-9ded7dbe-10 jWaRDy w-full">
+                    <thead>
+                      <tr>
+                        <th colspan="2" class="p-0 text-white">
+                          <div class="summary-table-heading tb-summary-heading">
+                            <span class="block mr-4 bg-white rounded-full p-1">
+                              <Icon
+                                name="check-list"
+                                width="25px"
+                                fill="#01579B"
+                              />
+                            </span>
+                            <div class="font-bold">
+                              {translationStore?.generalInfo}
+                            </div>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="border-b-1">
+                        <td>
+                          <div class="flex items-center">
+                            <span class="block mr-2"
+                              ><Icon
+                                name="external-link"
+                                width="20px"
+                                fill="#01579B"
+                              /></span
+                            >
+                            {translationStore?.website}
+                          </div>
+                        </td>
+                        <td class=""
+                          >{
+                            sportPage[0]?.attributes?.sportGeneralInfo?.website
+                          }</td
+                        >
+                      </tr>
+                      <tr class="border-b-1">
+                        <td>
+                          <div class="flex items-center">
+                            <span class="block mr-2"
+                              ><Icon
+                                name="people"
+                                width="20px"
+                                fill="#01579B"
+                              /></span
+                            >
+                            {translationStore?.society}
+                          </div>
+                        </td>
+                        <td
+                          >{
+                            sportPage[0]?.attributes?.sportGeneralInfo?.societa
+                          }</td
+                        >
+                      </tr>
+                      <tr class="border-b-1">
+                        <td>
+                          <div class="flex items-center">
+                            <span class="block mr-2"
+                              ><Icon
+                                name="badge"
+                                width="20px"
+                                fill="#01579B"
+                              /></span
+                            >
+                            {translationStore?.license}
+                          </div>
+                        </td>
+                        <td
+                          >{
+                            sportPage[0]?.attributes?.sportGeneralInfo
+                              ?.regulationLicense
+                          }</td
+                        >
+                      </tr>
+                      <tr class="border-b-1">
+                        <td>
+                          <div class="flex items-center">
+                            <span class="block mr-2"
+                              ><Icon
+                                name="phone"
+                                width="20px"
+                                fill="#01579B"
+                              /></span
+                            >
+                            {translationStore?.phone}
+                          </div>
+                        </td>
+                        <td
+                          >{
+                            sportPage[0]?.attributes?.sportGeneralInfo
+                              ?.telephone
+                          }</td
+                        >
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="flex items-center">
+                            <span class="block mr-2"
+                              ><Icon
+                                name="email"
+                                width="20px"
+                                fill="#01579B"
+                              /></span
+                            >
+                            {translationStore?.email}
+                          </div>
+                        </td>
+                        <td
+                          >{
+                            sportPage[0]?.attributes?.sportGeneralInfo?.email
+                          }</td
+                        >
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="testimonial-wrapper rounded-lg">
+                <div class="casino-detail-testimonial">
+                  <div class="flex flex-col justify-evenly p-3">
+                    <div class="flex justify-between">
+                      <div
+                        class="flex testimonial_author w-full justify-around md:justify-start"
+                      >
+                        <div class="approval-author mr-10">
+                          <div class="review_author_img mr-2">
+                            <Images
+                              src={sportPage[0]?.attributes?.author?.data
+                                ?.attributes?.photo?.data?.attributes?.url}
+                              alt="Reviewer Image"
+                              imageWidth={60}
+                              imageHeight={60}
+                              imageResponsive={false}
+                              classes=" rounded-full"
+                            />
+                          </div>
+                          <div class="flex flex-col details-container">
+                            <div class="approval-author-details">
+                              <span>{translationStore?.reviewedBy}</span>
+                              <span class="">
+                                <Link href={reviewAuthorPageURL}>
+                                  {
+                                    sportPage[0]?.attributes?.author?.data
+                                      ?.attributes?.firstName +
+                                      " " +
+                                      sportPage[0]?.attributes?.author?.data
+                                        ?.attributes?.lastName
+                                  }
+                                </Link>
+                              </span>
+                              <span
+                                >{
+                                  sportPage[0]?.attributes?.author?.data
+                                    ?.attributes?.jobTitle
+                                }</span
+                              >
+                            </div>
+                          </div>
+                        </div>
+                        <div class="approval-author">
+                          <div class="review_author_img mr-2">
+                            <Image
+                              src={sportPage[0]?.attributes?.testimonial
+                                ?.approvedBy?.data?.attributes?.photo?.data
+                                ?.attributes?.url}
+                              alt="Approver image"
+                              imageWidth={60}
+                              imageHeight={60}
+                              imageResponsive={false}
+                              classes=" rounded-full"
+                            />
+                          </div>
+                          <div class="flex flex-col details-container">
+                            <div class="approval-author-details">
+                              <span>{translationStore?.approvedBy}</span>
+                              <span class="">
+                                <Link href={approvedAuthorPageURL}>
+                                  {
+                                    sportPage[0]?.attributes?.testimonial
+                                      ?.approvedBy?.data?.attributes
+                                      ?.firstName +
+                                      " " +
+                                      sportPage[0]?.attributes?.testimonial
+                                        ?.approvedBy?.data?.attributes?.lastName
+                                  }
+                                </Link>
+                              </span>
+                              <span
+                                >{
+                                  sportPage[0]?.attributes?.testimonial
+                                    ?.approvedBy?.data?.attributes?.jobTitle
+                                }</span
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="hidden md:block">
+                        <Icon name="adm-icons" width="250px" />
+                      </div>
+                    </div>
+                    <div class="mt-3 mb-10 flex justify-start">
+                      <ReadOnlyRatings
+                        avgRating={sportPage[0]?.attributes?.authorRatings}
+                        showVotes={false}
+                        ratingClasses={"flex-row justify-center items-center"}
+                        {translationStore}
+                      />
+                    </div>
+
+                    <blockquote class="testimonial">
+                      <i>"<Fragment set:html={testimonialCleaned} />"</i>
+                    </blockquote>
+                  </div>
+                </div>
+              </div>
+              <div class="grid md:grid-cols-2 mt-5">
+                <div
+                  class="border-b md:border-r md:border-b-0 mb-5 pb-5 border-gray-500"
+                >
+                  <div class="flex py-3 items-center mb-3">
+                    <span class="block mr-3"
+                      ><Icon name="card-icon" height="25px" /></span
+                    >
+                    <h5 class="text-xl font-bold text-white !mt-0">
+                      {translationStore?.payment}
+                    </h5>
+                  </div>
+                  <div class="flex flex-wrap">
+                    {
+                      sportPage[0]?.attributes?.paymentOptions
+                        ?.wireTransfer && (
+                        <span class="payment-icon">
+                          <Icon
+                            name="payments/wire"
+                            width="45px"
+                            height="28px"
+                          />
+                        </span>
+                      )
+                    }
+
+                    {
+                      sportPage[0]?.attributes?.paymentOptions?.skrill && (
+                        <span class="payment-icon">
+                          <Icon
+                            name="payments/skrill"
+                            width="45px"
+                            height="28px"
+                          />
+                        </span>
+                      )
+                    }
+
+                    {
+                      sportPage[0]?.attributes?.paymentOptions?.postepay && (
+                        <span class="payment-icon">
+                          <Icon
+                            name="payments/postepay"
+                            width="45px"
+                            height="28px"
+                          />
+                        </span>
+                      )
+                    }
+
+                    {
+                      sportPage[0]?.attributes?.paymentOptions?.paysafe && (
+                        <span class="payment-icon">
+                          <Icon
+                            name="payments/paysafe"
+                            width="45px"
+                            height="28px"
+                          />
+                        </span>
+                      )
+                    }
+
+                    {
+                      sportPage[0]?.attributes?.paymentOptions?.paypal && (
+                        <span class="payment-icon">
+                          <Icon
+                            name="payments/paypal"
+                            width="45px"
+                            height="28px"
+                          />
+                        </span>
+                      )
+                    }
+
+                    {
+                      sportPage[0]?.attributes?.paymentOptions?.neteller && (
+                        <span class="payment-icon">
+                          <Icon
+                            name="payments/neteller"
+                            width="45px"
+                            height="28px"
+                          />
+                        </span>
+                      )
+                    }
+
+                    {
+                      sportPage[0]?.attributes?.paymentOptions?.uKash && (
+                        <span class="payment-icon">
+                          <Icon
+                            name="payments/ukash"
+                            width="45px"
+                            height="28px"
+                          />
+                        </span>
+                      )
+                    }
+
+                    {
+                      sportPage[0]?.attributes?.paymentOptions?.creditCard && (
+                        <span class="payment-icon">
+                          <Icon
+                            name="payments/debit"
+                            width="45px"
+                            height="28px"
+                          />
+                        </span>
+                      )
+                    }
+                  </div>
+                </div>
+                <div class="md:ml-4">
+                  <div class="flex py-3 text-white items-center mb-3">
+                    <span class="block mr-3"
+                      ><Icon
+                        name="software-card"
+                        height="25px"
+                        fill="#01579B"
+                      /></span
+                    >
+                    <h5 class="text-xl font-bold text-white !mt-0">
+                      {translationStore?.software}
+                    </h5>
+                  </div>
+                  <div class="flex">
+                    <div class="provider-img-container">
+                      {
+                        sportPage[0]?.attributes?.providers?.data && (
+                          <ProviderIcons
+                            providers={
+                              sportPage[0]?.attributes?.providers?.data
+                            }
+                            client:load
+                          />
+                        )
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-wrapper">
+      <div class="fixed block md:hidden right-0 bottom-3 h-10 w-full z-[999]">
+        <div class="flex justify-between p-2 bg-white">
+          <div class="border border-grey-300 rounded-r-lg mr-2">
+            <Images
+              src={sportPage[0]?.attributes?.images?.data?.attributes?.url}
+              alt={sportPage[0]?.attributes?.title}
+              imageWidth={80}
+              imageHeight={0}
+            />
+          </div>
+          <Link
+            class="btn btn-misc block w-full uppercase"
+            externalInNewTab={true}
+            href={`${sportPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
+          >
+            {translationStore?.accessWebsite}
+          </Link>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="col-span-1 md:col-span-3">
+          <QuickLinks data={sportPage[0]} {translationStore} />
+
+          <ImageCarousel
+            data={sportPage[0]?.attributes.blocks[0]}
+            client:visible
+          />
+
+          <div class="row qc">
+            <!-- <div class="" set:html={sportPage[0]?.attributes?.introduction} /> -->
+            <ContentBlock
+              pageContent={sportPage[0]?.attributes?.introduction}
+            />
+          </div>
+
+          {
+            sportPage[0]?.attributes?.howTo && (
+              <h2>{sportPage[0]?.attributes?.howTo.title}</h2>
+            )
+          }
+
+          {
+            howTo &&
+              howTo?.howToGroup.map((howTo: HowToType, i: number) => (
+                <HowTo
+                  count={i + 1}
+                  howToImage={howTo?.image?.data?.attributes?.url}
+                  howToWidth={howTo?.image?.data?.attributes?.width}
+                  howToHeight={howTo?.image?.data?.attributes?.height}
+                  howToCopy={howTo.copy}
+                  howToHeading={howTo.heading}
+                />
+              ))
+          }
+
+          {
+            sportPage[0]?.attributes?.content1 && (
+              <div>
+                <ContentBlock
+                  pageContent={sportPage[0]?.attributes?.content1}
+                />
+              </div>
+            )
+          }
+
+          {
+            sportPage[0]?.attributes?.content2 && (
+              <div>
+                <ContentBlock
+                  pageContent={sportPage[0]?.attributes?.content2}
+                />
+              </div>
+            )
+          }
+
+          {
+            games.length > 0 && (
+              <div class="p-2 backdrop-blur-[6px] shadow-[0px_0px_12px_rgba(63,230,252,0.6)] bg-[rgba(255,255,255,0.3)] border border-[rgba(255,255,255,0.3)] rounded-lg">
+                <GameListBlock data={games} {translationStore} />
+              </div>
+            )
+          }
+
+          {
+            sportPage[0]?.attributes?.content3 && (
+              <div class="mt-3">
+                <ContentBlock
+                  pageContent={sportPage[0]?.attributes?.content3}
+                />
+              </div>
+            )
+          }
+
+          {
+            sportPage[0]?.attributes?.proscons && (
+              <ProsCons
+                heading={sportPage[0]?.attributes?.proscons?.heading}
+                pros={sportPage[0]?.attributes?.proscons?.pros}
+                cons={sportPage[0]?.attributes?.proscons?.cons}
+                prosImage={sportPage[0]?.attributes?.proscons?.proImage}
+                consImage={sportPage[0]?.attributes?.proscons?.conImage}
+              />
+            )
+          }
+
+          {
+            sportPage[0]?.attributes?.content4 && (
+              <div class="mt-3">
+                <ContentBlock
+                  pageContent={sportPage[0]?.attributes?.content4}
+                />
+              </div>
+            )
+          }
+
+          <div class="">
+            <CasinoComparison
+              data={sportPage[0]?.attributes?.sportComparison.data}
+              {translationStore}
+            />
+          </div>
+          {
+            sportPage[0]?.attributes?.faqs && (
+              <div class="mt-3 qc">
+                <div class="mb-4">
+                  <h2 class="faq-title">{translationStore?.faq}</h2>
+                </div>
+
+                <div class="mb-5">
+                  {sportPage[0]?.attributes?.faqs.map((faq: any) => (
+                    <Faqs data={faq} />
+                  ))}
+                </div>
+              </div>
+            )
+          }
+
+          <AuthorCard
+            data={sportPage[0].attributes.author}
+            {translationStore}
+          />
+
+          <div id="sport-review">
+            <UserReviews
+              reviewTypeSlug={sportPage[0].attributes.slug}
+              reviewTypeName={sportPage[0].attributes.title}
+              reviewTypeId={sportPage[0].id}
+              reviewType={"SPORT"}
+              translations={translationStore ?? {}}
+              client:load
+            />
+          </div>
+        </div>
+
+        <div class="col-span-1 hidden md:block">
+          <div class="bg-white flex flex-col p-3 rounded sticky top-3">
+            <div>
+              <Link
+                href={`${sportPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
+                class="block rounded border border-[transparent]"
+                externalInNewTab={true}
+              >
+                <Image
+                  src={sportPage[0]?.attributes?.images?.data?.attributes?.url}
+                  classes="w-full rounded"
+                  alt={sportPage[0]?.attributes?.title}
+                  imageWidth={330}
+                  ,
+                  imageHeight={150}
+                />
+              </Link>
+            </div>
+            <div class="mt-2 flex items-center justify-center">
+              <RatingStar
+                avgRating={sportPage[0]?.attributes?.ratingAvg}
+                ratingClasses="flex-col"
+                ratingCount={sportPage[0].attributes.ratingCount}
+                itemId={sportPage[0].id + ""}
+                ratingType={"casinos"}
+                translations={translationStore ?? {}}
+                client:load
+              />
+              <!-- <ReadOnlyRatings
+                avgRating={sportPage[0]?.attributes?.ratingAvg}
+                showVotes={true}
+                ratingClasses="flex-col"
+                ratingCount={sportPage[0].attributes.ratingCount}
+              /> -->
+            </div>
+            <div class="flex flex-col my-10">
+              <div class="flex items-center mb-3">
+                <span class="block"
+                  ><Icon
+                    name="pounds-img"
+                    height="25px"
+                    width="40px"
+                    class="inline-block m-[2px]"
+                  /></span
+                >
+                <div class="flex ml-5 font-bold">
+                  <Link
+                    externalInNewTab={true}
+                    class="text-sm text-decoration-underline text-blue-300"
+                    href={`${sportPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
+                  >
+                    {sportPage[0]?.attributes?.casinoBonus?.bonusLabel}
+                  </Link>
+                </div>
+              </div>
+              <table class="casino-details-box">
+                <tbody>
+                  <tr class="border-b-0">
+                    <td>
+                      <div class="flex items-center">
+                        <span class="block mr-5"
+                          ><Icon
+                            name="money-bag-black"
+                            height="25px"
+                            width="40px"
+                            class="inline-block m-[2px]"
+                          /></span
+                        >
+                        <span class="bonus-heading"
+                          >{translationStore?.reloadBonus}</span
+                        >
+                      </div>
+                    </td>
+                    <td>
+                      <div class="bonus-value font-bold pl-1">
+                        {
+                          sportPage[0]?.attributes?.bonusSection?.bonusAmount
+                            ? `${sportPage[0]?.attributes?.bonusSection?.bonusAmount}€`
+                            : ""
+                        }
+                        {
+                          sportPage[0]?.attributes?.bonusSection?.cashBack &&
+                          sportPage[0]?.attributes?.bonusSection
+                            ?.bonusAmount ? (
+                            <br />
+                          ) : (
+                            ""
+                          )
+                        }
+                        {
+                          sportPage[0]?.attributes?.bonusSection?.cashBack
+                            ? `${sportPage[0]?.attributes?.bonusSection?.cashBack}`
+                            : ""
+                        }
+                        {
+                          (sportPage[0]?.attributes?.bonusSection?.cashBack ||
+                            sportPage[0]?.attributes?.bonusSection
+                              ?.bonusAmount) &&
+                            sportPage[0]?.attributes?.bonusSection
+                              ?.freeSpin && <br />
+                        }
+                        {
+                          sportPage[0]?.attributes?.bonusSection?.freeSpin &&
+                            `${sportPage[0]?.attributes?.bonusSection?.freeSpin}`
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="border-b-0">
+                    <td>
+                      <div class="flex items-center">
+                        <span class="block mr-5"
+                          ><Icon
+                            name="gift-bag-black"
+                            height="25px"
+                            width="40px"
+                            class="inline-block m-[2px]"
+                          /></span
+                        >
+                        <span class="bonus-heading"
+                          >{translationStore?.withoutDeposit}</span
+                        >
+                      </div>
+                    </td>
+                    <td>
+                      <div class="bonus-value font-bold pl-1">
+                        {
+                          sportPage[0]?.attributes?.noDepositSection
+                            ?.bonusAmount
+                            ? `${
+                                sportPage[0]?.attributes?.noDepositSection
+                                  ?.bonusAmount || 0
+                              }€ ${translationStore?.withoutDeposit}`
+                            : ""
+                        }
+                        {
+                          sportPage[0]?.attributes?.noDepositSection &&
+                          sportPage[0]?.attributes?.noDepositSection
+                            ?.bonusAmount &&
+                          sportPage[0]?.attributes?.freeSpinsSection &&
+                          sportPage[0]?.attributes?.freeSpinsSection
+                            ?.bonusAmount ? (
+                            <>
+                              <span>+</span>
+                              <br />
+                            </>
+                          ) : (
+                            ""
+                          )
+                        }
+                        {
+                          sportPage[0]?.attributes?.freeSpinsSection &&
+                          sportPage[0]?.attributes?.freeSpinsSection
+                            ?.bonusAmount
+                            ? `${
+                                sportPage[0]?.attributes?.freeSpinsSection
+                                  ?.bonusAmount || 0
+                              } ${translationStore?.freeSpins}`
+                            : ""
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="mb-5">
+              <Link
+                href={`${sportPage[0]?.attributes?.casinoBonus?.bonusUrl}`}
+                class="btn btn-misc block w-full uppercase"
+                externalInNewTab={true}
+              >
+                {translationStore?.accessWebsite}
+              </Link>
+            </div>
+            <Collapse
+              id="termsConditions-2"
+              label={translationStore?.termsConditions}
+              containerClass="mt-1 text-[12px]"
+              labelClass="ml-3 font-bold text-[16px] cursor-pointer"
+              checked={true}
+            >
+              <Icon
+                slot="icon"
+                name="up-arrow"
+                width="15px"
+                id="terms-toggle-icon"
+                class="inline-block m-[2px] peer-checked:group-[]:rotate-180"
+              />
+              <span slot="content">{termsAndConditionsCleaned}</span>
+            </Collapse>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style lang="postcss">
+	.expanded {
+        display: none;
+    }
+
+	.casino-details-box {
+		font-size: 14px;
+		table {
+			border: none;
+		}
+
+		td {
+			border: none;
+			padding: 4px 0px;
+		}
+	}
+
+  h1 {
+    @apply text-xl leading-[26px] md:text-3xl lg:text-4xl text-white;
+  }
+
+	h1,
+	h5 {
+		margin-bottom: 0px !important;
+	}
+
+	.terms-text {
+		font-size: 12px !important;
+		p {
+			font-size: 12px !important;
+		}
+	}
+
+	.casino-table-div {
+		table th {
+			background-color: transparent;
+		}
+
+		table td {
+			padding: 5px;
+		}
+
+		table td:last-child {
+			border: none;
+		}
+
+		table tr {
+			border-bottom-color: #000;
+		}
+	}
+
+	.tb-summary-heading {
+		@apply -mt-2 -mr-2 -ml-2 mb-2 rounded-t-lg flex p-3 bg-purple-700 items-center;
+	}
+
+	.approval-author {
+		@apply flex flex-col md:flex-row items-center approval;
+	}
+
+	.approval-author-details {
+		@apply flex flex-col items-center md:items-start text-xs;
+	}
+
+	.testimonial-wrapper {
+		background: #eef4f9;
+	}
+
+	.payment-icon {
+		@apply block bg-white rounded p-1 mr-2 mb-2;
+	}
+
+	.casino-summary-wrapper {
+		background: rgba(255, 255, 255, 0.3);
+		box-shadow: 0px 0px 12px rgba(63, 230, 252, 0.6);
+		backdrop-filter: blur(6px);
+		border: 1px solid rgba(255, 255, 255, 0.3);
+	}
+	.casino-page {
+		position: relative;
+
+
+		.sticky-casino-header {
+			display: none;
+			bottom: 10px;
+			left: 10px;
+			background-color: #fff;
+			z-index: 9999;
+			border: 1px solid #00bcd4;
+			border-radius: 4px;
+
+			& > div {
+				flex-direction: column;
+				padding: 0;
+
+				.bonus-text {
+					text-align: center;
+					display: flex;
+					align-items: center;
+					align-self: center;
+					padding: 10px;
+
+					.termsAndConditions {
+						font-weight: 400;
+						font-size: 8px;
+						font-style: italic;
+						text-decoration: underline dotted;
+					}
+				}
+
+				.website-btn {
+					:global(a) {
+						text-align: center;
+						align-items: center;
+						display: flex;
+						text-transform: uppercase;
+						border-radius: 0;
+						color: white;
+						text-decoration: none;
+					}
+				}
+			}
+
+			@media (min-width: theme('screens.md')) {
+				top: 0px;
+				left: initial;
+				width: 100%;
+				height: 100px;
+				border: none;
+				border-radius: 0px;
+
+				& > div {
+					flex-direction: row;
+
+					.bonus-text {
+						padding: 0;
+					}
+				}
+			}
+		}
+
+		
+		:global(.sticky-casino-header.show) {
+			display: block !important;
+		}
+
+	
+		.heading-date {
+			:global(.sub-header) {
+				margin-bottom: 0 !important;
+			}
+		}
+
+	
+		.casino-details {
+			border: 1px solid rgb(198, 203, 207);
+
+			.logo-perks {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				.casino-img-and-rating {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+				}
+
+				.bonus-heading {
+					text-transform: uppercase;
+					font-size: 12px;
+				}
+
+				.bonus-value {
+					font-weight: bold;
+					color: #01579b;
+					font-size: 14px;
+				}
+
+				@media (min-width: theme('screens.md')) {
+					justify-content: flex-start;
+				}
+			}
+
+			.casino-detail-testimonial {
+				margin-top: 20px;
+
+				.testimonial {
+					color: rgb(71, 80, 89);
+					font-size: 15px;
+					padding-left: 50px;
+					padding-top: 15px;
+					background-size: 30px;
+					background-repeat: no-repeat;
+					background-image: url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cpath%20d%3D%22M464%20256h-80v-64a64.06%2064.06%200%200%201%2064-64h8a23.94%2023.94%200%200%200%2024-23.88V56a23.94%2023.94%200%200%200-23.88-24H448a160%20160%200%200%200-160%20160v240a48%2048%200%200%200%2048%2048h128a48%2048%200%200%200%2048-48V304a48%2048%200%200%200-48-48z%22%20style%3D%22opacity%3A0.4%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M176%20256H96v-64a64.06%2064.06%200%200%201%2064-64h8a23.94%2023.94%200%200%200%2024-23.88V56a23.94%2023.94%200%200%200-23.88-24H160A160%20160%200%200%200%200%20192v240a48%2048%200%200%200%2048%2048h128a48%2048%200%200%200%2048-48V304a48%2048%200%200%200-48-48z%22%20class%3D%22quote-left_svg__fa-primary%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E);
+				}
+
+				.testimonial_author {
+					font-size: 12px;
+					align-items: flex-start;
+					justify-content: center;
+
+					.approval {
+						display: flex;
+						flex-direction: column;
+						justify-content: center;
+						align-items: center;
+						max-width: 230px;
+
+						.review_author_img {
+							width: 60px;
+							height: 60px;
+							margin-right: 10px;
+							overflow: hidden;
+							flex-shrink: 0;
+
+							:global(img) {
+								border-radius: 50%;
+							}
+						}
+
+						.details-container {
+							align-items: center;
+							justify-content: center;
+
+							.approver-details {
+								text-align: center;
+							}
+						}
+					}
+					@media (min-width: theme('screens.md')) {
+						justify-content: space-around;
+						margin-left: 50px;
+
+						.approval {
+							flex-direction: row;
+
+							.details-container {
+								align-items: flex-start;
+
+								.approver-details {
+									text-align: left;
+								}
+							}
+						}
+					}
+
+					@media (min-width: theme('screens.lg')) {
+						justify-content: space-between;
+
+						.approval {
+						}
+					}
+				}
+
+				@media (max-width: 990px) {
+					.testimonial_author {
+						justify-content: space-between;
+						margin: 0px 20px;
+					}
+				}
+
+				@media (max-width: 490px) {
+					.testimonial_author {
+						justify-content: space-around;
+					}
+				}
+
+				@media (min-width: theme('screens.sm')) {
+				}
+
+				@media (min-width: theme('screens.md')) {
+					margin-top: 0px;
+				}
+			}
+
+			:global(.rating-container) {
+				flex-direction: row;
+				margin: 0;
+				padding: 0;
+				align-items: center;
+				justify-content: center;
+
+				:global(.rating-text) {
+					margin-left: 10px;
+					font-size: 12px;
+				}
+			}
+		}
+
+		
+		.casino-summary {
+			margin: 20px 0;
+			border-radius: 4px;
+			border: 1px solid silver;
+			background: white;
+
+			h3 {
+				margin: 0;
+				width: 100%;
+				color: #01579b;
+				padding: 10px;
+				background: #c6cbcf;
+			}
+
+			table {
+				margin: 0;
+				border: none;
+				box-shadow: none;
+				width: 100%;
+
+				tbody {
+					tr {
+						display: flex;
+						border-bottom: 1px solid rgb(198, 203, 207);
+						justify-content: space-between;
+						padding: 5px;
+
+						td {
+							text-align: end;
+							border: none;
+						}
+					}
+				}
+
+				td {
+					border: none;
+				}
+			}
+
+			.casino-summary-container {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-between;
+				font-size: 14px;
+
+				@media (min-width: theme('screens.xl')) {
+					gap: 10px;
+					margin: 10px;
+					flex-wrap: nowrap;
+				}
+
+				.casino-table-div {
+					flex-basis: 100%;
+					margin: 10px 10px 30px;
+					height: fit-content;
+					border: none;
+
+					@media (max-width: theme('screens.sm')) {
+						margin: 10px 10px 5px;
+					}
+
+					.characteristics {
+						font-weight: bold;
+					}
+
+					&.providers-div {
+						display: flex;
+						flex-direction: column;
+
+						.providers-inner {
+							@media (min-width: theme('screens.lg')) {
+								min-height: 100px;
+							}
+
+							
+
+							.provider-img-container {
+								display: flex;
+								flex-wrap: wrap;
+								padding: 5px;
+								gap: 2px;
+								justify-content: center;
+								max-width: 235px;
+								margin: 0 auto;
+
+								:global(svg) {
+									display: inline-block;
+									margin: 2px;
+									background: var(--bs-payment-bkg);
+									border-radius: 4px !important;
+									border: 1px solid var(--bs-payment-border) !important;
+									
+									&:last-child {
+										border: none !important;
+									}
+								}
+							}
+						}
+					}
+
+					&.bonus-div {
+						thead {
+						}
+
+						tbody {
+							th {
+								margin-right: 20px;
+								text-transform: capitalize;
+								font-size: 14px;
+								font-weight: normal;
+							}
+							tr {
+								td {
+									cursor: pointer;
+									font-size: 14px;
+									font-weight: bold;
+
+									a {
+										text-decoration: underline;
+									}
+								}
+							}
+						}
+					}
+
+					&.features-div {
+						td {
+							flex-basis: 90%;
+							text-align: left;
+						}
+					}
+
+					&.general-div {
+						th {
+							font-weight: normal;
+						}
+
+						td {
+							font-weight: bold;
+						}
+					}
+
+					@media (min-width: theme('screens.sm')) {
+						flex-basis: 45%;
+					}
+
+					@media (min-width: theme('screens.xl')) {
+						margin: 0;
+						flex-basis: auto;
+
+						&.providers-div {
+							min-width: 230px;
+						}
+						&.general-div {
+							min-width: 280px;
+						}
+					}
+
+					.summary-table-heading {
+						gap: 5%;
+						display: flex;
+						padding: 0 20px;
+
+						border: 1px solid #c6cbcf;
+						border-radius: 4px;
+						background: #e0e3e6;
+
+						:global(svg) {
+							align-self: center;
+							fill: #01579b;
+							width: 15px;
+							height: 15px;
+						}
+
+						h5 {
+							text-transform: capitalize;
+							font-size: 14px;
+							color: #475059;
+							margin: 10px 0;
+						}
+					}
+				}
+
+				:global(.provider-container) {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					flex-wrap: wrap;
+
+					:global(img) {
+						display: inline-block;
+						width: 45px;
+						height: 28px;
+						border-radius: 4px;
+						border: 1px solid var(--bs-provider-border);
+						margin: 3px;
+					}
+				}
+			}
+		}
+
+		.casino-games {
+			display: flex;
+			flex-wrap: wrap;
+			-webkit-box-pack: center;
+			justify-content: center;
+			margin-top: 20px;
+
+			:global(.gameCard) {
+				max-width: 178px !important;
+				min-width: auto !important;
+				margin: 2px;
+
+				:global(card-title) {
+					font-size: 14px;
+				}
+			}
+		}
+
+		
+		.comparison-table {
+			.table {
+				--bs-table-color: #475059;
+				--bs-table-bg: theme('colors.white');
+				tr {
+					&:first-of-type {
+						td {
+							padding: 0;
+						}
+					}
+
+					td {
+						width: 20%;
+						text-align: center;
+						vertical-align: middle;
+
+						&:first-of-type {
+							text-transform: uppercase;
+							font-weight: bold;
+						}
+
+						.software-list {
+							:global(img) {
+								margin: 5px;
+								border-radius: 4px;
+								border: 1px solid lightgray;
+							}
+						}
+
+						:global(.review-link) {
+							font-size: 10px;
+							color: #475059;
+							text-decoration: underline dotted;
+							margin-top: 5px;
+						}
+					}
+				}
+			}
+		}
+
+		:global(.author-wrapper) {
+			margin-top: 20px;
+		}
+	}
+
+	:global(.tooltip) {
+		:global(img) {
+			margin: 3px;
+			border-radius: 4px;
+		}
+	}
+
+	:global(.custom-tooltip) {
+		z-index: 9999;
+	}
+
+	:global(h1),
+	:global(h2),
+	:global(h3),
+	:global(h4),
+	:global(h5),
+	:global(h6),
+
+	:global(h1),
+	:global(h2),
+	:global(h3),
+	:global(h4),
+	:global(h5),
+	:global(h6) {
+		@apply mt-10;
+	}
+
+    :global(.blog-image) {
+				display: block;
+				width: 100%;
+				opacity: 0.9;
+				transition: all 0.3s cubic-bezier(0.37, 0.75, 0.61, 1.05) 0s;
+			}
+</style>
+</MainLayout>

@@ -5,7 +5,7 @@ import { Link } from 'astro-link'
 import dayjs from 'dayjs'
 
 // Types
-import type { CasinoComparison } from "../../../interfaces/common/types.ts"
+import type { SportComparison } from "../../../interfaces/common/types.ts"
 
 // Stores
 
@@ -16,6 +16,8 @@ import { noDepositBonus, welcomeBonus } from '../../../lib/casinoBonusLayout'
 import AstroCollapsible from "../helpers/collapsible.astro"
 import Images from '../helpers/images.astro'
 import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
+const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
+import { urlTranslate } from '../../../utils/data-store.util'
 
 // Tailwind Gradient Object for Dynamic Classes
 const badgesOptions = ([
@@ -26,8 +28,8 @@ const badgesOptions = ([
 
 const { data, isCustom = false, translationStore } = Astro.props
 
-// Snippet of Code to handle the differences betwen Custom Casino Comparison and Casino Pages Casino Comparison
-const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) => item.casino.data) : data
+// Snippet of Code to handle the differences betwen Custom Sport Comparison and Sport Pages Sport Comparison
+const sports = isCustom === true ? data.sports.map((item: SportComparison) => item.sport.data) : data
 
 ---
 <div class="rounded-[6px]">
@@ -36,14 +38,14 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
 	</div>
 	<div class="p-3 rounded-br-[6px] rounded-bl-[6px] bg-grey-100 gap-y-3 md:flex md-gap-y-0 md:gap-x-3">
         {
-            casinos.map((casinoData: any, i: number) => (
+            sports.map((sportData: any, i: number) => (
 
                 <div class="flex flex-col basis-1 md:basis-1/3 casino-logo">
                     <div class="">
                         {
-                           casinoData?.attributes?.Badges 
+                           sportData?.attributes?.Badges 
                             ? <span class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.exclusive}</span>
-                            :casinoData?.attributes?.publishedAt && dayjs().diff(casinoData?.attributes.publishedAt, 'day') <= 14 
+                            :sportData?.attributes?.publishedAt && dayjs().diff(sportData?.attributes.publishedAt, 'day') <= 14 
                             ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.newCasino}</span>
                             :<></>
                         }
@@ -54,15 +56,15 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                             {i <= 2 && <span class={`casino-logo__tag w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b ${badgesOptions[i]}`}>#{i + 1}</span>}
                             
                             <Link
-                                href={`${casinoData?.attributes?.casinoBonus?.bonusUrl}/`}
+                                href={`${sportData?.attributes?.sportBonus?.bonusUrl}/`}
                                 class={`block rounded border border-[transparent] bg-gradient-to-b ${i <= 2 && badgesOptions[i]}`}
                                 type="external"
                                 rel="sponsored"
                             >
                                 <Images 
                                     classes={'w-full rounded min-h-[89.6px]'}
-                                    src={casinoData?.attributes.images?.data?.attributes.url}
-                                    alt={casinoData?.attributes.title}
+                                    src={sportData?.attributes.images?.data?.attributes.url}
+                                    alt={sportData?.attributes.title}
                                     imageWidth={230}
                                     imageHeight={90}
                                     imageWatermark="(giochigatsby,legal_combined_sm_50856b6eb8.svg,-2,-5,10)"
@@ -74,14 +76,14 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                     <div class="flex flex-col items-center bg-white justify-center pb-3">
                         <div class="ratings">
                             <ReadOnlyRating
-                                avgRating={casinoData?.attributes.ratingAvg} ratingCount={casinoData?.attributes.ratingCount}
+                                avgRating={sportData?.attributes.ratingAvg} ratingCount={sportData?.attributes.ratingCount}
                                 showVotes={true}
                                 {translationStore} />
                         </div>
                         <div class="flex items-center">
                             <Link
                                 class="flex text-[14px] space-x-4 text-grey-500 mr-[11px]"
-                                href={`/casino/recensione/${casinoData?.attributes?.slug}/`}
+                                href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]['sport-pages']}/${sportData?.attributes?.slug}/`}
                             >
                                 <span class="underline">{translationStore?.review}</span>
                                 <Icon name="arrow-right" class="w-[14px] fill-grey-500" />
@@ -93,12 +95,12 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                             {translationStore?.casinoTableHeadingBonus}
                         </div>
                         <Link
-                            href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored"
-                            set:html={welcomeBonus(casinoData, translationStore?.reloadBonus)}>
+                            href={`${sportData?.attributes.sportBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored"
+                            set:html={welcomeBonus(sportData, translationStore?.reloadBonus)}>
                         </Link>
                         <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                            title={casinoData?.attributes.bonusSection?.termsConditions}
+                            title={sportData?.attributes.bonusSection?.termsConditions}
                             data-tooltip-placement="left">
                             {translationStore?.wageringRequirement} 
                             <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
@@ -111,7 +113,7 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                                 containerClass={'w-full md:hidden mt-2'}
                                 labelClass={'text-sm items-center text-grey-500'}
                                 icon={{name: 'angle', height: '20px', width: '20px', classes: 'fill-grey-500'}}
-                                content={casinoData?.attributes.bonusSection?.termsConditions}>
+                                content={sportData?.attributes.bonusSection?.termsConditions}>
                             </AstroCollapsible>
                         </div>
                     </div>
@@ -119,10 +121,10 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         <div class="text-[#7C838D] text-center text-sm leading-[18px] font-bold">
                             {translationStore?.withoutDeposit}
                         </div>
-                        <Link href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored">
+                        <Link href={`${sportData?.attributes.sportBonus?.bonusUrl}/`} class="flex underline text-center font-bold my-4" type="external" rel="sponsored">
                             <Fragment
                                 set:html={noDepositBonus(
-                                    casinoData,
+                                    sportData,
                                     {
                                         withoutDeposit: translationStore?.withoutDeposit,
                                         freeSpins: translationStore?.freeSpins})?.bonus
@@ -131,7 +133,7 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         </Link>
                         <span
                             class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                            title={noDepositBonus(casinoData, {
+                            title={noDepositBonus(sportData, {
                                         withoutDeposit: translationStore?.withoutDeposit,
                                         freeSpins: translationStore?.freeSpins
                                     })?.terms}
@@ -147,7 +149,7 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                                 labelClass={'text-sm items-center text-grey-500'}
                                 icon={{name: 'angle', height: '20px', width: '20px', classes: 'fill-grey-500'}}
                                 content={noDepositBonus(
-                                    casinoData,
+                                    sportData,
                                     {
                                         withoutDeposit: translationStore?.withoutDeposit,
                                         freeSpins: translationStore?.freeSpins
@@ -158,20 +160,20 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                     </div>
                     <div class="flex flex-col border-t border-grey-300 bg-white items-center justify-center h-full px-3 py-6">
                         <div class="h-full w-full flex flex-col justify-end items-center sm:justify-center">
-                            {casinoData?.attributes.casinoBonus?.bonusCode && <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{translationStore?.bonusCode}</div>}
-                            {casinoData?.attributes.casinoBonus?.bonusUrl &&
+                            {sportData?.attributes.sportBonus?.bonusCode && <div class="mb-[7px] text-[#212529] text-[14px] font-bold">{translationStore?.bonusCode}</div>}
+                            {sportData?.attributes.sportBonus?.bonusUrl &&
                                 <Link
-                                    href={`${casinoData?.attributes.casinoBonus?.bonusUrl}/`}
+                                    href={`${sportData?.attributes.sportBonus?.bonusUrl}/`}
                                     class="btn btn-misc uppercase text-white w-full mb-[7px] font-extrabold"
                                     type="external"
                                     rel="sponsored"
                                 >
-                                    {casinoData?.attributes.casinoBonus?.bonusCode ?casinoData?.attributes?.casinoBonus?.bonusCode : translationStore?.visitSite}
+                                    {sportData?.attributes.sportBonus?.bonusCode ?sportData?.attributes?.sportBonus?.bonusCode : translationStore?.visitSite}
                                 </Link>
                             }
                             <span
                                 class="hidden md:flex items-center cursor-pointer text-xs text-grey-500 underline mr-[7px]"
-                                title={casinoData?.attributes.termsAndConditions?.copy}>
+                                title={sportData?.attributes.termsAndConditions?.copy}>
                                 {translationStore?.termsConditions} 
                                 <Icon name="circle-info" width="12px" height="12px" class="fill-text-grey-500 ml-1" />
                             </span>
@@ -182,7 +184,7 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                                     containerClass={'w-full md:hidden mt-2'}
                                     labelClass={'text-sm items-center text-grey-500'}
                                     icon={{name: 'angle', height: '20px', width: '20px', classes: 'fill-grey-500'}}
-                                    content={casinoData?.attributes.termsAndConditions?.copy}>
+                                    content={sportData?.attributes.termsAndConditions?.copy}>
                                 </AstroCollapsible>
                             </div>
                         </div> 
