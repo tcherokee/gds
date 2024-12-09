@@ -11,13 +11,14 @@ import type { SportComparison } from "../../../interfaces/common/types.ts"
 
 // Helpers
 import { noDepositBonus, welcomeBonus } from '../../../lib/casinoBonusLayout'
+import { urlTranslate } from '../../../utils/data-store.util'
 
 // Components
 import AstroCollapsible from "../helpers/collapsible.astro"
 import Images from '../helpers/images.astro'
 import ReadOnlyRating from "../helpers/readOnlyRatings.astro"
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
-import { urlTranslate } from '../../../utils/data-store.util'
+
 
 // Tailwind Gradient Object for Dynamic Classes
 const badgesOptions = ([

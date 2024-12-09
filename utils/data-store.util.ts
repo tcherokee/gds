@@ -110,7 +110,7 @@ export const urlTranslate = {
     "popular-games-page": "/slot-machine/piu-giocate",
     "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
-    "sport-pages": "",
+    "sport-pages": "/scommesse",
   },
   gr: {
     "game-pages": "/gioco",
@@ -140,7 +140,7 @@ export const urlTranslate = {
     "popular-games-page": "/slot-machine/piu-giocate",
     "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
-    "sport-pages": "",
+    "sport-pages": "/scommesse",
   },
   csi: {
     "game-pages": "/slot-machines",
@@ -155,7 +155,7 @@ export const urlTranslate = {
     "popular-games-page": "/slot-machine/piu-giocate",
     "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
-    "sport-pages": "",
+    "sport-pages": "/scommesse",
   },
   csco: {
     "game-pages": "/slot-machines",
@@ -170,7 +170,7 @@ export const urlTranslate = {
     "popular-games-page": "/slot-machine/piu-giocate",
     "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
-    "sport-pages": "",
+    "sport-pages": "/scommesse",
   },
   csmx: {
     "game-pages": "/slot-machines",
@@ -185,7 +185,7 @@ export const urlTranslate = {
     "popular-games-page": "/slot-machine/piu-giocate",
     "top-rated-page": "/slot-machine/miglori",
     "software-page": "/slot-software",
-    "sport-pages": "",
+    "sport-pages": "/scommesse",
   },
   tgs: {
     "game-pages": "/slot",
@@ -200,6 +200,6 @@ export const urlTranslate = {
     "popular-games-page": "/gratis/mas-jugadas",
     "top-rated-page": "/gratis/mejores",
     "software-page": "/proveedores",
-    "sport-pages": "",
+    "sport-pages": "/scommesse",
   },
 };
