@@ -1,7 +1,7 @@
 import { persistentAtom } from "@nanostores/persistent";
 
 export type TRatings = {
-  type: "games" | "casinos";
+  type: "games" | "casinos" | "sports";
   id: number;
   ratingValue: number;
 };

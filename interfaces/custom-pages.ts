@@ -11,6 +11,7 @@ export type CustomPageAttributes = {
     data: Author;
   };
   showContentDate: boolean;
+  sideBarToShow: "casino" | "sport";
   blocks: Block[];
 };
 

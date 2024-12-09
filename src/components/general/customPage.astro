@@ -46,6 +46,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
 import CasinoSidebar from "../casino/casinoSidebar.astro";
 import Breadcrumbs from "../layout/breadcrumbs.astro";
 import AuthorCard from "./authorCard.astro";
+import SportSidebar from "../sport/sportSidebar.astro";
 
 // const path = Astro.params.path as string;
 const { path } = Astro.props;
@@ -481,7 +482,14 @@ Astro.response.headers.set(
         <AuthorCard data={customPage[0].attributes.author} {translationStore} />
       </div>
       <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-        <CasinoSidebar {translationStore} />
+        {
+          !customPage[0].attributes.sideBarToShow ||
+          customPage[0].attributes.sideBarToShow === "casino" ? (
+            <CasinoSidebar translationStore={translationStore} />
+          ) : (
+            <SportSidebar translationStore={translationStore} />
+          )
+        }
       </div>
     </div>
   </div>
