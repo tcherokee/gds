@@ -1,4 +1,6 @@
 ---
+import { getClientAddress } from "astro";
+
 // First and Third Party Plugins
 import qs from "qs";
 
@@ -33,6 +35,7 @@ import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 import { getTranslations } from "../../utils/api-requests";
 
 const ipAddress = Astro.clientAddress;
+let addressIP = getClientAddress(Astro.request);
 
 const sortStore = sortOptions.get();
 
@@ -157,8 +160,8 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ ipAddress }}>
-  console.log("IP Address", ipAddress);
+<script define:vars={{ ipAddress, addressIP }}>
+  console.log("IP Address", ipAddress, addressIP);
 </script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
