@@ -143,7 +143,7 @@
                     </td>
                     <td class="hidden flex-auto md:flex">
                       <div>
-                        <span class="message-content line-clamp-1 text-base">
+                        <span class="message-content prose line-clamp-1 text-base">
                           {@html message.content}
                         </span>
                       </div>
