@@ -83,7 +83,7 @@
         location.reload();
       } else {
         window.location.href = `${import.meta.env.BASE_URL}dashboard/`;
-        location.reload();
+        // location.reload();
       }
     } else {
       toast.error(res?.error.message);
