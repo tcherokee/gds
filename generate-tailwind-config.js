@@ -8,6 +8,7 @@ const siteId = process.env.SITE_ID || "default"; // Fallback to 'default' if not
 
 const configContent = `
 import forms from "@tailwindcss/forms";
+import typography from "@tailwindcss/typography";
 
 /** @type {import('tailwindcss').Config} */
 
@@ -70,7 +71,7 @@ module.exports = {
       active: 'ui~="active"',
     },
   },
-  plugins: [forms],
+  plugins: [forms, typography],
 };
 `;
 
