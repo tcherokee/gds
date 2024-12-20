@@ -24,6 +24,7 @@ export type FooterImage = {
 type LayoutAttributes = {
   [key: string | symbol]: any;
   legalText: string;
+  countries: string[];
   footerContent: string;
   cookiesHeaderText: string;
   cookiesDescription: string;

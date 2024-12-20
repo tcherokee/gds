@@ -1,4 +1,6 @@
 import type {
+  CountriesQueryOptions,
+  CountryQueryOptions,
   LayoutQueryOptions,
   MenuQueryOptions,
   TranslationsQueryOptions,
@@ -14,6 +16,9 @@ export const layoutQs = (): LayoutQueryOptions => ({
     "cookiesLinkText",
   ],
   populate: {
+    countries: {
+      fields: ["countryName", "shortCode"],
+    },
     footerImages: {
       fields: ["imageName", "imageLink"],
       populate: {
@@ -145,6 +150,10 @@ export const filterProviders = () => ({
   },
 });
 
+export const countryQs = (): CountryQueryOptions => ({
+  fields: ["shortCode"],
+});
+
 export const menuQs = (): MenuQueryOptions => ({
   fields: ["title"],
   populate: {
@@ -170,4 +179,8 @@ export const translationsQs = (): TranslationsQueryOptions => ({
   populate: {
     translation: "*",
   },
+});
+
+export const countriesQs = (): CountriesQueryOptions => ({
+  fields: ["countryName", "shortCode"],
 });
