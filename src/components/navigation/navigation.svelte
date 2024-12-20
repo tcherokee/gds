@@ -23,6 +23,9 @@
   onMount(async () => {
     // Call the API route to get auth cookie
     const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/get-auth-cookie/`);
+    // Call the API route to get Client IP
+    const ipResponse = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/ip/`);
+    console.log('IP_RESPONSE', ipResponse);
     const { hasAuthCookkie } = await response.json();
     if (!hasAuthCookkie && $user) {
       user.set(null);
