@@ -31,14 +31,20 @@ import { blogsQs } from "../../qs/blogs.ts";
 import MainLayout from "../layouts/MainLayout.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 import { getTranslations } from "../../utils/api-requests";
+import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
-const ipAddress = Astro.clientAddress;
+const userCountry = await getUserCountryByIP();
+const country = await userCountryHandler(userCountry.country.toLowerCase());
+
+const homeData = {
+  casinoCountry: country,
+};
 
 const sortStore = sortOptions.get();
 
 const translationStore = await getTranslations();
 
-const query = qs.stringify(homepageQs(), { encodeValuesOnly: true });
+const query = qs.stringify(homepageQs(homeData), { encodeValuesOnly: true });
 
 const homepage = await fetchApi<Homepage>({
   endpoint: "homepage",
@@ -157,8 +163,8 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ ipAddress }}>
-  console.log("IP Address", ipAddress);
+<script define:vars={{ userCountry }}>
+  console.log("user Country", userCountry);
 </script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
