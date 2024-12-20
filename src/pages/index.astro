@@ -209,6 +209,9 @@ Astro.response.headers.set(
     }
   </div>
   <div class="xl:container content-auto px-2 pt-5">
+    <div>
+      Your IP address is: <span class="address">{Astro.clientAddress}</span>
+    </div>
     {
       Components.map(
         (Component, i) =>
