@@ -3,13 +3,23 @@ import { getDBCountries } from "./api-requests";
 export const getUserCountryByIP = async () => {
   try {
     //get IP
-    const IPRequest = await fetch("https://api.ipify.org/?format=json")
+    const IPRequest = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/ip/`)
       .then((res) => res.json())
       .then();
 
+    console.log(IPRequest);
+
+    const ipAddress = IPRequest.ip.split(",")[0];
+
+    console.log("ipAddress", ipAddress);
+
+    // const IPRequest = await fetch("https://api.ipify.org/?format=json")
+    //   .then((res) => res.json())
+    //   .then();
+
     //get country by IP
     const IPCountry = await fetch(
-      `https://ipinfo.io/${IPRequest.ip}?token=262bfc99d3cceb`
+      `https://ipinfo.io/${ipAddress}?token=262bfc99d3cceb`
     )
       .then((res) => res.json())
       .then();
