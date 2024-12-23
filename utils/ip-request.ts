@@ -7,7 +7,7 @@ export const getUserCountryByIP = async () => {
       .then((res) => res.json())
       .then();
 
-    console.log(IPRequest);
+    console.log("IPRequest", IPRequest);
 
     const ipAddress = IPRequest.ip.split(",")[0];
 
@@ -24,7 +24,7 @@ export const getUserCountryByIP = async () => {
       .then((res) => res.json())
       .then();
 
-    return { co: IPCountry, ip: ipAddress };
+    return { co: IPCountry, ip: IPRequest };
   } catch (error) {
     console.error(error);
   }
