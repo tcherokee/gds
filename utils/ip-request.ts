@@ -24,7 +24,7 @@ export const getUserCountryByIP = async () => {
       .then((res) => res.json())
       .then();
 
-    return IPCountry;
+    return { co: IPCountry, ip: ipAddress };
   } catch (error) {
     console.error(error);
   }

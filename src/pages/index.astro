@@ -34,7 +34,9 @@ import { getTranslations } from "../../utils/api-requests";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
 const userCountry = await getUserCountryByIP();
-const country = await userCountryHandler(userCountry.country.toLowerCase());
+const country = await userCountryHandler(
+  userCountry?.co?.country.toLowerCase()
+);
 
 const homeData = {
   casinoCountry: country,
