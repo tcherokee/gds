@@ -33,6 +33,12 @@ import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 import { getTranslations } from "../../utils/api-requests";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
+const IPRequest = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/ip/`)
+  .then((res) => res.json())
+  .then();
+
+// const ipAddress = IPRequest.ip.split(",")[0];
+
 const userCountry = await getUserCountryByIP();
 const country = await userCountryHandler(
   userCountry?.co?.country.toLowerCase()
@@ -165,8 +171,9 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ userCountry }}>
+<script define:vars={{ userCountry, IPRequest }}>
   console.log("user Country", userCountry);
+  console.log("IPRequest", IPRequest);
 </script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />

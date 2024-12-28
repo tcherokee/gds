@@ -7,11 +7,7 @@ export const getUserCountryByIP = async () => {
       .then((res) => res.json())
       .then();
 
-    console.log("IPRequest", IPRequest);
-
     const ipAddress = IPRequest.ip.split(",")[0];
-
-    console.log("ipAddress", ipAddress);
 
     // const IPRequest = await fetch("https://api.ipify.org/?format=json")
     //   .then((res) => res.json())
