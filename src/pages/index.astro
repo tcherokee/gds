@@ -38,6 +38,7 @@ const IPRequest = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/ip/`)
   .then();
 
 // const ipAddress = IPRequest.ip.split(",")[0];
+const clientIP = Astro.request.headers.get("x-forwarded-for") || "Unknown IP";
 
 const userCountry = await getUserCountryByIP();
 const country = await userCountryHandler(
@@ -171,9 +172,10 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ userCountry, IPRequest }}>
+<script define:vars={{ userCountry, IPRequest, clientIP }}>
   console.log("user Country", userCountry);
   console.log("IPRequest", IPRequest);
+  console.log("CLIENT_IP:", clientIP);
 </script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
