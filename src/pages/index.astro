@@ -33,16 +33,17 @@ import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 import { getTranslations } from "../../utils/api-requests";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
-const IPRequest = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/ip/`)
-  .then((res) => res.json())
-  .then();
+// const IPRequest = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/ip/`)
+//   .then((res) => res.json())
+//   .then();
 
 // const ipAddress = IPRequest.ip.split(",")[0];
-const clientIP = Astro.request.headers.get("x-forwarded-for") || "Unknown IP";
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.61";
 
-const userCountry = await getUserCountryByIP();
+const userCountry = await getUserCountryByIP(clientIP);
 const country = await userCountryHandler(
-  userCountry?.co?.country.toLowerCase()
+  userCountry?.location?.country.toLowerCase()
 );
 
 const homeData = {
@@ -172,9 +173,8 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ userCountry, IPRequest, clientIP }}>
+<script define:vars={{ userCountry, clientIP }}>
   console.log("user Country", userCountry);
-  console.log("IPRequest", IPRequest);
   console.log("CLIENT_IP:", clientIP);
 </script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
