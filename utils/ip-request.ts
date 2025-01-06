@@ -1,21 +1,8 @@
 import { getDBCountries } from "./api-requests";
 
-export const getUserCountryByIP = async () => {
+export const getUserCountryByIP = async (clientIP: string) => {
   try {
-    //get IP
-    const IPRequest = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/ip/`)
-      .then((res) => res.json())
-      .then();
-
-    console.log(IPRequest);
-
-    const ipAddress = IPRequest.ip.split(",")[0];
-
-    console.log("ipAddress", ipAddress);
-
-    // const IPRequest = await fetch("https://api.ipify.org/?format=json")
-    //   .then((res) => res.json())
-    //   .then();
+    const ipAddress = clientIP.split(",")[0];
 
     //get country by IP
     const IPCountry = await fetch(
@@ -24,7 +11,7 @@ export const getUserCountryByIP = async () => {
       .then((res) => res.json())
       .then();
 
-    return IPCountry;
+    return { location: IPCountry, ip: ipAddress };
   } catch (error) {
     console.error(error);
   }

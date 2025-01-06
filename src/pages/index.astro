@@ -33,8 +33,18 @@ import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 import { getTranslations } from "../../utils/api-requests";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
-const userCountry = await getUserCountryByIP();
-const country = await userCountryHandler(userCountry.country.toLowerCase());
+// const IPRequest = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/ip/`)
+//   .then((res) => res.json())
+//   .then();
+
+// const ipAddress = IPRequest.ip.split(",")[0];
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.61";
+
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase()
+);
 
 const homeData = {
   casinoCountry: country,
@@ -163,8 +173,9 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ userCountry }}>
+<script define:vars={{ userCountry, clientIP }}>
   console.log("user Country", userCountry);
+  console.log("CLIENT_IP:", clientIP);
 </script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
@@ -209,6 +220,9 @@ Astro.response.headers.set(
     }
   </div>
   <div class="xl:container content-auto px-2 pt-5">
+    <div>
+      Your IP address is: <span class="address">{Astro.clientAddress}</span>
+    </div>
     {
       Components.map(
         (Component, i) =>

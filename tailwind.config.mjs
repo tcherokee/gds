@@ -1,4 +1,5 @@
 import forms from "@tailwindcss/forms";
+import typography from "@tailwindcss/typography";
 import * as dotenv from "dotenv";
 
 /** @type {import('tailwindcss').Config} */
@@ -68,5 +69,5 @@ export default {
       active: 'ui~="active"',
     },
   },
-  plugins: [forms],
+  plugins: [forms, typography],
 };

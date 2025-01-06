@@ -178,7 +178,7 @@
             </table>
           {:else}
             <h2 class="text-lg !font-bold">{selectedMessage.title}</h2>
-            <div class="message-content">
+            <div class="message-content prose !max-w-[100%]">
               {@html selectedMessage.content}
             </div>
           {/if}
