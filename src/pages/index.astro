@@ -39,7 +39,7 @@ import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
 // const ipAddress = IPRequest.ip.split(",")[0];
 const clientIP =
-  Astro.request.headers.get("x-forwarded-for") || "102.216.183.61";
+  Astro.request.headers.get("x-forwarded-for") || "149.22.91.164";
 
 const userCountry = await getUserCountryByIP(clientIP);
 const country = await userCountryHandler(
@@ -173,9 +173,11 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ userCountry, clientIP }}>
+<script define:vars={{ userCountry, clientIP, homepage, country }}>
+  console.log("Home page", homepage);
   console.log("user Country", userCountry);
   console.log("CLIENT_IP:", clientIP);
+  console.log("country:", country);
 </script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
