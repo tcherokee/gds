@@ -25,6 +25,8 @@ export const userCountryHandler = async (shortCode: string) => {
       ({ attributes }) => attributes?.shortCode === shortCode
     );
 
+    console.log("Short code", country ? shortCode : "rod");
+
     return country ? shortCode : "rod";
   } catch (error) {
     console.error(error);
