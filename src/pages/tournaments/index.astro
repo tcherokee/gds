@@ -1,0 +1,86 @@
+---
+import qs from "qs";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getTranslations } from "../../../utils/api-requests";
+import { tournamentApi } from "../../../lib/tournamentapi";
+import type { Tournament, TournamentResponse } from "../../../interfaces/tournaments";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+import TournamentCard from "../../components/tournaments/tournamentCard.svelte";
+
+const translationStore = await getTranslations();
+
+let tournaments = [];
+let error = null;
+
+const getTournaments = async () => {
+  return tournamentApi<TournamentResponse>("getTournamentFullSchedule");
+}
+
+try {
+  const response = await getTournaments();
+  tournaments = response.data || [];
+} catch (e) {
+  console.error("Error fetching tournaments:", e);
+  error = e instanceof Error ? e.message : "Unknown error occurred";
+}
+
+// export function getTournamentResults() {
+//   return fetchFromApi<TournamentResponse>("getTournamentResults");
+// }
+
+// Fetch active tournaments
+
+const seo = {
+  pageTitle: translationStore?.tournamentPageTitle || "Tournaments",
+  metaDescription:
+    translationStore?.tournamentPageDescription ||
+    "View all active tournaments",
+  url: `${import.meta.env.PUBLIC_FULL_URL}/tournaments`,
+};
+
+// Cache Control Headers
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
+
+const breadcrumbs = [
+  { title: translationStore?.home || "Home", href: "/" },
+  {
+    title: translationStore?.tournaments || "Tournaments",
+    href: "/tournaments",
+    current: true,
+  },
+];
+---
+
+<MainLayout seoData={seo}>
+  <Breadcrumb
+    breadcrumbs={[
+      { id: 1, breadCrumbText: "Home", breadCrumbUrl: "/" },
+      { id: 2, breadCrumbText: "Tournaments", breadCrumbUrl: null },
+    ]}
+  />
+  <div class="featured-background curve">some dummy text</div>
+  <div class="xl:container content-auto px-2 pt-5">
+    <h1 class="text-2xl font-bold mb-6">{translationStore?.tournaments}</h1>
+
+    <section class="py-20 px-4">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-4xl font-bold mb-12 text-center">Active Tournaments</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          {
+            tournaments.map((tournament) => (
+              <TournamentCard client:load tournament={tournament} />
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </div>
+</MainLayout>

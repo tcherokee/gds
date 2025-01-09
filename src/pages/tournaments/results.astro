@@ -1,0 +1,90 @@
+---
+import qs from "qs";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getTranslations } from "../../../utils/api-requests";
+import fetchApi from "../../../lib/strapi";
+import type { Tournament } from "../../../interfaces/tournaments";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+
+const translationStore = await getTranslations();
+
+// Fetch completed tournaments
+const tournaments = await fetchApi<Tournament[]>({
+  endpoint: "tournaments",
+  wrappedByKey: "data",
+  query: "?filters[endDate][$lt]=$now&sort[endDate]=desc",
+});
+
+const seo = {
+  pageTitle: translationStore?.tournamentResultsTitle || "Tournament Results",
+  metaDescription:
+    translationStore?.tournamentResultsDescription ||
+    "View past tournament results",
+  url: `${import.meta.env.PUBLIC_FULL_URL}/tournaments/results`,
+};
+
+// Cache Control Headers
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
+
+const breadcrumbs = [
+  { title: translationStore?.home || "Home", href: "/" },
+  {
+    title: translationStore?.tournaments || "Tournaments",
+    href: "/tournaments",
+  },
+  {
+    title: translationStore?.results || "Results",
+    href: "/tournaments/results",
+    current: true,
+  },
+];
+---
+
+<MainLayout seoData={seo}>
+  <Breadcrumb
+    breadcrumbs={[
+      { id: 1, breadCrumbText: "Home", breadCrumbUrl: "/" },
+      { id: 2, breadCrumbText: "Tournaments", breadCrumbUrl: "/tournaments" },
+      { id: 3, breadCrumbText: "Results", breadCrumbUrl: null },
+    ]}
+  />
+  <div class="featured-background curve">
+    some dummy text
+  </div>
+  <div class="xl:container content-auto px-2 pt-5">
+    <h1 class="text-2xl font-bold mb-6">
+      {translationStore?.tournamentResults}
+    </h1>
+
+    <div class="space-y-4">
+      {
+        tournaments.map((tournament) => (
+          // Tournament results would go here
+          <div class="bg-white rounded-lg shadow p-4">
+            <h2 class="text-xl font-bold">{tournament.name}</h2>
+            <div class="mt-4">
+              <h3 class="font-semibold">Winners:</h3>
+              {tournament.scoreboard.slice(0, 3).map((score, index) => (
+                <div class="flex justify-between py-2">
+                  <span>
+                    #{index + 1} {score.name}
+                  </span>
+                  <span>{score.prize}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</MainLayout>
+

@@ -1,0 +1,79 @@
+---
+import qs from "qs";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getTranslations } from "../../../utils/api-requests";
+import fetchApi from "../../../lib/strapi";
+import type { Tournament } from "../../../interfaces/tournaments";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+
+const translationStore = await getTranslations();
+
+// Fetch upcoming tournaments
+const tournaments = await fetchApi<Tournament[]>({
+  endpoint: "tournaments",
+  wrappedByKey: "data",
+  query: "?filters[isLive][$eq]=false&filters[startDate][$gt]=$now",
+});
+
+const seo = {
+  pageTitle: translationStore?.tournamentScheduleTitle || "Tournament Schedule",
+  metaDescription:
+    translationStore?.tournamentScheduleDescription ||
+    "View upcoming tournaments schedule",
+  url: `${import.meta.env.PUBLIC_FULL_URL}/tournaments/schedule`,
+};
+
+// Cache Control Headers
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
+
+const breadcrumbs = [
+  { title: translationStore?.home || "Home", href: "/" },
+  {
+    title: translationStore?.tournaments || "Tournaments",
+    href: "/tournaments",
+  },
+  {
+    title: translationStore?.schedule || "Schedule",
+    href: "/tournaments/schedule",
+    current: true,
+  },
+];
+---
+
+<MainLayout seoData={seo}>
+  <Breadcrumb
+    breadcrumbs={[
+      { id: 1, breadCrumbText: "Home", breadCrumbUrl: "/" },
+      { id: 2, breadCrumbText: "Tournaments", breadCrumbUrl: "/tournaments" },
+      { id: 3, breadCrumbText: "Schedule", breadCrumbUrl: null },
+    ]}
+  />
+  <div class="featured-background curve">some dummy text</div>
+  <div class="xl:container content-auto px-2 pt-5">
+    <h1 class="text-2xl font-bold mb-6">
+      {translationStore?.tournamentSchedule}
+    </h1>
+
+    <div class="space-y-4">
+      {
+        tournaments.map((tournament) => (
+          // Tournament schedule items would go here
+          <div class="bg-white rounded-lg shadow p-4">
+            <h2 class="text-xl font-bold">{tournament.name}</h2>
+            <p>Starts: {new Date(tournament.startDate).toLocaleDateString()}</p>
+            {/* Add more schedule details */}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</MainLayout>
+
