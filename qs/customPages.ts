@@ -1,7 +1,9 @@
 import { populate } from "dotenv";
 import { slotCategories } from "../utils/api-requests";
 
-export const customPageQs = (path: string) => {
+export const customPageQs = (path: string, casinoCountry: string = "") => {
+  console.log("casinoCountry =", casinoCountry);
+
   return {
     fields: [
       "title",
@@ -103,8 +105,20 @@ export const customPageQs = (path: string) => {
                   termsAndConditions: {
                     fields: ["copy", "gambleResponsibly"],
                   },
+                  countries: {
+                    fields: ["countryName", "shortCode"],
+                  },
                 },
               },
+            },
+            filters: {
+              ...(casinoCountry && {
+                countries: {
+                  shortCode: {
+                    $in: casinoCountry,
+                  },
+                },
+              }),
             },
           },
           casinos: {
@@ -142,8 +156,20 @@ export const customPageQs = (path: string) => {
                   termsAndConditions: {
                     fields: ["copy", "gambleResponsibly"],
                   },
+                  countries: {
+                    fields: ["countryName", "shortCode"],
+                  },
                 },
               },
+            },
+            filters: {
+              ...(casinoCountry && {
+                countries: {
+                  shortCode: {
+                    $in: casinoCountry,
+                  },
+                },
+              }),
             },
           },
           gameProviders: {

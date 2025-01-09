@@ -170,8 +170,8 @@ let gamePageRelatedCasinoTitle =
   );
 ---
 
-<script define:vars={{ translationStore }}>
-  console.log("translationStore", translationStore);
+<script define:vars={{ gamePage }}>
+  console.log("gamePage", gamePage);
 </script>
 <MainLayout
   seoData={seo}
@@ -211,7 +211,7 @@ let gamePageRelatedCasinoTitle =
   <div class="w-full xl:container px-2">
     <div class="mb-10">
       <h2 class="mt-8 mb-4 md:mt-16">
-        {gamePageRelatedCasinoTitle}
+        {gamePageRelatedCasinoTitle} Hello
       </h2>
       <RelatedCasino slug={gamePage[0]?.attributes?.slug} {translationStore} />
     </div>

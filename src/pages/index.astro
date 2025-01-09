@@ -47,7 +47,7 @@ const country = await userCountryHandler(
 );
 
 const homeData = {
-  casinoCountry: country,
+  casinoCountry: country?.sc,
 };
 
 const sortStore = sortOptions.get();
@@ -173,11 +173,8 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ userCountry, clientIP, homepage, country }}>
+<script define:vars={{ homepage }}>
   console.log("Home page", homepage);
-  console.log("user Country", userCountry);
-  console.log("CLIENT_IP:", clientIP);
-  console.log("country:", country);
 </script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
@@ -222,9 +219,6 @@ Astro.response.headers.set(
     }
   </div>
   <div class="xl:container content-auto px-2 pt-5">
-    <div>
-      Your IP address is: <span class="address">{Astro.clientAddress}</span>
-    </div>
     {
       Components.map(
         (Component, i) =>
