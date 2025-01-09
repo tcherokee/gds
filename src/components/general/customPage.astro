@@ -47,6 +47,21 @@ import CasinoSidebar from "../casino/casinoSidebar.astro";
 import Breadcrumbs from "../layout/breadcrumbs.astro";
 import AuthorCard from "./authorCard.astro";
 import SportSidebar from "../sport/sportSidebar.astro";
+import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../utils/ip-request";
+
+// const ipAddress = IPRequest.ip.split(",")[0];
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "149.22.91.164";
+
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase()
+);
+
+const casinoCountry = country?.sc || "";
 
 // const path = Astro.params.path as string;
 const { path } = Astro.props;
@@ -69,7 +84,9 @@ const gameProviders = await fetchApi<{
   query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
 });
 
-const query = qs.stringify(customPageQs(path), { encodeValuesOnly: true });
+const query = qs.stringify(customPageQs(path, casinoCountry), {
+  encodeValuesOnly: true,
+});
 
 let gamesQueryObj: GameFilters = {
   limit: 18,
@@ -87,7 +104,7 @@ const customPage = await fetchApi<CustomPageItem[]>({
   query: `?${query}`,
 });
 
-const gameQuery = customPage[0]?.attributes.blocks.find(
+const gameQuery = customPage[0]?.attributes?.blocks?.find(
   (block) => block.__component === "games.games-carousel"
 ) as CustomGameList;
 
@@ -192,8 +209,6 @@ if (allHowTos && allHowTos.length > 0) {
   combinedSchema.push(...howToSchema);
 }
 
-console.log(JSON.stringify(customPage[0]))
-
 // Breadcrumb Schema
 const breadSchema = {
   "@context": "https://schema.org",
@@ -254,39 +269,6 @@ const getLoopCounter = (blocks: Block[]): number => {
 };
 
 let loopCounter = getLoopCounter(customPage[0]?.attributes?.blocks);
-// let loopCounter = 1;
-
-// if (
-//   customPage[0]?.attributes?.blocks.find(
-//     (block) => block.__component === "shared.overview-block"
-//   )
-// ) {
-//   loopCounter += 1;
-// }
-
-// if (
-//   customPage[0]?.attributes?.blocks.find(
-//     (block) => block.__component === "games.new-and-loved-slots"
-//   )
-// ) {
-//   loopCounter += 1;
-// }
-
-// if (
-//   customPage[0]?.attributes?.blocks.find(
-//     (block) => block.__component === "casinos.casino-list"
-//   )
-// ) {
-//   loopCounter += 1;
-// }
-
-// if (
-//   customPage[0]?.attributes?.blocks.find(
-//     (block) => block.__component === "games.games-carousel"
-//   )
-// ) {
-//   loopCounter += 1;
-// }
 
 // Get the index of the first occurrence of the FAQ
 const faqIndex = customPage[0]?.attributes?.blocks.findIndex(
@@ -306,6 +288,10 @@ Astro.response.headers.set(
 );
 ---
 
+<script define:vars={{ userCountry, clientIP, country, customPage }}>
+  console.log("THIS IS A CUSTOM PAGE", customPage);
+  console.log("user Country", userCountry);
+</script>
 <MainLayout seoData={seo} otherSchema={combinedSchema}>
   <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
 
@@ -338,6 +324,7 @@ Astro.response.headers.set(
                 return (
                   <div class="relative z-50">
                     <CasinoTable
+                      casinoCountry={casinoCountry}
                       initialCasinos={casinoListBlock}
                       translations={translationStore ?? {}}
                       {slotProviders}
@@ -429,6 +416,7 @@ Astro.response.headers.set(
                     ] as CasinoListBlock;
                     return (
                       <CasinoTable
+                        casinoCountry={casinoCountry}
                         initialCasinos={casinoListBlock}
                         translations={translationStore ?? {}}
                         {slotProviders}
@@ -485,7 +473,10 @@ Astro.response.headers.set(
         {
           !customPage[0].attributes.sideBarToShow ||
           customPage[0].attributes.sideBarToShow === "casino" ? (
-            <CasinoSidebar translationStore={translationStore} />
+            <CasinoSidebar
+              casinoCountry={casinoCountry}
+              translationStore={translationStore}
+            />
           ) : (
             <SportSidebar translationStore={translationStore} />
           )

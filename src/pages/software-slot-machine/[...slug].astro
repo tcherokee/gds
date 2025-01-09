@@ -40,9 +40,25 @@ import {
   getTranslations,
 } from "../../../utils/api-requests";
 
+import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../utils/ip-request";
+
+// const ipAddress = IPRequest.ip.split(",")[0];
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "149.22.91.164";
+
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase()
+);
+
+const casinoCountry = country?.sc || "";
+
 const slug = Astro.params.slug as string;
 
-const strippedSlug = slug.replace(/\/p\d+$/, '');
+const strippedSlug = slug.replace(/\/p\d+$/, "");
 
 const translationStore = await getTranslations();
 const slotCategories = await slotCategoriesResponse();
@@ -62,7 +78,9 @@ const gameProviders = await fetchApi<{
   query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
 });
 
-const query = qs.stringify(slotProvidersQs(strippedSlug), { encodeValuesOnly: true });
+const query = qs.stringify(slotProvidersQs(strippedSlug, casinoCountry), {
+  encodeValuesOnly: true,
+});
 
 // let gamesQueryObj: GameFilters = {
 //   limit: 18,
@@ -229,7 +247,7 @@ Astro.response.headers.set(
         }
       </div>
       <div class="basis-[315px] shrink-0 order-first order-last">
-        <CasinoSideBar {translationStore} />
+        <CasinoSideBar {casinoCountry} {translationStore} />
       </div>
     </div>
   </div>

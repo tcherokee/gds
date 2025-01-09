@@ -15,10 +15,10 @@ import type { LayoutData } from "../../../interfaces/layout";
 // Components
 import { Link } from "astro-link";
 
-const { translationStore } = Astro.props;
+const { casinoCountry, translationStore } = Astro.props;
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
-const query = qs.stringify(customPageLayoutAddOnsQs(), {
+const query = qs.stringify(customPageLayoutAddOnsQs(casinoCountry), {
   encodeValuesOnly: true,
 });
 
@@ -54,6 +54,9 @@ const casinoArray = [
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 ---
 
+<script define:vars={{ casinoArray }}>
+  console.log("Page Sidebar", casinoArray);
+</script>
 <div class="sticky top-2">
   {
     casinoArray.map(

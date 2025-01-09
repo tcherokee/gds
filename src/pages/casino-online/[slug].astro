@@ -27,12 +27,29 @@ import MainLayout from "../../layouts/MainLayout.astro";
 
 import { getTranslations } from "../../../utils/api-requests";
 import type { BreadcrumbData } from "../../../interfaces/common/types";
+import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../utils/ip-request";
+
+// const ipAddress = IPRequest.ip.split(",")[0];
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "149.22.91.164";
+
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase()
+);
+
+const casinoCountry = country?.sc || "";
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
-const query = qs.stringify(casinoproviderQs(slug), { encodeValuesOnly: true });
+const query = qs.stringify(casinoproviderQs(slug, casinoCountry), {
+  encodeValuesOnly: true,
+});
 
 // Request to the Fetch Function to get page data from API
 const casinoProvider = await fetchApi<Casinoprovider[]>({
@@ -123,6 +140,7 @@ Astro.response.headers.set(
       <ProviderCasino
         slug={casinoProvider[0]?.attributes?.slug}
         {translationStore}
+        {casinoCountry}
       />
     </div>
   </div>
@@ -175,7 +193,7 @@ Astro.response.headers.set(
             )}
           </div>
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-            <CasinoSideBar {translationStore} />
+            <CasinoSideBar {casinoCountry} {translationStore} />
           </div>
         </div>
       )

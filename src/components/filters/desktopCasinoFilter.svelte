@@ -17,7 +17,7 @@
 
 
 	// Valid Keys for the Casino Filters Array to validate and squash typescript errors
-    const validKeys: (keyof CasinoFilters)[] = ["limit", "sort", "providers", "ids", "bonusKey", "condition", "amount", "wagering", "speed"];
+    const validKeys: (keyof CasinoFilters)[] = ["limit", "sort", "providers", "ids", "bonusKey", "condition", "amount", "wagering", "speed", "casinoCountry"];
 
 	// Function to get bonus label based on the value
 	const  getLabelByValue = (data: BonusLabels, searchValue: string): string | undefined => {

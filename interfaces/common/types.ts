@@ -589,6 +589,7 @@ export type CasinoFilters = {
   amount: string | undefined;
   wagering: string | undefined;
   speed: string | undefined;
+  casinoCountry: string | undefined;
 };
 
 export type SportFilters = {

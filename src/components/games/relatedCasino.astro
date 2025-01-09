@@ -4,9 +4,27 @@ import fetchApi from "../../../lib/strapi";
 import { providerGamesQs } from "../../../qs/provider-games";
 import type { Gamepage } from "../../../interfaces/game-page";
 import CasinoTable from "../../components/casino/casinoTable.astro";
+import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../utils/ip-request";
+
+// const ipAddress = IPRequest.ip.split(",")[0];
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "149.22.91.164";
+
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase()
+);
+
+const casinoCountry = country?.sc;
 
 const { slug, translationStore } = Astro.props;
-const query = qs.stringify(providerGamesQs(slug), { encodeValuesOnly: true });
+
+const query = qs.stringify(providerGamesQs(slug, casinoCountry), {
+  encodeValuesOnly: true,
+});
 
 const gamePage = await fetchApi<Gamepage[]>({
   endpoint: "games",
