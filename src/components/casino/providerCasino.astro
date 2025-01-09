@@ -5,9 +5,11 @@ import { providercasinoQs } from "../../../qs/provider-casino";
 import CasinoTableBlock from "../../components/blocks/casinoTableBlock.astro";
 import type { Casinoprovider } from "../../../interfaces/casino-provider";
 
-const { slug, translationStore } = Astro.props;
+const { slug, casinoCountry, translationStore } = Astro.props;
 
-const query = qs.stringify(providercasinoQs(slug), { encodeValuesOnly: true });
+const query = qs.stringify(providercasinoQs(slug, casinoCountry), {
+  encodeValuesOnly: true,
+});
 
 const casinoProvider = await fetchApi<Casinoprovider[]>({
   endpoint: "casino-providers",

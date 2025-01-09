@@ -45,10 +45,12 @@
   import { casinosQs } from "../../../qs/casinos";
   import { getTranslations } from "../../../stores/addTranslations";
 
+  export let casinoCountry: string;
   export let initialCasinos: CasinoListBlock;
   export let translations: TranslationData;
   export let slotProviders: TProviderAttributesOnly[] = [];
   export let showCasinoTableHeader: boolean;
+  
 
   const siteID = import.meta.env.PUBLIC_SITE_ID;
   // const siteURL: string = `${siteID === 'gds' ? '/it' : ''}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
@@ -66,6 +68,9 @@
   if (showCasinoTableHeader === null) showCasinoTableHeader = true; //ensures that when this flag is null the table header shows
 
   let currentCasinosLength = numberPerLoadMore;
+
+  //set Casino country
+  casinoVariables.setKey("casinoCountry", casinoCountry || "");
 
   // Set Sort Key in Casino Variables Store
   casinoVariables.setKey("sort", $sortOptions[casinoSort] || "ratingAvg:desc");
@@ -130,6 +135,7 @@
     casinoVariables.setKey("amount", "");
     casinoVariables.setKey("wagering", "");
     casinoVariables.setKey("speed", "");
+    casinoVariables.setKey("casinoCountry", casinoCountry);
 
     // Set QS Query String to Get Updated Casinos
     const query = qs.stringify(casinosQs($casinoVariables), {

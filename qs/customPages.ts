@@ -1,9 +1,7 @@
 import { populate } from "dotenv";
 import { slotCategories } from "../utils/api-requests";
 
-export const customPageQs = (path: string, casinoCountry: string = "") => {
-  console.log("casinoCountry =", casinoCountry);
-
+export const customPageQs = (path: string, casinoCountry: string) => {
   return {
     fields: [
       "title",
@@ -109,16 +107,16 @@ export const customPageQs = (path: string, casinoCountry: string = "") => {
                     fields: ["countryName", "shortCode"],
                   },
                 },
-              },
-            },
-            filters: {
-              ...(casinoCountry && {
-                countries: {
-                  shortCode: {
-                    $in: casinoCountry,
-                  },
+                filters: {
+                  ...(casinoCountry && {
+                    countries: {
+                      shortCode: {
+                        $in: casinoCountry,
+                      },
+                    },
+                  }),
                 },
-              }),
+              },
             },
           },
           casinos: {
@@ -160,16 +158,16 @@ export const customPageQs = (path: string, casinoCountry: string = "") => {
                     fields: ["countryName", "shortCode"],
                   },
                 },
-              },
-            },
-            filters: {
-              ...(casinoCountry && {
-                countries: {
-                  shortCode: {
-                    $in: casinoCountry,
-                  },
+                filters: {
+                  ...(casinoCountry && {
+                    countries: {
+                      shortCode: {
+                        $in: casinoCountry,
+                      },
+                    },
+                  }),
                 },
-              }),
+              },
             },
           },
           gameProviders: {
@@ -282,7 +280,7 @@ export const customPageQs = (path: string, casinoCountry: string = "") => {
   };
 };
 
-export const customPageLayoutAddOnsQs = () => ({
+export const customPageLayoutAddOnsQs = (casinoCountry: string = "") => ({
   populate: {
     filterProviders: {
       fields: ["slug"],
@@ -300,6 +298,15 @@ export const customPageLayoutAddOnsQs = () => ({
         },
         bonusSection: true,
       },
+      filters: {
+        ...(casinoCountry && {
+          countries: {
+            shortCode: {
+              $in: casinoCountry,
+            },
+          },
+        }),
+      },
     },
     no_deposit_casinos: {
       fields: ["slug", "title"],
@@ -308,6 +315,15 @@ export const customPageLayoutAddOnsQs = () => ({
           fields: ["url"],
         },
         noDepositSection: true,
+      },
+      filters: {
+        ...(casinoCountry && {
+          countries: {
+            shortCode: {
+              $in: casinoCountry,
+            },
+          },
+        }),
       },
     },
     free_spin_casinos: {
@@ -318,6 +334,15 @@ export const customPageLayoutAddOnsQs = () => ({
         },
         freeSpinsSection: true,
       },
+      filters: {
+        ...(casinoCountry && {
+          countries: {
+            shortCode: {
+              $in: casinoCountry,
+            },
+          },
+        }),
+      },
     },
     most_loved_sports: {
       fields: ["slug", "title"],
@@ -326,6 +351,15 @@ export const customPageLayoutAddOnsQs = () => ({
           fields: ["url"],
         },
         bonusSection: true,
+      },
+      filters: {
+        ...(casinoCountry && {
+          countries: {
+            shortCode: {
+              $in: casinoCountry,
+            },
+          },
+        }),
       },
     },
     no_deposit_sports: {

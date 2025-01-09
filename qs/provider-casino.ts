@@ -1,4 +1,7 @@
-export const providercasinoQs = (slug: string | undefined) => ({
+export const providercasinoQs = (
+  slug: string | undefined,
+  casinoCountry: string = ""
+) => ({
   fields: ["title", "slug", "createdAt", "updatedAt"],
   populate: {
     casinoLists: {
@@ -14,6 +17,9 @@ export const providercasinoQs = (slug: string | undefined) => ({
       populate: {
         noDepositSection: {
           fields: ["bonusAmount", "termsConditions"],
+        },
+        countries: {
+          fields: ["countryName", "shortCode"],
         },
         freeSpinsSection: {
           fields: ["bonusAmount", "termsConditions"],
@@ -33,6 +39,15 @@ export const providercasinoQs = (slug: string | undefined) => ({
             },
           },
         },
+      },
+      filters: {
+        ...(casinoCountry && {
+          countries: {
+            shortCode: {
+              $in: casinoCountry,
+            },
+          },
+        }),
       },
     },
   },

@@ -61,7 +61,7 @@ const country = await userCountryHandler(
   userCountry?.location?.country.toLowerCase()
 );
 
-const casinoCountry = country?.sc;
+const casinoCountry = country?.sc || "";
 
 // const path = Astro.params.path as string;
 const { path } = Astro.props;
@@ -87,8 +87,6 @@ const gameProviders = await fetchApi<{
 const query = qs.stringify(customPageQs(path, casinoCountry), {
   encodeValuesOnly: true,
 });
-
-console.log("customQuery = ", query);
 
 let gamesQueryObj: GameFilters = {
   limit: 18,
@@ -271,39 +269,6 @@ const getLoopCounter = (blocks: Block[]): number => {
 };
 
 let loopCounter = getLoopCounter(customPage[0]?.attributes?.blocks);
-// let loopCounter = 1;
-
-// if (
-//   customPage[0]?.attributes?.blocks.find(
-//     (block) => block.__component === "shared.overview-block"
-//   )
-// ) {
-//   loopCounter += 1;
-// }
-
-// if (
-//   customPage[0]?.attributes?.blocks.find(
-//     (block) => block.__component === "games.new-and-loved-slots"
-//   )
-// ) {
-//   loopCounter += 1;
-// }
-
-// if (
-//   customPage[0]?.attributes?.blocks.find(
-//     (block) => block.__component === "casinos.casino-list"
-//   )
-// ) {
-//   loopCounter += 1;
-// }
-
-// if (
-//   customPage[0]?.attributes?.blocks.find(
-//     (block) => block.__component === "games.games-carousel"
-//   )
-// ) {
-//   loopCounter += 1;
-// }
 
 // Get the index of the first occurrence of the FAQ
 const faqIndex = customPage[0]?.attributes?.blocks.findIndex(
@@ -359,6 +324,7 @@ Astro.response.headers.set(
                 return (
                   <div class="relative z-50">
                     <CasinoTable
+                      casinoCountry={casinoCountry}
                       initialCasinos={casinoListBlock}
                       translations={translationStore ?? {}}
                       {slotProviders}
@@ -450,6 +416,7 @@ Astro.response.headers.set(
                     ] as CasinoListBlock;
                     return (
                       <CasinoTable
+                        casinoCountry={casinoCountry}
                         initialCasinos={casinoListBlock}
                         translations={translationStore ?? {}}
                         {slotProviders}
@@ -506,7 +473,10 @@ Astro.response.headers.set(
         {
           !customPage[0].attributes.sideBarToShow ||
           customPage[0].attributes.sideBarToShow === "casino" ? (
-            <CasinoSidebar translationStore={translationStore} />
+            <CasinoSidebar
+              casinoCountry={casinoCountry}
+              translationStore={translationStore}
+            />
           ) : (
             <SportSidebar translationStore={translationStore} />
           )

@@ -10,7 +10,8 @@ export const casinosQs = ({
   condition = "",
   amount = "",
   wagering = "",
-  speed = ""
+  speed = "",
+  casinoCountry = "",
 }: CasinoFilters) => {
   return {
     fields: ["title", "slug", "ratingAvg", "ratingCount"],
@@ -33,6 +34,9 @@ export const casinosQs = ({
       casinoGeneralInfo: {
         fields: ["wageringRequirements"],
       },
+      countries: {
+        fields: ["countryName", "shortCode"],
+      },
       providers: {
         fields: ["title", "slug"],
         populate: {
@@ -46,6 +50,13 @@ export const casinosQs = ({
       },
     },
     filters: {
+      ...(casinoCountry && {
+        countries: {
+          shortCode: {
+            $in: casinoCountry,
+          },
+        },
+      }),
       ...(providers && {
         providers: {
           slug: {
@@ -55,7 +66,7 @@ export const casinosQs = ({
       }),
       ...(ids && {
         id: {
-          $in: ids
+          $in: ids,
         },
       }),
       ...(wagering && {
@@ -111,7 +122,7 @@ export const casinosQs = ({
         ],
       }),
     },
-    ...((sort) && { sort: [sort] }),
+    ...(sort && { sort: [sort] }),
     pagination: {
       pageSize: limit,
     },

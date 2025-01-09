@@ -43,10 +43,27 @@ import RatingStar from "../../../components/helpers/ratingStar.svelte";
 import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
 import TimeDate from "../../../components/helpers/timeDate.astro";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
+import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../../utils/ip-request";
+
+// const ipAddress = IPRequest.ip.split(",")[0];
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "149.22.91.164";
+
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase()
+);
+
+const casinoCountry = country?.sc || "";
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
-const casino = qs.stringify(casinopageQs(slug), { encodeValuesOnly: true });
+const casino = qs.stringify(casinopageQs(slug, casinoCountry), {
+  encodeValuesOnly: true,
+});
 
 const casinoPage = await fetchApi<Casinopage[]>({
   endpoint: "casinos",
