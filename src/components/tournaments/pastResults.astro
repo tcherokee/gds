@@ -1,5 +1,6 @@
 ---
-const {tournaments} = Astro.props;
+const { tournaments } = Astro.props;
+import type { Tournament } from "../../../interfaces/tournaments";
 let error = null;
 
 function formatDate(dateString: string) {
@@ -39,7 +40,7 @@ console.log(tournaments);
         </thead>
         <tbody>
           {
-            tournaments.map((tournament) => (
+            tournaments.map((tournament: Tournament) => (
               <tr class="border-b border-gray-800 hover:bg-gray-800/50">
                 <td class="py-4 px-6">
                   <div class="flex items-center gap-4">

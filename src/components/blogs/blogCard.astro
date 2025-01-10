@@ -106,9 +106,13 @@ let categoryLang: any = categoryLangOptions[import.meta.env.LANG];
         </h4>
         <div class="mt-0">
           <div class="line-clamp-3">
-            {<Fragment set:html={(blog as Blog)?.attributes?.content1} /> ?? (
-              <Fragment set:html={(blog as AuthorBlogAttributes)?.content1} />
-            )}
+            {
+              (blog as Blog)?.attributes?.content1 ? (
+                <Fragment set:html={(blog as Blog)?.attributes?.content1} />
+              ) : (
+                <Fragment set:html={(blog as AuthorBlogAttributes)?.content1} />
+              )
+            }
           </div>
         </div>
 
