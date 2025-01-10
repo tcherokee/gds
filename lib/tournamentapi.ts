@@ -7,7 +7,7 @@ const LICENSE_KEY = import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY;
 export async function tournamentApi<T>(endpoint: string): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  console.log(url, AUTH_TOKEN, LICENSE_KEY);
+  console.log('stuff', url, AUTH_TOKEN, LICENSE_KEY);
 
   try {
     const response = await fetch(url, {
