@@ -128,6 +128,13 @@ module.exports = {
       "breadcrumb-text": COLORS.white,
       "breadcrumb-separator": COLORS.white,
 
+      // Tournaments
+      "tournament-card-labels": COLORS.misc,
+      "tournament-card-labels-text": COLORS.bodyText,
+      "tournament-card-bg-gradient": COLORS.primary,
+      "tournament-card-bg-gradient-end": COLORS.background[500],
+      "tournament-card-bg-gradient-start": COLORS.background[900],
+
       // Favourites
       "unfilled-favs": COLORS.white,
       "filled-favs": COLORS.danger,

@@ -1,0 +1,78 @@
+---
+const {tournaments} = Astro.props;
+let error = null;
+
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+console.log(tournaments);
+---
+
+<section class="py-20 px-4">
+  <div class="mx-auto">
+    <h2 class="text-4xl font-bold mb-12 text-center">
+      Past Tournament Results
+    </h2>
+
+    {
+      error && (
+        <div class="bg-red-500/10 border border-red-500 text-red-500 p-4 mb-8 rounded-lg">
+          Error loading tournament results: {error}
+        </div>
+      )
+    }
+
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-gray-700">
+            <th class="text-left py-4 px-6">Tournament</th>
+            <th class="text-left py-4 px-6">End Date</th>
+            <th class="text-left py-4 px-6">Status</th>
+            <th class="w-32"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            tournaments.map((tournament) => (
+              <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-4">
+                    {tournament.logoImage && (
+                      <img
+                        src={tournament.logoImage}
+                        alt={tournament.name}
+                        class="h-8 w-8 object-contain"
+                        onerror="this.style.display='none'"
+                      />
+                    )}
+                    <span class="font-semibold">{tournament.name}</span>
+                  </div>
+                </td>
+                <td class="py-4 px-6">{formatDate(tournament.endDate)}</td>
+                <td class="py-4 px-6">
+                  <span
+                    class={`inline-flex items-center px-2.5 py-0.5 rounded-full font-medium
+                  ${tournament.isLive ? "bg-green-500/10 text-green-500" : "bg-yellow-500/10 text-yellow-500"}`}
+                  >
+                    {tournament.isLive ? "Live" : "Completed"}
+                  </span>
+                </td>
+                <td class="py-4 px-6 text-right">
+                  <button class="inline-flex items-center gap-2 px-4 py-2 bg-misc text-white rounded-lg transition-colors">
+                    Leaderboard
+                  </button>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
