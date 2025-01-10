@@ -72,8 +72,8 @@
       <!-- Game Background -->
       <div class="absolute inset-0 w-full h-full overflow-hidden bg-tournament-card-bg-gradient -z-10">
         <img 
-          src="/it/fire-portals-background.jpg"
-          alt="Fire Portals Background"
+          src={tournament.backgroundImage}
+          alt={`${tournament.name} Background`}
           class="w-full h-full object-cover"
         />
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-800/90"></div>
@@ -81,8 +81,8 @@
 
       <div class="relative h-48 mt-16 overflow-hidden bg-gray-900">
           <img 
-            src="/it/fire-portals-logo.png"
-            alt="Fire Portals Background"
+            src={tournament.logoImage}
+            alt={tournament.name}
             class="w-full h-full object-cover"
           />
       </div>
