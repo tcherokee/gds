@@ -30,14 +30,14 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
 
     // Log the complete request details
     console.group('🚀 Tournament API Request');
-    console.log('Endpoint:', `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`);
+    console.log('Endpoint:', `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}/`);
     console.log('Method:', 'GET');
     console.log('Headers:', headers);
     console.log('Request ID:', requestId);
     console.log('Timestamp:', new Date().toISOString());
     console.groupEnd();
     
-    const response = await fetch(`${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`, {
+    const response = await fetch(`${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}/`, {
       method: 'GET',
       headers,
     });
