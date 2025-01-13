@@ -21,16 +21,19 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
   
   try {
     // Log the start of the request for debugging
-    console.log(`[Tournament API] Starting request ${requestId} to ${endpoint}`);
+      console.log(`[Tournament API] Starting request ${requestId} to ${endpoint}`);
+      console.log(`${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`, import.meta.env.PUBLIC_TOURNAMENT_AUTH_TOKEN, import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY);
     
     // Make the API request
-    const response = await fetch(`${import.meta.env.TOURNAMENT_API_URL}/${endpoint}`, {
+    const response = await fetch(`${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Request-ID': requestId  // Add request ID for tracing
+        'X-Request-ID': requestId,
+        Authorization: import.meta.env.PUBLIC_TOURNAMENT_AUTH_TOKEN,
+        License: import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY,
       },
-      timeout: TOURNAMENT_API_CONFIG.TIMEOUT
+    //   timeout: TOURNAMENT_API_CONFIG.TIMEOUT
     });
 
     // Check for HTTP errors
