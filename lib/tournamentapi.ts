@@ -9,45 +9,51 @@ import {
   isTournamentResponse 
 } from '../interfaces/tournaments';
 
+/**
+ * Main tournament API function for making requests to the tournament service
+ * @param endpoint - The API endpoint to call
+ * @returns Promise<TournamentResponse> - The API response
+ */
 export async function tournamentApi<T>(endpoint: string): Promise<TournamentResponse> {
+  // Start timing the request
   const startTime = performance.now();
   const requestId = crypto.randomUUID();
   
   try {
-    // Log request start
-      console.log(`[Tournament API] Starting request ${requestId} to ${endpoint}`);
-      console.log(`${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`, import.meta.env.PUBLIC_TOURNAMENT_AUTH_TOKEN, import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY);
+    // Log the start of the request for debugging
+    console.log(`[Tournament API] Starting request ${requestId} to ${endpoint}`);
     
-    const response = await fetch(`${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`, {
+    // Make the API request
+    const response = await fetch(`${import.meta.env.TOURNAMENT_API_URL}/${endpoint}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Request-ID': requestId,
-        'Authorization': `${import.meta.env.PUBLIC_TOURNAMENT_AUTH_TOKEN}`,
-        'license': import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY
+        'X-Request-ID': requestId  // Add request ID for tracing
       },
-    //   timeout: TOURNAMENT_API_CONFIG.TIMEOUT
+      timeout: TOURNAMENT_API_CONFIG.TIMEOUT
     });
 
+    // Check for HTTP errors
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
+    // Parse the response
     const data = await response.json();
     
-    // Validate response
+    // Validate response format
     if (!isTournamentResponse(data)) {
       throw new Error('Invalid response format');
     }
 
-    // Validate each tournament in the response
+    // If we have tournament data, validate each tournament
     if (data.data) {
       data.data.forEach(tournament => {
         TournamentDebug.validateTournament(tournament);
       });
     }
 
-    // Add metadata
+    // Return response with added metadata
     return {
       ...data,
       metadata: {
@@ -59,12 +65,13 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
     };
 
   } catch (error) {
+    // Create standardized error response
     const errorResponse = TournamentDebug.createErrorResponse(
       error as Error,
       endpoint
     );
     
-    // Log error details
+    // Log the error for debugging
     TournamentDebug.logTournamentError(errorResponse.error as TournamentError);
     
     return errorResponse;
