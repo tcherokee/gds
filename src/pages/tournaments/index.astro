@@ -52,24 +52,24 @@ let tournamentResults: Tournament[] = [];
 let liveTournamentResults: Tournament[] = [];
 let error = null;
 
-// const getTournaments = async () => {
-//   return tournamentApi<TournamentResponse>("getTournamentFullSchedule");
-// };
+const getTournaments = async () => {
+  return tournamentApi<TournamentResponse>("getTournamentFullSchedule");
+};
 
-// const getTournamentResults = async () => {
-//   return tournamentApi<TournamentResponse>("getTournamentResults");
-// };
+const getTournamentResults = async () => {
+  return tournamentApi<TournamentResponse>("getTournamentResults");
+};
 
 const getLiveTournament = async () => {
   return tournamentApi<TournamentResponse>("getLiveTournaments");
 };
 
 try {
-//   const tournamentResponse = await getTournaments();
-//   const tournamentResultsResponse = await getTournamentResults();
+  const tournamentResponse = await getTournaments();
+  const tournamentResultsResponse = await getTournamentResults();
   const liveTournamentResponse = await getLiveTournament();
-//   tournaments = tournamentResponse.data || [];
-//   tournamentResults = tournamentResultsResponse.data || [];
+  tournaments = tournamentResponse.data || [];
+  tournamentResults = tournamentResultsResponse.data || [];
   liveTournamentResults = liveTournamentResponse.data || [];
 } catch (e) {
   console.error("Error fetching tournaments:", e);
@@ -177,21 +177,18 @@ const breadcrumbs = [
   <div class="xl:container content-auto px-2 pt-5">
     <section class="py-20 px-4">
       <div class="max-w-6xl mx-auto">
-        <h2 class="text-4xl font-bold mb-12 text-center">
-          {liveTournamentResults[0]?.name || "Active Tournaments"}
-        </h2>
-        <!-- <div class="grid md:grid-cols-3 gap-8">
+        <h2 class="text-4xl font-bold mb-12 text-center">{liveTournamentResults[0]?.name || "Active Tournaments"}</h2>
+        <div class="grid md:grid-cols-3 gap-8">
           {
             tournaments.map((tournament) => (
               <TournamentCard client:load tournament={tournament} />
             ))
           }
-        </div> -->
-        <TournamentCard client:load />
+        </div>
       </div>
     </section>
 
-    <!-- <PastResults tournaments={tournamentResults} /> -->
+    <PastResults tournaments={tournamentResults} />
 
     <section class="py-20 px-4 bg-gray-800">
       <div class="mx-auto">
