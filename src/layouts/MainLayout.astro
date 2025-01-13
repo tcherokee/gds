@@ -34,6 +34,19 @@ import CookiesConsent from "../components/general/cookiesConsent.svelte";
 import { getTranslations } from "../../utils/api-requests";
 import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 import AdPopUp from "../components/helpers/ad-pop-up.svelte";
+import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
+
+// const ipAddress = IPRequest.ip.split(",")[0];
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") ||
+  import.meta.env.SITE_IDLOCAL_DEFAULT_IP;
+
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase()
+);
+
+const countryCode = country?.sc || "";
 
 const siteID = `${import.meta.env.SITE_ID}`;
 const siteLang = `${import.meta.env.LANG}`;
@@ -169,9 +182,10 @@ if (otherSchema) {
 }
 ---
 
-<!-- <script define:vars={{ layout }}>
-  console.log("layout", layout);
-</script> -->
+<script define:vars={{ menu, processedMenus }}>
+  console.log("menu", menu);
+  console.log("Process menu", processedMenus);
+</script>
 <html lang={siteLang}>
   <head>
     <meta charset="UTF-8" />
