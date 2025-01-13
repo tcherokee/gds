@@ -30,7 +30,7 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
 
     // Log the complete request details
     console.group('🚀 Tournament API Request');
-    console.log('Endpoint:', `${import.meta.env.TOURNAMENT_API_URL}/${endpoint}`);
+    console.log('Endpoint:', `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`);
     console.log('Method:', 'GET');
     console.log('Headers:', headers);
     console.log('Request ID:', requestId);
