@@ -1,8 +1,20 @@
 ---
-const { tournaments } = Astro.props;
+// Component: Past Tournament Results Table
+// Description: Displays a table of completed tournaments with their status and details
+
+// Import types
 import type { Tournament } from "../../../interfaces/tournaments";
+
+// Props interface
+interface Props {
+  tournaments: Tournament[]; // Array of tournament data
+}
+
+// Destructure props
+const { tournaments } = Astro.props;
 let error = null;
 
+// Date formatter utility
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString("en-US", {
     year: "numeric",
@@ -11,15 +23,19 @@ function formatDate(dateString: string) {
   });
 }
 
+// Debug logging
 console.log(tournaments);
 ---
 
+<!-- Tournament Results Section -->
 <section class="py-20 px-4">
   <div class="mx-auto">
+    <!-- Section Header -->
     <h2 class="text-4xl font-bold mb-12 text-center">
       Past Tournament Results
     </h2>
 
+    <!-- Error Alert -->
     {
       error && (
         <div class="bg-red-500/10 border border-red-500 text-red-500 p-4 mb-8 rounded-lg">
@@ -28,8 +44,10 @@ console.log(tournaments);
       )
     }
 
+    <!-- Tournament Results Table -->
     <div class="overflow-x-auto">
       <table class="w-full">
+        <!-- Table Header -->
         <thead>
           <tr class="border-b border-gray-700">
             <th class="text-left py-4 px-6">Tournament</th>
@@ -38,10 +56,13 @@ console.log(tournaments);
             <th class="w-32"></th>
           </tr>
         </thead>
+        <!-- Table Body -->
         <tbody>
           {
             tournaments.map((tournament: Tournament) => (
+              <!-- Tournament Row -->
               <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                <!-- Tournament Name and Logo -->
                 <td class="py-4 px-6">
                   <div class="flex items-center gap-4">
                     {tournament.logoImage && (
@@ -55,15 +76,18 @@ console.log(tournaments);
                     <span class="font-semibold">{tournament.name}</span>
                   </div>
                 </td>
+                <!-- End Date -->
                 <td class="py-4 px-6">{formatDate(tournament.endDate)}</td>
+                <!-- Tournament Status -->
                 <td class="py-4 px-6">
                   <span
                     class={`inline-flex items-center px-2.5 py-0.5 rounded-full font-medium
-                  ${tournament.isLive ? "bg-green-500/10 text-green-500" : "bg-yellow-500/10 text-yellow-500"}`}
+                    ${tournament.isLive ? "bg-green-500/10 text-green-500" : "bg-yellow-500/10 text-yellow-500"}`}
                   >
                     {tournament.isLive ? "Live" : "Completed"}
                   </span>
                 </td>
+                <!-- Action Button -->
                 <td class="py-4 px-6 text-right">
                   <button class="inline-flex items-center gap-2 px-4 py-2 bg-misc text-white rounded-lg transition-colors">
                     Leaderboard

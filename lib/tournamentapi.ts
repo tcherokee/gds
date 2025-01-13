@@ -20,43 +20,57 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
   const requestId = crypto.randomUUID();
   
   try {
-    // Log the start of the request for debugging
-      console.log(`[Tournament API] Starting request ${requestId} to ${endpoint}`);
-      console.log(`${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`, import.meta.env.PUBLIC_TOURNAMENT_AUTH_TOKEN, import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY);
+    // Construct request headers
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Request-ID': requestId,
+      Authorization: import.meta.env.PUBLIC_TOURNAMENT_AUTH_TOKEN,
+      License: import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY,
+    };
+
+    // Log the complete request details
+    console.group('🚀 Tournament API Request');
+    console.log('Endpoint:', `${import.meta.env.TOURNAMENT_API_URL}/${endpoint}`);
+    console.log('Method:', 'GET');
+    console.log('Headers:', headers);
+    console.log('Request ID:', requestId);
+    console.log('Timestamp:', new Date().toISOString());
+    console.groupEnd();
     
-    // Make the API request
     const response = await fetch(`${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Request-ID': requestId,
-        Authorization: import.meta.env.PUBLIC_TOURNAMENT_AUTH_TOKEN,
-        License: import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY,
-      },
-    //   timeout: TOURNAMENT_API_CONFIG.TIMEOUT
+      headers,
     });
 
-    // Check for HTTP errors
+    // Log the complete response details
+    console.group('📥 Tournament API Response');
+    console.log('Status:', response.status);
+    console.log('Status Text:', response.statusText);
+    console.log('Headers:', Object.fromEntries([...response.headers]));
+    console.log('Request ID:', requestId);
+    console.log('Duration:', `${(performance.now() - startTime).toFixed(2)}ms`);
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // Parse the response
     const data = await response.json();
-    
-    // Validate response format
+    console.log('Response Data:', JSON.stringify(data, null, 2));
+    console.groupEnd();
+
+    // Validate response
     if (!isTournamentResponse(data)) {
       throw new Error('Invalid response format');
     }
 
-    // If we have tournament data, validate each tournament
+    // Validate each tournament in the response
     if (data.data) {
       data.data.forEach(tournament => {
         TournamentDebug.validateTournament(tournament);
       });
     }
 
-    // Return response with added metadata
+    // Add metadata and return
     return {
       ...data,
       metadata: {
@@ -68,13 +82,19 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
     };
 
   } catch (error) {
-    // Create standardized error response
+    // Log error details
+    console.group('❌ Tournament API Error');
+    console.error('Error:', error);
+    console.error('Request ID:', requestId);
+    console.error('Endpoint:', endpoint);
+    console.error('Duration:', `${(performance.now() - startTime).toFixed(2)}ms`);
+    console.groupEnd();
+    
     const errorResponse = TournamentDebug.createErrorResponse(
       error as Error,
       endpoint
     );
     
-    // Log the error for debugging
     TournamentDebug.logTournamentError(errorResponse.error as TournamentError);
     
     return errorResponse;
