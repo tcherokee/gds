@@ -29,13 +29,8 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
     };
 
     // Log the complete request details
-    console.group('🚀 Tournament API Request');
-    console.log('Endpoint:', `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}/`);
-    console.log('Method:', 'GET');
-    console.log('Headers:', headers);
-    console.log('Request ID:', requestId);
-    console.log('Timestamp:', new Date().toISOString());
-    console.groupEnd();
+      console.group('🚀 Tournament API Request');
+      console.log('Endpoint/Headers:', `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`, headers);
     
     const response = await fetch(`${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}/`, {
       method: 'GET',
@@ -44,11 +39,7 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
 
     // Log the complete response details
     console.group('📥 Tournament API Response');
-    console.log('Status:', response.status);
-    console.log('Status Text:', response.statusText);
-    console.log('Headers:', Object.fromEntries([...response.headers]));
-    console.log('Request ID:', requestId);
-    console.log('Duration:', `${(performance.now() - startTime).toFixed(2)}ms`);
+    console.log('Status:', response);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
