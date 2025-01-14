@@ -19,28 +19,6 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
   const startTime = performance.now();
   const requestId = crypto.randomUUID();
 
-  // src/pages/api/your-endpoint.ts
-  const getServerInfo = async () => {
-    const services = [
-      "https://ip.seeip.org/json",
-      "https://api.myip.com",
-      "https://ipinfo.io/json",
-    ];
-
-    for (const service of services) {
-      try {
-        const response = await fetch(service);
-        const data = await response.json();
-        console.log(`Success with ${service}:`, data);
-        return data;
-      } catch (error) {
-        console.error(`Error with ${service}:`, error);
-        continue; // Try next service
-      }
-    }
-    return null;
-  };
-
   try {
     // Construct request headers
     const headers = {
@@ -50,15 +28,8 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
       License: import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY,
     };
 
-    // Log the complete request details
-    console.group("🚀 Tournament API Request");
-    console.log(
-      "Endpoint/Headers:",
-      `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}`,
-      headers
-    );
-      
-    const serverInfo = await getServerInfo();
+    // Log the start of the request
+    console.log("🚀 Tournament API Request");
 
     const response = await fetch(
       `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}/`,
@@ -68,17 +39,15 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
       }
     );
 
-    // Log the complete response details
-    console.group("📥 Tournament API Response");
-    console.log("Status:", response, JSON.stringify(serverInfo, null, 2));
+    // Log the response
+    console.log("📥 Tournament API Response");
+    
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log("Response Data:", JSON.stringify(data, null, 2));
-    console.groupEnd();
 
     // Validate response
     if (!isTournamentResponse(data)) {
