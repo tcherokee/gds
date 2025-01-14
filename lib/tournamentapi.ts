@@ -21,16 +21,24 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
 
   // src/pages/api/your-endpoint.ts
   const getServerInfo = async () => {
-    try {
-      const response = await fetch("https://ipapi.co/json/");
-      const data = await response.json();
-      console.log("Server IP:", data.ip);
-      console.log("Server Country:", data.country);
-      console.log("Full location data:", data);
-      return data;
-    } catch (error) {
-      console.error("Error getting server info:", error);
+    const services = [
+      "https://ip.seeip.org/json",
+      "https://api.myip.com",
+      "https://ipinfo.io/json",
+    ];
+
+    for (const service of services) {
+      try {
+        const response = await fetch(service);
+        const data = await response.json();
+        console.log(`Success with ${service}:`, data);
+        return data;
+      } catch (error) {
+        console.error(`Error with ${service}:`, error);
+        continue; // Try next service
+      }
     }
+    return null;
   };
 
   try {
