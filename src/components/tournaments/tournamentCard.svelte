@@ -193,7 +193,7 @@
       <!-- Background Image -->
       <div class="absolute inset-0 w-full h-full overflow-hidden bg-tournament-card-bg-gradient -z-10">
         <img 
-          src="/it/fire-portals-background.jpg"
+          src={tournament.backgroundImage}
           alt="Fire Portals Background"
           class="w-full h-full object-cover"
         />
