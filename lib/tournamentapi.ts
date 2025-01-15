@@ -1,20 +1,22 @@
-import type { 
-  Tournament, 
+import type {
+  Tournament,
   TournamentResponse,
-  TournamentError 
-} from '../interfaces/tournaments';
-import { 
-  TournamentDebug, 
+  TournamentError,
+} from "../interfaces/tournaments";
+import {
+  TournamentDebug,
   TOURNAMENT_API_CONFIG,
-  isTournamentResponse 
-} from '../interfaces/tournaments';
+  isTournamentResponse,
+} from "../interfaces/tournaments";
 
 /**
  * Main tournament API function for making requests to the tournament service
  * @param endpoint - The API endpoint to call
  * @returns Promise<TournamentResponse> - The API response
  */
-export async function tournamentApi<T>(endpoint: string): Promise<TournamentResponse> {
+export async function tournamentApi<T>(
+  endpoint: string
+): Promise<TournamentResponse> {
   // Start timing the request
   const startTime = performance.now();
   const requestId = crypto.randomUUID();
@@ -41,7 +43,6 @@ export async function tournamentApi<T>(endpoint: string): Promise<TournamentResp
 
     // Log the response
     console.log("📥 Tournament API Response");
-    
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

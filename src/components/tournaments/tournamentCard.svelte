@@ -5,6 +5,7 @@
   import XIcon from "~icons/kensho-icons/xmark";
   import { onMount, onDestroy } from 'svelte';
   import type { Tournament } from '../../../interfaces/tournaments';
+  import Images from '../helpers/images.svelte';
 
   export let tournament: Tournament;
   let isFlipped = false;
@@ -14,6 +15,10 @@
   let backgroundImageError = false;
   let logoImageError = false;
 
+  /**
+   * Handle image loading errors
+   * @param type - Type of image that failed to load ('background' or 'logo')
+   */
   function handleImageError(type: 'background' | 'logo') {
     if (type === 'background') {
       backgroundImageError = true;
@@ -22,6 +27,10 @@
     }
   }
 
+  /**
+   * Handle card flip animation and face selection
+   * @param face - The face to display ('front', 'info', 'leaderboard', or 'prizes')
+   */
   function handleFlip(face: typeof currentFace) {
     if (face === 'front') {
       isFlipped = false;
@@ -31,6 +40,10 @@
     }
   }
 
+  /**
+   * Update countdown timer
+   * Calculates time remaining and updates timeLeft state
+   */
   function updateCountdown() {
     const now = new Date().getTime();
     const targetTime = tournament.timer * 1000; // Convert to milliseconds
@@ -68,10 +81,9 @@
     <div class="absolute w-full h-full [backface-visibility:hidden] bg-gray-800 rounded-xl overflow-hidden border border-yellow-500/20 hover:border-yellow-500/40 transition-all"
          class:pointer-events-none={isFlipped}>
 
-
-      <!-- Game Background -->
+      <!-- Game Background Image with Gradient Overlay -->
       <div class="absolute inset-0 w-full h-full overflow-hidden bg-tournament-card-bg-gradient -z-10">
-        <img 
+        <Images
           src={tournament.backgroundImage}
           alt={`${tournament.name} Background`}
           class="w-full h-full object-cover"
@@ -79,15 +91,17 @@
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-800/90"></div>
       </div>
 
+      <!-- Game Logo -->
       <div class="relative h-48 mt-16 overflow-hidden bg-gray-900">
-          <img 
+          <Images
+            height={120}
             src={tournament.logoImage}
             alt={tournament.name}
-            class="w-full h-full object-cover"
+            class="object-cover"
           />
       </div>
 
-      <!-- Challenge Banner -->
+      <!-- Tournament Type Banner -->
       <div class="absolute top-4 left-0 right-0 flex justify-between transition-[z-index] duration-0 z-50"
            class:z-10={!isFlipped} class:z-[-1]={isFlipped}>
         <div class="bg-tournament-card-labels text-tournament-card-labels-text py-2 px-3 rounded-r-full font-bold flex items-center text-xs">
@@ -99,8 +113,9 @@
         </div>
       </div>
 
-      <!-- Tournament Info -->
+      <!-- Tournament Information Section -->
       <div class="p-6 z-50">
+        <!-- Prize Pool and Spins Info -->
         <div class="flex justify-between items-center mb-6">
           <div>
             <div class="text-2xl font-bold text-white">{tournament.prizePool}</div>
@@ -112,9 +127,11 @@
           </div>
         </div>
 
-        <!-- Timer -->
+        <!-- Countdown Timer -->
         <div class="mb-6">
-          <div class="text-white mb-2">{tournament.scheduleTimerTitle === 'ends_in' ? 'Ends in:' : 'Starts in:'}</div>
+          <div class="text-white mb-2">
+            {tournament.scheduleTimerTitle === 'ends_in' ? 'Ends in:' : 'Starts in:'}
+          </div>
           <div class="bg-gray-900/50 rounded-lg p-4 pt-0">
             <div class="flex justify-center items-center space-x-2 text-white text-3xl font-bold">
               <span>{String(timeLeft.hours).padStart(2, '0')}</span>
@@ -131,11 +148,12 @@
           </div>
         </div>
 
-        <!-- Action Buttons -->
+        <!-- Action Button -->
         <button class="w-full bg-secondary hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all mb-4">
           {tournament.actionButton.label.toUpperCase()}
         </button>
 
+        <!-- Navigation Buttons -->
         <div class="flex justify-center space-x-6 text-gray-400 text-sm">
           <button 
             on:click={() => handleFlip('info')}
@@ -164,6 +182,7 @@
 
     <!-- Back Face -->
     <div class="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] bg-gray-800 rounded-xl overflow-hidden border border-yellow-500/20">
+      <!-- Close Button -->
       <button 
         on:click={() => handleFlip('front')}
         class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white text-gray-900 hover:bg-misc hover:text-grey-900 transition-colors"
@@ -171,6 +190,7 @@
         <XIcon class="w-4 h-4" />
       </button>
 
+      <!-- Background Image -->
       <div class="absolute inset-0 w-full h-full overflow-hidden bg-tournament-card-bg-gradient -z-10">
         <img 
           src="/it/fire-portals-background.jpg"
@@ -180,7 +200,9 @@
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-800/95"></div>
       </div>
       
+      <!-- Conditional Content Based on Current Face -->
       {#if currentFace === 'info'}
+        <!-- Information Face -->
         <div class="p-6 mt-10 text-white">
           <h3 class="text-xl text-white font-bold mb-4">Tournament Information</h3>
           <div class="space-y-4">
@@ -196,6 +218,7 @@
           </div>
         </div>
       {:else if currentFace === 'leaderboard'}
+        <!-- Leaderboard Face -->
         <div class="p-6 mt-10 text-white">
           <h3 class="text-xl text-white font-bold mb-4">Current Leaders</h3>
           <div class="space-y-3">
@@ -216,6 +239,7 @@
           </div>
         </div>
       {:else if currentFace === 'prizes'}
+        <!-- Prizes Face -->
         <div class="p-6 mt-10 text-white">
           <h3 class="text-xl text-white font-bold mb-4">Prize Structure</h3>
           <div class="space-y-3">
@@ -232,6 +256,7 @@
   </div>
 </div>
 
+<!-- CSS for card flip animation -->
 <style>
   .rotate-y-180 {
     transform: rotateY(180deg);
