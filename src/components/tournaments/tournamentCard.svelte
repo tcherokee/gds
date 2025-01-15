@@ -114,9 +114,9 @@
       </div>
 
       <!-- Tournament Information Section -->
-      <div class="p-6 z-50">
-        <!-- Prize Pool and Spins Info -->
-        <div class="flex justify-between items-center mb-6">
+      <div class="p-6 z-50 h-[calc(100%-176px)] flex flex-col">
+        <!-- Top Section: Prize Pool and Spins Info -->
+        <div class="flex justify-between items-center">
           <div>
             <div class="text-2xl font-bold text-white">{tournament.prizePool}</div>
             <div class="text-white">Prize Pool</div>
@@ -127,8 +127,11 @@
           </div>
         </div>
 
-        <!-- Countdown Timer -->
-        <div class="mb-6">
+        <!-- First Spacer -->
+        <div class="flex-grow"></div>
+
+        <!-- Middle Section: Countdown Timer -->
+        <div>
           <div class="text-white mb-2">
             {tournament.scheduleTimerTitle === 'ends_in' ? 'Ends in:' : 'Starts in:'}
           </div>
@@ -148,34 +151,40 @@
           </div>
         </div>
 
-        <!-- Action Button -->
-        <button class="w-full bg-secondary hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all mb-4">
-          {tournament.actionButton.label.toUpperCase()}
-        </button>
+        <!-- Second Spacer -->
+        <div class="flex-grow"></div>
 
-        <!-- Navigation Buttons -->
-        <div class="flex justify-center space-x-6 text-gray-400 text-sm">
-          <button 
-            on:click={() => handleFlip('info')}
-            class="flex items-center text-white hover:text-misc transition-colors"
-          >
-            <CircleInfoIcon class="w-4 h-4 mr-1.5" />
-            Information
+        <!-- Bottom Section: Action Button and Navigation -->
+        <div class="mt-auto pb-2">
+          <!-- Action Button -->
+          <button class="w-full bg-secondary hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all mb-4">
+            {tournament.actionButton.label.toUpperCase()}
           </button>
-          <button 
-            on:click={() => handleFlip('leaderboard')}
-            class="flex items-center text-white hover:text-misc transition-colors"
-          >
-            <TrophyIcon class="w-4 h-4 mr-1.5" />
-            Leaderboard
-          </button>
-          <button 
-            on:click={() => handleFlip('prizes')}
-            class="flex items-center text-white hover:text-misc transition-colors"
-          >
-            <AwardIcon class="w-4 h-4 mr-1.5" />
-            Prizes
-          </button>
+
+          <!-- Navigation Buttons -->
+          <div class="flex justify-center space-x-6 text-gray-400 text-sm">
+            <button 
+              on:click={() => handleFlip('info')}
+              class="flex items-center text-white hover:text-misc transition-colors"
+            >
+              <CircleInfoIcon class="w-4 h-4 mr-1.5" />
+              Information
+            </button>
+            <button 
+              on:click={() => handleFlip('leaderboard')}
+              class="flex items-center text-white hover:text-misc transition-colors"
+            >
+              <TrophyIcon class="w-4 h-4 mr-1.5" />
+              Leaderboard
+            </button>
+            <button 
+              on:click={() => handleFlip('prizes')}
+              class="flex items-center text-white hover:text-misc transition-colors"
+            >
+              <AwardIcon class="w-4 h-4 mr-1.5" />
+              Prizes
+            </button>
+          </div>
         </div>
       </div>
     </div>
