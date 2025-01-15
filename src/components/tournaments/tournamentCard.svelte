@@ -118,29 +118,31 @@
         <!-- Prize Pool and Spins Info -->
         <div class="flex justify-between items-center mb-6">
           <div>
-            <div class="text-2xl font-bold text-white">{tournament.prizePool}</div>
-            <div class="text-white">Prize Pool</div>
+            <div class="text-2xl font-bold text-tournament-card-text [text-shadow:_-1px_-1px_0_#fff,_1px_-1px_0_#fff,_-1px_1px_0_#fff,_1px_1px_0_#fff]">
+              {tournament.prizePool}
+            </div>
+            <div class="text-tournament-card-text [text-shadow:_-1px_-1px_0_#fff,_1px_-1px_0_#fff,_-1px_1px_0_#fff,_1px_1px_0_#fff]">Prize Pool</div>
           </div>
           <div class="text-right">
-            <div class="text-2xl font-bold text-white">{tournament.spins}</div>
-            <div class="text-white">Spins</div>
+            <div class="text-2xl font-bold text-tournament-card-text [text-shadow:_-1px_-1px_0_#fff,_1px_-1px_0_#fff,_-1px_1px_0_#fff,_1px_1px_0_#fff]">{tournament.spins}</div>
+            <div class="text-tournament-card-text [text-shadow:_-1px_-1px_0_#fff,_1px_-1px_0_#fff,_-1px_1px_0_#fff,_1px_1px_0_#fff]">Spins</div>
           </div>
         </div>
 
         <!-- Countdown Timer -->
         <div class="mb-6">
-          <div class="text-white mb-2">
+          <div class="text-tournament-card-text [text-shadow:_-1px_-1px_0_#fff,_1px_-1px_0_#fff,_-1px_1px_0_#fff,_1px_1px_0_#fff] mb-2">
             {tournament.scheduleTimerTitle === 'ends_in' ? 'Ends in:' : 'Starts in:'}
           </div>
           <div class="bg-gray-900/50 rounded-lg p-4 pt-0">
-            <div class="flex justify-center items-center space-x-2 text-white text-3xl font-bold">
+            <div class="flex justify-center items-center space-x-2 text-tournament-card-text [text-shadow:_-1px_-1px_0_#fff,_1px_-1px_0_#fff,_-1px_1px_0_#fff,_1px_1px_0_#fff] text-3xl font-bold">
               <span>{String(timeLeft.hours).padStart(2, '0')}</span>
               <span>:</span>
               <span>{String(timeLeft.mins).padStart(2, '0')}</span>
               <span>:</span>
               <span>{String(timeLeft.secs).padStart(2, '0')}</span>
             </div>
-            <div class="flex justify-center items-center space-x-8 mt-1 text-sm text-white">
+            <div class="flex justify-center items-center space-x-8 mt-1 text-sm text-tournament-card-text [text-shadow:_-1px_-1px_0_#fff,_1px_-1px_0_#fff,_-1px_1px_0_#fff,_1px_1px_0_#fff]">
               <span>HOURS</span>
               <span>MINS</span>
               <span>SECS</span>
