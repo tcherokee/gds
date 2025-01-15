@@ -1,28 +1,96 @@
-import type { TournamentResponse } from "../interfaces/tournaments"
+import type {
+  Tournament,
+  TournamentResponse,
+  TournamentError,
+} from "../interfaces/tournaments";
+import {
+  TournamentDebug,
+  TOURNAMENT_API_CONFIG,
+  isTournamentResponse,
+} from "../interfaces/tournaments";
 
-const API_BASE_URL = import.meta.env.TOURNAMENT_API_URL;
-const AUTH_TOKEN = import.meta.env.TOURNAMENT_AUTH_TOKEN;
-const LICENSE_KEY = import.meta.env.TOURNAMENT_LICENSE_KEY;
-
-export async function tournamentApi<T>(endpoint: string): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+/**
+ * Main tournament API function for making requests to the tournament service
+ * @param endpoint - The API endpoint to call
+ * @returns Promise<TournamentResponse> - The API response
+ */
+export async function tournamentApi<T>(
+  endpoint: string
+): Promise<TournamentResponse> {
+  // Start timing the request
+  const startTime = performance.now();
+  const requestId = crypto.randomUUID();
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: AUTH_TOKEN,
-        License: LICENSE_KEY,
-        "Content-Type": "application/json",
-      },
-    });
+    // Construct request headers
+    const headers = {
+      "Content-Type": "application/json",
+      "X-Request-ID": requestId,
+      Authorization: import.meta.env.PUBLIC_TOURNAMENT_AUTH_TOKEN,
+      License: import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY,
+    };
+
+    // Log the start of the request
+    console.log("🚀 Tournament API Request");
+
+    const response = await fetch(
+      `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}/`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    // Log the response
+    console.log("📥 Tournament API Response");
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+
+    // Validate response
+    if (!isTournamentResponse(data)) {
+      throw new Error("Invalid response format");
+    }
+
+    // Validate each tournament in the response
+    if (data.data) {
+      data.data.forEach((tournament) => {
+        TournamentDebug.validateTournament(tournament);
+      });
+    }
+
+    // Add metadata and return
+    return {
+      ...data,
+      metadata: {
+        requestId,
+        timestamp: new Date().toISOString(),
+        endpoint,
+        duration: performance.now() - startTime,
+      },
+    };
   } catch (error) {
-    console.error(`Error fetching from ${endpoint}:`, error);
-    throw error;
+    // Log error details
+    console.group("❌ Tournament API Error");
+    console.error("Error:", error);
+    console.error("Request ID:", requestId);
+    console.error("Endpoint:", endpoint);
+    console.error(
+      "Duration:",
+      `${(performance.now() - startTime).toFixed(2)}ms`
+    );
+    console.groupEnd();
+
+    const errorResponse = TournamentDebug.createErrorResponse(
+      error as Error,
+      endpoint
+    );
+
+    TournamentDebug.logTournamentError(errorResponse.error as TournamentError);
+
+    return errorResponse;
   }
 }
