@@ -197,7 +197,7 @@
           alt="Fire Portals Background"
           class="w-full h-full object-cover"
         />
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-800/95"></div>
+        <div class="absolute inset-0 bg-background-900/60"></div>
       </div>
       
       <!-- Conditional Content Based on Current Face -->
