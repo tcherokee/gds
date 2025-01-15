@@ -228,23 +228,31 @@
         </div>
       {:else if currentFace === 'leaderboard'}
         <!-- Leaderboard Face -->
-        <div class="p-6 mt-10 text-white">
+        <div class="p-6 mt-10 text-white h-[calc(100%-40px)] flex flex-col">
           <h3 class="text-xl text-white font-bold mb-4">Current Leaders</h3>
-          <div class="space-y-3">
-            {#each tournament.scoreboard as entry}
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <span class="w-8 font-bold">#{entry.position}</span>
-                  <span>{entry.name}</span>
+          <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            <div class="space-y-3 pb-10">
+              {#if Array.isArray(tournament.scoreboard) && tournament.scoreboard.length > 0}
+                {#each tournament.scoreboard as entry}
+                  <div class="flex items-center justify-between py-2 border-b border-gray-700/50">
+                    <div class="flex items-center">
+                      <span class="w-8 font-bold">#{entry.position}</span>
+                      <span>{entry.name}</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <span class="font-bold">{entry.score}</span>
+                      {#if entry.prize}
+                        <span class="text-yellow-500">{entry.prize}</span>
+                      {/if}
+                    </div>
+                  </div>
+                {/each}
+              {:else}
+                <div class="text-center text-gray-400">
+                  No leaderboard data available
                 </div>
-                <div class="flex items-center gap-4">
-                  <span class="font-bold">{entry.score}</span>
-                  {#if entry.prize}
-                    <span>{entry.prize}</span>
-                  {/if}
-                </div>
-              </div>
-            {/each}
+              {/if}
+            </div>
           </div>
         </div>
       {:else if currentFace === 'prizes'}
@@ -252,12 +260,18 @@
         <div class="p-6 mt-10 text-white">
           <h3 class="text-xl text-white font-bold mb-4">Prize Structure</h3>
           <div class="space-y-3">
-            {#each tournament.prizePoolList as prize}
-              <div class="flex items-center justify-between">
-                <span class="font-bold">Position {prize.range}</span>
-                <span class="font-bold">{prize.prize}</span>
+            {#if Array.isArray(tournament.prizePoolList) && tournament.prizePoolList.length > 0}
+              {#each tournament.prizePoolList as prize}
+                <div class="flex items-center justify-between">
+                  <span class="font-bold">Position {prize.range}</span>
+                  <span class="font-bold">{prize.prize}</span>
+                </div>
+              {/each}
+            {:else}
+              <div class="text-center text-gray-400">
+                No prize data available
               </div>
-            {/each}
+            {/if}
           </div>
         </div>
       {/if}
@@ -269,5 +283,28 @@
 <style>
   .rotate-y-180 {
     transform: rotateY(180deg);
+  }
+
+  /* Custom scrollbar styles */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
   }
 </style>
