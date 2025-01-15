@@ -10,14 +10,29 @@ import type { Tournament } from "../../../interfaces/tournaments";
 
 // Props interface
 interface Props {
-  tournaments: Tournament[]; // Array of tournament data
+  tournaments: Tournament[] | null;
 }
 
-// Destructure props and filter for completed tournaments only
 const { tournaments } = Astro.props;
-const completedTournaments = tournaments.filter(tournament => !tournament.isLive);
+const completedTournaments = tournaments 
+  ? tournaments.filter(tournament => !tournament.isLive)
+  : [];
 let error = null;
 
+// Helper function to safely format the timestamp
+const formatTimestamp = (timestamp: number | string | undefined) => {
+  if (!timestamp) return 'Date not available';
+  
+  // Convert string to number if needed
+  const numericTimestamp = typeof timestamp === 'string' 
+    ? parseInt(timestamp, 10) 
+    : timestamp;
+
+  // Check if we have a valid number
+  if (isNaN(numericTimestamp)) return 'Invalid date';
+
+  return formatUnixTimestamp(numericTimestamp);
+};
 ---
 
 <!-- Tournament Results Section -->
@@ -67,7 +82,9 @@ let error = null;
                     <span class="font-semibold">{tournament.name}</span>
                   </div>
                 </td>
-                <td class="py-4 px-6">{formatUnixTimestamp(tournament.endDate)}</td>
+                <td class="py-4 px-6">
+                  {formatTimestamp(tournament.endDate)}
+                </td>
                 <td class="py-4 px-6">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-yellow-500/10 text-yellow-500">
                     Completed

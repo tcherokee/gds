@@ -49,8 +49,9 @@ let faqs = [
 
 let tournaments: Tournament[] = [];
 let tournamentResults: Tournament[] = [];
+let liveTournamentResults: Tournament[] = [];
+let error = null;
 
-// function to get tournaments from the api
 const getTournaments = async () => {
   return tournamentApi<TournamentResponse>("getTournamentFullSchedule");
 };
@@ -59,11 +60,17 @@ const getTournamentResults = async () => {
   return tournamentApi<TournamentResponse>("getTournamentResults");
 };
 
+const getLiveTournament = async () => {
+  return tournamentApi<TournamentResponse>("getLiveTournaments");
+};
+
 try {
   const tournamentResponse = await getTournaments();
   const tournamentResultsResponse = await getTournamentResults();
+  const liveTournamentResponse = await getLiveTournament();
   tournaments = tournamentResponse.data || [];
   tournamentResults = tournamentResultsResponse.data || [];
+  liveTournamentResults = liveTournamentResponse.data || [];
 } catch (e) {
   console.error("Error fetching tournaments:", e);
   error = e instanceof Error ? e.message : "Unknown error occurred";
@@ -173,7 +180,7 @@ const breadcrumbs = [
         <h2 class="text-4xl font-bold mb-12 text-center">Live Tournaments</h2>
         <div class="grid md:grid-cols-3 gap-8">
           {
-            tournaments.map((tournament) => (
+            liveTournamentResults.map((tournament) => (
               <TournamentCard client:load tournament={tournament} />
             ))
           }
