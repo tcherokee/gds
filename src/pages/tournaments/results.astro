@@ -1,19 +1,25 @@
 ---
-import qs from "qs";
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getTranslations } from "../../../utils/api-requests";
-import fetchApi from "../../../lib/strapi";
-import type { Tournament } from "../../../interfaces/tournaments";
+import { tournamentApi } from "../../../lib/tournamentapi";
+import type { Tournament, TournamentResponse } from "../../../interfaces/tournaments";
 import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+import PastResults from "../../components/tournaments/pastResults.astro";
 
 const translationStore = await getTranslations();
 
-// Fetch completed tournaments
-const tournaments = await fetchApi<Tournament[]>({
-  endpoint: "tournaments",
-  wrappedByKey: "data",
-  query: "?filters[endDate][$lt]=$now&sort[endDate]=desc",
-});
+// Get tournament results using the tournament API
+const getTournamentResults = async () => {
+  return tournamentApi<TournamentResponse>("getTournamentResults");
+};
+
+let tournaments: Tournament[] = [];
+try {
+  const tournamentResultsResponse = await getTournamentResults();
+  tournaments = tournamentResultsResponse.data || [];
+} catch (e) {
+  console.error("Error fetching tournament results:", e);
+}
 
 const seo = {
   pageTitle: translationStore?.tournamentResultsTitle || "Tournament Results",
@@ -22,17 +28,6 @@ const seo = {
     "View past tournament results",
   url: `${import.meta.env.PUBLIC_FULL_URL}/tournaments/results`,
 };
-
-// Cache Control Headers
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=0, must-revalidate"
-);
-
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
-);
 
 const breadcrumbs = [
   { title: translationStore?.home || "Home", href: "/" },
@@ -49,42 +44,25 @@ const breadcrumbs = [
 ---
 
 <MainLayout seoData={seo}>
-  <Breadcrumb
-    breadcrumbs={[
-      { id: 1, breadCrumbText: "Home", breadCrumbUrl: "/" },
-      { id: 2, breadCrumbText: "Tournaments", breadCrumbUrl: "/tournaments" },
-      { id: 3, breadCrumbText: "Results", breadCrumbUrl: null },
-    ]}
-  />
+  <!-- Header Section -->
   <div class="featured-background curve">
-    some dummy text
-  </div>
-  <div class="xl:container content-auto px-2 pt-5">
-    <h1 class="text-2xl font-bold mb-6">
-      {translationStore?.tournamentResults}
-    </h1>
-
-    <div class="space-y-4">
-      {
-        tournaments.map((tournament) => (
-          // Tournament results would go here
-          <div class="bg-white rounded-lg shadow p-4">
-            <h2 class="text-xl font-bold">{tournament.name}</h2>
-            <div class="mt-4">
-              <h3 class="font-semibold">Winners:</h3>
-              {tournament.scoreboard.slice(0, 3).map((score, index) => (
-                <div class="flex justify-between py-2">
-                  <span>
-                    #{index + 1} {score.name}
-                  </span>
-                  <span>{score.prize}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))
-      }
+    <div class="xl:container content-auto px-4 py-12">
+      <Breadcrumb breadcrumbs={breadcrumbs} />
+      
+      <div class="max-w-4xl mx-auto text-center mt-8">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+          {translationStore?.tournamentResultsTitle || "Tournament Results"}
+        </h1>
+        <p class="text-lg text-gray-300">
+          {translationStore?.tournamentResultsDescription || "View the results of our past tournaments"}
+        </p>
+      </div>
     </div>
+  </div>
+
+  <!-- Results Table Section -->
+  <div class="xl:container content-auto px-4">
+    <PastResults tournaments={tournaments} />
   </div>
 </MainLayout>
 

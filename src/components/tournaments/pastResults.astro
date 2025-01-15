@@ -2,6 +2,9 @@
 // Component: Past Tournament Results Table
 // Description: Displays a table of completed tournaments with their status and details
 
+// import unix date formatter
+import { formatUnixTimestamp } from "../../../lib/unixDateFormatter";
+
 // Import types
 import type { Tournament } from "../../../interfaces/tournaments";
 
@@ -10,21 +13,11 @@ interface Props {
   tournaments: Tournament[]; // Array of tournament data
 }
 
-// Destructure props
+// Destructure props and filter for completed tournaments only
 const { tournaments } = Astro.props;
+const completedTournaments = tournaments.filter(tournament => !tournament.isLive);
 let error = null;
 
-// Date formatter utility
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-// Debug logging
-console.log(tournaments);
 ---
 
 <!-- Tournament Results Section -->
@@ -59,10 +52,8 @@ console.log(tournaments);
         <!-- Table Body -->
         <tbody>
           {
-            tournaments.map((tournament: Tournament) => (
-              <!-- Tournament Row -->
+            completedTournaments.map((tournament: Tournament) => (
               <tr class="border-b border-gray-800 hover:bg-gray-800/50">
-                <!-- Tournament Name and Logo -->
                 <td class="py-4 px-6">
                   <div class="flex items-center gap-4">
                     {tournament.logoImage && (
@@ -76,18 +67,12 @@ console.log(tournaments);
                     <span class="font-semibold">{tournament.name}</span>
                   </div>
                 </td>
-                <!-- End Date -->
-                <td class="py-4 px-6">{formatDate(tournament.endDate)}</td>
-                <!-- Tournament Status -->
+                <td class="py-4 px-6">{formatUnixTimestamp(tournament.endDate)}</td>
                 <td class="py-4 px-6">
-                  <span
-                    class={`inline-flex items-center px-2.5 py-0.5 rounded-full font-medium
-                    ${tournament.isLive ? "bg-green-500/10 text-green-500" : "bg-yellow-500/10 text-yellow-500"}`}
-                  >
-                    {tournament.isLive ? "Live" : "Completed"}
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-yellow-500/10 text-yellow-500">
+                    Completed
                   </span>
                 </td>
-                <!-- Action Button -->
                 <td class="py-4 px-6 text-right">
                   <button class="inline-flex items-center gap-2 px-4 py-2 bg-misc text-white rounded-lg transition-colors">
                     Leaderboard
