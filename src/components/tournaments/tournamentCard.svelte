@@ -84,9 +84,9 @@
       <!-- Game Background Image with Gradient Overlay -->
       <div class="absolute inset-0 w-full h-full overflow-hidden bg-tournament-card-bg-gradient -z-10">
         <Images
-          src={tournament.backgroundImage}
-          alt={`${tournament.name} Background`}
-          class="w-full h-full object-cover"
+          imageUrl={tournament.backgroundImage}
+          imageAlt={`${tournament.name} Background`}
+          imageClass="w-full h-full object-cover"
         />
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-800/90"></div>
       </div>
@@ -94,10 +94,10 @@
       <!-- Game Logo -->
       <div class="relative h-48 mt-16 overflow-hidden bg-gray-900">
           <Images
-            height={120}
-            src={tournament.logoImage}
-            alt={tournament.name}
-            class="object-cover"
+            imageHeight={120}
+            imageUrl={tournament.logoImage}
+            imageAlt={tournament.name}
+            imageClass="object-cover"
           />
       </div>
 
