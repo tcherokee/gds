@@ -209,3 +209,103 @@ export const TOURNAMENT_API_CONFIG = {
   RETRY_ATTEMPTS: 3, // Number of retry attempts
   RETRY_DELAY: 1000, // 1 second delay between retries
 } as const;
+
+// New types for the tournaments page content
+interface StrapiImage {
+  data: {
+    id: number;
+    attributes: {
+      url: string;
+    };
+  };
+}
+
+interface StrapiImageArray {
+  data: {
+    id: number;
+    attributes: {
+      url: string;
+    };
+  }[];
+}
+
+interface Partnership {
+  url: string;
+}
+
+interface TournamentRegisterStep {
+  heading: string;
+  content: string;
+  backgroundImage: StrapiImage;
+  icon: {
+    data: {
+      attributes: {
+        url: string;
+      };
+    };
+  };
+}
+
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+interface SEO {
+  metaTitle: string;
+  metaDescription: string;
+}
+
+export interface TournamentPageContent {
+  attributes: {
+    tournamentPageHeader: string;
+    tournamentPageSubHeader: string;
+    partnerships: Partnership[];
+    tournamentRegisterSteps: TournamentRegisterStep[];
+    faqs: FAQ[];
+    seo: SEO;
+  };
+}
+
+// Strapi specific types
+export interface StrapiData<T> {
+  data: {
+    id: number;
+    attributes: T;
+  };
+}
+
+export interface StrapiPartnership {
+  data: {
+    id: number;
+    attributes: {
+      url: string;
+    };
+  }[];
+}
+
+export interface TournamentPageAttributes {
+  id: number;
+  attributes: {
+    tournamentPageHeader: string;
+    tournamentPageSubHeader: string;
+    partnerships: StrapiPartnership;
+    tournamentRegisterSteps: {
+      id: number;
+      heading: string;
+      content: string;
+      backgroundImage: StrapiImage;
+      icon: StrapiImage;
+    }[];
+    faqs: {
+      id: number;
+      question: string;
+      answer: string;
+    }[];
+    seo: {
+      id: number;
+      metaTitle: string;
+      metaDescription: string;
+    }
+  };
+}

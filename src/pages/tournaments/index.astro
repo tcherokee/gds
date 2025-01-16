@@ -1,12 +1,15 @@
 ---
 import qs from "qs";
+import fetchApi from "../../../lib/strapi";
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getTranslations } from "../../../utils/api-requests";
 import { tournamentApi } from "../../../lib/tournamentapi";
 import type {
   Tournament,
   TournamentResponse,
+  TournamentPageAttributes,
 } from "../../../interfaces/tournaments";
+import { tournamentsQs } from "../../../qs/tournaments";
 import PastResults from "../../components/tournaments/pastResults.astro";
 import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import TournamentCard from "../../components/tournaments/tournamentCard.svelte";
@@ -14,38 +17,15 @@ import Images from "../../components/helpers/images.astro";
 import Faqs from "../../components/general/faqs.astro";
 const translationStore = await getTranslations();
 
-let faqs = [
-  {
-    id: 1,
-    question: "What are slots tournaments?",
-    answer:
-      "<p>Slots tournaments are competitive events where players compete against each other by playing selected slot games within a specific timeframe. Players earn points based on their wins or other criteria, and those with the highest scores win prizes from the tournament prize pool. These tournaments add an extra layer of excitement to regular slot gameplay and offer additional chances to win.</p>",
-  },
-  {
-    id: 2,
-    question: "How do I join a tournament?",
-    answer:
-      "<p>Joining a tournament is simple: just click the 'Join Now' or 'Play Now' button on any active tournament. Some tournaments may require specific bet levels or a minimum number of spins to participate. Once you've met the entry requirements, your scores will automatically be tracked on the tournament leaderboard as you play the eligible games.</p>",
-  },
-  {
-    id: 3,
-    question: "How are tournament winners determined?",
-    answer:
-      "<p>Tournament winners are determined by their position on the leaderboard at the end of the tournament period. Points are typically awarded based on various factors such as the size of wins relative to bet size, consecutive wins, or special feature triggers during gameplay. The exact scoring system varies by tournament and is always clearly explained in the tournament rules.</p>",
-  },
-  {
-    id: 4,
-    question: "What types of prizes can I win?",
-    answer:
-      "<p>Tournament prizes vary depending on the event but often include cash prizes, bonus funds, free spins, or other rewards. Prize pools are typically split among multiple top-ranking players, with higher positions receiving larger shares. The exact prize structure is always displayed in the tournament details under the 'Prizes' section.</p>",
-  },
-  {
-    id: 5,
-    question: "Can I participate in multiple tournaments at once?",
-    answer:
-      "<p>Yes, you can participate in multiple tournaments simultaneously as long as you meet the entry requirements for each one. This gives you more opportunities to win and can make your gaming sessions more exciting. Just remember to check the specific rules and requirements for each tournament you wish to enter.</p>",
-  },
-];
+const query = qs.stringify(tournamentsQs(), { encodeValuesOnly: true });
+
+const tournamentContent = await fetchApi<TournamentPageAttributes>({
+  endpoint: "tournament",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
+
+console.log(JSON.stringify(tournamentContent, null, 2));
 
 let tournaments: Tournament[] = [];
 let tournamentResults: Tournament[] = [];
@@ -119,52 +99,60 @@ const breadcrumbs = [
       class="bg-casino-gradient pt-24 pb-12 px-4 text-center text-white relative"
     >
       <h1 class="text-5xl md:text-6xl mb-4 font-bold">
-        Giochidislots Tournaments, Real Cash Prizes
+        {tournamentContent?.attributes?.tournamentPageHeader}
       </h1>
       <p class="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
-        Play competitively against other players for real cash prizes in our
-        slot tournaments.
+        {tournamentContent?.attributes?.tournamentPageSubHeader}
       </p>
       <h2 class="mt-24 mb-12 font-bold text-white">How To Get Involved</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        <div
-          class="p-2.5 bg-white/5 rounded-2xl backdrop-blur-lg transition-all duration-300 ease-in-out hover:scale-105"
-        >
-          <div class="bg-white/10 m-[1.5px] p-6 rounded-xl">
-            <div class="text-5xl mb-4">📝</div>
-            <h3 class="text-xl text-white mb-4">1. Register</h3>
-            <p class="text-white/80 leading-relaxed">
-              Create your giochidislots account and vevrify your email address
-            </p>
-          </div>
-        </div>
-        <div
-          class="p-2.5 bg-white/5 rounded-2xl backdrop-blur-lg transition-all duration-300 ease-in-out hover:scale-105"
-        >
-          <div class="bg-white/10 m-[1.5px] p-6 rounded-xl">
-            <div class="text-5xl mb-4">🎮</div>
-            <h3 class="text-xl text-white mb-4">2. Pick Tournament</h3>
-            <p class="text-white/80 leading-relaxed">
-              Choose from our exciting selection of slot tournaments
-            </p>
-          </div>
-        </div>
-        <div
-          class="p-2.5 bg-white/5 rounded-2xl backdrop-blur-lg transition-all duration-300 ease-in-out hover:scale-105"
-        >
-          <div class="bg-white/10 m-[1.5px] p-6 rounded-xl">
-            <div class="text-5xl mb-4">🏆</div>
-            <h3 class="text-xl text-white mb-4">3. Win Prizes</h3>
-            <p class="text-white/80 leading-relaxed">
-              Compete and win real cash prizes and exclusive rewards
-            </p>
-          </div>
-        </div>
+        {
+          tournamentContent?.attributes?.tournamentRegisterSteps?.map(
+            (step, index) => (
+              <div class="p-2.5 bg-white/5 rounded-2xl backdrop-blur-lg transition-all duration-300 ease-in-out hover:scale-105">
+                <div class="bg-white/10 m-[1.5px] p-6 rounded-xl relative overflow-hidden">
+                  {/* Background Image with Darker Overlay */}
+                  {step.backgroundImage?.data?.attributes?.url && (
+                    <div class="absolute inset-0 -z-10">
+                      <Images
+                        src={step.backgroundImage.data.attributes.url}
+                        imageWidth={360}
+                        imageHeight={250}
+                        classes="w-full h-full object-cover"
+                        alt={`Step ${index + 1} background`}
+                      />
+                      <div class="absolute inset-0 bg-background-900/80" />
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div class="relative z-10">
+                    <div class="flex justify-center items-center mb-4">
+                      {/* <Images
+                        src={step.icon?.data?.attributes?.url}
+                        imageWidth={50}
+                        imageHeight={50}
+                        classes="rounded-lg"
+                        alt={`Step ${index + 1} icon`}
+                      /> */}
+                    </div>
+                    <h3 class="text-xl text-white mb-4 text-center">
+                      {index + 1}. {step.heading}
+                    </h3>
+                    <p class="text-white/80 leading-relaxed text-center">
+                      {step.content}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )
+          )
+        }
       </div>
       <div class="flex flex-col items-center justify-center mt-5">
         <p class="text-white text-sm mb-3">In partnership with</p>
         <Images
-          src="https://images.giochidislots.com/Pragmatic_Play_b579ff7abb.jpg"
+          src={tournamentContent?.attributes?.partnerships.data[0]?.attributes?.url}
           imageWidth={110}
           imageHeight={48}
           classes="rounded-lg"
@@ -196,7 +184,11 @@ const breadcrumbs = [
           Frequently Asked Questions
         </h2>
         <div class="space-y-4">
-          {faqs.map((faq) => <Faqs data={faq} />)}
+          {
+            tournamentContent?.attributes?.faqs.map((faq) => (
+              <Faqs data={faq} />
+            ))
+          }
         </div>
       </div>
     </section>
