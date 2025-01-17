@@ -9,7 +9,7 @@ export interface Tournament {
 
   // Tournament timing and status
   scheduleTimerTitle: string;
-  timer: number;
+  timer: number | string;
   isLive: boolean;
   startDate: string;
   tournamentStartTime: string;
@@ -27,7 +27,7 @@ export interface Tournament {
   // Tournament classification
   type: string;
   tournamentLabel: string;
-  prizePool: string;
+  prizePool: number | string;
   tagName: string;
   isFeatureTournament: boolean;
   isExclusive: boolean;
