@@ -51,6 +51,7 @@ import {
   getUserCountryByIP,
   userCountryHandler,
 } from "../../../utils/ip-request";
+import PastResults from "../tournaments/pastResults.astro"
 
 // const ipAddress = IPRequest.ip.split(",")[0];
 const clientIP =
@@ -245,7 +246,7 @@ const Components = await loadComponents(mappedComponents);
 
 // Function to determins how to structure the blocks in the custom pages. Based on the structure of the blocks the number of items in the blue section could change.
 const getLoopCounter = (blocks: Block[]): number => {
-  if (!blocks || blocks.length < 2) return 2; // Default value if blocks array is not as expected
+  if (!blocks || blocks.length < 2) return 2;
 
   const secondBlockComponent = blocks[1]?.["__component"];
   const thirdBlockComponent = blocks[2]?.["__component"];
@@ -259,7 +260,7 @@ const getLoopCounter = (blocks: Block[]): number => {
   }
 
   if (
-    secondBlockComponent?.includes("shared") &&
+    (secondBlockComponent?.includes("shared") || secondBlockComponent?.includes("tournaments")) &&
     secondBlockComponent !== "shared.provider-list"
   ) {
     return 1;
@@ -461,6 +462,21 @@ Astro.response.headers.set(
                       />
                     );
                   }
+                  case "casinoLiveVideo": {
+                    return (
+                      <CasinoLiveVideo
+                        translations={translationStore}
+                        playbackUrl={
+                          (
+                            customPage[0]?.attributes?.blocks[
+                              i
+                            ] as TCasinoLiveVideo
+                          ).playbackUrl
+                        }
+                        client:load
+                      />
+                    );
+                  }
                 }
               }
             }
@@ -469,19 +485,21 @@ Astro.response.headers.set(
 
         <AuthorCard data={customPage[0].attributes.author} {translationStore} />
       </div>
-      <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-        {
-          !customPage[0].attributes.sideBarToShow ||
-          customPage[0].attributes.sideBarToShow === "casino" ? (
-            <CasinoSidebar
-              casinoCountry={casinoCountry}
-              translationStore={translationStore}
-            />
-          ) : (
+       {
+        !customPage[0].attributes.sideBarToShow ? (
+          <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
+            <CasinoSidebar translationStore={translationStore} />
+          </div>
+        ) : customPage[0].attributes.sideBarToShow === "casino" ? (
+          <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
+            <CasinoSidebar translationStore={translationStore} />
+          </div>
+        ) : customPage[0].attributes.sideBarToShow === "sport" ? (
+          <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
             <SportSidebar translationStore={translationStore} />
-          )
-        }
-      </div>
+          </div>
+        ) : null
+      }
     </div>
   </div>
 </MainLayout>

@@ -265,6 +265,7 @@ export const customPageQs = (path: string, casinoCountry: string) => {
           ImageCarousel: {
             fields: ["url", "caption"],
           },
+          tournamentTable:true
         },
       },
     },

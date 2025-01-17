@@ -15,49 +15,46 @@ import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import TournamentCard from "../../components/tournaments/tournamentCard.svelte";
 import Images from "../../components/helpers/images.astro";
 import Faqs from "../../components/general/faqs.astro";
+
+// Fetch translations for the page
 const translationStore = await getTranslations();
 
+// Build the query string for Strapi API
 const query = qs.stringify(tournamentsQs(), { encodeValuesOnly: true });
-
+// Fetch tournament page content from Strapi
 const tournamentContent = await fetchApi<TournamentPageAttributes>({
   endpoint: "tournament",
   wrappedByKey: "data",
   query: `?${query}`,
 });
 
-console.log(JSON.stringify(tournamentContent, null, 2));
-
+// Initialize state variables
 let tournaments: Tournament[] = [];
-let tournamentResults: Tournament[] = [];
 let liveTournamentResults: Tournament[] = [];
 let error = null;
 
+// API functions for different tournament types
 const getTournaments = async () => {
   return tournamentApi<TournamentResponse>("getTournamentFullSchedule");
-};
-
-const getTournamentResults = async () => {
-  return tournamentApi<TournamentResponse>("getTournamentResults");
 };
 
 const getLiveTournament = async () => {
   return tournamentApi<TournamentResponse>("getLiveTournaments");
 };
 
+// Fetch all tournament data
 try {
   const tournamentResponse = await getTournaments();
-  const tournamentResultsResponse = await getTournamentResults();
   const liveTournamentResponse = await getLiveTournament();
+
   tournaments = tournamentResponse.data || [];
-  tournamentResults = tournamentResultsResponse.data || [];
   liveTournamentResults = liveTournamentResponse.data || [];
 } catch (e) {
   console.error("Error fetching tournaments:", e);
   error = e instanceof Error ? e.message : "Unknown error occurred";
 }
 
-// Fetch active tournaments
-
+// SEO configuration
 const seo = {
   pageTitle: translationStore?.tournamentPageTitle || "Tournaments",
   metaDescription:
@@ -66,7 +63,7 @@ const seo = {
   url: `${import.meta.env.PUBLIC_FULL_URL}/tournaments`,
 };
 
-// Cache Control Headers
+// Cache Control Headers for performance
 Astro.response.headers.set(
   "Cache-Control",
   "public, max-age=0, must-revalidate"
@@ -77,6 +74,7 @@ Astro.response.headers.set(
   "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
 );
 
+// Breadcrumb navigation configuration
 const breadcrumbs = [
   { title: translationStore?.home || "Home", href: "/" },
   {
@@ -88,30 +86,37 @@ const breadcrumbs = [
 ---
 
 <MainLayout seoData={seo}>
+  {/* Breadcrumb Navigation */}
   <Breadcrumb
     breadcrumbs={[
       { id: 1, breadCrumbText: "Home", breadCrumbUrl: "/" },
       { id: 2, breadCrumbText: "Tournaments", breadCrumbUrl: null },
     ]}
   />
+
+  {/* Hero Section with Tournament Information */}
   <div class="featured-background curve">
     <section
       class="bg-casino-gradient pt-24 pb-12 px-4 text-center text-white relative"
     >
+      {/* Hero Content */}
       <h1 class="text-5xl md:text-6xl mb-4 font-bold">
         {tournamentContent?.attributes?.tournamentPageHeader}
       </h1>
       <p class="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
         {tournamentContent?.attributes?.tournamentPageSubHeader}
       </p>
+
+      {/* How To Get Involved Section */}
       <h2 class="mt-24 mb-12 font-bold text-white">How To Get Involved</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {/* Registration Steps */}
         {
           tournamentContent?.attributes?.tournamentRegisterSteps?.map(
             (step, index) => (
               <div class="p-2.5 bg-white/5 rounded-2xl backdrop-blur-lg transition-all duration-300 ease-in-out hover:scale-105">
                 <div class="bg-white/10 m-[1.5px] p-6 rounded-xl relative overflow-hidden">
-                  {/* Background Image with Darker Overlay */}
+                  {/* Background Image with Overlay */}
                   {step.backgroundImage?.data?.attributes?.url && (
                     <div class="absolute inset-0 -z-10">
                       <Images
@@ -125,7 +130,7 @@ const breadcrumbs = [
                     </div>
                   )}
 
-                  {/* Content */}
+                  {/* Step Content */}
                   <div class="relative z-10">
                     <div class="flex justify-center items-center mb-4">
                       {/* <Images
@@ -149,6 +154,8 @@ const breadcrumbs = [
           )
         }
       </div>
+
+      {/* Partnership Logo Section */}
       <div class="flex flex-col items-center justify-center mt-5">
         <p class="text-white text-sm mb-3">In partnership with</p>
         <Images
@@ -162,7 +169,9 @@ const breadcrumbs = [
     </section>
   </div>
 
+  {/* Main Content Section */}
   <div class="xl:container content-auto px-2 pt-5">
+    {/* Live Tournaments Section */}
     <section class="py-20 px-4">
       <div class="max-w-6xl mx-auto">
         <h2 class="text-4xl font-bold mb-12 text-center">Live Tournaments</h2>
@@ -176,13 +185,15 @@ const breadcrumbs = [
       </div>
     </section>
 
-    <PastResults tournaments={tournamentResults} />
+    {/* Past Tournament Results */}
+    <PastResults />
 
+    {/* FAQ Section */}
     <section class="py-20 px-4 bg-gray-800">
       <div class="mx-auto">
         <h2 class="text-4xl font-bold mb-12 text-center">
           Frequently Asked Questions
-        </h2>
+        </h2>®
         <div class="space-y-4">
           {
             tournamentContent?.attributes?.faqs.map((faq) => (

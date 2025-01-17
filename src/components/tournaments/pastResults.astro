@@ -7,32 +7,53 @@ import { formatUnixTimestamp } from "../../../lib/unixDateFormatter";
 
 // Import types
 import type { Tournament } from "../../../interfaces/tournaments";
+import type { TournamentResponse } from "../../../interfaces/tournaments";
+// Import tournament API
+import { tournamentApi } from "../../../lib/tournamentapi";
 
-// Props interface
-interface Props {
-  tournaments: Tournament[] | null;
+// Initialize state variables
+let tournaments: Tournament[] = [];
+let error = null;
+
+const getTournaments = async () => {
+  return tournamentApi<TournamentResponse>("getTournamentResults");
+};
+
+// Fetch all tournament data
+try {
+  const tournamentsResponse = await getTournaments();
+  tournaments = tournamentsResponse.data || [];
+} catch (e) {
+  console.error("Error fetching tournaments:", e);
+  error = e instanceof Error ? e.message : "Unknown error occurred";
 }
 
-const { tournaments } = Astro.props;
-const completedTournaments = tournaments 
-  ? tournaments.filter(tournament => !tournament.isLive)
+// Filter tournaments that have ended
+const currentTime = Math.floor(Date.now() / 1000); // Convert to Unix timestamp
+const completedTournaments = tournaments
+  ? tournaments.filter((tournament) => {
+      const endTime = typeof tournament.endDate === 'string' 
+        ? parseInt(tournament.endDate, 10) 
+        : tournament.endDate;
+      return endTime && endTime < currentTime;
+    })
   : [];
-let error = null;
 
 // Helper function to safely format the timestamp
 const formatTimestamp = (timestamp: number | string | undefined) => {
-  if (!timestamp) return 'Date not available';
-  
+  if (!timestamp) return "Date not available";
+
   // Convert string to number if needed
-  const numericTimestamp = typeof timestamp === 'string' 
-    ? parseInt(timestamp, 10) 
-    : timestamp;
+  const numericTimestamp =
+    typeof timestamp === "string" ? parseInt(timestamp, 10) : timestamp;
 
   // Check if we have a valid number
-  if (isNaN(numericTimestamp)) return 'Invalid date';
+  if (isNaN(numericTimestamp)) return "Invalid date";
 
   return formatUnixTimestamp(numericTimestamp);
 };
+
+console.log('here');
 ---
 
 <!-- Tournament Results Section -->
@@ -59,6 +80,7 @@ const formatTimestamp = (timestamp: number | string | undefined) => {
         <thead>
           <tr class="border-b border-gray-700">
             <th class="text-left py-4 px-6">Tournament</th>
+            <th class="text-left py-4 px-6">Start Date</th>
             <th class="text-left py-4 px-6">End Date</th>
             <th class="text-left py-4 px-6">Status</th>
             <th class="w-32"></th>
@@ -82,9 +104,8 @@ const formatTimestamp = (timestamp: number | string | undefined) => {
                     <span class="font-semibold">{tournament.name}</span>
                   </div>
                 </td>
-                <td class="py-4 px-6">
-                  {formatTimestamp(tournament.endDate)}
-                </td>
+                <td class="py-4 px-6">{formatTimestamp(tournament.startDate)}</td>
+                <td class="py-4 px-6">{formatTimestamp(tournament.endDate)}</td>
                 <td class="py-4 px-6">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-yellow-500/10 text-yellow-500">
                     Completed
