@@ -12,6 +12,7 @@ import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import TournamentCard from "../../components/tournaments/tournamentCard.svelte";
 import Images from "../../components/helpers/images.astro";
 import Faqs from "../../components/general/faqs.astro";
+import LiveTournaments from "../../components/tournaments/LiveTournaments.svelte";
 const translationStore = await getTranslations();
 
 let faqs = [
@@ -49,7 +50,7 @@ let faqs = [
 
 let tournaments: Tournament[] = [];
 let tournamentResults: Tournament[] = [];
-let liveTournamentResults: Tournament[] = [];
+let liveTournaments: Tournament[] = [];
 let error = null;
 
 const getTournaments = async () => {
@@ -70,7 +71,7 @@ try {
   const liveTournamentResponse = await getLiveTournament();
   tournaments = tournamentResponse.data || [];
   tournamentResults = tournamentResultsResponse.data || [];
-  liveTournamentResults = liveTournamentResponse.data || [];
+  liveTournaments = liveTournamentResponse.data || [];
 } catch (e) {
   console.error("Error fetching tournaments:", e);
   error = e instanceof Error ? e.message : "Unknown error occurred";
@@ -175,20 +176,21 @@ const breadcrumbs = [
   </div>
 
   <div class="xl:container content-auto px-2 pt-5">
-    <section class="py-20 px-4">
+    <LiveTournaments liveTournaments={liveTournaments} client:load />
+    <!-- <section class="py-20 px-4">
       <div class="max-w-6xl mx-auto">
         <h2 class="text-4xl font-bold mb-12 text-center">
-          {liveTournamentResults[0]?.name || "Active Tournaments"}
+          {liveTournaments[0]?.name || "Active Tournaments"}
         </h2>
         <div class="grid md:grid-cols-3 gap-8">
           {
-            tournaments.map((tournament) => (
+            liveTournaments.map((tournament) => (
               <TournamentCard client:load tournament={tournament} />
             ))
           }
         </div>
       </div>
-    </section>
+    </section> -->
 
     <PastResults tournaments={tournamentResults} />
 
