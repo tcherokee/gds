@@ -19,7 +19,12 @@ import "../styles/app.postcss";
 
 //Types and TypeGuards
 import type { LayoutData } from "../../interfaces/layout";
-import type { NavigationItem, ProcessedMenus } from "../../interfaces/menu.ts";
+import type {
+  MenuItem,
+  MenuItemChild,
+  NavigationItem,
+  ProcessedMenus,
+} from "../../interfaces/menu.ts";
 import {
   isMainLayoutData,
   isNavigationItemArray,
@@ -36,10 +41,8 @@ import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
-// const ipAddress = IPRequest.ip.split(",")[0];
 const clientIP =
-  Astro.request.headers.get("x-forwarded-for") ||
-  import.meta.env.SITE_IDLOCAL_DEFAULT_IP;
+  Astro.request.headers.get("x-forwarded-for") || "149.22.91.164";
 
 const userCountry = await getUserCountryByIP(clientIP);
 const country = await userCountryHandler(
@@ -98,7 +101,46 @@ const menu = isNavigationItemArray(responses[1])
 const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
   (acc: ProcessedMenus, menu: NavigationItem) => {
     const title = menu.attributes.title;
-    const items = menu.attributes.items.data;
+    let items = [];
+
+    if (title === "Main Navigation") {
+      items = menu.attributes.items.data.map((item: MenuItem) => {
+        if (item.attributes.children.data.length > 0) {
+          // Filter children with "- $coiuntryCode" in the title
+          const filteredChildren = item.attributes.children.data.filter(
+            (child) => child.attributes.title.includes(`-${countryCode}`)
+          );
+
+          console.log({
+            ...item,
+            attributes: {
+              ...item.attributes,
+              children: {
+                ...item.attributes.children,
+                data: filteredChildren,
+              },
+            },
+          });
+
+          // Return the updated item with filtered children
+          return {
+            ...item,
+            attributes: {
+              ...item.attributes,
+              children: {
+                ...item.attributes.children,
+                data: filteredChildren,
+              },
+            },
+          };
+        } else {
+          return item;
+        }
+      });
+    } else {
+      items = menu.attributes.items.data;
+    }
+
     if (
       title === "Sub Navigation" ||
       title === "Main Navigation" ||
@@ -182,9 +224,11 @@ if (otherSchema) {
 }
 ---
 
-<script define:vars={{ menu, processedMenus }}>
+<script define:vars={{ menu, processedMenus, clientIP, userCountry }}>
   console.log("menu", menu);
   console.log("Process menu", processedMenus);
+  console.log("userCountry", userCountry);
+  console.log("clientIP", clientIP);
 </script>
 <html lang={siteLang}>
   <head>
@@ -231,6 +275,7 @@ if (otherSchema) {
           subNavigation={processedMenus?.subnavigation}
           logo={layout?.attributes?.Logo}
           {translationStore}
+          {countryCode}
         />
       </header>
       <slot />
