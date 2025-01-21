@@ -99,7 +99,7 @@ export const sortGames = computed(getTranslations, (getTranslations) => {
     },
     Newest: {
       label: getTranslations.filtersNew,
-      value: "createdAt:desc",
+      value: "publishedAt:desc",
     },
   };
 
