@@ -42,7 +42,7 @@ import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
 const clientIP =
-  Astro.request.headers.get("x-forwarded-for") || "149.22.91.164";
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
 
 const userCountry = await getUserCountryByIP(clientIP);
 const country = await userCountryHandler(
@@ -108,19 +108,16 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
         if (item.attributes.children.data.length > 0) {
           // Filter children with "- $coiuntryCode" in the title
           const filteredChildren = item.attributes.children.data.filter(
-            (child) => child.attributes.title.includes(`-${countryCode}`)
+            (child) => {
+              if (countryCode === "rod") {
+                // Exclude children with "-it"
+                return !child.attributes.title.includes(`-${countryCode}`);
+              } else {
+                // Include children with filterKeyword
+                return child.attributes.title.includes(`-${countryCode}`);
+              }
+            }
           );
-
-          console.log({
-            ...item,
-            attributes: {
-              ...item.attributes,
-              children: {
-                ...item.attributes.children,
-                data: filteredChildren,
-              },
-            },
-          });
 
           // Return the updated item with filtered children
           return {
@@ -224,11 +221,14 @@ if (otherSchema) {
 }
 ---
 
-<script define:vars={{ menu, processedMenus, clientIP, userCountry }}>
+<script
+  define:vars={{ menu, processedMenus, clientIP, userCountry, countryCode }}
+>
   console.log("menu", menu);
   console.log("Process menu", processedMenus);
   console.log("userCountry", userCountry);
   console.log("clientIP", clientIP);
+  console.log("countryCode", countryCode);
 </script>
 <html lang={siteLang}>
   <head>
