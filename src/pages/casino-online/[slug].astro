@@ -34,7 +34,8 @@ import {
 
 // const ipAddress = IPRequest.ip.split(",")[0];
 const clientIP =
-  Astro.request.headers.get("x-forwarded-for") || "149.22.91.164";
+  Astro.request.headers.get("x-forwarded-for") ||
+  import.meta.env.SITE_IDLOCAL_DEFAULT_IP;
 
 const userCountry = await getUserCountryByIP(clientIP);
 const country = await userCountryHandler(
