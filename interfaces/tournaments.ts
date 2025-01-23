@@ -105,6 +105,34 @@ export interface TournamentResponse {
   statusCode?: number;
 }
 
+export type PlayerResults = {
+  position: number;
+  remainingSpinsForADay: number;
+  score: number;
+  spins_taken: number;
+  totalPlayers: number;
+  scoreboard: Scoreboard[];
+};
+
+export type Scoreboard = {
+  avatar: string;
+  disqualified: boolean;
+  finished: number;
+  last_score_updated_at: number;
+  max_cash_win: number;
+  max_multiplier_win: number;
+  name: string;
+  position: number;
+  score: number;
+  score_reset_count: number;
+  spinsCountPerDay: [];
+  spins_left: number;
+  spins_row_lost_highest: number;
+  spins_row_win_highest: number;
+  spins_taken: number;
+  user_id: number;
+};
+
 // Type guard to verify if a response matches the TournamentResponse interface
 export function isTournamentResponse(
   response: unknown

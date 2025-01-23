@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ url, cookies }) => {
   const username = url.searchParams.get("username") as string;
+  const tournament_id = url.searchParams.get("tournament_id") as string;
   const opts = {
     headers: {
       "Content-Type": "application/json",
@@ -13,7 +14,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
   };
 
   const res = await fetch(
-    `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}getPlayerTournamentHistory`,
+    `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}getTournamentLeaderBoard?tournament_id=${tournament_id}`,
     opts
   );
   const data = await res.json();

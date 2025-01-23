@@ -1,0 +1,52 @@
+---
+import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
+import TournamentGamePlayer from "../../components/tournaments/tournamentGamePlayer.svelte";
+import MainLayout from "../../layouts/MainLayout.astro";
+
+const slug = Astro.params.slug as string;
+const fullUrl = import.meta.env.PUBLIC_FULL_URL;
+// Check if slug is a valid number
+if (isNaN(Number(slug))) {
+  return Astro.redirect(`${fullUrl}/tournaments/`);
+}
+
+const tournamentId = Number(slug);
+
+const getTournamentData = async () => {
+  const res = await fetch(
+    `${fullUrl}/api/pragmatic-api/get-tournament?` +
+      new URLSearchParams({ tournament_id: tournamentId.toString() })
+  );
+  const data = await res.json();
+  return data.data;
+};
+
+const tournamentData = await getTournamentData();
+---
+
+<MainLayout seoData={{}}>
+  <Breadcrumbs
+    breadcrumbs={[
+      { id: 1, breadCrumbText: "Home", breadCrumbUrl: "/" },
+      {
+        id: 2,
+        breadCrumbText: "Tournaments",
+        breadCrumbUrl: `${fullUrl}/tournaments`,
+      },
+      {
+        id: 3,
+        breadCrumbText: `${tournamentId}`,
+        breadCrumbUrl: null,
+      },
+    ]}
+  />
+  <div class="curve rounded-b-3xl pb-3">
+    <div class="section-wrapper relative z-10">
+      <TournamentGamePlayer
+        tournamentId={tournamentId}
+        tournament={tournamentData}
+        client:load
+      />
+    </div>
+  </div>
+</MainLayout>

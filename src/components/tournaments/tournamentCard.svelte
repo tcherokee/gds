@@ -8,7 +8,6 @@
   import Images from "../helpers/images.svelte";
   import { user } from "../../../stores/authStore";
   import dayjs from "dayjs";
-  import { createEventDispatcher } from 'svelte';
   import type { TUser } from "../../../interfaces/auth";
 
   export let tournament: Tournament;
@@ -19,10 +18,6 @@
   let intervalId: number;
   let backgroundImageError = false;
   let logoImageError = false;
-
-  const dispatch = createEventDispatcher<{
-    tournamentSelected: { tournamentId: number, gameURL: string };
-  }>();
 
   /**
    * Handle image loading errors
@@ -91,32 +86,8 @@
       );
       const res = await registerResponse.json();
       console.log(res);
-      startTournamentGameHandler();
+      window.location.href = `${import.meta.env.BASE_URL}tournaments/${tournament.tournamentId}/`;
     }
-  };
-
-  const startTournamentGameHandler = async () => {
-    // const tokenResponse = await fetch(
-    //   `${import.meta.env.BASE_URL}api/pragmatic-api/generate-token`
-    // );
-    // const token = await tokenResponse.json();
-    // console.log(token);
-    const startGameResponse = await fetch(
-      `${import.meta.env.BASE_URL}api/pragmatic-api/start-game`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          username: "doyincodes",
-          tournamentId: tournament.tournamentId,
-        }),
-      }
-    );
-    const res = await startGameResponse.json();
-    
-    console.log("START_GAME_RES:", res);
-    
-    // Dispatch the event after successful game start
-    dispatch('tournamentSelected', { tournament, gameURL: res.data.gameURL });
   };
 
   onMount(async () => {

@@ -18,8 +18,6 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }),
   };
 
-  console.log(`LICENSE: ${import.meta.env.PUBLIC_TOURNAMENT_LICENSE_KEY}`);
-
   const res = await fetch(
     `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}startGame`,
     opts

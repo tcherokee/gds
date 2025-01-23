@@ -28,8 +28,6 @@ export const POST: APIRoute = async ({ request }) => {
     body: JSON.stringify(payload),
   };
 
-  console.log(payload);
-
   const res = await fetch(
     `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}registerUser`,
     opts
