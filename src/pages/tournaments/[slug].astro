@@ -24,6 +24,10 @@ const getTournamentData = async () => {
 const tournamentData = await getTournamentData();
 ---
 
+<script define:vars={{ tournamentData }}>
+  console.log("tournamentData", tournamentData);
+</script>
+
 <MainLayout seoData={{}}>
   <Breadcrumbs
     breadcrumbs={[

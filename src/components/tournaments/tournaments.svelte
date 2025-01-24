@@ -19,8 +19,8 @@
       console.log("userTournamentHistory", res.data);
       // Update currentUserTournaments after getting new history
       updateCurrentUserTournaments(res.data);
-      currentUserTournamentsLoader = false;
     }
+    currentUserTournamentsLoader = false;
   };
 
   const updateCurrentUserTournaments = (
