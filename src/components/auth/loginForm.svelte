@@ -71,6 +71,8 @@
       const reviewSourceType =
         await window.localStorage?.getItem("_reviewSourceType");
         window.localStorage?.removeItem("_reviewSourceType")
+      const tournamentId = await window.localStorage?.getItem("_tournamentId")
+      window.localStorage?.removeItem("_tournamentId")
       if (paramValue) {
         if (reviewSourceType === "GAME") {
           window.location.href = `${import.meta.env.BASE_URL}slot-machines/${paramValue}/`;
@@ -82,6 +84,10 @@
         }
         location.reload();
       } else {
+        if (tournamentId) {
+          window.location.href = `${import.meta.env.BASE_URL}tournaments/`;
+          return;
+        }
         window.location.href = `${import.meta.env.BASE_URL}dashboard/`;
         // location.reload();
       }

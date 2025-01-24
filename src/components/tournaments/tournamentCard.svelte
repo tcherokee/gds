@@ -3,13 +3,17 @@
   import TrophyIcon from "~icons/kensho-icons/trophy-star";
   import CircleInfoIcon from "~icons/kensho-icons/circle-info";
   import XIcon from "~icons/kensho-icons/xmark";
-  import { onMount, onDestroy } from 'svelte';
-  import type { Tournament } from '../../../interfaces/tournaments';
-  import Images from '../helpers/images.svelte';
+  import { onMount, onDestroy } from "svelte";
+  import type { Tournament } from "../../../interfaces/tournaments";
+  import Images from "../helpers/images.svelte";
+  import { user } from "../../../stores/authStore";
+  import dayjs from "dayjs";
+  import type { TUser } from "../../../interfaces/auth";
 
   export let tournament: Tournament;
+  export let userTournament: Tournament | undefined;
   let isFlipped = false;
-  let currentFace: 'front' | 'info' | 'leaderboard' | 'prizes' = 'front';
+  let currentFace: "front" | "info" | "leaderboard" | "prizes" = "front";
   let timeLeft = { hours: 0, mins: 0, secs: 0 };
   let intervalId: number;
   let backgroundImageError = false;
@@ -19,8 +23,8 @@
    * Handle image loading errors
    * @param type - Type of image that failed to load ('background' or 'logo')
    */
-  function handleImageError(type: 'background' | 'logo') {
-    if (type === 'background') {
+  function handleImageError(type: "background" | "logo") {
+    if (type === "background") {
       backgroundImageError = true;
     } else {
       logoImageError = true;
@@ -32,7 +36,7 @@
    * @param face - The face to display ('front', 'info', 'leaderboard', or 'prizes')
    */
   function handleFlip(face: typeof currentFace) {
-    if (face === 'front') {
+    if (face === "front") {
       isFlipped = false;
     } else {
       currentFace = face;
@@ -48,21 +52,45 @@
     const now = new Date().getTime();
     const targetTime = tournament.timer * 1000; // Convert to milliseconds
     const distance = targetTime - now;
-    
+
     if (distance < 0) {
       timeLeft = { hours: 0, mins: 0, secs: 0 };
       clearInterval(intervalId);
       return;
     }
-    
+
     timeLeft = {
       hours: Math.floor(distance / (1000 * 60 * 60)),
       mins: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-      secs: Math.floor((distance % (1000 * 60)) / 1000)
+      secs: Math.floor((distance % (1000 * 60)) / 1000),
     };
   }
 
-  onMount(() => {
+  const tournamentActionBtnHandler = async () => {
+    console.log($user);
+    if (!$user) {
+      window.localStorage?.removeItem("_reviewSourceType")
+      window.localStorage?.setItem("_tournamentId", tournament.tournamentId.toString());
+      window.location.href = `${import.meta.env.BASE_URL}authentication/login/`;
+      return;
+    } else {
+      const registerResponse = await fetch(
+        `${import.meta.env.BASE_URL}api/pragmatic-api/register-user`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            username: ($user as unknown as TUser).username,
+            external_user_id:  ($user as unknown as TUser).id,
+          }),
+        }
+      );
+      const res = await registerResponse.json();
+      console.log(res);
+      window.location.href = `${import.meta.env.BASE_URL}tournaments/${tournament.tournamentId}/`;
+    }
+  };
+
+  onMount(async () => {
     updateCountdown();
     intervalId = setInterval(updateCountdown, 1000);
   });
@@ -73,14 +101,15 @@
 </script>
 
 <div class="relative [perspective:1000px] h-[600px]">
-  <div 
+  <div
     class="absolute w-full h-full transition-transform duration-700 [transform-style:preserve-3d]"
     class:rotate-y-180={isFlipped}
   >
     <!-- Front Face -->
-    <div class="absolute w-full h-full [backface-visibility:hidden] bg-gray-800 rounded-xl overflow-hidden border border-yellow-500/20 hover:border-yellow-500/40 transition-all"
-         class:pointer-events-none={isFlipped}>
-
+    <div
+      class="absolute w-full h-full [backface-visibility:hidden] bg-gray-800 rounded-xl overflow-hidden border border-yellow-500/20 hover:border-yellow-500/40 transition-all"
+      class:pointer-events-none={isFlipped}
+    >
       <!-- Game Background Image with Gradient Overlay -->
       <div class="absolute inset-0 w-full h-full overflow-hidden bg-tournament-card-bg-gradient -z-10">
         <img
@@ -102,13 +131,20 @@
       </div>
 
       <!-- Tournament Type Banner -->
-      <div class="absolute top-4 left-0 right-0 flex justify-between transition-[z-index] duration-0 z-50"
-           class:z-10={!isFlipped} class:z-[-1]={isFlipped}>
-        <div class="bg-tournament-card-labels text-tournament-card-labels-text py-2 px-3 rounded-r-full font-bold flex items-center text-xs">
+      <div
+        class="absolute top-4 left-0 right-0 flex justify-between transition-[z-index] duration-0 z-50"
+        class:z-10={!isFlipped}
+        class:z-[-1]={isFlipped}
+      >
+        <div
+          class="bg-tournament-card-labels text-tournament-card-labels-text py-2 px-3 rounded-r-full font-bold flex items-center text-xs"
+        >
           <TrophyIcon class="w-3.5 h-3.5 mr-2" />
           {tournament.tournamentLabel.toUpperCase()}
         </div>
-        <div class="bg-tournament-card-labels text-tournament-card-labels-text py-2 px-3 rounded-l-full font-bold text-xs">
+        <div
+          class="bg-tournament-card-labels text-tournament-card-labels-text py-2 px-3 rounded-l-full font-bold text-xs"
+        >
           {tournament.betLevel} BET LEVEL
         </div>
       </div>
@@ -118,7 +154,9 @@
         <!-- Top Section: Prize Pool and Spins Info -->
         <div class="flex justify-between items-center">
           <div>
-            <div class="text-2xl font-bold text-white">{tournament.prizePool}</div>
+            <div class="text-2xl font-bold text-white">
+              {tournament.prizePool}
+            </div>
             <div class="text-white">Prize Pool</div>
           </div>
           <div class="text-right">
@@ -133,17 +171,23 @@
         <!-- Middle Section: Countdown Timer -->
         <div>
           <div class="text-white mb-2">
-            {tournament.scheduleTimerTitle === 'ends_in' ? 'Ends in:' : 'Starts in:'}
+            {tournament.scheduleTimerTitle === "ends_in"
+              ? "Ends in:"
+              : "Starts in:"}
           </div>
           <div class="bg-gray-900/50 rounded-lg p-4 pt-0">
-            <div class="flex justify-center items-center space-x-2 text-white text-3xl font-bold">
-              <span>{String(timeLeft.hours).padStart(2, '0')}</span>
+            <div
+              class="flex justify-center items-center space-x-2 text-white text-3xl font-bold"
+            >
+              <span>{String(timeLeft.hours).padStart(2, "0")}</span>
               <span>:</span>
-              <span>{String(timeLeft.mins).padStart(2, '0')}</span>
+              <span>{String(timeLeft.mins).padStart(2, "0")}</span>
               <span>:</span>
-              <span>{String(timeLeft.secs).padStart(2, '0')}</span>
+              <span>{String(timeLeft.secs).padStart(2, "0")}</span>
             </div>
-            <div class="flex justify-center items-center space-x-8 mt-1 text-sm text-white">
+            <div
+              class="flex justify-center items-center space-x-8 mt-1 text-sm text-white"
+            >
               <span>HOURS</span>
               <span>MINS</span>
               <span>SECS</span>
@@ -151,14 +195,38 @@
           </div>
         </div>
 
-        <!-- Second Spacer -->
-        <div class="flex-grow"></div>
+        <!-- Action Button -->
+        <button
+          class="w-full bg-secondary hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all mb-4"
+          on:click={() => {
+            tournamentActionBtnHandler();
+          }}
+        >
+          {userTournament?.actionButton.label.toUpperCase() ?? ($user ? 'JOIN' : tournament.actionButton.label.toUpperCase())}
+        </button>
 
-        <!-- Bottom Section: Action Button and Navigation -->
-        <div class="mt-auto pb-2">
-          <!-- Action Button -->
-          <button class="w-full bg-secondary hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all mb-4">
-            {tournament.actionButton.label.toUpperCase()}
+        <!-- Navigation Buttons -->
+        <div class="flex justify-center space-x-6 text-gray-400 text-sm">
+          <button
+            on:click={() => handleFlip("info")}
+            class="flex items-center text-white hover:text-misc transition-colors"
+          >
+            <CircleInfoIcon class="w-4 h-4 mr-1.5" />
+            Information
+          </button>
+          <button
+            on:click={() => handleFlip("leaderboard")}
+            class="flex items-center text-white hover:text-misc transition-colors"
+          >
+            <TrophyIcon class="w-4 h-4 mr-1.5" />
+            Leaderboard
+          </button>
+          <button
+            on:click={() => handleFlip("prizes")}
+            class="flex items-center text-white hover:text-misc transition-colors"
+          >
+            <AwardIcon class="w-4 h-4 mr-1.5" />
+            Prizes
           </button>
 
           <!-- Navigation Buttons -->
@@ -190,10 +258,12 @@
     </div>
 
     <!-- Back Face -->
-    <div class="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] bg-gray-800 rounded-xl overflow-hidden border border-yellow-500/20">
+    <div
+      class="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] bg-gray-800 rounded-xl overflow-hidden border border-yellow-500/20"
+    >
       <!-- Close Button -->
-      <button 
-        on:click={() => handleFlip('front')}
+      <button
+        on:click={() => handleFlip("front")}
         class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white text-gray-900 hover:bg-misc hover:text-grey-900 transition-colors"
       >
         <XIcon class="w-4 h-4" />
@@ -208,12 +278,14 @@
         />
         <div class="absolute inset-0 bg-background-900/60"></div>
       </div>
-      
+
       <!-- Conditional Content Based on Current Face -->
-      {#if currentFace === 'info'}
+      {#if currentFace === "info"}
         <!-- Information Face -->
         <div class="p-6 mt-10 text-white">
-          <h3 class="text-xl text-white font-bold mb-4">Tournament Information</h3>
+          <h3 class="text-xl text-white font-bold mb-4">
+            Tournament Information
+          </h3>
           <div class="space-y-4">
             <p><strong>Game:</strong> {tournament.gameTitle}</p>
             <p><strong>Bet Level:</strong> {tournament.betLevel}</p>
@@ -226,7 +298,7 @@
             </div>
           </div>
         </div>
-      {:else if currentFace === 'leaderboard'}
+      {:else if currentFace === "leaderboard"}
         <!-- Leaderboard Face -->
         <div class="p-6 mt-10 text-white h-[calc(100%-40px)] flex flex-col">
           <h3 class="text-xl text-white font-bold mb-4">Current Leaders</h3>
@@ -255,7 +327,7 @@
             </div>
           </div>
         </div>
-      {:else if currentFace === 'prizes'}
+      {:else if currentFace === "prizes"}
         <!-- Prizes Face -->
         <div class="p-6 mt-10 text-white">
           <h3 class="text-xl text-white font-bold mb-4">Prize Structure</h3>

@@ -1,22 +1,20 @@
 ---
 import qs from "qs";
-import fetchApi from "../../../lib/strapi";
-import MainLayout from "../../layouts/MainLayout.astro";
-import { getTranslations } from "../../../utils/api-requests";
-import { tournamentApi } from "../../../lib/tournamentapi";
 import type {
-  Tournament,
-  TournamentResponse,
-  TournamentPageAttributes,
+Tournament,
+TournamentPageAttributes,
+TournamentResponse,
 } from "../../../interfaces/tournaments";
+import fetchApi from "../../../lib/strapi";
+import { tournamentApi } from "../../../lib/tournamentapi";
 import { tournamentsQs } from "../../../qs/tournaments";
-import PastResults from "../../components/tournaments/pastResults.astro";
-import Breadcrumb from "../../components/layout/breadcrumbs.astro";
-import TournamentCard from "../../components/tournaments/tournamentCard.svelte";
-import Images from "../../components/helpers/images.astro";
+import { getTranslations } from "../../../utils/api-requests";
 import Faqs from "../../components/general/faqs.astro";
-
-// Fetch translations for the page
+import Images from "../../components/helpers/images.astro";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+import PastResults from "../../components/tournaments/pastResults.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+import LiveTournaments from "../../components/tournaments/liveTournaments.svelte";
 const translationStore = await getTranslations();
 
 // Build the query string for Strapi API
@@ -30,7 +28,8 @@ const tournamentContent = await fetchApi<TournamentPageAttributes>({
 
 // Initialize state variables
 let tournaments: Tournament[] = [];
-let liveTournamentResults: Tournament[] = [];
+let tournamentResults: Tournament[] = [];
+let liveTournaments: Tournament[] = [];
 let error = null;
 
 // API functions for different tournament types
@@ -48,7 +47,7 @@ try {
   const liveTournamentResponse = await getLiveTournament();
 
   tournaments = tournamentResponse.data || [];
-  liveTournamentResults = liveTournamentResponse.data || [];
+  liveTournaments = liveTournamentResponse.data || [];
 } catch (e) {
   console.error("Error fetching tournaments:", e);
   error = e instanceof Error ? e.message : "Unknown error occurred";
@@ -171,19 +170,7 @@ const breadcrumbs = [
 
   {/* Main Content Section */}
   <div class="xl:container content-auto px-2 pt-5">
-    {/* Live Tournaments Section */}
-    <section class="py-20 px-4">
-      <div class="max-w-6xl mx-auto">
-        <h2 class="text-4xl font-bold mb-12 text-center">Live Tournaments</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-          {
-            liveTournamentResults.map((tournament) => (
-              <TournamentCard client:load tournament={tournament} />
-            ))
-          }
-        </div>
-      </div>
-    </section>
+    <LiveTournaments liveTournaments={liveTournaments} client:load />
 
     {/* Past Tournament Results */}
     <PastResults />
@@ -193,7 +180,7 @@ const breadcrumbs = [
       <div class="mx-auto">
         <h2 class="text-4xl font-bold mb-12 text-center">
           Frequently Asked Questions
-        </h2>®
+        </h2>
         <div class="space-y-4">
           {
             tournamentContent?.attributes?.faqs.map((faq) => (
