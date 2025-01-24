@@ -16,6 +16,7 @@ export const GET: APIRoute = async ({ url }) => {
     opts
   );
   const data = await res.json();
+  console.log("GET_TOURNAMENT_API_RESPONSE:", data);
 
   return new Response(
     JSON.stringify({
