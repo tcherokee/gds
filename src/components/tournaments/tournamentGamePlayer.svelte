@@ -142,7 +142,7 @@
     {/if}
     <div class="bg-tournament-card-bg-gradient"></div>
     <img
-      src="/it/fire-portals-background.jpg"
+      src={tournament?.backgroundImage}
       alt="Fire Portals Background"
       class="w-full h-full object-cover"
     />
@@ -172,12 +172,14 @@
                 </div>
               </div>
 
-              <div class="rounded-lg p-4">
-                <div class="text-yellow-400 text-sm mb-1">Daily Spins</div>
-                <div class="text-white text-2xl font-bold">
-                  {playerResults?.remainingSpinsForADay ?? 0}/{tournament?.dailySpins}
+              {#if tournament?.remainingSpinsForADay}
+                <div class="rounded-lg p-4">
+                  <div class="text-yellow-400 text-sm mb-1">Daily Spins</div>
+                  <div class="text-white text-2xl font-bold">
+                  {playerResults?.remainingSpinsForADay ?? 0}/{tournament?.dailySpins ?? 0}
+                  </div>
                 </div>
-              </div>
+              {/if}
             </div>
           {:else}
             <!-- Leaderboard Tab -->
