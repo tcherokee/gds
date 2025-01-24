@@ -22,7 +22,7 @@ console.log(
 const getTournamentData = async () => {
   try {
     const res = await fetch(
-      `${fullUrl}/api/pragmatic-api/get-tournament?` +
+      `${fullUrl}/api/pragmatic-api/get-tournament/?` +
         new URLSearchParams({ tournament_id: tournamentId.toString() })
     );
 
