@@ -16,7 +16,7 @@
   let playerToken = "";
   let apiUrl = "";
   let currentTab: "position" | "leaderboard" = "position";
-  let playerResultsLoader = false;
+  let playerResultsLoader = true;
   let playerResults: PlayerResults;
   let userScoreBoard: Scoreboard;
 
@@ -40,7 +40,6 @@
       }
     );
     playerResults = await playerResultsResponse.json();
-    console.log("PLAYER RESULTS", playerResults);
     if (playerResults) {
       const username = ($user as unknown as TUser)?.username;
       userScoreBoard = playerResults.scoreboard.find(
@@ -105,7 +104,7 @@
   });
 </script>
 
-<div class="flex flex-col md:flex-row">
+<div class="flex flex-col md:flex-row space-y-4 md:space-y-0">
   <!-- Game Container -->
   <div class="flex-1 w-full md:w-3/4">
     <div class="md:h-[600px] w-full aspect-[16/9] bg-black">
@@ -125,9 +124,9 @@
       {/if}
     </div>
     <div
-      class="bg-white md:rounded-bl-lg flex justify-between items-center py-3 px-2.5"
+      class="bg-white rounded-b-lg md:rounded-none md:rounded-bl-lg flex justify-between items-center py-3 px-2.5"
     >
-      <div class="">{tournament?.name}</div>
+      <div class="text-base font-medium">{tournament?.name}</div>
     </div>
   </div>
 
@@ -135,21 +134,20 @@
   <div
     class="w-full md:w-1/4 grid [&>*]:col-start-1 [&>*]:row-start-1 rounded-lg md:rounded-none md:rounded-br-lg overflow-hidden"
   >
-    {#if playerResultsLoader && !playerResults}
-      <div class="w-full h-full flex justify-center items-center">
-        <div class="custom-spinner" aria-hidden="true" />
-      </div>
-    {/if}
     <div class="bg-tournament-card-bg-gradient"></div>
     <img
       src={tournament?.backgroundImage}
       alt="Fire Portals Background"
       class="w-full h-full object-cover"
     />
-    {#if playerResults}
-      <div class="flex flex-col justify-between">
-        <!-- Tab Content -->
-        <div class="md:h-[600px] max-h-[400px] md:max-h-[600px] p-4 overflow-y-scroll order-1 md:order-0">
+    <div class="flex flex-col justify-between">
+      <!-- Tab Content -->
+      <div class="h-[400px] md:h-[600px] p-4 overflow-y-scroll order-1 md:order-0">
+        {#if playerResultsLoader && !playerResults}
+          <div class="w-full h-full flex justify-center items-center">
+            <div class="custom-spinner" aria-hidden="true" />
+          </div>
+        {:else if playerResults}
           {#if currentTab === "position"}
             <!-- Position Tab -->
             <div class="space-y-4">
@@ -201,29 +199,25 @@
               {/each}
             </div>
           {/if}
-        </div>
-
-        <!-- Tab Navigation -->
-        <div class="flex order-0 md:order-1">
-          <button
-            class="flex-1 py-3 text-center text-base font-medium transition-colors"
-            class:text-white={currentTab === "position"}
-            class:text-gray-400={currentTab !== "position"}
-            on:click={() => (currentTab = "position")}
-          >
-            Position
-          </button>
-          <button
-            class="flex-1 py-3 text-center text-base font-medium transition-colors"
-            class:text-white={currentTab === "leaderboard"}
-            class:text-gray-400={currentTab !== "leaderboard"}
-            on:click={() => (currentTab = "leaderboard")}
-          >
-            Leaderboard
-          </button>
-        </div>
+        {/if}
       </div>
-    {/if}
+
+      <!-- Tab Navigation -->
+      <div class="flex order-0 md:order-1 bg-white divide-x divide-grey-300">
+        <button
+          class={`md:border-l md:border-l-grey-300 flex-1 py-3 text-center text-base font-medium transition-colors hover:bg-grey-100 ${currentTab === "position" ? "!text-misc font-semibold" : ""}`}
+          on:click={() => (currentTab = "position")}
+        >
+          Position
+        </button>
+        <button
+          class={`flex-1 py-3 text-center text-base font-medium transition-colors hover:bg-grey-100 ${currentTab === "leaderboard" ? "!text-misc font-semibold" : ""}`}
+          on:click={() => (currentTab = "leaderboard")}
+        >
+          Leaderboard
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 

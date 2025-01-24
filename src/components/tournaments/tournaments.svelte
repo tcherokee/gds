@@ -17,7 +17,6 @@
     if (tournamentHistoryResponse.ok) {
       const res = await tournamentHistoryResponse.json();
       if (res.success) {
-          console.log("userTournamentHistory", res.data);
           // Update currentUserTournaments after getting new history
           updateCurrentUserTournaments(res.data);
       }
@@ -35,7 +34,6 @@
       },
       {} as Record<string, Tournament>
     );
-    console.log("CURRENT_USER_TOURNAMENTS", currentUserTournaments);
   };
 
   onMount(async () => {
@@ -43,10 +41,10 @@
       `${import.meta.env.PUBLIC_FULL_URL}/api/get-auth-cookie/`
     );
     const { hasPPToken } = await response.json();
-    // console.log("PP_TOKEN", hasPPToken);
-    // console.log("AUTH_TOKEN", hasAuthCookkie);
     if (hasPPToken) {
       getUserTournamentHistory();
+    } else {
+      currentUserTournamentsLoader = false;
     }
   });
 </script>
