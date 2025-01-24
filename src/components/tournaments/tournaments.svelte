@@ -5,7 +5,7 @@
   import { user } from "../../../stores/authStore";
   import type { TUser } from "../../../interfaces/auth";
   export let liveTournaments: Tournament[] = [];
-  let currentUserTournamentsLoader = false;
+  let currentUserTournamentsLoader = true;
   let currentUserTournaments: Record<string, Tournament> = {};
 
   const getUserTournamentHistory = async () => {

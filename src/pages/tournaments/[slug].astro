@@ -1,4 +1,5 @@
 ---
+import type { Tournament } from "../../../interfaces/tournaments";
 import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
 import TournamentGamePlayer from "../../components/tournaments/tournamentGamePlayer.svelte";
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -42,7 +43,7 @@ const getTournamentData = async () => {
   }
 };
 
-let tournamentData;
+let tournamentData: Tournament;
 try {
   tournamentData = await getTournamentData();
 
