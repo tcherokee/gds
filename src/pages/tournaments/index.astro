@@ -1,9 +1,9 @@
 ---
 import qs from "qs";
 import type {
-Tournament,
-TournamentPageAttributes,
-TournamentResponse,
+  Tournament,
+  TournamentPageAttributes,
+  TournamentResponse,
 } from "../../../interfaces/tournaments";
 import fetchApi from "../../../lib/strapi";
 import { tournamentApi } from "../../../lib/tournamentapi";
@@ -14,7 +14,7 @@ import Images from "../../components/helpers/images.astro";
 import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import PastResults from "../../components/tournaments/pastResults.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
-import LiveTournaments from "../../components/tournaments/liveTournaments.svelte";
+import Tournaments from "../../components/tournaments/tournaments.svelte";
 const translationStore = await getTranslations();
 
 // Build the query string for Strapi API
@@ -158,7 +158,8 @@ const breadcrumbs = [
       <div class="flex flex-col items-center justify-center mt-5">
         <p class="text-white text-sm mb-3">In partnership with</p>
         <Images
-          src={tournamentContent?.attributes?.partnerships.data[0]?.attributes?.url}
+          src={tournamentContent?.attributes?.partnerships.data[0]?.attributes
+            ?.url}
           imageWidth={110}
           imageHeight={48}
           classes="rounded-lg"
@@ -170,7 +171,7 @@ const breadcrumbs = [
 
   {/* Main Content Section */}
   <div class="xl:container content-auto px-2 pt-5">
-    <LiveTournaments liveTournaments={liveTournaments} client:load />
+    <Tournaments liveTournaments={liveTournaments} client:load />
 
     {/* Past Tournament Results */}
     <PastResults />
