@@ -16,7 +16,7 @@ const tournamentId = Number(slug);
 
 console.log(
   "GET_TOURNAMENT_API:",
-  `${fullUrl}/api/pragmatic-api/get-tournament?` +
+  `${fullUrl}/api/pragmatic-api/get-tournament/?` +
     new URLSearchParams({ tournament_id: tournamentId.toString() })
 );
 const getTournamentData = async () => {
