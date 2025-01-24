@@ -16,9 +16,11 @@
     );
     if (tournamentHistoryResponse.ok) {
       const res = await tournamentHistoryResponse.json();
-      console.log("userTournamentHistory", res.data);
-      // Update currentUserTournaments after getting new history
-      updateCurrentUserTournaments(res.data);
+      if (res.success) {
+          console.log("userTournamentHistory", res.data);
+          // Update currentUserTournaments after getting new history
+          updateCurrentUserTournaments(res.data);
+      }
     }
     currentUserTournamentsLoader = false;
   };

@@ -5,6 +5,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
 
 const slug = Astro.params.slug as string;
 const fullUrl = import.meta.env.PUBLIC_FULL_URL;
+
 // Check if slug is a valid number
 if (isNaN(Number(slug))) {
   return Astro.redirect(`${fullUrl}/tournaments/`);
@@ -12,16 +13,46 @@ if (isNaN(Number(slug))) {
 
 const tournamentId = Number(slug);
 
+console.log(
+  "GET_TOURNAMENT_API:",
+  `${fullUrl}/api/pragmatic-api/get-tournament?` +
+    new URLSearchParams({ tournament_id: tournamentId.toString() })
+);
 const getTournamentData = async () => {
-  const res = await fetch(
-    `${fullUrl}/api/pragmatic-api/get-tournament?` +
-      new URLSearchParams({ tournament_id: tournamentId.toString() })
-  );
-  const data = await res.json();
-  return data.data;
+  try {
+    const res = await fetch(
+      `${fullUrl}/api/pragmatic-api/get-tournament?` +
+        new URLSearchParams({ tournament_id: tournamentId.toString() })
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    if (!data || !data.data) {
+      throw new Error("Tournament data not found");
+    }
+
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching tournament data:", error);
+    return Astro.redirect(`${fullUrl}/tournaments/`);
+  }
 };
 
-const tournamentData = await getTournamentData();
+let tournamentData;
+try {
+  tournamentData = await getTournamentData();
+
+  if (!tournamentData) {
+    return Astro.redirect(`${fullUrl}/tournaments/`);
+  }
+} catch (error) {
+  console.error("Error in tournament page:", error);
+  return Astro.redirect(`${fullUrl}/tournaments/`);
+}
 ---
 
 <script define:vars={{ tournamentData }}>
