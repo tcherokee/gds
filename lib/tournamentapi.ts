@@ -14,9 +14,7 @@ import {
  * @param endpoint - The API endpoint to call
  * @returns Promise<TournamentResponse> - The API response
  */
-export async function tournamentApi<T>(
-  endpoint: string
-): Promise<TournamentResponse> {
+export async function tournamentApi<T>(endpoint: string): Promise<T> {
   // Start timing the request
   const startTime = performance.now();
   const requestId = crypto.randomUUID();
@@ -71,7 +69,7 @@ export async function tournamentApi<T>(
         endpoint,
         duration: performance.now() - startTime,
       },
-    };
+    } as T;
   } catch (error) {
     // Log error details
     console.group("❌ Tournament API Error");
@@ -91,6 +89,6 @@ export async function tournamentApi<T>(
 
     TournamentDebug.logTournamentError(errorResponse.error as TournamentError);
 
-    return errorResponse;
+    return errorResponse as T;
   }
 }

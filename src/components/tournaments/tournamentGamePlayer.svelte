@@ -40,6 +40,7 @@
       }
     );
     playerResults = await playerResultsResponse.json();
+    console.log("PLAYER RESULTS", playerResults);
     if (playerResults) {
       const username = ($user as unknown as TUser)?.username;
       userScoreBoard = playerResults.scoreboard.find(
@@ -174,7 +175,7 @@
               <div class="rounded-lg p-4">
                 <div class="text-yellow-400 text-sm mb-1">Daily Spins</div>
                 <div class="text-white text-2xl font-bold">
-                  {playerResults?.remainingSpinsForADay}/{tournament?.dailySpins}
+                  {playerResults?.remainingSpinsForADay ?? 0}/{tournament?.dailySpins}
                 </div>
               </div>
             </div>

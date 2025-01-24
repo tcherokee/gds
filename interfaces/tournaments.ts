@@ -105,6 +105,15 @@ export interface TournamentResponse {
   statusCode?: number;
 }
 
+export type SingleTournamentResponse = {
+  success: boolean;
+  message: string;
+  data?: Tournament;
+  error?: TournamentError;
+  metadata?: TournamentRequestMetadata;
+  statusCode?: number;
+};
+
 export type PlayerResults = {
   position: number;
   remainingSpinsForADay: number;
