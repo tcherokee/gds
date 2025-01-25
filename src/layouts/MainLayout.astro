@@ -43,10 +43,11 @@ import { getTranslations } from "../../utils/api-requests";
 import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
+import type { Country, CountryDataItem } from "../../interfaces/country";
 
 let userCountry: UserCountry | undefined;
-let country;
-let countryCode;
+let country: { sc: string } | undefined;
+let countryCode: string | undefined;
 
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";

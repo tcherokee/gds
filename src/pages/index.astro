@@ -35,8 +35,8 @@ import { getTranslations } from "../../utils/api-requests";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
 let userCountry: UserCountry | undefined;
-let country;
-let countryCode;
+let country: { sc: string } | undefined;
+let countryCode: string | undefined;
 
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
