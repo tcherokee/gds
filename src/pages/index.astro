@@ -8,6 +8,7 @@ import type {
   Block,
   BlogBlockTypes,
   HomeGameListBlock,
+  UserCountry,
 } from "../../interfaces/common/types.ts";
 import type { Game } from "../../interfaces/games.ts";
 import type { Blog } from "../../interfaces/blog.ts";
@@ -33,22 +34,27 @@ import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 import { getTranslations } from "../../utils/api-requests";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
-// const IPRequest = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/ip/`)
-//   .then((res) => res.json())
-//   .then();
+let userCountry: UserCountry | undefined;
+let country;
+let countryCode;
 
-// const ipAddress = IPRequest.ip.split(",")[0];
 const clientIP =
-  Astro.request.headers.get("x-forwarded-for") ||
-  import.meta.env.SITE_IDLOCAL_DEFAULT_IP;
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
 
-const userCountry = await getUserCountryByIP(clientIP);
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase()
-);
+if (clientIP === "102.216.183.41") {
+  userCountry = await getUserCountryByIP(clientIP);
+
+  country = await userCountryHandler(
+    userCountry?.location?.country.toLowerCase() || ""
+  );
+
+  countryCode = country?.sc || "";
+} else {
+  countryCode = "rod";
+}
 
 const homeData = {
-  casinoCountry: country?.sc,
+  casinoCountry: countryCode,
 };
 
 const sortStore = sortOptions.get();
@@ -174,9 +180,9 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ homepage }}>
+<!-- <script define:vars={{ homepage }}>
   console.log("Home page", homepage);
-</script>
+</script> -->
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 
