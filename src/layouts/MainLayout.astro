@@ -110,10 +110,10 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
           const filteredChildren = item.attributes.children.data.filter(
             (child) => {
               if (countryCode === "rod") {
-                // Exclude children with "-it"
+                // Exclude children with countryCode
                 return !child.attributes.title.includes(`-${countryCode}`);
               } else {
-                // Include children with filterKeyword
+                // Include children with countryCode
                 return child.attributes.title.includes(`-${countryCode}`);
               }
             }
