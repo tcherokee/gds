@@ -54,8 +54,8 @@ import {
 } from "../../../utils/ip-request";
 
 let userCountry: UserCountry | undefined;
-let country;
-let casinoCountry;
+let country: { sc: string } | undefined;
+let casinoCountry: string | undefined;
 
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
