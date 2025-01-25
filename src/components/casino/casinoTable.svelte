@@ -45,7 +45,7 @@
   import { casinosQs } from "../../../qs/casinos";
   import { getTranslations } from "../../../stores/addTranslations";
 
-  export let casinoCountry: string;
+  export let casinoCountry: string | undefined;
   export let initialCasinos: CasinoListBlock;
   export let translations: TranslationData;
   export let slotProviders: TProviderAttributesOnly[] = [];
