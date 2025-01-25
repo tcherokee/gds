@@ -32,6 +32,7 @@ import type {
   TCasinoLiveVideo,
   TGameListBlock,
   TProviderAttributesOnly,
+  UserCountry,
 } from "../../../interfaces/common/types.ts";
 import type { CustomPageItem } from "../../../interfaces/custom-pages";
 
@@ -52,17 +53,24 @@ import {
   userCountryHandler,
 } from "../../../utils/ip-request";
 
-// const ipAddress = IPRequest.ip.split(",")[0];
+let userCountry: UserCountry | undefined;
+let country;
+let casinoCountry;
+
 const clientIP =
-  Astro.request.headers.get("x-forwarded-for") ||
-  import.meta.env.SITE_IDLOCAL_DEFAULT_IP;
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
 
-const userCountry = await getUserCountryByIP(clientIP);
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase()
-);
+if (clientIP === "102.216.183.41") {
+  userCountry = await getUserCountryByIP(clientIP);
 
-const casinoCountry = country?.sc || "";
+  country = await userCountryHandler(
+    userCountry?.location?.country.toLowerCase() || ""
+  );
+
+  casinoCountry = country?.sc || "";
+} else {
+  casinoCountry = "rod";
+}
 
 // const path = Astro.params.path as string;
 const { path } = Astro.props;

@@ -6,7 +6,10 @@ import { ViewTransitions } from "astro:transitions";
 import LDTag from "../components/helpers/LDTag.svelte";
 
 // Types
-import type { BreadcrumbData } from "../../interfaces/common/types";
+import type {
+  BreadcrumbData,
+  UserCountry,
+} from "../../interfaces/common/types";
 
 // QS Query Strings
 import { layoutQs, menuQs } from "../../qs/layout.ts";
@@ -41,15 +44,24 @@ import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
+let userCountry: UserCountry | undefined;
+let country;
+let countryCode;
+
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
 
-const userCountry = await getUserCountryByIP(clientIP);
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase()
-);
+if (clientIP === "102.216.183.41") {
+  userCountry = await getUserCountryByIP(clientIP);
 
-const countryCode = country?.sc || "";
+  country = await userCountryHandler(
+    userCountry?.location?.country.toLowerCase() || ""
+  );
+
+  countryCode = country?.sc || "";
+} else {
+  countryCode = "rod";
+}
 
 const siteID = `${import.meta.env.SITE_ID}`;
 const siteLang = `${import.meta.env.LANG}`;
@@ -109,13 +121,7 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
           // Filter children with "- $coiuntryCode" in the title
           const filteredChildren = item.attributes.children.data.filter(
             (child) => {
-              if (countryCode === "rod") {
-                // Exclude children with countryCode
-                return !child.attributes.title.includes(`-${countryCode}`);
-              } else {
-                // Include children with countryCode
-                return child.attributes.title.includes(`-${countryCode}`);
-              }
+              return child.attributes.title.includes(`-${countryCode}`);
             }
           );
 

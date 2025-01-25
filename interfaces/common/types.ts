@@ -707,3 +707,16 @@ export type SportAttributes = {
     wageringRequirements: number;
   };
 };
+
+export type UserCountry = {
+  location: {
+    city: string;
+    country: string;
+    ip: string;
+    loc: string;
+    org: string;
+    region: string;
+    timezone: string;
+  };
+  ip: string;
+};

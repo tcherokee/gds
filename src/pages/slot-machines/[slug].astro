@@ -8,6 +8,7 @@ import type {
   HowToGroup,
   Faqs as FaqsType,
   Block as BlockType,
+  UserCountry,
 } from "../../../interfaces/common/types";
 
 // Helpers
@@ -41,16 +42,24 @@ import {
 } from "../../../utils/ip-request";
 
 // const ipAddress = IPRequest.ip.split(",")[0];
+let userCountry: UserCountry | undefined;
+let country;
+let casinoCountry;
+
 const clientIP =
-  Astro.request.headers.get("x-forwarded-for") ||
-  import.meta.env.SITE_IDLOCAL_DEFAULT_IP;
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
 
-const userCountry = await getUserCountryByIP(clientIP);
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase()
-);
+if (clientIP === "102.216.183.41") {
+  userCountry = await getUserCountryByIP(clientIP);
 
-const casinoCountry = country?.sc || "";
+  country = await userCountryHandler(
+    userCountry?.location?.country.toLowerCase() || ""
+  );
+
+  casinoCountry = country?.sc || "";
+} else {
+  casinoCountry = "rod";
+}
 
 // Set Up Translation Store
 const translationStore = await getTranslations();
