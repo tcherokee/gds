@@ -30,7 +30,10 @@ export async function tournamentApi<T>(endpoint: string): Promise<T> {
 
     // Log the start of the request
     console.log("🚀 Tournament API Request");
-
+    console.log(
+      "Endpoint",
+      `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}/`
+    );
     const response = await fetch(
       `${import.meta.env.PUBLIC_TOURNAMENT_API_URL}${endpoint}/`,
       {
@@ -51,13 +54,6 @@ export async function tournamentApi<T>(endpoint: string): Promise<T> {
     // Validate response
     if (!isTournamentResponse(data)) {
       throw new Error("Invalid response format");
-    }
-
-    // Validate each tournament in the response
-    if (data.data) {
-      data.data.forEach((tournament) => {
-        TournamentDebug.validateTournament(tournament);
-      });
     }
 
     // Add metadata and return

@@ -2,21 +2,21 @@
 import type {
   SingleTournamentResponse,
   Tournament,
-} from "../../../interfaces/tournaments";
-import { tournamentApi } from "../../../lib/tournamentapi";
-import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
-import TournamentGamePlayer from "../../components/tournaments/tournamentGamePlayer.svelte";
-import MainLayout from "../../layouts/MainLayout.astro";
+} from "../../../../interfaces/tournaments";
+import { tournamentApi } from "../../../../lib/tournamentapi";
+import Breadcrumbs from "../../../components/layout/breadcrumbs.astro";
+import TournamentGamePlayer from "../../../components/tournaments/tournamentGamePlayer.svelte";
+import MainLayout from "../../../layouts/MainLayout.astro";
 
-const slug = Astro.params.slug as string;
+const id = Astro.params.id as string;
 const fullUrl = import.meta.env.PUBLIC_FULL_URL;
 
-// Check if slug is a valid number
-if (isNaN(Number(slug))) {
+// Check if id is a valid number
+if (isNaN(Number(id))) {
   return Astro.redirect(`${fullUrl}/tournaments/`);
 }
 
-const tournamentId = Number(slug);
+const tournamentId = Number(id);
 
 const opts = {
   headers: {
