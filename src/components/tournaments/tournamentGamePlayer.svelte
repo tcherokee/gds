@@ -7,8 +7,7 @@
     Scoreboard,
     Tournament,
   } from "../../../interfaces/tournaments";
-  import LeaderboardCurrPosition from "../../../dist/server/chunks/leaderboardCurrPosition_BsTckYgr.mjs";
-  import Link from "../../components/helpers/link.svelte";
+ import Link from "../../components/helpers/link.svelte";
 
   export let tournamentId: number;
   export let tournament: Tournament;
