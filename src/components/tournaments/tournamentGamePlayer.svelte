@@ -7,6 +7,8 @@
     Scoreboard,
     Tournament,
   } from "../../../interfaces/tournaments";
+  import LeaderboardCurrPosition from "../../../dist/server/chunks/leaderboardCurrPosition_BsTckYgr.mjs";
+  import Link from "../../components/helpers/link.svelte";
 
   export let tournamentId: number;
   export let tournament: Tournament;
@@ -197,6 +199,14 @@
                   <div class="text-white font-bold">{scoreboard.score}</div>
                 </div>
               {/each}
+              <div class="flex justify-center mt-6 px-4">
+                <Link 
+                  classes="btn btn-misc uppercase !text-body-text !text-[14px] mt-4 p-6  w-fit"
+                  href={`/tournaments/${tournamentId}/leaderboards`}
+                >
+                  Leaderboards
+                </Link>
+              </div>
             </div>
           {/if}
         {/if}
