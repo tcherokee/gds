@@ -52,7 +52,7 @@ let countryCode: string | undefined;
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
 
-if (clientIP === "102.216.183.41") {
+if (clientIP !== "102.216.183.41") {
   userCountry = await getUserCountryByIP(clientIP);
 
   country = await userCountryHandler(
