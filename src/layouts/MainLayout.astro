@@ -43,26 +43,15 @@ import { getTranslations } from "../../utils/api-requests";
 import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
-import type { Country, CountryDataItem } from "../../interfaces/country";
-
-let userCountry: UserCountry | undefined;
-let country: { sc: string } | undefined;
-let countryCode: string | undefined;
 
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
 
-if (clientIP !== "102.216.183.41") {
-  userCountry = await getUserCountryByIP(clientIP);
-
-  country = await userCountryHandler(
-    userCountry?.location?.country.toLowerCase() || ""
-  );
-
-  countryCode = country?.sc || "";
-} else {
-  countryCode = "rod";
-}
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
+const countryCode = country?.sc || "";
 
 const siteID = `${import.meta.env.SITE_ID}`;
 const siteLang = `${import.meta.env.LANG}`;
