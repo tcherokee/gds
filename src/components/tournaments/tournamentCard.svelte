@@ -106,10 +106,9 @@
     class:rotate-y-180={isFlipped}
   >
     <!-- Front Face -->
-    <div
-      class="absolute w-full h-full [backface-visibility:hidden] bg-gray-800 rounded-xl overflow-hidden border border-yellow-500/20 hover:border-yellow-500/40 transition-all"
-      class:pointer-events-none={isFlipped}
-    >
+    <div class="absolute w-full h-full [backface-visibility:hidden] bg-gray-800 rounded-xl overflow-hidden border border-yellow-500/20 hover:border-yellow-500/40 transition-all"
+         class:pointer-events-none={isFlipped}>
+
       <!-- Game Background Image with Gradient Overlay -->
       <div class="absolute inset-0 w-full h-full overflow-hidden bg-tournament-card-bg-gradient -z-10">
         <img
@@ -131,20 +130,13 @@
       </div>
 
       <!-- Tournament Type Banner -->
-      <div
-        class="absolute top-4 left-0 right-0 flex justify-between transition-[z-index] duration-0 z-50"
-        class:z-10={!isFlipped}
-        class:z-[-1]={isFlipped}
-      >
-        <div
-          class="bg-tournament-card-labels text-tournament-card-labels-text py-2 px-3 rounded-r-full font-bold flex items-center text-xs"
-        >
+      <div class="absolute top-4 left-0 right-0 flex justify-between transition-[z-index] duration-0 z-50"
+           class:z-10={!isFlipped} class:z-[-1]={isFlipped}>
+        <div class="bg-tournament-card-labels text-tournament-card-labels-text py-2 px-3 rounded-r-full font-bold flex items-center text-xs">
           <TrophyIcon class="w-3.5 h-3.5 mr-2" />
           {tournament.tournamentLabel.toUpperCase()}
         </div>
-        <div
-          class="bg-tournament-card-labels text-tournament-card-labels-text py-2 px-3 rounded-l-full font-bold text-xs"
-        >
+        <div class="bg-tournament-card-labels text-tournament-card-labels-text py-2 px-3 rounded-l-full font-bold text-xs">
           {tournament.betLevel} BET LEVEL
         </div>
       </div>
@@ -154,9 +146,7 @@
         <!-- Top Section: Prize Pool and Spins Info -->
         <div class="flex justify-between items-center">
           <div>
-            <div class="text-2xl font-bold text-white">
-              {tournament.prizePool}
-            </div>
+            <div class="text-2xl font-bold text-white">{tournament.prizePool}</div>
             <div class="text-white">Prize Pool</div>
           </div>
           <div class="text-right">
@@ -171,23 +161,17 @@
         <!-- Middle Section: Countdown Timer -->
         <div>
           <div class="text-white mb-2">
-            {tournament.scheduleTimerTitle === "ends_in"
-              ? "Ends in:"
-              : "Starts in:"}
+            {tournament.scheduleTimerTitle === 'ends_in' ? 'Ends in:' : 'Starts in:'}
           </div>
           <div class="bg-gray-900/50 rounded-lg p-4 pt-0">
-            <div
-              class="flex justify-center items-center space-x-2 text-white text-3xl font-bold"
-            >
-              <span>{String(timeLeft.hours).padStart(2, "0")}</span>
+            <div class="flex justify-center items-center space-x-2 text-white text-3xl font-bold">
+              <span>{String(timeLeft.hours).padStart(2, '0')}</span>
               <span>:</span>
-              <span>{String(timeLeft.mins).padStart(2, "0")}</span>
+              <span>{String(timeLeft.mins).padStart(2, '0')}</span>
               <span>:</span>
-              <span>{String(timeLeft.secs).padStart(2, "0")}</span>
+              <span>{String(timeLeft.secs).padStart(2, '0')}</span>
             </div>
-            <div
-              class="flex justify-center items-center space-x-8 mt-1 text-sm text-white"
-            >
+            <div class="flex justify-center items-center space-x-8 mt-1 text-sm text-white">
               <span>HOURS</span>
               <span>MINS</span>
               <span>SECS</span>
@@ -195,38 +179,14 @@
           </div>
         </div>
 
-        <!-- Action Button -->
-        <button
-          class="w-full bg-secondary hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all mb-4"
-          on:click={() => {
-            tournamentActionBtnHandler();
-          }}
-        >
-          {userTournament?.actionButton.label.toUpperCase() ?? ($user ? 'JOIN' : tournament.actionButton.label.toUpperCase())}
-        </button>
+        <!-- Second Spacer -->
+        <div class="flex-grow"></div>
 
-        <!-- Navigation Buttons -->
-        <div class="flex justify-center space-x-6 text-gray-400 text-sm">
-          <button
-            on:click={() => handleFlip("info")}
-            class="flex items-center text-white hover:text-misc transition-colors"
-          >
-            <CircleInfoIcon class="w-4 h-4 mr-1.5" />
-            Information
-          </button>
-          <button
-            on:click={() => handleFlip("leaderboard")}
-            class="flex items-center text-white hover:text-misc transition-colors"
-          >
-            <TrophyIcon class="w-4 h-4 mr-1.5" />
-            Leaderboard
-          </button>
-          <button
-            on:click={() => handleFlip("prizes")}
-            class="flex items-center text-white hover:text-misc transition-colors"
-          >
-            <AwardIcon class="w-4 h-4 mr-1.5" />
-            Prizes
+        <!-- Bottom Section: Action Button and Navigation -->
+        <div class="mt-auto pb-2">
+          <!-- Action Button -->
+          <button class="w-full bg-secondary hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all mb-4">
+            {tournament.actionButton.label.toUpperCase()}
           </button>
 
           <!-- Navigation Buttons -->
