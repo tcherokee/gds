@@ -1,4 +1,4 @@
-export const casinopageQs = (slug:string) => ({
+export const casinopageQs = (slug: string) => ({
   fields: [
     "title",
     "slug",
@@ -176,6 +176,14 @@ export const casinopageQs = (slug:string) => ({
         },
         termsAndConditions: {
           fields: ["copy"],
+        },
+      },
+    },
+    paymentChannels: {
+      fields: ["name"],
+      populate: {
+        logo: {
+          fields: ["url"],
         },
       },
     },
