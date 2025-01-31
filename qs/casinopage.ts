@@ -188,6 +188,14 @@ export const casinopageQs = (slug: string, casinoCountry: string) => ({
         }),
       },
     },
+    paymentChannels: {
+      fields: ["name"],
+      populate: {
+        logo: {
+          fields: ["url"],
+        },
+      },
+    },
     blocks: {
       populate: {
         image: {
