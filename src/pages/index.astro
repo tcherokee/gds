@@ -36,24 +36,16 @@ import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
 const localisation = await getLocalisation();
 
-let userCountry: UserCountry | undefined;
-let country: { sc: string } | undefined;
-let countryCode: string | undefined;
-
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
 
-if (clientIP === "102.216.183.41") {
-  userCountry = await getUserCountryByIP(clientIP);
+const userCountry = await getUserCountryByIP(clientIP);
 
-  country = await userCountryHandler(
-    userCountry?.location?.country.toLowerCase() || ""
-  );
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
 
-  countryCode = country?.sc || "";
-} else {
-  countryCode = "rod";
-}
+const countryCode = country?.sc || "";
 
 const homeData = {
   casinoCountry: countryCode,
