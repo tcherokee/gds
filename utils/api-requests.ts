@@ -2,9 +2,27 @@ import qs from "qs";
 import type { TranslationDataItem } from "../interfaces/translation";
 import type { CountryDataItem } from "../interfaces/country";
 import fetchApi from "../lib/strapi";
-import { translationsQs, countriesQs } from "../qs/layout";
+import { translationsQs, countriesQs, layoutQs } from "../qs/layout";
 import type { TProviderAttributesOnly } from "../interfaces/common/types";
 import type { TUserGameProvider } from "../interfaces/games";
+import type { LayoutData } from "../interfaces/layout";
+
+export const getLocalisation = async () => {
+  try {
+    const layoutQuery = qs.stringify(layoutQs(), {
+      encodeValuesOnly: true,
+    });
+    const response = await fetchApi<LayoutData>({
+      endpoint: "layout",
+      wrappedByKey: "data",
+      query: `?${layoutQuery}`,
+    });
+
+    return response.attributes.localisation;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const getDBCountries = async () => {
   try {

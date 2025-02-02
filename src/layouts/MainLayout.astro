@@ -39,10 +39,12 @@ import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
 // import Newsletter from "../components/layout/newsletter.astro";
 import CookiesConsent from "../components/general/cookiesConsent.svelte";
-import { getTranslations } from "../../utils/api-requests";
+import { getLocalisation, getTranslations } from "../../utils/api-requests";
 import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
+
+const localisation = await getLocalisation();
 
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
@@ -103,33 +105,35 @@ const menu = isNavigationItemArray(responses[1])
 const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
   (acc: ProcessedMenus, menu: NavigationItem) => {
     const title = menu.attributes.title;
-    let items = [];
+    let items: MenuItem[] = [];
 
-    if (title === "Main Navigation") {
-      items = menu.attributes.items.data.map((item: MenuItem) => {
-        if (item.attributes.children.data.length > 0) {
-          // Filter children with "- $coiuntryCode" in the title
-          const filteredChildren = item.attributes.children.data.filter(
-            (child) => {
-              return child.attributes.title.includes(`-${countryCode}`);
-            }
-          );
+    if (localisation) {
+      if (title === "Main Navigation") {
+        items = menu.attributes.items.data.map((item: MenuItem) => {
+          if (item.attributes.children.data.length > 0) {
+            // Filter children with "- $coiuntryCode" in the title
+            const filteredChildren = item.attributes.children.data.filter(
+              (child) => {
+                return child.attributes.title.includes(`-${countryCode}`);
+              }
+            );
 
-          // Return the updated item with filtered children
-          return {
-            ...item,
-            attributes: {
-              ...item.attributes,
-              children: {
-                ...item.attributes.children,
-                data: filteredChildren,
+            // Return the updated item with filtered children
+            return {
+              ...item,
+              attributes: {
+                ...item.attributes,
+                children: {
+                  ...item.attributes.children,
+                  data: filteredChildren,
+                },
               },
-            },
-          };
-        } else {
-          return item;
-        }
-      });
+            };
+          } else {
+            return item;
+          }
+        });
+      }
     } else {
       items = menu.attributes.items.data;
     }
@@ -218,8 +222,16 @@ if (otherSchema) {
 ---
 
 <script
-  define:vars={{ menu, processedMenus, clientIP, userCountry, countryCode }}
+  define:vars={{
+    localisation,
+    menu,
+    processedMenus,
+    clientIP,
+    userCountry,
+    countryCode,
+  }}
 >
+  console.log("localisation", localisation);
   console.log("menu", menu);
   console.log("Process menu", processedMenus);
   console.log("userCountry", userCountry);

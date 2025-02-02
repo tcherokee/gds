@@ -15,6 +15,7 @@ import { customPageQs } from "../../../qs/customPages";
 import { gamesQs } from "../../../qs/games.ts";
 
 import {
+  getLocalisation,
   slotCategories as slotCategoriesResponse,
   slotProviders as slotProvidersResponse,
   getTranslations as translationResponse,
@@ -57,6 +58,8 @@ let userCountry: UserCountry | undefined;
 let country: { sc: string } | undefined;
 let casinoCountry: string | undefined;
 
+const localisation = await getLocalisation();
+
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
 
@@ -93,7 +96,7 @@ const gameProviders = await fetchApi<{
   query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
 });
 
-const query = qs.stringify(customPageQs(path, casinoCountry), {
+const query = qs.stringify(customPageQs(path, casinoCountry, localisation), {
   encodeValuesOnly: true,
 });
 

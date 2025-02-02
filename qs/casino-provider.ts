@@ -1,4 +1,8 @@
-export const casinoproviderQs = (slug: string, casinoCountry: string) => ({
+export const casinoproviderQs = (
+  slug: string,
+  casinoCountry: string,
+  localisation: boolean = false
+) => ({
   fields: [
     "title",
     "content1",
@@ -57,13 +61,14 @@ export const casinoproviderQs = (slug: string, casinoCountry: string) => ({
         },
       },
       filters: {
-        ...(casinoCountry && {
-          countries: {
-            shortCode: {
-              $in: casinoCountry,
+        ...(localisation &&
+          casinoCountry && {
+            countries: {
+              shortCode: {
+                $in: casinoCountry,
+              },
             },
-          },
-        }),
+          }),
       },
     },
   },
