@@ -1,7 +1,11 @@
 import { populate } from "dotenv";
 import { slotCategories } from "../utils/api-requests";
 
-export const customPageQs = (path: string, casinoCountry: string) => {
+export const customPageQs = (
+  path: string,
+  casinoCountry: string,
+  localisation: boolean = false
+) => {
   return {
     fields: [
       "title",
@@ -108,13 +112,14 @@ export const customPageQs = (path: string, casinoCountry: string) => {
                   },
                 },
                 filters: {
-                  ...(casinoCountry && {
-                    countries: {
-                      shortCode: {
-                        $in: casinoCountry,
+                  ...(localisation &&
+                    casinoCountry && {
+                      countries: {
+                        shortCode: {
+                          $in: casinoCountry,
+                        },
                       },
-                    },
-                  }),
+                    }),
                 },
               },
             },
@@ -281,7 +286,10 @@ export const customPageQs = (path: string, casinoCountry: string) => {
   };
 };
 
-export const customPageLayoutAddOnsQs = (casinoCountry: string = "") => ({
+export const customPageLayoutAddOnsQs = (
+  casinoCountry: string = "",
+  localisation: boolean = false
+) => ({
   populate: {
     filterProviders: {
       fields: ["slug"],
@@ -300,13 +308,14 @@ export const customPageLayoutAddOnsQs = (casinoCountry: string = "") => ({
         bonusSection: true,
       },
       filters: {
-        ...(casinoCountry && {
-          countries: {
-            shortCode: {
-              $in: casinoCountry,
+        ...(localisation &&
+          casinoCountry && {
+            countries: {
+              shortCode: {
+                $in: casinoCountry,
+              },
             },
-          },
-        }),
+          }),
       },
     },
     no_deposit_casinos: {

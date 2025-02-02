@@ -22,7 +22,10 @@ import {
   loadComponents,
   mapBlocksToDynamicComponents,
 } from "../../../../lib/loadBlockComponents";
-import { getTranslations } from "../../../../utils/api-requests";
+import {
+  getLocalisation,
+  getTranslations,
+} from "../../../../utils/api-requests";
 import ContentBlock from "../../../components/blocks/contentBlock.astro";
 import GameListBlock from "../../../components/blocks/gameListBlock.astro";
 import CasinoComparison from "../../../components/casino/casinoComparison.astro";
@@ -49,6 +52,8 @@ import {
   userCountryHandler,
 } from "../../../../utils/ip-request";
 
+const localisation = await getLocalisation();
+
 let userCountry: UserCountry | undefined;
 let country: { sc: string } | undefined;
 let casinoCountry: string | undefined;
@@ -70,7 +75,7 @@ if (clientIP === "102.216.183.41") {
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
-const casino = qs.stringify(casinopageQs(slug, casinoCountry), {
+const casino = qs.stringify(casinopageQs(slug, casinoCountry, localisation), {
   encodeValuesOnly: true,
 });
 

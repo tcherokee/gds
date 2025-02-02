@@ -9,6 +9,9 @@ import {
   userCountryHandler,
 } from "../../../utils/ip-request";
 import type { UserCountry } from "../../../interfaces/common/types";
+import { getLocalisation } from "../../../utils/api-requests";
+
+const localisation = await getLocalisation();
 
 let userCountry: UserCountry | undefined;
 let country: { sc: string } | undefined;
@@ -31,7 +34,7 @@ if (clientIP === "102.216.183.41") {
 
 const { slug, translationStore } = Astro.props;
 
-const query = qs.stringify(providerGamesQs(slug, casinoCountry), {
+const query = qs.stringify(providerGamesQs(slug, casinoCountry, localisation), {
   encodeValuesOnly: true,
 });
 

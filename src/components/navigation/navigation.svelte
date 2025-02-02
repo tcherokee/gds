@@ -138,7 +138,7 @@
                               href={`${child?.attributes?.url}/`}
                               classes="flex w-full items-center rounded-md py-2 pl-8 pr-2 text-sm font-medium text-navbar-text hover:bg-nav-hover-bkg"
                             >
-                              {child?.attributes?.title.split(`-${countryCode}`)[0]}
+                              {child?.attributes?.title.split(`-`)[0]}
                             </Link>
                           {/each}
                         </div>
@@ -200,7 +200,7 @@
                 href={`${child?.attributes?.url}/`}
                 classes="-m-3 uppercase block rounded-md p-3 transition duration-150 ease-in-out hover:bg-gray-50 text-navbar-text"
               >
-                {child?.attributes?.title.split(`-${countryCode}`)[0]}
+                {child?.attributes?.title.split(`-`)[0]}
               </Link>
             </li>
           {/each}
