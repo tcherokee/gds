@@ -61,8 +61,6 @@ steps:
         'PUBLIC_SUPABASE_URL=${_PUBLIC_SUPABASE_URL}',
         '--build-arg',
         'PUBLIC_SUPABASE_ANON_KEY=${_PUBLIC_SUPABASE_ANON_KEY}',
-        '--build-arg',
-        'SUPABASE_SERVICE_ROLE_KEY=${_SUPABASE_SERVICE_ROLE_KEY}',
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '--cache-from',
@@ -147,8 +145,6 @@ steps:
       - 'PUBLIC_SUPABASE_URL=${_PUBLIC_SUPABASE_URL}'
       - '--set-env-vars'
       - 'PUBLIC_SUPABASE_ANON_KEY=${_PUBLIC_SUPABASE_ANON_KEY}'
-      - '--set-env-vars'
-      - 'SUPABASE_SERVICE_ROLE_KEY=${_SUPABASE_SERVICE_ROLE_KEY}'
 
 substitutions:
   _OUTPUT_DIST_PATH: '/'
@@ -184,6 +180,5 @@ substitutions:
   _PUBLIC_SWETRIX_ID: ''
   _PUBLIC_SUPABASE_URL: ''
   _PUBLIC_SUPABASE_ANON_KEY: ''
-  _SUPABASE_SERVICE_ROLE_KEY: ''
 
 timeout: 2700s
