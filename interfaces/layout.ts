@@ -31,6 +31,7 @@ type LayoutAttributes = {
   cookiesUrl: string;
   cookiesLinkText: string;
   footerImages: FooterImage[];
+  localisation: boolean;
   Logo: {
     data: ImageData;
   };

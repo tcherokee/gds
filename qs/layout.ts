@@ -14,6 +14,7 @@ export const layoutQs = (): LayoutQueryOptions => ({
     "cookiesDescription",
     "cookiesUrl",
     "cookiesLinkText",
+    "localisation",
   ],
   populate: {
     countries: {

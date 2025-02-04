@@ -31,7 +31,11 @@ export const gamesQs = (
   sort: sort,
 });
 
-export const slotProvidersQs = (slug: string, casinoCountry: string) => ({
+export const slotProvidersQs = (
+  slug: string,
+  casinoCountry: string,
+  localisation: boolean = false
+) => ({
   fields: [
     "title",
     "heading",
@@ -81,13 +85,14 @@ export const slotProvidersQs = (slug: string, casinoCountry: string) => ({
         },
       },
       filters: {
-        ...(casinoCountry && {
-          countries: {
-            shortCode: {
-              $in: casinoCountry,
+        ...(localisation &&
+          casinoCountry && {
+            countries: {
+              shortCode: {
+                $in: casinoCountry,
+              },
             },
-          },
-        }),
+          }),
       },
     },
     faqs: {

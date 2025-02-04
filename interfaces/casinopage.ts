@@ -13,7 +13,7 @@ import type {
   BreadcrumbData,
   CasinoData,
   CasinoFeatures,
-  HowToGroup
+  HowToGroup,
 } from "./common/types";
 
 export type Casinopage = {
@@ -75,5 +75,23 @@ type Attributes = {
   casinoComparison: {
     data: CasinoComparison;
   };
+  paymentChannels: {
+    data: PaymentChannels[];
+  };
   faqs: Faqs[];
+};
+
+export type PaymentChannels = {
+  id: number;
+  attributes: {
+    name: string;
+    logo: {
+      data: {
+        id: number;
+        attributes: {
+          url: string;
+        };
+      };
+    };
+  };
 };
