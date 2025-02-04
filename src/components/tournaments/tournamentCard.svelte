@@ -185,8 +185,13 @@
         <!-- Bottom Section: Action Button and Navigation -->
         <div class="mt-auto pb-2">
           <!-- Action Button -->
-          <button class="w-full bg-secondary hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all mb-4">
-            {tournament.actionButton.label.toUpperCase()}
+          <button
+            class="w-full bg-secondary hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all mb-4"
+            on:click={() => {
+              tournamentActionBtnHandler();
+            }}
+          >
+            {userTournament?.actionButton.label.toUpperCase() ?? ($user ? 'JOIN' : tournament.actionButton.label.toUpperCase())}
           </button>
 
           <!-- Navigation Buttons -->
