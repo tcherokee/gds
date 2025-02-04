@@ -45,7 +45,8 @@
     "svoast": "^2.4.4",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.3.3",
-    "vanilla-lazyload": "^17.8.5"
+    "vanilla-lazyload": "^17.8.5",
+    "@supabase/supabase-js": "^2.39.0"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",

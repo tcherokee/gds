@@ -8,6 +8,7 @@
     Tournament,
   } from "../../../interfaces/tournaments";
  import Link from "../../components/helpers/link.svelte";
+ import ChatPanel from "../../components/chat/chatPanel.svelte"
 
   export let tournamentId: number;
   export let tournament: Tournament;
@@ -180,7 +181,7 @@
                 </div>
               {/if}
             </div>
-          {:else}
+          {:else if  currentTab === "leaderboard"}
             <!-- Leaderboard Tab -->
             <div class="space-y-2 -mx-4 relative">
               {#each playerResults?.scoreboard as scoreboard, i}
@@ -207,6 +208,11 @@
                 </Link>
               </div>
             </div>
+          {:else if  currentTab === "chat"}
+            <!-- Leaderboard Tab -->
+            <div class="space-y-2 -mx-4 relative">
+              <ChatPanel gameId={tournamentId} />
+            </div>
           {/if}
         {/if}
       </div>
@@ -224,6 +230,12 @@
           on:click={() => (currentTab = "leaderboard")}
         >
           Leaderboard
+        </button>
+        <button
+          class={`flex-1 py-3 text-center text-base font-medium transition-colors hover:bg-grey-100 ${currentTab === "chat" ? "!text-misc font-semibold" : ""}`}
+          on:click={() => (currentTab = "chat")}
+        >
+          chat
         </button>
       </div>
     </div>
