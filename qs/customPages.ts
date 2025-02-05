@@ -270,6 +270,7 @@ export const customPageQs = (
           ImageCarousel: {
             fields: ["url", "caption"],
           },
+          tournamentTable:true
         },
       },
     },

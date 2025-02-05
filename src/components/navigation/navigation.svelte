@@ -24,9 +24,6 @@
     // Call the API route to get auth cookie
     const response = await fetch(`${import.meta.env.PUBLIC_FULL_URL}/api/get-auth-cookie/`);
     const { hasAuthCookkie } = await response.json();
-    if (!hasAuthCookkie && $user) {
-      user.set(null);
-    }
     toggle = !$user;
   });
 

@@ -322,6 +322,12 @@ export type IntroductionWithImageBlock = BlockBase & {
   image: ImageInfo;
 };
 
+export type TournamentTableBlock = BlockBase & {
+  id: number;
+  __component: string;
+  tournamentTableOptions?: string;
+};
+
 export type SlideBtn = {
   btnText: string;
   btnLink: string;
@@ -485,7 +491,8 @@ export type Block =
   | ImageWithParagraphTypes
   | ProsAndConsTypes
   | TGameListBlock
-  | TCasinoLiveVideo;
+  | TCasinoLiveVideo
+  | TournamentTableBlock;
 
 export type TCasinoLiveVideo = BlockBase & {
   playbackUrl: string;

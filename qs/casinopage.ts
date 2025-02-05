@@ -193,6 +193,14 @@ export const casinopageQs = (
           }),
       },
     },
+    paymentChannels: {
+      fields: ["name"],
+      populate: {
+        logo: {
+          fields: ["url"],
+        },
+      },
+    },
     blocks: {
       populate: {
         image: {

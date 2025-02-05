@@ -17,6 +17,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
       // Redirection
       const url = new URL(context.request.url);
 
+      // Check for tournament routes on non-GDS sites
+      if (
+        url.pathname.includes("tournaments") &&
+        import.meta.env.PUBLIC_SITE_ID !== "gds"
+      ) {
+        return Response.redirect(url.origin, 302);
+      }
+
       // Check for cache-clearing trigger
       if (url.searchParams.get("clearCache") === "true") {
         cachedRedirects = null;

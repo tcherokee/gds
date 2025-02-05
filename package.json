@@ -29,11 +29,13 @@
     "astro-icon": "^0.8.2",
     "astro-link": "^1.2.1",
     "astro-tooltips": "^0.6.2",
+    "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "fastify": "^4.26.1",
     "flickity": "^3.0.0",
     "instantsearch.js": "^4.63.0",
+    "jsonwebtoken": "^9.0.2",
     "meilisearch": "^0.36.0",
     "nanostores": "^0.9.5",
     "prettier-plugin-astro": "^0.12.2",
@@ -43,9 +45,12 @@
     "svoast": "^2.4.4",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.3.3",
-    "vanilla-lazyload": "^17.8.5"
+    "vanilla-lazyload": "^17.8.5",
+    "@supabase/supabase-js": "^2.39.0"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/jsonwebtoken": "^9.0.7",
     "postcss-import": "^15.1.0",
     "postcss-nesting": "^12.0.1",
     "unplugin-icons": "^0.18.1"
