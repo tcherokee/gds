@@ -43,6 +43,11 @@ export const homepageQs = (
             freeSpinsSection: true,
             countries: {
               fields: ["countryName", "shortCode"],
+              populate: {
+                countryFlag: {
+                  fields: ["url"],
+                },
+              },
             },
           },
           filters: {

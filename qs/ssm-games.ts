@@ -55,6 +55,11 @@ export const slotProvidersQs = (
         },
         countries: {
           fields: ["countryName", "shortCode"],
+          populate: {
+            countryFlag: {
+              fields: ["url"],
+            },
+          },
         },
         casinoBonus: {
           fields: ["bonusUrl", "bonusLabel", "bonusCode"],

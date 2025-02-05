@@ -36,6 +36,11 @@ export const casinosQs = ({
       },
       countries: {
         fields: ["countryName", "shortCode"],
+        populate: {
+          countryFlag: {
+            fields: ["url"],
+          },
+        },
       },
       providers: {
         fields: ["title", "slug"],

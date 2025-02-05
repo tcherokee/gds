@@ -1,6 +1,7 @@
 // API Responses and Fetch Function
 
 import type GameListBlock from "../../src/components/blocks/gameListBlock.svelte";
+import type { Country } from "../country";
 
 export type ApiResponse<T> = {
   data: {
@@ -183,6 +184,7 @@ export type CasinoAttributes = {
     id: number;
     wageringRequirements: number;
   };
+  countries: Country;
 };
 
 export type AuthorCasinoAttributes = {

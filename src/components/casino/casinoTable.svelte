@@ -145,6 +145,9 @@
     // Set Qs Store to Query Value
     // casinoQsStore.set(`?${query}`);
   };
+
+  console.log("casinooooo", casinosList);
+  
 </script>
 
 <div>
@@ -206,6 +209,18 @@
                           class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
                           >{translations?.newCasino}</span
                         >
+                      {/if}
+
+                      {#if casino?.attributes?.countries.data[0]?.attributes?.countryFlag?.data?.attributes?.url}
+                          <div class="absolute top-[10px] right-[20px] w-7 h-5 z-[999]">
+                            <Image
+                            imageUrl={casino?.attributes?.countries?.data[0]?.attributes?.countryFlag?.data?.attributes?.url}
+                            imageClass="w-full rounded"
+                            imageAlt={casino?.attributes?.countries?.data[0]?.attributes?.countryName}
+                            imageWidth={28}
+                            imageHeight={20}
+                          />
+                            </div>
                       {/if}
                       <div
                         class="h-full flex items-center px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative max-w-[368px] {i ===
