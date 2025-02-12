@@ -53,28 +53,17 @@ import {
   getUserCountryByIP,
   userCountryHandler,
 } from "../../../utils/ip-request";
-import PastResults from "../tournaments/pastResults.astro"
-
-let userCountry: UserCountry | undefined;
-let country: { sc: string } | undefined;
-let casinoCountry: string | undefined;
+import PastResults from "../tournaments/pastResults.astro";
 
 const localisation = await getLocalisation();
 
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
-
-if (clientIP === "102.216.183.41") {
-  userCountry = await getUserCountryByIP(clientIP);
-
-  country = await userCountryHandler(
-    userCountry?.location?.country.toLowerCase() || ""
-  );
-
-  casinoCountry = country?.sc || "";
-} else {
-  casinoCountry = "rod";
-}
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
+const casinoCountry = country?.sc || "";
 
 // const path = Astro.params.path as string;
 const { path } = Astro.props;
@@ -272,7 +261,8 @@ const getLoopCounter = (blocks: Block[]): number => {
   }
 
   if (
-    (secondBlockComponent?.includes("shared") || secondBlockComponent?.includes("tournaments")) &&
+    (secondBlockComponent?.includes("shared") ||
+      secondBlockComponent?.includes("tournaments")) &&
     secondBlockComponent !== "shared.provider-list"
   ) {
     return 1;
@@ -497,14 +487,14 @@ Astro.response.headers.set(
 
         <AuthorCard data={customPage[0].attributes.author} {translationStore} />
       </div>
-       {
+      {
         !customPage[0].attributes.sideBarToShow ? (
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-            <CasinoSidebar translationStore={translationStore} />
+            <CasinoSidebar (casinoCountry) translationStore={translationStore} />
           </div>
         ) : customPage[0].attributes.sideBarToShow === "casino" ? (
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-            <CasinoSidebar translationStore={translationStore} />
+            <CasinoSidebar {casinoCountry} translationStore={translationStore} />
           </div>
         ) : customPage[0].attributes.sideBarToShow === "sport" ? (
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
