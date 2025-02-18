@@ -517,6 +517,7 @@ export type Casino = {
       cashBack?: any;
       freeSpin?: any;
     };
+    countries: Country;
     [key: string]: any;
   };
 };
@@ -599,6 +600,7 @@ export type CasinoFilters = {
   wagering: string | undefined;
   speed: string | undefined;
   casinoCountry: string | undefined;
+  localisation?: boolean;
 };
 
 export type SportFilters = {

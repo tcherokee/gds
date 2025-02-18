@@ -291,10 +291,13 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ userCountry, clientIP, country, customPage }}>
+<!-- <script
+  define:vars={{ userCountry, clientIP, country, customPage, casinoCountry }}
+>
   console.log("THIS IS A CUSTOM PAGE", customPage);
   console.log("user Country", userCountry);
-</script>
+  console.log("country code", casinoCountry);
+</script> -->
 <MainLayout seoData={seo} otherSchema={combinedSchema}>
   <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
 
@@ -490,11 +493,17 @@ Astro.response.headers.set(
       {
         !customPage[0].attributes.sideBarToShow ? (
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-            <CasinoSidebar (casinoCountry) translationStore={translationStore} />
+            <CasinoSidebar
+              {casinoCountry}
+              translationStore={translationStore}
+            />
           </div>
         ) : customPage[0].attributes.sideBarToShow === "casino" ? (
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
-            <CasinoSidebar {casinoCountry} translationStore={translationStore} />
+            <CasinoSidebar
+              {casinoCountry}
+              translationStore={translationStore}
+            />
           </div>
         ) : customPage[0].attributes.sideBarToShow === "sport" ? (
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">

@@ -41,25 +41,13 @@ import {
   userCountryHandler,
 } from "../../../utils/ip-request";
 
-// const ipAddress = IPRequest.ip.split(",")[0];
-let userCountry: UserCountry | undefined;
-let country: { sc: string } | undefined;
-let casinoCountry: string | undefined;
-
 const clientIP =
   Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
-
-if (clientIP === "102.216.183.41") {
-  userCountry = await getUserCountryByIP(clientIP);
-
-  country = await userCountryHandler(
-    userCountry?.location?.country.toLowerCase() || ""
-  );
-
-  casinoCountry = country?.sc || "";
-} else {
-  casinoCountry = "rod";
-}
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
+const casinoCountry = country?.sc || "";
 
 // Set Up Translation Store
 const translationStore = await getTranslations();
@@ -195,9 +183,9 @@ let gamePageRelatedCasinoTitle =
   );
 ---
 
-<script define:vars={{ gamePage }}>
+<!-- <script define:vars={{ gamePage }}>
   console.log("gamePage", gamePage);
-</script>
+</script> -->
 <MainLayout
   seoData={seo}
   crumbLocation="games"
