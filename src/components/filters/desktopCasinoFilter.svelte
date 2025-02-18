@@ -89,8 +89,7 @@
 			 //set Casino country
   			casinoVariables.setKey("casinoCountry", casinoCountry || "");
 			casinoVariables.setKey("localisation", localisation);
-
-			console.log('changeSortOrder - casinoVariables', $casinoVariables);
+			
 			// Set QS Query String to Get Updated Casinos
 			const query = qs.stringify(casinosQs($casinoVariables), {encodeValuesOnly: true})
 			
@@ -107,9 +106,6 @@
 
 		// Validate the key in indeed in the list of casino filters key then use type assertion to squash the typescript error
 		validKeys.includes(key as keyof CasinoFilters) && casinoVariables.setKey(key as keyof CasinoFilters, value)
-			
-
-		console.log('handleFilterChange - casinoVariables', $casinoVariables);
         
 		// Set QS Query String to Get Updated Casinos
         const query = qs.stringify(casinosQs($casinoVariables), {encodeValuesOnly: true})
@@ -143,9 +139,6 @@
 
 		// Validate the key in indeed in the list of casino filters key then use type assertion to squash the typescript error
 		validKeys.includes(key as keyof CasinoFilters) && casinoVariables.setKey(key as keyof CasinoFilters, value)
-
-		
-		console.log('clearFilterOptions - casinoVariables', $casinoVariables);
 
         // Set QS Query String to Get Updated Casinos
         const query = qs.stringify(casinosQs($casinoVariables), {encodeValuesOnly: true})

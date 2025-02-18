@@ -51,9 +51,6 @@
   export let translations: TranslationData;
   export let slotProviders: TProviderAttributesOnly[] = [];
   export let showCasinoTableHeader: boolean;
-  
-  console.log("localisation", localisation);
-  
 
   const siteID = import.meta.env.PUBLIC_SITE_ID;
   // const siteURL: string = `${siteID === 'gds' ? '/it' : ''}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
@@ -85,8 +82,6 @@
     "bonusKey",
     $bonusLabels[casinoFilters]?.value || "bonusSection"
   );
-
-  console.log('casinoVariablessssss', $casinoVariables);
   
 
   // Tailwind Gradient Object for Dynamic Classes
@@ -155,7 +150,7 @@
     // casinoQsStore.set(`?${query}`);
   };
 
-  console.log("casinooooo", casinosList);
+ 
   
 </script>
 
