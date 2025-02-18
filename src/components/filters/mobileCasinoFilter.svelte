@@ -1,5 +1,6 @@
 <script lang="ts">
     export let translationStore: TranslationData = {};
+    export let casinoCountry: string | undefined;
     // Import First or Third Party Plugins
 	import qs from 'qs';
 // Import Types
@@ -38,6 +39,9 @@
 
 	// Get Sort Store Kets for Looping
 	const sortKeys = $sort ? Object.keys($sort) : [];
+
+    //set Casino country
+  	casinoVariables.setKey("casinoCountry", casinoCountry || "");
 
     // Variables
 	let toggleSort: false

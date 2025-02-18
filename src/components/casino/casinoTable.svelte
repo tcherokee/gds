@@ -155,8 +155,8 @@
     <div class="mb-5 pt-2.5">
       <div>
         <div class="text-black relative mb-10 z-20">
-          <MobileCasinoFilter translationStore={translations} />
-          <DesktopCasinoFilter translationStore={translations} />
+          <MobileCasinoFilter {casinoCountry} translationStore={translations} />
+          <DesktopCasinoFilter {casinoCountry} translationStore={translations} />
         </div>
       </div>
       <div>
