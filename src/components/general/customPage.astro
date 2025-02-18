@@ -331,6 +331,7 @@ Astro.response.headers.set(
                   <div class="relative z-50">
                     <CasinoTable
                       casinoCountry={casinoCountry}
+                      localisation={localisation}
                       initialCasinos={casinoListBlock}
                       translations={translationStore ?? {}}
                       {slotProviders}
@@ -423,6 +424,7 @@ Astro.response.headers.set(
                     return (
                       <CasinoTable
                         casinoCountry={casinoCountry}
+                        localisation={localisation}
                         initialCasinos={casinoListBlock}
                         translations={translationStore ?? {}}
                         {slotProviders}

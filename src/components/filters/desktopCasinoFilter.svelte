@@ -1,6 +1,7 @@
 <script lang="ts">
 	export let translationStore: TranslationData = {};
 	export let casinoCountry: string | undefined;
+	export let localisation: boolean | undefined;
     // Import First or Third Party Plugins
 	import qs from 'qs';
 // Import Types
@@ -87,6 +88,7 @@
 			casinoVariables.setKey('sort', newSortValue)
 			 //set Casino country
   			casinoVariables.setKey("casinoCountry", casinoCountry || "");
+			casinoVariables.setKey("localisation", localisation);
 
 			console.log('changeSortOrder - casinoVariables', $casinoVariables);
 			// Set QS Query String to Get Updated Casinos
@@ -101,6 +103,7 @@
 
 		//set Casino country
 		casinoVariables.setKey("casinoCountry", casinoCountry || "");
+		casinoVariables.setKey("localisation", localisation);
 
 		// Validate the key in indeed in the list of casino filters key then use type assertion to squash the typescript error
 		validKeys.includes(key as keyof CasinoFilters) && casinoVariables.setKey(key as keyof CasinoFilters, value)
@@ -133,6 +136,7 @@
 
 		//set Casino country
 		casinoVariables.setKey("casinoCountry", casinoCountry || "");
+		casinoVariables.setKey("localisation", localisation);
 
 		// Set Casino IDs to an empty array or it will override any filtering
 		$casinoVariables.ids.length > 0 && casinoVariables.setKey('ids', [])

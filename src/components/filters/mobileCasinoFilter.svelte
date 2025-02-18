@@ -1,6 +1,7 @@
 <script lang="ts">
     export let translationStore: TranslationData = {};
     export let casinoCountry: string | undefined;
+    export let localisation: boolean | undefined;
     // Import First or Third Party Plugins
 	import qs from 'qs';
 // Import Types
@@ -42,6 +43,7 @@
 
     //set Casino country
   	casinoVariables.setKey("casinoCountry", casinoCountry || "");
+    casinoVariables.setKey("localisation", localisation);
 
     // Variables
 	let toggleSort: false

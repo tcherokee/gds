@@ -46,6 +46,7 @@
   import { getTranslations } from "../../../stores/addTranslations";
 
   export let casinoCountry: string | undefined;
+  export let localisation: boolean | undefined;
   export let initialCasinos: CasinoListBlock;
   export let translations: TranslationData;
   export let slotProviders: TProviderAttributesOnly[] = [];
@@ -71,6 +72,8 @@
 
   //set Casino country
   casinoVariables.setKey("casinoCountry", casinoCountry || "");
+
+  casinoVariables.setKey("localisation", localisation);
 
   // Set Sort Key in Casino Variables Store
   casinoVariables.setKey("sort", $sortOptions[casinoSort] || "ratingAvg:desc");
@@ -136,6 +139,7 @@
     casinoVariables.setKey("wagering", "");
     casinoVariables.setKey("speed", "");
     casinoVariables.setKey("casinoCountry", casinoCountry);
+    casinoVariables.setKey("localisation", localisation);
 
     // Set QS Query String to Get Updated Casinos
     const query = qs.stringify(casinosQs($casinoVariables), {
