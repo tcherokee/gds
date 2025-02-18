@@ -291,13 +291,13 @@ Astro.response.headers.set(
 );
 ---
 
-<!-- <script
+<script
   define:vars={{ userCountry, clientIP, country, customPage, casinoCountry }}
 >
   console.log("THIS IS A CUSTOM PAGE", customPage);
   console.log("user Country", userCountry);
   console.log("country code", casinoCountry);
-</script> -->
+</script>
 <MainLayout seoData={seo} otherSchema={combinedSchema}>
   <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
 
