@@ -32,9 +32,7 @@
 		}
 		return undefined; // Return undefined if no matching value is found
 	}
-
-	 //set Casino country
-  	casinoVariables.setKey("casinoCountry", casinoCountry || "");
+	
 
     // Get Bonus Type Store Keys for Looping
     const bonusTypeKeys = $bonusLabels ? Object.keys($bonusLabels) : [];
@@ -87,7 +85,10 @@
 			const newSortValue = key + ":" + value
 
 			casinoVariables.setKey('sort', newSortValue)
-        
+			 //set Casino country
+  			casinoVariables.setKey("casinoCountry", casinoCountry || "");
+
+			console.log('changeSortOrder - casinoVariables', $casinoVariables);
 			// Set QS Query String to Get Updated Casinos
 			const query = qs.stringify(casinosQs($casinoVariables), {encodeValuesOnly: true})
 			
@@ -98,8 +99,14 @@
 
     const handleFilterChange = (key: string, value: string | number) => {
 
+		//set Casino country
+		casinoVariables.setKey("casinoCountry", casinoCountry || "");
+
 		// Validate the key in indeed in the list of casino filters key then use type assertion to squash the typescript error
 		validKeys.includes(key as keyof CasinoFilters) && casinoVariables.setKey(key as keyof CasinoFilters, value)
+			
+
+		console.log('handleFilterChange - casinoVariables', $casinoVariables);
         
 		// Set QS Query String to Get Updated Casinos
         const query = qs.stringify(casinosQs($casinoVariables), {encodeValuesOnly: true})
@@ -124,11 +131,17 @@
     const clearFilterOptions = (e: Event, key: string, value: string | number) => {
         e.stopPropagation()
 
+		//set Casino country
+		casinoVariables.setKey("casinoCountry", casinoCountry || "");
+
 		// Set Casino IDs to an empty array or it will override any filtering
 		$casinoVariables.ids.length > 0 && casinoVariables.setKey('ids', [])
 
 		// Validate the key in indeed in the list of casino filters key then use type assertion to squash the typescript error
 		validKeys.includes(key as keyof CasinoFilters) && casinoVariables.setKey(key as keyof CasinoFilters, value)
+
+		
+		console.log('clearFilterOptions - casinoVariables', $casinoVariables);
 
         // Set QS Query String to Get Updated Casinos
         const query = qs.stringify(casinosQs($casinoVariables), {encodeValuesOnly: true})
