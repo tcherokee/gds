@@ -52,6 +52,8 @@
   export let slotProviders: TProviderAttributesOnly[] = [];
   export let showCasinoTableHeader: boolean;
   
+  console.log("localisation", localisation);
+  
 
   const siteID = import.meta.env.PUBLIC_SITE_ID;
   // const siteURL: string = `${siteID === 'gds' ? '/it' : ''}${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}/`;
@@ -83,6 +85,9 @@
     "bonusKey",
     $bonusLabels[casinoFilters]?.value || "bonusSection"
   );
+
+  console.log('casinoVariablessssss', $casinoVariables);
+  
 
   // Tailwind Gradient Object for Dynamic Classes
   const badgesOptions = [
@@ -159,8 +164,8 @@
     <div class="mb-5 pt-2.5">
       <div>
         <div class="text-black relative mb-10 z-20">
-          <MobileCasinoFilter {casinoCountry} translationStore={translations} />
-          <DesktopCasinoFilter {casinoCountry} translationStore={translations} />
+          <MobileCasinoFilter {casinoCountry} {localisation} translationStore={translations} />
+          <DesktopCasinoFilter {casinoCountry} {localisation} translationStore={translations} />
         </div>
       </div>
       <div>

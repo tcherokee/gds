@@ -44,6 +44,7 @@ export const casinoVariables = map<CasinoFilters>({
   wagering: "",
   speed: "",
   casinoCountry: "",
+  localisation: false,
 });
 
 export const casinoQsStore = atom<string | undefined>(undefined);
