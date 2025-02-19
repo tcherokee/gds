@@ -485,7 +485,12 @@ export type Block =
   | ImageWithParagraphTypes
   | ProsAndConsTypes
   | TGameListBlock
-  | TCasinoLiveVideo;
+  | TCasinoLiveVideo
+  | TQuickLinks;
+
+export type TQuickLinks = BlockBase & {
+  showQuickLinks: boolean;
+};
 
 export type TCasinoLiveVideo = BlockBase & {
   playbackUrl: string;

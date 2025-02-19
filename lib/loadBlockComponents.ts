@@ -114,7 +114,7 @@ export const mapBlocksToDynamicComponents = (
           return {
             location: "helpers",
             name: "quicklinks",
-            extension: "astro",
+            extension: "svelte",
           };
         case "shared.faqs":
           return {

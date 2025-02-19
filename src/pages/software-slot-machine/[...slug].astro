@@ -42,7 +42,7 @@ import {
 
 const slug = Astro.params.slug as string;
 
-const strippedSlug = slug.replace(/\/p\d+$/, '');
+const strippedSlug = slug.replace(/\/p\d+$/, "");
 
 const translationStore = await getTranslations();
 const slotCategories = await slotCategoriesResponse();
@@ -62,7 +62,9 @@ const gameProviders = await fetchApi<{
   query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
 });
 
-const query = qs.stringify(slotProvidersQs(strippedSlug), { encodeValuesOnly: true });
+const query = qs.stringify(slotProvidersQs(strippedSlug), {
+  encodeValuesOnly: true,
+});
 
 // let gamesQueryObj: GameFilters = {
 //   limit: 18,
@@ -228,7 +230,7 @@ Astro.response.headers.set(
           )
         }
       </div>
-      <div class="basis-[315px] shrink-0 order-first order-last">
+      <div class="basis-[315px] shrink-0 order-first md:order-last">
         <CasinoSideBar {translationStore} />
       </div>
     </div>
