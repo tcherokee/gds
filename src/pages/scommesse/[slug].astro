@@ -30,7 +30,7 @@ import {
   default as Images,
 } from "../../components/helpers/images.astro";
 import ProviderIcons from "../../components/helpers/providerIcons.svelte";
-import QuickLinks from "../../components/helpers/quicklinks.astro";
+import QuickLinks from "../../components/helpers/quicklinks.svelte";
 import RatingStar from "../../components/helpers/ratingStar.svelte";
 import ReadOnlyRatings from "../../components/helpers/readOnlyRatings.astro";
 import TimeDate from "../../components/helpers/timeDate.astro";
@@ -906,7 +906,7 @@ Astro.response.headers.set(
       </div>
       <div class="grid md:grid-cols-4 gap-8">
         <div class="col-span-1 md:col-span-3">
-          <QuickLinks data={sportPage[0]} {translationStore} />
+          <QuickLinks data={sportPage[0]} block="" {translationStore} />
 
           <ImageCarousel
             data={sportPage[0]?.attributes.blocks[0]}

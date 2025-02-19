@@ -32,7 +32,7 @@ import type { TUserGame, TUserGameProvider } from "../../../interfaces/games";
 import fetchApi from "../../../lib/strapi";
 import { gamesQs } from "../../../qs/games";
 import { urlTranslate } from "../../../utils/data-store.util";
-import Quicklinks from "../../components/helpers/quicklinks.astro";
+import Quicklinks from "../../components/helpers/quicklinks.svelte";
 import Breadcrumbs from "../../components/layout/breadcrumbs.astro";
 
 import {
@@ -222,7 +222,7 @@ Astro.response.headers.set(
   <div class="relative xl:container px-2">
     <div class="flex flex-col gap-x-8 mt-10 md:flex-row">
       <div class="slot-machine-content order-last md:order-first">
-        <Quicklinks data={categoryPage[0]} {translationStore} />
+        <Quicklinks data={categoryPage[0]} block="" {translationStore} />
         {
           categoryPage[0]?.attributes?.content1 && (
             <ContentBlock pageContent={categoryPage[0]?.attributes?.content1} />
