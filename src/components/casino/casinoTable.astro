@@ -56,14 +56,6 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                     <div class:list={["h-full flex items-center px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative max-w-[368px]", i === 0 ? 'casino-logo__first' : i === 1 ? 'casino-logo__second' : i === 2 ? 'casino-logo__third' : '']}>
                                         
                                     {i <= 2 && <span class:list={["casino-logo__tag w-[28px] h-6 absolute flex justify-center items-center p-[2px] top-0 left-[18px] rounded-bl rounded-br text-white text-sm font-bold bg-gradient-to-b"]}>#{i + 1}</span>}
-                                   
-                                        {
-                                            ((casino as CasinoData)?.attributes?.countries?.data[0]?.attributes?.countryFlag?.data?.attributes?.url)
-                                            ? <div class="absolute top-0 right-[20px] w-7 h-5">
-                                                <Images src={(casino as CasinoData)?.attributes?.countries?.data[0]?.attributes?.countryFlag?.data?.attributes?.url} classes="w-full rounded" alt={(casino as CasinoData)?.attributes?.countries?.data[0]?.attributes?.countryName} imageWidth={28} imageHeight={20} />
-                                            </div>
-                                            :<></>
-                                        }
                                         
                                         <Link
                                             href={`${(casino as CasinoData)?.attributes?.casinoBonus?.bonusUrl ?? (casino as AuthorCasinoAttributes)?.casinoBonus?.bonusUrl}`}
@@ -71,6 +63,13 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                             type="external"
                                             rel="sponsored"
                                         >
+                                             {
+                                            ((casino as CasinoData)?.attributes?.countries?.data[0]?.attributes?.countryFlag?.data?.attributes?.url)
+                                            ? <div class="absolute top-0 right-[20px] w-7 h-5">
+                                                <Images src={(casino as CasinoData)?.attributes?.countries?.data[0]?.attributes?.countryFlag?.data?.attributes?.url} classes="w-full rounded" alt={(casino as CasinoData)?.attributes?.countries?.data[0]?.attributes?.countryName} imageWidth={28} imageHeight={20} />
+                                            </div>
+                                            :<></>
+                                        }
                                             <Images src={(casino as CasinoData)?.attributes?.images?.data?.attributes.url ?? (casino as AuthorCasinoAttributes)?.images?.url} classes="w-full rounded" alt={(casino as CasinoData)?.attributes?.title ?? (casino as AuthorCasinoAttributes)?.title} imageWidth={206} imageHeight={88} />
                                         </Link>
                                     </div>
