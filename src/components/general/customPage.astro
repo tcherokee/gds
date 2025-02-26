@@ -40,6 +40,8 @@ import GameListBlock from "../blocks/gameListBlock.svelte";
 import CasinoTable from "../casino/casinoTable.svelte";
 import CasinoLiveVideo from "../general/casinoLiveVideo.svelte";
 
+import LiveStatsBlock from "../blocks/liveStatsBlock.svelte";
+
 // Astro Layouts & Components
 import type { TUserGame } from "../../../interfaces/games";
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -506,7 +508,7 @@ Astro.response.headers.set(
             }
           })
         }
-
+        <LiveStatsBlock client:load />
         <AuthorCard data={customPage[0].attributes.author} {translationStore} />
       </div>
       <div class="basis-[315px] shrink-0 order-first mb-5 md:order-last">
@@ -521,4 +523,6 @@ Astro.response.headers.set(
       </div>
     </div>
   </div>
+
+
 </MainLayout>
