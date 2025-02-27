@@ -30,6 +30,9 @@
 	CasinoLiveStats.subscribe((data: any) => {
 		stats = data
 		totalResultCount = stats?.last20Results?.length
+
+		console.log('Mega Wheel', stats);
+		
 	})
 
 	//load more casinos
@@ -62,7 +65,7 @@
 				<span class="relative inline-flex rounded-full h-2 w-2 bg-danger" />
 			</span>
 			<div>
-				<h3>{translations.liveStatistics}</h3>
+				<h3>{translations?.liveStatistics}</h3>
 			</div>
 		</div>
 
@@ -73,10 +76,10 @@
 						class="hidden border-l-[12px] border-r-[12px] border-l-purple-800 border-r-purple-800"
 					>
 						<tr>
-							<th scope="col" class="px-3">{translations.statsTimeAt}</th>
-							<th scope="col" class="px-3">{translations.statsResultRotate}</th>
-							<th scope="col" class="px-3">{translations.statsSlotResult}</th>
-							<th scope="col" class="px-3">{translations.winningMultiplier}</th>
+							<th scope="col" class="px-3">{translations?.statsTimeAt}</th>
+							<th scope="col" class="px-3">{translations?.statsResultRotate}</th>
+							<th scope="col" class="px-3">{translations?.statsSlotResult}</th>
+							<th scope="col" class="px-3">{translations?.winningMultiplier}</th>
 						</tr>
 					</thead>
 
@@ -97,9 +100,9 @@
 										>
 											<!-- {result.result} -->
 											<img
-												src={OutcomeImages[result.result]}
+												src={OutcomeImages[result?.result]}
 												class="w-[50px]"
-												alt={result.result}
+												alt={result?.result}
 											/>
 										</div>
 									</td>
@@ -107,14 +110,14 @@
 										<div
 											class="px-3 py-3 flex h-full flex-col items-center justify-center bg-white rounded-tr-lg md:rounded-tr-none"
 										>
-											{result.slot}x
+											{result?.slot}x
 										</div>
 									</td>
 									<td class="w-full md:w-auto bg-white">
 										<div
 											class="px-3 py-3 flex h-full flex-col items-center justify-center bg-white rounded-tr-lg md:rounded-tr-none"
 										>
-											{result.multiplier}x
+											{result?.multiplier}x
 										</div>
 									</td>
 								</tr>
@@ -125,11 +128,11 @@
 				<div class="flex justify-end items-center m-3 text-10">
 					<div class="mr-5 font-extrabold">
 						{ResultViewCount} of {totalResultCount}
-						{translations.statsResult}
+						{translations?.statsResult}
 					</div>
 					<div>
 						<button class="btn capitalize btn-secondary" on:click={loadMoreResult}>
-							{translations.loadMoreResult}
+							{translations?.loadMoreResult}
 						</button>
 					</div>
 				</div>

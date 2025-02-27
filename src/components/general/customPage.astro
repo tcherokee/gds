@@ -310,6 +310,9 @@ Astro.response.headers.set(
 );
 ---
 
+<script define:vars={{ customPage }}>
+  console.log('customPage', customPage[0]);
+</script>
 <MainLayout seoData={seo} otherSchema={combinedSchema}>
   <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
 
@@ -440,6 +443,15 @@ Astro.response.headers.set(
                 );
               } else {
                 switch (mappedComponents[i].name) {
+                  case "liveStats": {
+                    return (
+                      <LiveStatsBlock
+                        data={
+                          customPage[0].attributes.blocks[i] }
+                        client:load
+                      />
+                    );
+                  }
                   case "casinoTable": {
                     const casinoListBlock = customPage[0].attributes.blocks[
                       i
@@ -508,7 +520,6 @@ Astro.response.headers.set(
             }
           })
         }
-        <LiveStatsBlock client:load />
         <AuthorCard data={customPage[0].attributes.author} {translationStore} />
       </div>
       <div class="basis-[315px] shrink-0 order-first mb-5 md:order-last">

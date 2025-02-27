@@ -4,7 +4,7 @@
 	import { CasinoLiveStats } from '../../../lib/liveStatsVariables'
 	import { dgaLiveStats } from '../../../lib/casinoStatsLive'
 
-	// export let liveStats: any;
+	export let data: any;
 	let casinoStats: any
 
 	import Blackjack from '../casino/live-stats/blackjack.svelte'
@@ -13,12 +13,10 @@
 
 	$: CasinoLiveStats.set(casinoStats)
 
-	let showCasinoLiveStats = true;
-	// let showCasinoLiveStats = liveStats?.showLiveStats
-	let liveStatsGame = 'blackjack';
-	// let liveStatsGame = liveStats?.game
-	// let liveStatsCasionId = liveStats?.casinoId
-	// let liveStatsTableId = liveStats?.tableId
+	let showCasinoLiveStats = data?.showLiveStats
+	let liveStatsGame = data?.game
+	let liveStatsCasionId = data?.casinoId
+	let liveStatsTableId = data?.tableId
 	
 
 	onMount(() => {
@@ -27,11 +25,9 @@
 			//connect to live stats api
 			casinoStats = dgaLiveStats.connect(
 				'dga.pragmaticplaylive.net',
-				"il9srgw4dna11111",
-				301
+				liveStatsCasionId,
+				liveStatsTableId
 			)
-
-			// console.log('Stats here', casinoStats);
 			
 		}
 	})
@@ -47,8 +43,8 @@
 <!-- Game casino live stats -->
 {#if showCasinoLiveStats}
 <div class="mb-5">
-	<!-- <svelte:component this={GameTypes[liveStatsGame]} /> -->
-	{#if liveStatsGame === 'blackjack'}
+	<svelte:component this={GameTypes[liveStatsGame]} />
+	<!-- {#if liveStatsGame === 'blackjack'}
 		<Blackjack />
 	{/if}
 
@@ -58,7 +54,7 @@
 
 	{#if liveStatsGame === 'megawheel'}
 		<Megawheel />
-	{/if}
+	{/if} -->
 </div>
 {/if}
 <!-- End Game casino live stats -->

@@ -28,6 +28,8 @@
     CasinoLiveStats.subscribe((data: any) => {
         stats = data;
 		totalResultCount = stats?.gameResult?.length;
+
+		console.log('Sweet Bonanza', stats);
     });
 
 	//load more casinos
@@ -56,7 +58,7 @@
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-danger"></span>
             </span>
             <div>
-				<h3>{translations.liveStatistics}</h3>
+				<h3>{translations?.liveStatistics}</h3>
 			</div>
         </div>
 
@@ -66,11 +68,11 @@
 	
 					<thead class="hidden border-l-[12px] border-r-[12px] border-l-purple-800 border-r-purple-800">
 						<tr>
-							<th scope="col" class="px-3">{translations.statsTimeAt}</th>
-							<th scope="col" class="px-3">{translations.statsResult}</th>
-							<th scope="col" class="px-3">{translations.winningMultiplier}	</th>
-							<th scope="col" class="px-3">{translations.sugarbomb}</th>
-							<th scope="col" class="px-3]">{translations.bombMultiplier}</th>
+							<th scope="col" class="px-3">{translations?.statsTimeAt}</th>
+							<th scope="col" class="px-3">{translations?.statsResult}</th>
+							<th scope="col" class="px-3">{translations?.winningMultiplier}	</th>
+							<th scope="col" class="px-3">{translations?.sugarbomb}</th>
+							<th scope="col" class="px-3]">{translations?.bombMultiplier}</th>
 						</tr>
 					</thead>
 	
@@ -85,26 +87,26 @@
 								</td>
 								<td class="text-center w-1/3 md:w-auto bg-[#eef4f9]">
 									<div class="px-3 py-3 flex h-full flex-col items-center justify-center bg-white rounded-tr-lg md:rounded-tr-none">
-										<img src={OutcomeImages[result.result]} class="w-[50px]" alt={result.result}>
+										<img src={OutcomeImages[result?.result]} class="w-[50px]" alt={result?.result}>
 									</div>
 								</td>
 								<td class="w-1/3 md:w-auto bg-white">
 									<div class="px-3 py-3 flex h-full flex-col items-center justify-center bg-white rounded-tr-lg md:rounded-tr-none">
-										{result.multiplier}x
+										{result?.multiplier}x
 									</div>
 								</td>
 								<td class={(result.sugarbomb)? 'sugarbomb-cell sugarbomb-cell-true': 'sugarbomb-cell  sugarbomb-cell-false'}>
 									<div class="flex flex-col items-center h-full justify-center px-3 py-3">
-										{#if result.sugarbomb}
-											<img src={SugarBomb} class="w-[50px]" alt={result.sugarbomb}>
+										{#if result?.sugarbomb}
+											<img src={SugarBomb} class="w-[50px]" alt={result?.sugarbomb}>
 										{:else}
-											<img src={NoSugarBomb} class="w-[50px]" alt={result.sugarbomb}>
+											<img src={NoSugarBomb} class="w-[50px]" alt={result?.sugarbomb}>
 										{/if}
 									</div>
 								</td>
 								<td class="w-full !border-l-0 md:w-auto">
 									<div class="px-3 py-3 flex h-full flex-col items-center justify-center bg-white rounded-tr-lg md:rounded-tr-none">
-										{#each result.sbmul as sbmul}
+										{#each result?.sbmul as sbmul}
 											<div class="p-2 bg-grey-300 font-bold mr-2 w-fit py-2 px-4 rounded-lg">{sbmul}</div>   
 										{/each}
 									</div>
@@ -115,10 +117,10 @@
 					</tbody>
 				</table>
 				<div class="flex justify-end items-center m-3 text-10">
-					<div class="mr-5 font-extrabold">{ResultViewCount} of {totalResultCount} {translations.statsResult}</div>
+					<div class="mr-5 font-extrabold">{ResultViewCount} of {totalResultCount} {translations?.statsResult}</div>
 					<div>
 						<button class="btn capitalize btn-secondary" on:click={loadMoreResult}>
-							{translations.loadMoreResult}
+							{translations?.loadMoreResult}
 						</button>
 					</div>
 				</div>
