@@ -1,7 +1,7 @@
 import { CasinoLiveStats } from "./liveStatsVariables";
 
 export const dgaLiveStats = {
-  websocket: null,
+  websocket: null as WebSocket | null,
   wsUri: null,
   tableId: null,
   casinoId: null,
@@ -20,7 +20,7 @@ export const dgaLiveStats = {
     }
     self.websocket = new WebSocket("wss://" + wsUri + "/ws");
     (self.websocket as WebSocket).onopen = function (evt: any) {
-      self.onWsOpen(evt, casinoId, tableId);
+      self.onWsOpen(evt);
     };
     self.websocket.onclose = function (evt: any) {
       self.onWsClose(evt);
@@ -49,7 +49,9 @@ export const dgaLiveStats = {
   disconnect: function () {
     const self = this;
     self.tryToConnect = false;
-    self.websocket.close();
+    if (self.websocket) {
+      self.websocket.close();
+    }
   },
   // public
   subscribe: function (casinoId: any, tableId: any, currency: any) {
@@ -83,7 +85,7 @@ export const dgaLiveStats = {
       self.onConnect();
     }
     if (self.tableId) {
-      self.subscribe(self.casinoId, self.tableId);
+      self.subscribe(self.casinoId, self.tableId, "$");
     }
   },
 
@@ -116,6 +118,10 @@ export const dgaLiveStats = {
 
   doWsSend: function (message: any) {
     const self = this;
-    self.websocket.send(message);
+    if (self.websocket && self.websocket.readyState === WebSocket.OPEN) {
+      self.websocket.send(message);
+    } else {
+      console.error("WebSocket is not open.");
+    }
   },
 };
