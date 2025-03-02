@@ -196,7 +196,7 @@ if (allHowTos && allHowTos.length > 0) {
   combinedSchema.push(...howToSchema);
 }
 
-console.log(JSON.stringify(customPage[0]))
+// console.log(JSON.stringify(customPage[0]))
 
 // Breadcrumb Schema
 const breadSchema = {
@@ -310,9 +310,9 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ customPage }}>
+<!-- <script define:vars={{ customPage }}>
   console.log('customPage', customPage[0]);
-</script>
+</script> -->
 <MainLayout seoData={seo} otherSchema={combinedSchema}>
   <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
 

@@ -29,7 +29,7 @@
         stats = data;
 		totalResultCount = stats?.gameResult?.length;
 
-		console.log('Sweet Bonanza', stats);
+		// console.log('Sweet Bonanza', stats);
     });
 
 	//load more casinos
