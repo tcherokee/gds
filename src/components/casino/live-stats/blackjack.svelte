@@ -12,7 +12,7 @@
     let stats;
     CasinoLiveStats.subscribe(data => {
         stats = data;
-        console.log("casino stats", stats);
+        // console.log("casino stats", stats);
     });
 
 </script>

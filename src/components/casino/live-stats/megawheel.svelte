@@ -31,7 +31,7 @@
 		stats = data
 		totalResultCount = stats?.last20Results?.length
 
-		console.log('Mega Wheel', stats);
+		// console.log('Mega Wheel', stats);
 		
 	})
 

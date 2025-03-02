@@ -19,51 +19,49 @@ const translationStore: TranslationData = getTranslations.get();
 
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 
-console.log("data", data.categoriesList.slot_categories.data);
+// console.log("data", data.categoriesList.slot_categories.data);
 ---
 
 <div>
   <div class="relative xl:container px-2 pb-5">
     <div class="[&>*]:px-[6px] -mx-[6px] flex flex-wrap justify-center gap-y-3">
       {
-        data.categoriesList.slot_categories.data.map(
-          (category: Category) => (
-            <div class="w-1/2 sm:w-1/3 lg:w-1/4 xl:w-1/5">
-              <aside class="game-card relative rounded-lg h-[155px] w-full">
-                <div class="absolute h-full left-0 top-0 w-full">
-                  <Image
-                    src={category?.attributes?.images?.data?.attributes?.url}
-                    alt={category?.attributes?.title}
-                    imageWidth={235}
-                    imageHeight={150}
-                    classes="h-full rounded-lg w-full"
-                  />
+        data.categoriesList.slot_categories.data.map((category: Category) => (
+          <div class="w-1/2 sm:w-1/3 lg:w-1/4 xl:w-1/5">
+            <aside class="game-card relative rounded-lg h-[155px] w-full">
+              <div class="absolute h-full left-0 top-0 w-full">
+                <Image
+                  src={category?.attributes?.images?.data?.attributes?.url}
+                  alt={category?.attributes?.title}
+                  imageWidth={235}
+                  imageHeight={150}
+                  classes="h-full rounded-lg w-full"
+                />
+              </div>
+              <div class="game-meta group rounded-lg flex flex-col justify-end h-full relative z-10">
+                <div class="game-actions scale-75 flex flex-col items-center min-w-[150px] opacity-0 absolute top-[50%] left-[50%] -translate-y-1/2 -translate-x-1/2 sm:group-hover:scale-100 sm:group-hover:opacity-100">
+                  <Link
+                    href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]["category-pages"] + "/" + category?.attributes?.slug}/`}
+                    classes="btn btn-misc"
+                  >
+                    {translationStore.playFunBtn}
+                  </Link>
                 </div>
-                <div class="game-meta group rounded-lg flex flex-col justify-end h-full relative z-10">
-                  <div class="game-actions scale-75 flex flex-col items-center min-w-[150px] opacity-0 absolute top-[50%] left-[50%] -translate-y-1/2 -translate-x-1/2 sm:group-hover:scale-100 sm:group-hover:opacity-100">
-                    <Link
-                      href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]["category-pages"] + "/" + category?.attributes?.slug}/`}
-                      classes="btn btn-misc"
-                    >
-                      {translationStore.playFunBtn}
-                    </Link>
-                  </div>
-                  <div class="p-2 rounded-b-lg bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]">
-                    <div class="mb-[2px] game-title-box">
-                      <h4 class="text-white text-sm font-bold !m-0">
-                        <Link
-                          href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]["category-pages"] + "/" + category?.attributes?.slug}/`}
-                        >
-                          {category?.attributes?.title}
-                        </Link>
-                      </h4>
-                    </div>
+                <div class="p-2 rounded-b-lg bg-[linear-gradient(180deg,rgba(47,18,58,0)_0%,rgba(31,18,58,0.6)_37.79%)]">
+                  <div class="mb-[2px] game-title-box">
+                    <h4 class="text-white text-sm font-bold !m-0">
+                      <Link
+                        href={`${urlTranslate[PUBLIC_SITE_ID as keyof typeof urlTranslate]["category-pages"] + "/" + category?.attributes?.slug}/`}
+                      >
+                        {category?.attributes?.title}
+                      </Link>
+                    </h4>
                   </div>
                 </div>
-              </aside>
-            </div>
-          )
-        )
+              </div>
+            </aside>
+          </div>
+        ))
       }
     </div>
   </div>

@@ -190,10 +190,10 @@
 
   const fetchData = async () => {
     try {
-      console.log('Fetching games data');
+      // console.log('Fetching games data');
       gamesData = await gamesAPI(data.attributes.slug);
       if (gamesData && gamesData.iframeURL) {
-        console.log('lang', import.meta.env.PUBLIC_LANG, PUBLIC_LANG)
+        // console.log('lang', import.meta.env.PUBLIC_LANG, PUBLIC_LANG)
         const updatedURL = updateURLWithLang(gamesData.iframeURL, PUBLIC_LANG);
         
         iframeURL = updatedURL;
