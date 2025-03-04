@@ -51,6 +51,16 @@ steps:
         'PUBLIC_GAMES_API_URL=${_PUBLIC_GAMES_API_URL}',
         '--build-arg',
         'PUBLIC_GAMES_API_TOKEN=${_PUBLIC_GAMES_API_TOKEN}',
+        '--build-arg',
+        'PUBLIC_TOURNAMENT_API_URL=${_PUBLIC_TOURNAMENT_API_URL}',
+        '--build-arg',
+        'PUBLIC_TOURNAMENT_AUTH_TOKEN=${_PUBLIC_TOURNAMENT_AUTH_TOKEN}',
+        '--build-arg',
+        'PUBLIC_TOURNAMENT_LICENSE_KEY=${_PUBLIC_TOURNAMENT_LICENSE_KEY}',
+        '--build-arg',
+        'PUBLIC_SUPABASE_URL=${_PUBLIC_SUPABASE_URL}',
+        '--build-arg',
+        'PUBLIC_SUPABASE_ANON_KEY=${_PUBLIC_SUPABASE_ANON_KEY}',
         '-t',
         'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
         '--cache-from',
@@ -125,6 +135,16 @@ steps:
       - 'PUBLIC_GAMES_API_URL=${_PUBLIC_GAMES_API_URL}'
       - '--set-env-vars'
       - 'PUBLIC_GAMES_API_TOKEN=${_PUBLIC_GAMES_API_TOKEN}'
+      - '--set-env-vars'
+      - 'PUBLIC_TOURNAMENT_API_URL=${_PUBLIC_TOURNAMENT_API_URL}'
+      - '--set-env-vars'
+      - 'PUBLIC_TOURNAMENT_AUTH_TOKEN=${_PUBLIC_TOURNAMENT_AUTH_TOKEN}'
+      - '--set-env-vars'
+      - 'PUBLIC_TOURNAMENT_LICENSE_KEY=${_PUBLIC_TOURNAMENT_LICENSE_KEY}'
+      - '--set-env-vars'
+      - 'PUBLIC_SUPABASE_URL=${_PUBLIC_SUPABASE_URL}'
+      - '--set-env-vars'
+      - 'PUBLIC_SUPABASE_ANON_KEY=${_PUBLIC_SUPABASE_ANON_KEY}'
 
 substitutions:
   _OUTPUT_DIST_PATH: '/'
@@ -153,7 +173,12 @@ substitutions:
   _PUBLIC_ROOT_DOMAIN: ''
   _PUBLIC_FULL_URL: ''
   _SITE_NAME: ''
+  _PUBLIC_TOURNAMENT_API_URL: ''
+  _PUBLIC_TOURNAMENT_AUTH_TOKEN: ''
+  _PUBLIC_TOURNAMENT_LICENSE_KEY: ''
   _IS_PROD: 'false'
   _PUBLIC_SWETRIX_ID: ''
+  _PUBLIC_SUPABASE_URL: ''
+  _PUBLIC_SUPABASE_ANON_KEY: ''
 
 timeout: 2700s

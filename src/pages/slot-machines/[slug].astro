@@ -8,6 +8,7 @@ import type {
   HowToGroup,
   Faqs as FaqsType,
   Block as BlockType,
+  UserCountry,
 } from "../../../interfaces/common/types";
 
 // Helpers
@@ -35,6 +36,18 @@ import { getTranslations } from "../../../utils/api-requests";
 import { layoutQs } from "../../../qs/layout";
 import type { LayoutData } from "../../../interfaces/layout";
 import UserReviews from "../../components/general/userReviews.svelte";
+import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../utils/ip-request";
+
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
+const casinoCountry = country?.sc || "";
 
 // Set Up Translation Store
 const translationStore = await getTranslations();
@@ -170,8 +183,8 @@ let gamePageRelatedCasinoTitle =
   );
 ---
 
-<!-- <script define:vars={{ translationStore }}>
-  console.log("translationStore", translationStore);
+<!-- <script define:vars={{ gamePage }}>
+  console.log("gamePage", gamePage);
 </script> -->
 <MainLayout
   seoData={seo}
@@ -211,7 +224,7 @@ let gamePageRelatedCasinoTitle =
   <div class="w-full xl:container px-2">
     <div class="mb-10">
       <h2 class="mt-8 mb-4 md:mt-16">
-        {gamePageRelatedCasinoTitle}
+        {gamePageRelatedCasinoTitle} Hello
       </h2>
       <RelatedCasino slug={gamePage[0]?.attributes?.slug} {translationStore} />
     </div>
@@ -364,8 +377,8 @@ let gamePageRelatedCasinoTitle =
           />
         </div>
       </div>
-      <div class="basis-[315px] shrink-0 order-first md:order-last">
-        <CasinoSideBar {translationStore} />
+      <div class="basis-[315px] shrink-0 order-first order-last">
+        <CasinoSideBar {casinoCountry} {translationStore} />
       </div>
     </div>
   </div>

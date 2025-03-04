@@ -1,4 +1,8 @@
-export const gamesQs = (slug: string = "", sort: string = "", page: number = 1) => ({
+export const gamesQs = (
+  slug: string = "",
+  sort: string = "",
+  page: number = 1
+) => ({
   fields: ["title", "slug", "ratingAvg", "ratingCount", "publishedAt"],
   populate: {
     provider: {
@@ -27,7 +31,11 @@ export const gamesQs = (slug: string = "", sort: string = "", page: number = 1) 
   sort: sort,
 });
 
-export const slotProvidersQs = (slug: string) => ({
+export const slotProvidersQs = (
+  slug: string,
+  casinoCountry: string,
+  localisation: boolean = false
+) => ({
   fields: [
     "title",
     "heading",
@@ -44,6 +52,14 @@ export const slotProvidersQs = (slug: string) => ({
       populate: {
         images: {
           fields: ["url"],
+        },
+        countries: {
+          fields: ["countryName", "shortCode"],
+          populate: {
+            countryFlag: {
+              fields: ["url"],
+            },
+          },
         },
         casinoBonus: {
           fields: ["bonusUrl", "bonusLabel", "bonusCode"],
@@ -72,6 +88,16 @@ export const slotProvidersQs = (slug: string) => ({
             },
           },
         },
+      },
+      filters: {
+        ...(localisation &&
+          casinoCountry && {
+            countries: {
+              shortCode: {
+                $in: casinoCountry,
+              },
+            },
+          }),
       },
     },
     faqs: {

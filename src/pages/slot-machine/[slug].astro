@@ -10,6 +10,7 @@ import type {
   Faqs,
   GameFilters,
   TProviderAttributesOnly,
+  UserCountry,
 } from "../../../interfaces/common/types";
 
 // Layouts
@@ -41,6 +42,18 @@ import {
 } from "../../../utils/api-requests";
 import { layoutQs } from "../../../qs/layout";
 import type { LayoutData } from "../../../interfaces/layout";
+import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../utils/ip-request";
+
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
+const casinoCountry = country?.sc || "";
 
 const slug = Astro.params.slug as string;
 
@@ -251,8 +264,8 @@ Astro.response.headers.set(
           )
         }
       </div>
-      <div class="basis-[315px] shrink-0 order-first mb-5 md:order-last">
-        <CasinoSidebar {translationStore} />
+      <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
+        <CasinoSidebar {casinoCountry} {translationStore} />
       </div>
     </div>
   </div>

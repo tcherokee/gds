@@ -1,4 +1,8 @@
-export const providerGamesQs = (slug: string | undefined) => ({
+export const providerGamesQs = (
+  slug: string | undefined,
+  casinoCountry: string = "",
+  localisation: boolean = false
+) => ({
   fields: ["title", "heading", "slug"],
   populate: {
     provider: {
@@ -49,6 +53,16 @@ export const providerGamesQs = (slug: string | undefined) => ({
             termsAndConditions: {
               fields: ["copy", "gambleResponsibly"],
             },
+          },
+          filters: {
+            ...(localisation &&
+              casinoCountry && {
+                countries: {
+                  shortCode: {
+                    $in: casinoCountry,
+                  },
+                },
+              }),
           },
         },
       },

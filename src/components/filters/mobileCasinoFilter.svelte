@@ -1,5 +1,7 @@
 <script lang="ts">
     export let translationStore: TranslationData = {};
+    export let casinoCountry: string | undefined;
+    export let localisation: boolean | undefined;
     // Import First or Third Party Plugins
 	import qs from 'qs';
 // Import Types
@@ -18,7 +20,7 @@
     //get translation context
 
 	// Valid Keys for the Casino Filters Array to validate and squash typescript errors
-    const validKeys: (keyof CasinoFilters)[] = ["limit", "sort", "providers", "ids", "bonusKey", "condition", "amount", "wagering", "speed"];
+    const validKeys: (keyof CasinoFilters)[] = ["limit", "sort", "providers", "ids", "bonusKey", "condition", "amount", "wagering", "speed", , "casinoCountry"];
 
 	// Function to get bonus label based on the value
 	const  getLabelByValue = (data: BonusLabels, searchValue: string): string | undefined => {
@@ -38,6 +40,10 @@
 
 	// Get Sort Store Kets for Looping
 	const sortKeys = $sort ? Object.keys($sort) : [];
+
+    //set Casino country
+  	casinoVariables.setKey("casinoCountry", casinoCountry || "");
+    casinoVariables.setKey("localisation", localisation);
 
     // Variables
 	let toggleSort: false

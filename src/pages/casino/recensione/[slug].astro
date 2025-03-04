@@ -1,13 +1,14 @@
 ---
 import { Link } from "astro-link";
 import qs from "qs";
-import type { Casinopage } from "../../../../interfaces/casinopage";
+import type { Casinopage, PaymentChannels } from "../../../../interfaces/casinopage";
 import type {
   CasinoFeatures,
   Faqs as FaqsType,
   HowToGroup,
   HowTo as HowToType,
   ProsConsBlock,
+  UserCountry,
 } from "../../../../interfaces/common/types";
 import type { Gamepage } from "../../../../interfaces/game-page";
 import fetchApi from "../../../../lib/strapi";
@@ -21,7 +22,10 @@ import {
   loadComponents,
   mapBlocksToDynamicComponents,
 } from "../../../../lib/loadBlockComponents";
-import { getTranslations } from "../../../../utils/api-requests";
+import {
+  getLocalisation,
+  getTranslations,
+} from "../../../../utils/api-requests";
 import ContentBlock from "../../../components/blocks/contentBlock.astro";
 import GameListBlock from "../../../components/blocks/gameListBlock.astro";
 import CasinoComparison from "../../../components/casino/casinoComparison.astro";
@@ -43,10 +47,26 @@ import RatingStar from "../../../components/helpers/ratingStar.svelte";
 import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
 import TimeDate from "../../../components/helpers/timeDate.astro";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
+import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../../utils/ip-request";
+
+const localisation = await getLocalisation();
+
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
+const casinoCountry = country?.sc || "";
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
-const casino = qs.stringify(casinopageQs(slug), { encodeValuesOnly: true });
+const casino = qs.stringify(casinopageQs(slug, casinoCountry, localisation), {
+  encodeValuesOnly: true,
+});
 
 const casinoPage = await fetchApi<Casinopage[]>({
   endpoint: "casinos",
@@ -86,6 +106,8 @@ const termsAndConditionsCleaned = termsAndConditions.replace(
 
 const testimonial = `${casinoPage[0]?.attributes?.testimonial?.testimonial}`;
 const testimonialCleaned = testimonial.replace(/(<([^>]+)>)/gi, "");
+
+const paymentChannels = casinoPage[0]?.attributes?.paymentChannels;
 
 let casinoFeatures = casinoPage[0]?.attributes?.casinoFeatures;
 
@@ -789,7 +811,22 @@ Astro.response.headers.set(
                   </div>
                   <div class="flex flex-wrap">
                     {
-                      casinoPage[0]?.attributes?.paymentOptions
+                         paymentChannels?.data.length > 0 && (paymentChannels?.data.map((channel: PaymentChannels) => (
+                          <span class="payment-icon">
+                            <Image
+                              src={channel?.attributes?.logo?.data?.attributes?.url}
+                              classes="w-full rounded"
+                              alt={channel?.attributes?.name}
+                              imageWidth={55}
+                              ,
+                              imageHeight={28}
+                          />
+                          </span>
+                        )))
+                    }
+
+                    {
+                     paymentChannels?.data.length < 1 && (casinoPage[0]?.attributes?.paymentOptions
                         ?.wireTransfer && (
                         <span class="payment-icon">
                           <Icon
@@ -797,12 +834,12 @@ Astro.response.headers.set(
                             width="45px"
                             height="28px"
                           />
-                        </span>
+                        </span>)
                       )
                     }
 
                     {
-                      casinoPage[0]?.attributes?.paymentOptions?.skrill && (
+                      paymentChannels?.data.length < 1 && ( casinoPage[0]?.attributes?.paymentOptions?.skrill && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/skrill"
@@ -810,11 +847,11 @@ Astro.response.headers.set(
                             height="28px"
                           />
                         </span>
-                      )
+                      ))
                     }
 
                     {
-                      casinoPage[0]?.attributes?.paymentOptions?.postepay && (
+                      paymentChannels?.data.length < 1 && ( casinoPage[0]?.attributes?.paymentOptions?.postepay && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/postepay"
@@ -822,11 +859,11 @@ Astro.response.headers.set(
                             height="28px"
                           />
                         </span>
-                      )
+                      ))
                     }
 
                     {
-                      casinoPage[0]?.attributes?.paymentOptions?.paysafe && (
+                       paymentChannels?.data.length < 1 && (casinoPage[0]?.attributes?.paymentOptions?.paysafe && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/paysafe"
@@ -834,11 +871,11 @@ Astro.response.headers.set(
                             height="28px"
                           />
                         </span>
-                      )
+                      ))
                     }
 
                     {
-                      casinoPage[0]?.attributes?.paymentOptions?.paypal && (
+                       paymentChannels?.data.length < 1 && (casinoPage[0]?.attributes?.paymentOptions?.paypal && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/paypal"
@@ -846,11 +883,11 @@ Astro.response.headers.set(
                             height="28px"
                           />
                         </span>
-                      )
+                      ))
                     }
 
                     {
-                      casinoPage[0]?.attributes?.paymentOptions?.neteller && (
+                       paymentChannels?.data.length < 1 && (casinoPage[0]?.attributes?.paymentOptions?.neteller && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/neteller"
@@ -858,11 +895,11 @@ Astro.response.headers.set(
                             height="28px"
                           />
                         </span>
-                      )
+                      ))
                     }
 
                     {
-                      casinoPage[0]?.attributes?.paymentOptions?.uKash && (
+                       paymentChannels?.data.length < 1 && (casinoPage[0]?.attributes?.paymentOptions?.uKash && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/ukash"
@@ -870,11 +907,11 @@ Astro.response.headers.set(
                             height="28px"
                           />
                         </span>
-                      )
+                      ))
                     }
 
                     {
-                      casinoPage[0]?.attributes?.paymentOptions?.creditCard && (
+                       paymentChannels?.data.length < 1 && (casinoPage[0]?.attributes?.paymentOptions?.creditCard && (
                         <span class="payment-icon">
                           <Icon
                             name="payments/debit"
@@ -882,7 +919,7 @@ Astro.response.headers.set(
                             height="28px"
                           />
                         </span>
-                      )
+                      ))
                     }
                   </div>
                 </div>

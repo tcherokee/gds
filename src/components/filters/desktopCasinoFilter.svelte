@@ -1,5 +1,7 @@
 <script lang="ts">
 	export let translationStore: TranslationData = {};
+	export let casinoCountry: string | undefined;
+	export let localisation: boolean | undefined;
     // Import First or Third Party Plugins
 	import qs from 'qs';
 // Import Types
@@ -14,10 +16,13 @@
 // Import Stores
     import { bonusAmount, casinoQsStore, casinoVariables, wageringReqAmount } from "../../../stores/casinos";
     import { bonusLabels, conditions, sort } from "../../../stores/filters";
-
+	import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../utils/ip-request";
 
 	// Valid Keys for the Casino Filters Array to validate and squash typescript errors
-    const validKeys: (keyof CasinoFilters)[] = ["limit", "sort", "providers", "ids", "bonusKey", "condition", "amount", "wagering", "speed"];
+    const validKeys: (keyof CasinoFilters)[] = ["limit", "sort", "providers", "ids", "bonusKey", "condition", "amount", "wagering", "speed", "casinoCountry"];
 
 	// Function to get bonus label based on the value
 	const  getLabelByValue = (data: BonusLabels, searchValue: string): string | undefined => {
@@ -28,6 +33,7 @@
 		}
 		return undefined; // Return undefined if no matching value is found
 	}
+	
 
     // Get Bonus Type Store Keys for Looping
     const bonusTypeKeys = $bonusLabels ? Object.keys($bonusLabels) : [];
@@ -80,7 +86,10 @@
 			const newSortValue = key + ":" + value
 
 			casinoVariables.setKey('sort', newSortValue)
-        
+			 //set Casino country
+  			casinoVariables.setKey("casinoCountry", casinoCountry || "");
+			casinoVariables.setKey("localisation", localisation);
+			
 			// Set QS Query String to Get Updated Casinos
 			const query = qs.stringify(casinosQs($casinoVariables), {encodeValuesOnly: true})
 			
@@ -90,6 +99,10 @@
 	}
 
     const handleFilterChange = (key: string, value: string | number) => {
+
+		//set Casino country
+		casinoVariables.setKey("casinoCountry", casinoCountry || "");
+		casinoVariables.setKey("localisation", localisation);
 
 		// Validate the key in indeed in the list of casino filters key then use type assertion to squash the typescript error
 		validKeys.includes(key as keyof CasinoFilters) && casinoVariables.setKey(key as keyof CasinoFilters, value)
@@ -116,6 +129,10 @@
     // Click Handler for clearing the filter fields
     const clearFilterOptions = (e: Event, key: string, value: string | number) => {
         e.stopPropagation()
+
+		//set Casino country
+		casinoVariables.setKey("casinoCountry", casinoCountry || "");
+		casinoVariables.setKey("localisation", localisation);
 
 		// Set Casino IDs to an empty array or it will override any filtering
 		$casinoVariables.ids.length > 0 && casinoVariables.setKey('ids', [])

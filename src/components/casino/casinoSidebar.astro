@@ -14,13 +14,19 @@ import type { LayoutData } from "../../../interfaces/layout";
 
 // Components
 import { Link } from "astro-link";
+import { getLocalisation } from "../../../utils/api-requests";
 
-const { translationStore } = Astro.props;
+const localisation = await getLocalisation();
+
+const { casinoCountry, translationStore } = Astro.props;
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
-const query = qs.stringify(customPageLayoutAddOnsQs(), {
-  encodeValuesOnly: true,
-});
+const query = qs.stringify(
+  customPageLayoutAddOnsQs(casinoCountry, localisation),
+  {
+    encodeValuesOnly: true,
+  }
+);
 
 // Request to the Fetch Function to get the custom page slugs from the API
 const layout = await fetchApi<LayoutData>({
@@ -54,6 +60,9 @@ const casinoArray = [
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 ---
 
+<script define:vars={{ casinoArray, casinoCountry }}>
+  console.log("Page Sidebar", casinoArray, casinoCountry);
+</script>
 <div class="sticky top-2">
   {
     casinoArray.map(

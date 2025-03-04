@@ -24,12 +24,14 @@ export type FooterImage = {
 type LayoutAttributes = {
   [key: string | symbol]: any;
   legalText: string;
+  countries: string[];
   footerContent: string;
   cookiesHeaderText: string;
   cookiesDescription: string;
   cookiesUrl: string;
   cookiesLinkText: string;
   footerImages: FooterImage[];
+  localisation: boolean;
   Logo: {
     data: ImageData;
   };

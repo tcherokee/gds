@@ -6,7 +6,10 @@ import { ViewTransitions } from "astro:transitions";
 import LDTag from "../components/helpers/LDTag.svelte";
 
 // Types
-import type { BreadcrumbData } from "../../interfaces/common/types";
+import type {
+  BreadcrumbData,
+  UserCountry,
+} from "../../interfaces/common/types";
 
 // QS Query Strings
 import { layoutQs, menuQs } from "../../qs/layout.ts";
@@ -19,7 +22,12 @@ import "../styles/app.postcss";
 
 //Types and TypeGuards
 import type { LayoutData } from "../../interfaces/layout";
-import type { NavigationItem, ProcessedMenus } from "../../interfaces/menu.ts";
+import type {
+  MenuItem,
+  MenuItemChild,
+  NavigationItem,
+  ProcessedMenus,
+} from "../../interfaces/menu.ts";
 import {
   isMainLayoutData,
   isNavigationItemArray,
@@ -31,9 +39,21 @@ import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
 // import Newsletter from "../components/layout/newsletter.astro";
 import CookiesConsent from "../components/general/cookiesConsent.svelte";
-import { getTranslations } from "../../utils/api-requests";
+import { getLocalisation, getTranslations } from "../../utils/api-requests";
 import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 import AdPopUp from "../components/helpers/ad-pop-up.svelte";
+import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
+
+const localisation = await getLocalisation();
+
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
+
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
+const countryCode = country?.sc || "";
 
 const siteID = `${import.meta.env.SITE_ID}`;
 const siteLang = `${import.meta.env.LANG}`;
@@ -85,7 +105,49 @@ const menu = isNavigationItemArray(responses[1])
 const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
   (acc: ProcessedMenus, menu: NavigationItem) => {
     const title = menu.attributes.title;
-    const items = menu.attributes.items.data;
+    let items: MenuItem[] = [];
+
+    if (localisation) {
+      if (title === "Main Navigation") {
+        items = menu.attributes.items.data.map((item: MenuItem) => {
+          if (item.attributes.children.data.length > 0) {
+            // Filter children with "- $coiuntryCode" in the title
+            const filteredChildren = item.attributes.children.data.filter(
+              (child) => {
+                //split child title and see if see if it has no country code attached or if the attached country code is same as visitor's country.
+                // let titleSplit = child.attributes.title.split("-");
+                // if (titleSplit.length === 1 || titleSplit[1] === countryCode) {
+                //   return child.attributes.title;
+                // }
+
+                // returns items with "-it" in their title OR items with no "-" in their title
+                return (
+                  child.attributes.title.includes(`-${countryCode}`) ||
+                  child.attributes.title.split("-").length === 1
+                );
+              }
+            );
+
+            // Return the updated item with filtered children
+            return {
+              ...item,
+              attributes: {
+                ...item.attributes,
+                children: {
+                  ...item.attributes.children,
+                  data: filteredChildren,
+                },
+              },
+            };
+          } else {
+            return item;
+          }
+        });
+      }
+    } else {
+      items = menu.attributes.items.data;
+    }
+
     if (
       title === "Sub Navigation" ||
       title === "Main Navigation" ||
@@ -170,8 +232,22 @@ if (otherSchema) {
 ---
 
 <!-- 
-<script define:vars={{ layout }}>
-  console.log(layout);
+<script
+  define:vars={{
+    localisation,
+    menu,
+    processedMenus,
+    clientIP,
+    userCountry,
+    countryCode,
+  }}
+>
+  console.log("localisation", localisation);
+  console.log("menu", menu);
+  console.log("Process menu", processedMenus);
+  console.log("userCountry", userCountry);
+  console.log("clientIP", clientIP);
+  console.log("countryCode", countryCode);
 </script> -->
 <html lang={siteLang}>
   <head>
@@ -218,6 +294,7 @@ if (otherSchema) {
           subNavigation={processedMenus?.subnavigation}
           logo={layout?.attributes?.Logo}
           {translationStore}
+          {countryCode}
         />
       </header>
       <slot />
@@ -283,7 +360,7 @@ if (otherSchema) {
       });
     </script>
 
-    <noscript is:inline>
+    <noscript>
       <img
         src="https://api.stats.kenshomedia.com/log/noscript?pid=6wNdNPt3U82T"
         alt="analytics-pixel"

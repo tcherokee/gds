@@ -1,4 +1,8 @@
-export const casinopageQs = (slug:string) => ({
+export const casinopageQs = (
+  slug: string,
+  casinoCountry: string,
+  localisation: boolean = false
+) => ({
   fields: [
     "title",
     "slug",
@@ -176,6 +180,24 @@ export const casinopageQs = (slug:string) => ({
         },
         termsAndConditions: {
           fields: ["copy"],
+        },
+      },
+      filters: {
+        ...(localisation &&
+          casinoCountry && {
+            countries: {
+              shortCode: {
+                $in: casinoCountry,
+              },
+            },
+          }),
+      },
+    },
+    paymentChannels: {
+      fields: ["name"],
+      populate: {
+        logo: {
+          fields: ["url"],
         },
       },
     },

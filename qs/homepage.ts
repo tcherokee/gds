@@ -2,7 +2,10 @@
 
 import { populate } from "dotenv";
 
-export const homepageQs = () => ({
+export const homepageQs = (
+  { casinoCountry = "" },
+  localisation: boolean = false
+) => ({
   fields: ["title", "heading", "updatedAt"],
   populate: {
     blocks: {
@@ -38,6 +41,24 @@ export const homepageQs = () => ({
             termsAndConditions: true,
             noDepositSection: true,
             freeSpinsSection: true,
+            countries: {
+              fields: ["countryName", "shortCode"],
+              populate: {
+                countryFlag: {
+                  fields: ["url"],
+                },
+              },
+            },
+          },
+          filters: {
+            ...(localisation &&
+              casinoCountry && {
+                countries: {
+                  shortCode: {
+                    $in: casinoCountry,
+                  },
+                },
+              }),
           },
         },
         providers: {

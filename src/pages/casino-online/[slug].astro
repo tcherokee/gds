@@ -5,7 +5,10 @@ import qs from "qs";
 // Types
 import type { GetStaticPaths } from "astro";
 import type { Casinoprovider } from "../../../interfaces/casino-provider";
-import type { Faqs as FaqsType } from "../../../interfaces/common/types";
+import type {
+  Faqs as FaqsType,
+  UserCountry,
+} from "../../../interfaces/common/types";
 
 // Queries
 import { casinoproviderQs } from "../../../qs/casino-provider";
@@ -25,14 +28,33 @@ import IntroBlock from "../../components/general/introWithImage.astro";
 import Breadcrumb from "../../components/layout/breadcrumbs.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
 
-import { getTranslations } from "../../../utils/api-requests";
+import { getLocalisation, getTranslations } from "../../../utils/api-requests";
 import type { BreadcrumbData } from "../../../interfaces/common/types";
+import {
+  getUserCountryByIP,
+  userCountryHandler,
+} from "../../../utils/ip-request";
+
+const localisation = await getLocalisation();
+
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
+const userCountry = await getUserCountryByIP(clientIP);
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
+const casinoCountry = country?.sc || "";
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
 
 // Import the QS Query string for custom slugs and prepare it for the API fetch
-const query = qs.stringify(casinoproviderQs(slug), { encodeValuesOnly: true });
+const query = qs.stringify(
+  casinoproviderQs(slug, casinoCountry, localisation),
+  {
+    encodeValuesOnly: true,
+  }
+);
 
 // Request to the Fetch Function to get page data from API
 const casinoProvider = await fetchApi<Casinoprovider[]>({
@@ -123,6 +145,7 @@ Astro.response.headers.set(
       <ProviderCasino
         slug={casinoProvider[0]?.attributes?.slug}
         {translationStore}
+        {casinoCountry}
       />
     </div>
   </div>
@@ -174,8 +197,8 @@ Astro.response.headers.set(
               </div>
             )}
           </div>
-          <div class="basis-[315px] shrink-0 order-first mb-5 md:order-last">
-            <CasinoSideBar {translationStore} />
+          <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
+            <CasinoSideBar {casinoCountry} {translationStore} />
           </div>
         </div>
       )

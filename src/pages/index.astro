@@ -8,6 +8,7 @@ import type {
   Block,
   BlogBlockTypes,
   HomeGameListBlock,
+  UserCountry,
 } from "../../interfaces/common/types.ts";
 import type { Game } from "../../interfaces/games.ts";
 import type { Blog } from "../../interfaces/blog.ts";
@@ -30,15 +31,33 @@ import { blogsQs } from "../../qs/blogs.ts";
 // Components
 import MainLayout from "../layouts/MainLayout.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
-import { getTranslations } from "../../utils/api-requests";
+import { getLocalisation, getTranslations } from "../../utils/api-requests";
+import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
 
-const ipAddress = Astro.clientAddress;
+const localisation = await getLocalisation();
+
+const clientIP =
+  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
+
+const userCountry = await getUserCountryByIP(clientIP);
+
+const country = await userCountryHandler(
+  userCountry?.location?.country.toLowerCase() || ""
+);
+
+const countryCode = country?.sc || "";
+
+const homeData = {
+  casinoCountry: countryCode,
+};
 
 const sortStore = sortOptions.get();
 
 const translationStore = await getTranslations();
 
-const query = qs.stringify(homepageQs(), { encodeValuesOnly: true });
+const query = qs.stringify(homepageQs(homeData, localisation), {
+  encodeValuesOnly: true,
+});
 
 const homepage = await fetchApi<Homepage>({
   endpoint: "homepage",
@@ -157,8 +176,8 @@ Astro.response.headers.set(
 );
 ---
 
-<!-- <script define:vars={{ ipAddress }}>
-  console.log("IP Address", ipAddress);
+<!-- <script define:vars={{ homepage }}>
+  console.log("Home page", homepage);
 </script> -->
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />

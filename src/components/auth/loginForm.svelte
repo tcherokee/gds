@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { user } from "../../../stores/authStore";
   import { toast } from "svoast";
+  import { supabase } from '../../../lib/supabase';  // Add this import
 
   // Components
   import Link from "../helpers/link.svelte";
@@ -24,69 +25,118 @@
 
   const loginHandler = async () => {
     logInLoader = true;
-    const loginPayload = {
-      identifier: email,
-      password,
-      recaptchaToken,
-    };
-
-    const response = await fetch(
-      `${import.meta.env.PUBLIC_FULL_URL}/api/auth/login/`,
-      {
-        method: "POST",
-        body: JSON.stringify(loginPayload),
-      }
-    );
-    const res = await response.json();
-    logInLoader = false;
-    resetCaptcha();
-
-    if (res.jwt) {
-      const {
-        id,
-        firstName,
-        lastName,
-        username,
+    
+    try {
+      // First try to sign in with Supabase
+      let { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
-        bio,
-        cover_image,
-        photo,
-      } = res.user;
-      user.set({
-        id,
-        firstName,
-        lastName,
-        username,
-        email,
-        bio,
-        cover_image,
-        photo,
+        password,
       });
-      // Parse the URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-
-      // Get review param value
-      const paramValue = urlParams.get("review");
-      console.log(paramValue);
-      const reviewSourceType =
-        await window.localStorage?.getItem("_reviewSourceType");
-        window.localStorage?.removeItem("_reviewSourceType")
-      if (paramValue) {
-        if (reviewSourceType === "GAME") {
-          window.location.href = `${import.meta.env.BASE_URL}slot-machines/${paramValue}/`;
-          return;
-        }
-        if (reviewSourceType === "CASINO") {
-           window.location.href = `${import.meta.env.BASE_URL}casino/recensione/${paramValue}/`;
-          return;
-        }
-        location.reload();
-      } else {
-        window.location.href = `${import.meta.env.BASE_URL}dashboard/`;
-        // location.reload();
+    
+      // If sign in fails due to no user, try to sign up
+      if (signInError?.message?.includes('Invalid login credentials')) {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password
+        });
+    
+        if (signUpError) throw signUpError;
+        signInData = signUpData;
+      } else if (signInError) {
+        throw signInError;
       }
-    } else {
-      toast.error(res?.error.message);
+    
+      // Proceed with your API auth
+      const loginPayload = {
+        identifier: email,
+        password,
+        recaptchaToken,
+      };
+    
+      const response = await fetch(
+        `${import.meta.env.PUBLIC_FULL_URL}/api/auth/login/`,
+        {
+          method: "POST",
+          body: JSON.stringify(loginPayload),
+        }
+      );
+      const res = await response.json();
+      
+      if (res.jwt) {
+        const {
+          id,
+          firstName,
+          lastName,
+          username,
+          email,
+          bio,
+          cover_image,
+          photo,
+        } = res.user;
+        
+        // Now that we have the user data, update Supabase user metadata
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: {
+            original_id: id,
+            username: username
+          }
+        });
+
+        if (updateError) {
+          console.error('Error updating user metadata:', updateError);
+        }
+        
+        // Set user in store
+        user.set({
+          id,
+          firstName,
+          lastName,
+          username,
+          email,
+          bio,
+          cover_image,
+          photo,
+          supabaseUser: signInData.user,
+        });
+
+        // Parse the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Get review param value
+        const paramValue = urlParams.get("review");
+        console.log(paramValue);
+        const reviewSourceType =
+          await window.localStorage?.getItem("_reviewSourceType");
+          window.localStorage?.removeItem("_reviewSourceType")
+        const tournamentId = await window.localStorage?.getItem("_tournamentId")
+        window.localStorage?.removeItem("_tournamentId")
+        if (paramValue) {
+          if (reviewSourceType === "GAME") {
+            window.location.href = `${import.meta.env.BASE_URL}slot-machines/${paramValue}/`;
+            return;
+          }
+          if (reviewSourceType === "CASINO") {
+            window.location.href = `${import.meta.env.BASE_URL}casino/recensione/${paramValue}/`;
+            return;
+          }
+          location.reload();
+        } else {
+          if (tournamentId) {
+            window.location.href = `${import.meta.env.BASE_URL}tournaments/`;
+            return;
+          }
+          window.location.href = `${import.meta.env.BASE_URL}dashboard/`;
+          // location.reload();
+        }
+      } else {
+        await supabase.auth.signOut();
+        toast.error(res?.error.message);
+      }
+    } catch (error) {
+      toast.error(error.message || translations.loginError);
+    } finally {
+      logInLoader = false;
+      resetCaptcha();
     }
   };
 

@@ -19,6 +19,9 @@ type CasinoField = {
 export type LayoutQueryOptions = {
   fields: string[];
   populate: {
+    countries: {
+      fields: string[];
+    };
     footerImages: {
       fields: string[];
       populate: {
@@ -98,8 +101,16 @@ export type MenuQueryOptions = {
   };
 };
 
+export type CountryQueryOptions = {
+  fields: string[];
+};
+
 export type TranslationsQueryOptions = {
   populate: {
     translation: string;
   };
+};
+
+export type CountriesQueryOptions = {
+  fields: string[];
 };

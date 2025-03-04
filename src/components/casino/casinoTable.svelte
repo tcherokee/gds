@@ -45,6 +45,8 @@
   import { casinosQs } from "../../../qs/casinos";
   import { getTranslations } from "../../../stores/addTranslations";
 
+  export let casinoCountry: string | undefined;
+  export let localisation: boolean | undefined;
   export let initialCasinos: CasinoListBlock;
   export let translations: TranslationData;
   export let slotProviders: TProviderAttributesOnly[] = [];
@@ -67,6 +69,11 @@
 
   let currentCasinosLength = numberPerLoadMore;
 
+  //set Casino country
+  casinoVariables.setKey("casinoCountry", casinoCountry || "");
+
+  casinoVariables.setKey("localisation", localisation);
+
   // Set Sort Key in Casino Variables Store
   casinoVariables.setKey("sort", $sortOptions[casinoSort] || "ratingAvg:desc");
 
@@ -75,6 +82,7 @@
     "bonusKey",
     $bonusLabels[casinoFilters]?.value || "bonusSection"
   );
+  
 
   // Tailwind Gradient Object for Dynamic Classes
   const badgesOptions = [
@@ -130,6 +138,8 @@
     casinoVariables.setKey("amount", "");
     casinoVariables.setKey("wagering", "");
     casinoVariables.setKey("speed", "");
+    casinoVariables.setKey("casinoCountry", casinoCountry);
+    casinoVariables.setKey("localisation", localisation);
 
     // Set QS Query String to Get Updated Casinos
     const query = qs.stringify(casinosQs($casinoVariables), {
@@ -139,6 +149,9 @@
     // Set Qs Store to Query Value
     // casinoQsStore.set(`?${query}`);
   };
+
+ 
+  
 </script>
 
 <div>
@@ -146,8 +159,8 @@
     <div class="mb-5 pt-2.5">
       <div>
         <div class="text-black relative mb-10 z-20">
-          <MobileCasinoFilter translationStore={translations} />
-          <DesktopCasinoFilter translationStore={translations} />
+          <MobileCasinoFilter {casinoCountry} {localisation} translationStore={translations} />
+          <DesktopCasinoFilter {casinoCountry} {localisation} translationStore={translations} />
         </div>
       </div>
       <div>
@@ -200,6 +213,18 @@
                           class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
                           >{translations?.newCasino}</span
                         >
+                      {/if}
+
+                      {#if casino?.attributes?.countries.data[0]?.attributes?.countryFlag?.data?.attributes?.url}
+                          <div class="absolute top-[0px] right-[95px] w-7 h-5 z-[999]">
+                            <Image
+                            imageUrl={casino?.attributes?.countries?.data[0]?.attributes?.countryFlag?.data?.attributes?.url}
+                            imageClass="w-full rounded"
+                            imageAlt={casino?.attributes?.countries?.data[0]?.attributes?.countryName}
+                            imageWidth={28}
+                            imageHeight={20}
+                          />
+                            </div>
                       {/if}
                       <div
                         class="h-full flex items-center px-3 py-2 bg-white rounded-tl-lg md:rounded-bl-lg relative max-w-[368px] {i ===

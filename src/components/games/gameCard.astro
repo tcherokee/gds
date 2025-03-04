@@ -24,8 +24,8 @@ let gameURL =
   (game?.attributes?.slug ?? game.slug);
 let provideURL =
   urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"] +
-    "/" +
-    game?.attributes?.provider?.data?.attributes?.slug ?? game?.provider?.slug;
+  "/" +
+  (game?.attributes?.provider?.data?.attributes?.slug || game?.provider?.slug);
 const diffInDays =
   dayjs().diff(game?.attributes?.publishedAt ?? game.publishedAt, "day") <= 14;
 ---

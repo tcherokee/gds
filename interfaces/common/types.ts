@@ -1,6 +1,7 @@
 // API Responses and Fetch Function
 
 import type GameListBlock from "../../src/components/blocks/gameListBlock.svelte";
+import type { Country } from "../country";
 
 export type ApiResponse<T> = {
   data: {
@@ -183,6 +184,7 @@ export type CasinoAttributes = {
     id: number;
     wageringRequirements: number;
   };
+  countries: Country;
 };
 
 export type AuthorCasinoAttributes = {
@@ -320,6 +322,12 @@ export type IntroductionWithImageBlock = BlockBase & {
   introduction: string;
   heading: string;
   image: ImageInfo;
+};
+
+export type TournamentTableBlock = BlockBase & {
+  id: number;
+  __component: string;
+  tournamentTableOptions?: string;
 };
 
 export type SlideBtn = {
@@ -486,11 +494,15 @@ export type Block =
   | ProsAndConsTypes
   | TGameListBlock
   | TCasinoLiveVideo
+<<<<<<< HEAD
   | TQuickLinks;
 
 export type TQuickLinks = BlockBase & {
   showQuickLinks: boolean;
 };
+=======
+  | TournamentTableBlock;
+>>>>>>> internationlisation
 
 export type TCasinoLiveVideo = BlockBase & {
   playbackUrl: string;
@@ -513,6 +525,7 @@ export type Casino = {
       cashBack?: any;
       freeSpin?: any;
     };
+    countries: Country;
     [key: string]: any;
   };
 };
@@ -594,6 +607,8 @@ export type CasinoFilters = {
   amount: string | undefined;
   wagering: string | undefined;
   speed: string | undefined;
+  casinoCountry: string | undefined;
+  localisation?: boolean;
 };
 
 export type SportFilters = {
@@ -710,4 +725,17 @@ export type SportAttributes = {
     id: number;
     wageringRequirements: number;
   };
+};
+
+export type UserCountry = {
+  location: {
+    city: string;
+    country: string;
+    ip: string;
+    loc: string;
+    org: string;
+    region: string;
+    timezone: string;
+  };
+  ip: string;
 };
