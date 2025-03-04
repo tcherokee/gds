@@ -215,7 +215,7 @@
                         >
                       {/if}
 
-                      {#if casino?.attributes?.countries.data[0]?.attributes?.countryFlag?.data?.attributes?.url}
+                      {#if casino?.attributes?.countries && casino?.attributes?.countries.data[0]?.attributes?.countryFlag?.data?.attributes?.url}
                           <div class="absolute top-[0px] right-[95px] w-7 h-5 z-[999]">
                             <Image
                             imageUrl={casino?.attributes?.countries?.data[0]?.attributes?.countryFlag?.data?.attributes?.url}
