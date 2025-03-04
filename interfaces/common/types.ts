@@ -494,15 +494,12 @@ export type Block =
   | ProsAndConsTypes
   | TGameListBlock
   | TCasinoLiveVideo
-<<<<<<< HEAD
-  | TQuickLinks;
+  | TQuickLinks
+  | TournamentTableBlock;
 
 export type TQuickLinks = BlockBase & {
   showQuickLinks: boolean;
 };
-=======
-  | TournamentTableBlock;
->>>>>>> internationlisation
 
 export type TCasinoLiveVideo = BlockBase & {
   playbackUrl: string;
