@@ -2,7 +2,6 @@ import type {
   Block,
   CasinoListBlock,
   DynamicComponent,
-  TournamentTableBlock,
 } from "../interfaces/common/types";
 
 export const mapBlocksToDynamicComponents = (
@@ -35,21 +34,6 @@ export const mapBlocksToDynamicComponents = (
             name: "introWithSlideBlock",
             extension: "astro",
           };
-        case "tournaments.tournament-table":
-          const tournamentTableBlock = block as TournamentTableBlock; 
-          if (tournamentTableBlock.tournamentTableOptions === "Completed Tournaments") {
-            return {
-              location: "tournaments",
-              name: "pastResults",
-              extension: "astro",
-            };
-          } else {
-            return {
-              location: "tournaments",
-              name: "upcomingTournaments",
-              extension: "astro",
-            };
-          }
         case "homepage.home-blog-list":
           return {
             location: "blocks",
