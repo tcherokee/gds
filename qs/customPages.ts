@@ -109,11 +109,6 @@ export const customPageQs = (
                   },
                   countries: {
                     fields: ["countryName", "shortCode"],
-                    populate: {
-                      countryFlag: {
-                        fields: ["url"],
-                      },
-                    },
                   },
                 },
                 filters: {
@@ -166,22 +161,16 @@ export const customPageQs = (
                   },
                   countries: {
                     fields: ["countryName", "shortCode"],
-                    populate: {
-                      countryFlag: {
-                        fields: ["url"],
-                      },
-                    },
                   },
                 },
                 filters: {
-                  ...(localisation &&
-                    casinoCountry && {
-                      countries: {
-                        shortCode: {
-                          $in: casinoCountry,
-                        },
+                  ...(casinoCountry && {
+                    countries: {
+                      shortCode: {
+                        $in: casinoCountry,
                       },
-                    }),
+                    },
+                  }),
                 },
               },
             },
@@ -281,7 +270,6 @@ export const customPageQs = (
           ImageCarousel: {
             fields: ["url", "caption"],
           },
-          tournamentTable: true,
         },
       },
     },
@@ -338,14 +326,13 @@ export const customPageLayoutAddOnsQs = (
         noDepositSection: true,
       },
       filters: {
-        ...(localisation &&
-          casinoCountry && {
-            countries: {
-              shortCode: {
-                $in: casinoCountry,
-              },
+        ...(casinoCountry && {
+          countries: {
+            shortCode: {
+              $in: casinoCountry,
             },
-          }),
+          },
+        }),
       },
     },
     free_spin_casinos: {
@@ -357,14 +344,13 @@ export const customPageLayoutAddOnsQs = (
         freeSpinsSection: true,
       },
       filters: {
-        ...(localisation &&
-          casinoCountry && {
-            countries: {
-              shortCode: {
-                $in: casinoCountry,
-              },
+        ...(casinoCountry && {
+          countries: {
+            shortCode: {
+              $in: casinoCountry,
             },
-          }),
+          },
+        }),
       },
     },
     most_loved_sports: {
@@ -376,14 +362,13 @@ export const customPageLayoutAddOnsQs = (
         bonusSection: true,
       },
       filters: {
-        ...(localisation &&
-          casinoCountry && {
-            countries: {
-              shortCode: {
-                $in: casinoCountry,
-              },
+        ...(casinoCountry && {
+          countries: {
+            shortCode: {
+              $in: casinoCountry,
             },
-          }),
+          },
+        }),
       },
     },
     no_deposit_sports: {
