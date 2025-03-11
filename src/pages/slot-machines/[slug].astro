@@ -81,6 +81,11 @@ if (allFAQs.length > 0) {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${siteURL}`,
+      "@id": `${siteURL}`,
+    },
     mainEntity: allFAQs.map(({ answer, question }) => {
       return {
         "@type": "Question",
@@ -100,6 +105,11 @@ if (howTo) {
   const howToSchema = {
     "@context": "https://schema.org",
     "@type": "HowTo",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${siteURL}`,
+      "@id": `${siteURL}`,
+    },
     name: `${howTo?.title}`,
     totalTime: "PT15M",
     description: `${howTo?.title}`,
@@ -134,6 +144,11 @@ if (howTo) {
 const ratingsSchema = {
   "@context": "http://schema.org",
   "@type": "VideoGame",
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    url: `${siteURL}`,
+    "@id": `${siteURL}`,
+  },
   name: `${gamePage[0]?.attributes?.title}`,
   // url: `${CanonicalURL}`,
   image: `${gamePage[0]?.attributes?.images?.data?.attributes?.url}`,
@@ -151,12 +166,12 @@ const ratingsSchema = {
     "@type": "Person",
     name: `${gamePage[0]?.attributes?.author?.data?.attributes?.firstName} ${gamePage[0]?.attributes?.author?.data?.attributes?.lastName}`,
     url: `${import.meta.env.PUBLIC_FULL_URL}/author/${gamePage[0]?.attributes?.author?.data?.attributes?.firstName}.${gamePage[0]?.attributes?.author?.data?.attributes?.lastName}`,
-    publisher: {
-      "@type": "Organization",
-      name: `${import.meta.env.PUBLIC_SITE_ID}`,
-      url: `${import.meta.env.PUBLIC_FULL_URL}`,
-      logo: `${gamePage[0]?.attributes?.images?.data?.attributes?.url}`,
-    },
+  },
+  publisher: {
+    "@type": "Organization",
+    name: `${import.meta.env.PUBLIC_SITE_ID}`,
+    url: `${import.meta.env.PUBLIC_FULL_URL}`,
+    logo: `${gamePage[0]?.attributes?.images?.data?.attributes?.url}`,
   },
 };
 combinedSchema.push(ratingsSchema);
@@ -190,11 +205,15 @@ let gamePageRelatedCasinoTitle =
   seoData={seo}
   crumbLocation="games"
   crumbTitle={gamePage[0]?.attributes?.title}
+  crumbUrl={siteURL}
   otherSchema={combinedSchema}
 >
   <Breadcrumb
     breadcrumbs={[
-      { breadCrumbText: gamePage[0]?.attributes?.title, breadCrumbUrl: null },
+      {
+        breadCrumbText: gamePage[0]?.attributes?.title,
+        breadCrumbUrl: null,
+      },
     ]}
     breadcrumbKey="gamesBreadcrumbs"
   />

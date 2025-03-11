@@ -135,6 +135,11 @@ if (
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${import.meta.env.FULL_URL}${urlTranslate[import.meta.env.SITE_ID as keyof typeof urlTranslate]["category-pages"]}/${slug}`,
+      "@id": `${import.meta.env.FULL_URL}${urlTranslate[import.meta.env.SITE_ID as keyof typeof urlTranslate]["category-pages"]}/${slug}`,
+    },
     mainEntity: categoryPage[0]?.attributes?.faqs?.map(
       ({ answer, question }) => {
         return {
@@ -202,6 +207,7 @@ Astro.response.headers.set(
   seoData={seo}
   crumbLocation="categories"
   crumbTitle={categoryPage[0]?.attributes?.title}
+  crumbUrl={`${import.meta.env.FULL_URL}${urlTranslate[import.meta.env.SITE_ID as keyof typeof urlTranslate]["category-pages"]}/${slug}`}
   otherSchema={combinedSchema}
 >
   <Breadcrumbs

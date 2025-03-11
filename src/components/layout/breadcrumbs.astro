@@ -18,7 +18,7 @@ const { breadcrumbs, breadcrumbKey } = Astro.props;
 
 // const {attributes: {casinoProvidersBreadcrumbs}} = layout;
 
-console.log(breadcrumbs)
+console.log(breadcrumbs);
 
 let pageBreadcrumbs = [...breadcrumbs];
 // if (breadcrumbKey && layout.attributes[breadcrumbKey]) {
@@ -33,7 +33,7 @@ if (breadcrumbKey && !breadcrumbs.length && !breadcrumStore[breadcrumbKey]) {
   pageBreadcrumbs = [
     {
       breadCrumbText: "HOME",
-      breadCrumbUrl: null,
+      breadCrumbUrl: "/",
     },
   ];
 }
@@ -45,7 +45,9 @@ if (breadcrumbKey && !breadcrumbs.length && !breadcrumStore[breadcrumbKey]) {
       {
         pageBreadcrumbs.length &&
           pageBreadcrumbs.map((breadcrumb: any, i: number) =>
-            breadcrumb.breadCrumbUrl !== null ? (
+            i === pageBreadcrumbs.length - 1 ? (
+              <span>{breadcrumb.breadCrumbText}</span>
+            ) : (
               <>
                 <a href={breadcrumb.breadCrumbUrl}>
                   {breadcrumb.breadCrumbText}
@@ -54,8 +56,6 @@ if (breadcrumbKey && !breadcrumbs.length && !breadcrumStore[breadcrumbKey]) {
                   {pageBreadcrumbs.length > i + 1 ? "/" : ""}
                 </span>
               </>
-            ) : (
-              <span>{breadcrumb.breadCrumbText}</span>
             )
           )
       }

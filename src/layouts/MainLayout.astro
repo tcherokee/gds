@@ -58,7 +58,7 @@ const countryCode = country?.sc || "";
 const siteID = `${import.meta.env.SITE_ID}`;
 const siteLang = `${import.meta.env.LANG}`;
 
-const { crumbLocation, crumbTitle, otherSchema } = Astro.props;
+const { crumbLocation, crumbTitle, crumbUrl, otherSchema } = Astro.props;
 
 const translationStore = await getTranslations();
 
@@ -179,7 +179,7 @@ let crumbData: BreadcrumbData[] = crumbTitle
   ? [
       {
         breadCrumbText: crumbTitle,
-        breadCrumbUrl: "",
+        breadCrumbUrl: crumbUrl || "",
       },
     ]
   : [];
@@ -215,9 +215,19 @@ switch (crumbLocation) {
 
 // Using a if statement here to prevent duplicate breadcrumb schema on custom pages.
 if (crumbLocation) {
+  const lastBreadcrumb = crumbData[crumbData.length - 1];
+  const lastBreadcrumbUrl = lastBreadcrumb?.breadCrumbUrl || "";
+
+  console.log("lastBreadcrumbUrl", crumbData, "---");
+  
   const BreadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${lastBreadcrumbUrl}`,
+      "@id": `${lastBreadcrumbUrl}`,
+    },
     itemListElement: crumbData?.map((bread, i) => {
       return {
         "@type": "ListItem",
@@ -236,24 +246,6 @@ if (otherSchema) {
 }
 ---
 
-<!-- 
-<script
-  define:vars={{
-    localisation,
-    menu,
-    processedMenus,
-    clientIP,
-    userCountry,
-    countryCode,
-  }}
->
-  console.log("localisation", localisation);
-  console.log("menu", menu);
-  console.log("Process menu", processedMenus);
-  console.log("userCountry", userCountry);
-  console.log("clientIP", clientIP);
-  console.log("countryCode", countryCode);
-</script> -->
 <html lang={siteLang}>
   <head>
     <meta charset="UTF-8" />
@@ -285,7 +277,10 @@ if (otherSchema) {
     <meta name="twitter:site" content={seoData.url} />
     <meta name="twitter:description" content={seoData.metaDescription} />
     <meta name="twitter:image" content={twitterImage} />
-    <meta name="twitter:image:alt" content=`${import.meta.env.SITE_NAME} Logo` />
+    <meta
+      name="twitter:image:alt"
+      content=`${import.meta.env.SITE_NAME} Logo`
+    />
 
     <!-- Facebook Open Graph Tags -->
     <meta property="og:type" content="website" />

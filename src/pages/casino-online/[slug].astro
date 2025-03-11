@@ -88,6 +88,11 @@ if (
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${canonical}`,
+      "@id": `${canonical}`,
+    },
     mainEntity: casinoProvider[0]?.attributes?.faqs?.map(
       ({ answer, question }) => {
         return {
@@ -121,6 +126,7 @@ Astro.response.headers.set(
   seoData={seo}
   crumbLocation="casino-providers"
   crumbTitle={casinoProvider[0]?.attributes?.title}
+  crumbUrl={canonical}
   otherSchema={combinedSchema}
 >
   <Breadcrumb

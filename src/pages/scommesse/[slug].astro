@@ -92,6 +92,11 @@ const prosCons = sportPage[0]?.attributes?.proscons as ProsConsBlock;
 const reviewSchema = {
   "@context": "https://schema.org/",
   "@type": "Review",
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    url: `${canonical}`,
+    "@id": `${canonical}`,
+  },
   datePublished: `${sportPage[0]?.attributes?.createdAt}`,
   dateModified: `${sportPage[0]?.attributes?.updatedAt}`,
   description: `${sportPage[0]?.attributes?.introduction?.replace(/(<([^>]+)>)/gi, "")}`,
@@ -179,6 +184,11 @@ if (allFAQs.length > 0) {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${canonical}`,
+      "@id": `${canonical}`,
+    },
     mainEntity: allFAQs.map(({ answer, question }) => {
       return {
         "@type": "Question",
@@ -199,6 +209,11 @@ if (howTo) {
   const howToSchema = {
     "@context": "https://schema.org",
     "@type": "HowTo",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: { canonical },
+      "@id": { canonical },
+    },
     name: `${howTo?.title}`,
     totalTime: "PT15M",
     description: `${howTo?.title}`,
@@ -246,6 +261,7 @@ Astro.response.headers.set(
   seoData={seo}
   crumbLocation="casino-page"
   crumbTitle={sportPage[0]?.attributes?.title}
+  crumbUrl={canonical}
   otherSchema={combinedSchema}
 >
   <Breadcrumb
