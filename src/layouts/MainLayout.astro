@@ -162,6 +162,11 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
   {}
 );
 
+const twitterImage =
+  siteID === "gds"
+    ? "https://images.giochidislots.com/Giochi_di_slots_logo_1cb2d97602.png"
+    : layout?.attributes?.Logo?.data?.attributes?.url;
+
 const favicon = `https://www.${import.meta.env.HOSTNAME}/favicon-${import.meta.env.SITE_ID}.png`;
 
 const { seoData, isHomePage = false, schemaData = null } = Astro.props;
@@ -273,6 +278,24 @@ if (otherSchema) {
     />
 
     <title>{seoData.pageTitle}</title>
+
+    <!-- Twitter Summary Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seoData.pageTitle} />
+    <meta name="twitter:site" content={seoData.url} />
+    <meta name="twitter:description" content={seoData.metaDescription} />
+    <meta name="twitter:image" content={twitterImage} />
+    <meta name="twitter:image:alt" content="ImageAltText" />
+
+    <!-- Facebook Open Graph Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={seoData.pageTitle} />
+    <meta property="og:description" content={seoData.metaDescription} />
+    <meta property="og:image" content={twitterImage} />
+    <meta property="og:url" content={seoData.url} />
+    <meta property="og:site_name" content={import.meta.env.SITE_NAME} />
+
+    
     <!-- <ViewTransitions /> -->
     <Tooltips placement="auto" maxWidth="300" />
 
