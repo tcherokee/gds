@@ -285,7 +285,7 @@ if (otherSchema) {
     <meta name="twitter:site" content={seoData.url} />
     <meta name="twitter:description" content={seoData.metaDescription} />
     <meta name="twitter:image" content={twitterImage} />
-    <meta name="twitter:image:alt" content="ImageAltText" />
+    <meta name="twitter:image:alt" content=`${import.meta.env.SITE_NAME} Logo` />
 
     <!-- Facebook Open Graph Tags -->
     <meta property="og:type" content="website" />
@@ -295,7 +295,6 @@ if (otherSchema) {
     <meta property="og:url" content={seoData.url} />
     <meta property="og:site_name" content={import.meta.env.SITE_NAME} />
 
-    
     <!-- <ViewTransitions /> -->
     <Tooltips placement="auto" maxWidth="300" />
 
