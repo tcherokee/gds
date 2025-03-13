@@ -1,21 +1,15 @@
 import { getDBCountries } from "./api-requests";
 
-export const getUserCountryByIP = async (clientIP: string) => {
+export const getUserCountry = async () => {
   try {
-    const ipAddress = clientIP.split(",")[0];
-
-    //get country by IP -  `https://ipinfo.io/${ipAddress}?token=262bfc99d3cceb`
-    const IPCountry = await fetch(
-      `https://ipinfo.io/${ipAddress}?token=262bfc99d3cceb`
+    //get country from google cloud
+    const location = await fetch(
+      `https://kenshomedia.ew.r.appspot.com/`
     )
       .then((res) => res.json())
       .then();
 
-    if (IPCountry.country) {
-      return { location: IPCountry, ip: ipAddress };
-    } else {
-      return { location: { country: "" }, ip: ipAddress }; // if api fails return empty country
-    }
+    return { location, ip: location.userIP };
   } catch (error) {
     console.error(error);
   }
@@ -24,7 +18,6 @@ export const getUserCountryByIP = async (clientIP: string) => {
 export const userCountryHandler = async (shortCode: string) => {
   try {
     const getSavedCountries = await getDBCountries();
-
     const country = getSavedCountries?.find(
       ({ attributes }) => attributes?.shortCode === shortCode
     );

@@ -54,15 +54,12 @@ import SportSidebar from "../sport/sportSidebar.astro";
 import type { TQuickLinks } from "../../../interfaces/common/types.ts";
 import Quicklinks from "../helpers/quicklinks.svelte";
 import {
-  getUserCountryByIP,
+   getUserCountry,
   userCountryHandler,
 } from "../../../utils/ip-request";
 
 const localisation = await getLocalisation();
-
-const clientIP =
-  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
-const userCountry = await getUserCountryByIP(clientIP);
+const userCountry = await  getUserCountry();
 const country = await userCountryHandler(
   userCountry?.location?.country.toLowerCase() || ""
 );
@@ -294,13 +291,12 @@ Astro.response.headers.set(
 );
 ---
 
-<!-- <script
-  define:vars={{ userCountry, clientIP, country, customPage, casinoCountry }}
+<script
+  define:vars={{ customPage}}
 >
   console.log("THIS IS A CUSTOM PAGE", customPage);
-  console.log("user Country", userCountry);
-  console.log("country code", casinoCountry);
-</script> -->
+  console.log("sideBarToShow", customPage[0].attributes.sideBarToShow);
+</script>
 <MainLayout seoData={seo} otherSchema={combinedSchema}>
   <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
 

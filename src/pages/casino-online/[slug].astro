@@ -31,15 +31,14 @@ import MainLayout from "../../layouts/MainLayout.astro";
 import { getLocalisation, getTranslations } from "../../../utils/api-requests";
 import type { BreadcrumbData } from "../../../interfaces/common/types";
 import {
-  getUserCountryByIP,
+  getUserCountry,
   userCountryHandler,
 } from "../../../utils/ip-request";
 
 const localisation = await getLocalisation();
 
-const clientIP =
-  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
-const userCountry = await getUserCountryByIP(clientIP);
+
+const userCountry = await  getUserCountry();
 const country = await userCountryHandler(
   userCountry?.location?.country.toLowerCase() || ""
 );
@@ -121,6 +120,11 @@ Astro.response.headers.set(
   "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
 );
 ---
+<!-- <script
+  define:vars={{ casinoProvider }}
+>
+  console.log("Casino online", casinoProvider[0]);
+</script> -->
 
 <MainLayout
   seoData={seo}
