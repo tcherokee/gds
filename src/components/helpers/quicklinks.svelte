@@ -202,6 +202,7 @@ onMount(() => {
   containerClass="mb-5"
   labelClass="text-base md:text-xl font-medium bg-quicklinks-btn-bkg text-white p-3"
   collapseClass="bg-white rounded-b-md"
+  checked={true}
 >
   <div slot="content" class="flex">
     <ul class="grid capitalize m-0 p-0 pr-4 md:grid-cols-2 w-full gap-2">
