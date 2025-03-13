@@ -4,8 +4,11 @@ import fetchApi from "../../../lib/strapi";
 import { providercasinoQs } from "../../../qs/provider-casino";
 import CasinoTableBlock from "../../components/blocks/casinoTableBlock.astro";
 import type { Casinoprovider } from "../../../interfaces/casino-provider";
+import { getLocalisation } from "../../../utils/api-requests";
 
 const { slug, casinoCountry, translationStore } = Astro.props;
+
+const localisation = await getLocalisation();
 
 const query = qs.stringify(providercasinoQs(slug, casinoCountry), {
   encodeValuesOnly: true,

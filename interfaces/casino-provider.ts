@@ -26,7 +26,7 @@ type Attributes = {
       ratingCount: number;
       authorRatings: number;
       publishedAt: string;
-    };
+    }[];
   };
   seo: Seo;
   author: {
