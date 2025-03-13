@@ -32,14 +32,10 @@ import { blogsQs } from "../../qs/blogs.ts";
 import MainLayout from "../layouts/MainLayout.astro";
 import Breadcrumbs from "../components/layout/breadcrumbs.astro";
 import { getLocalisation, getTranslations } from "../../utils/api-requests";
-import { getUserCountryByIP, userCountryHandler } from "../../utils/ip-request";
+import { getUserCountry, userCountryHandler } from "../../utils/ip-request";
 
 const localisation = await getLocalisation();
-
-const clientIP =
-  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
-
-const userCountry = await getUserCountryByIP(clientIP);
+const userCountry = await getUserCountry();
 
 const country = await userCountryHandler(
   userCountry?.location?.country.toLowerCase() || ""
@@ -176,8 +172,8 @@ Astro.response.headers.set(
 );
 ---
 
-<!-- <script define:vars={{ homepage }}>
-  console.log("Home page", homepage);
+<!-- <script define:vars={{ country }}>
+  console.log("Home country", country);
 </script> -->
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />

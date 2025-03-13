@@ -17,7 +17,7 @@
     import { bonusAmount, casinoQsStore, casinoVariables, wageringReqAmount } from "../../../stores/casinos";
     import { bonusLabels, conditions, sort } from "../../../stores/filters";
 	import {
-  getUserCountryByIP,
+   getUserCountry,
   userCountryHandler,
 } from "../../../utils/ip-request";
 

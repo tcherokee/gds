@@ -48,15 +48,14 @@ import ReadOnlyRatings from "../../../components/helpers/readOnlyRatings.astro";
 import TimeDate from "../../../components/helpers/timeDate.astro";
 import Breadcrumb from "../../../components/layout/breadcrumbs.astro";
 import {
-  getUserCountryByIP,
+   getUserCountry,
   userCountryHandler,
 } from "../../../../utils/ip-request";
 
 const localisation = await getLocalisation();
 
-const clientIP =
-  Astro.request.headers.get("x-forwarded-for") || "102.216.183.41";
-const userCountry = await getUserCountryByIP(clientIP);
+
+const userCountry = await  getUserCountry();
 const country = await userCountryHandler(
   userCountry?.location?.country.toLowerCase() || ""
 );
