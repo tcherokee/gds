@@ -34,7 +34,7 @@
   <div class="absolute pointer-events-none h-full left-0 top-0 w-full">
     <Image
       imageUrl={game?.images?.url}
-      imageAlt="{game?.title} logo"
+      imageAlt="{game?.title} slot"
       imageWidth={235}
       imageHeight={244}
       imageClass="rounded-lg w-full h-full"
