@@ -60,7 +60,6 @@ async function getDynamicRoutes(endpoint: string, baseUrl: string) {
 }
 
 export const GET: APIRoute = async (context: APIContext) => {
-  console.log("CONTEXT_SITE:", context.site?.href);
   const authorPageRoutes = await getDynamicRoutes("users", "author");
   const blogPageRoutes = await getDynamicRoutes("blogs", "blog");
   const casinoPageRoutes = await getDynamicRoutes(
