@@ -1,6 +1,7 @@
 // src/utils/fetchPaginatedData.ts
 import qs from "qs";
 import fetchApi from "../lib/strapi";
+
 export const sitemapPageQs = (
   fields: string[],
   filters: any,
@@ -11,7 +12,7 @@ export const sitemapPageQs = (
   filters,
   sort: ["id:asc"],
   pagination: {
-    page,
+    page: 1,
     pageSize,
   },
 });
@@ -60,8 +61,8 @@ const sitemapEndpointMap = {
 export async function fetchSitemapData(
   totalRecords: number[],
   page = 1,
-  pageSize = 150,
-  lastRecordId: number | null = null
+  lastRecordId: number | null = null,
+  pageSize = 150
 ) {
   const sitemapEndpoints = Object.keys(sitemapEndpointMap) as Array<
     keyof typeof sitemapEndpointMap
@@ -73,7 +74,6 @@ export async function fetchSitemapData(
     let cumulativeTotal = 0;
     let results: any[] = [];
     let usedEndpoints: string[] = [];
-    let resultsByEndpoint: Record<string, any[]> = {};
     let newLastRecordId: number | null = lastRecordId; // Track last ID
 
     for (let i = 0; i < sitemapEndpoints.length; i++) {
@@ -99,7 +99,8 @@ export async function fetchSitemapData(
               sitemapEndpointMap[selectedEndpoint].fields,
               {
                 ...sitemapEndpointMap[selectedEndpoint].filters,
-                ...(lastRecordId && { id: { $gt: lastRecordId } }),
+                ...(lastRecordId &&
+                  remainingItems === pageSize && { id: { $gt: lastRecordId } }),
               },
               adjustedPage,
               currentPageSize
@@ -123,9 +124,10 @@ export async function fetchSitemapData(
             let baseUrl = `${import.meta.env.PUBLIC_FULL_URL}/${sitemapEndpointMap[selectedEndpoint].path}`;
             if (selectedEndpoint === "users") {
               return {
-                url: `${baseUrl}/${item.firstName.toLowerCase()}.${item.lastName.toLowerCase()}`,
-                title: `${item.firstName} ${item.lastName}/`,
+                url: `${baseUrl}/${item.firstName.toLowerCase()}.${item.lastName.toLowerCase()}/`,
+                title: `${item.firstName} ${item.lastName}`,
                 endpoint: sitemapEndpoints[i],
+                id: item.id,
               };
             }
             if (selectedEndpoint === "custom-pages") {
@@ -133,20 +135,16 @@ export async function fetchSitemapData(
                 url: `${baseUrl}${item.attributes.urlPath}/`,
                 title: item.attributes.title,
                 endpoint: sitemapEndpoints[i],
+                id: item.id,
               };
             }
             return {
               url: `${baseUrl}/${item.attributes.slug}/`,
               title: item.attributes.title,
               endpoint: selectedEndpoint,
+              id: item.id,
             };
           });
-
-          // Add data to its respective endpoint group
-          if (!resultsByEndpoint[selectedEndpoint]) {
-            resultsByEndpoint[selectedEndpoint] = [];
-          }
-          resultsByEndpoint[selectedEndpoint].push(...modifiedResult);
 
           results.push(...modifiedResult);
           usedEndpoints.push(selectedEndpoint);
@@ -177,7 +175,6 @@ export async function fetchSitemapData(
       data: results, // Ensure exactly `pageSize` items are returned
       pageSize: results.length,
       lastRecordId: newLastRecordId,
-      resultsByEndpoint,
     };
   } catch (error) {
     console.error("Error fetching data:", error);

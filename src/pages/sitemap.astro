@@ -7,7 +7,9 @@ import MainLayout from "../layouts/MainLayout.astro";
 import { fetchSitemapData } from "../../utils/fetch-sitemap-data";
 import type { CustomPageItem } from "../../interfaces/custom-pages";
 import IntroductionWithImage from "../components/general/introWithImage.astro";
+import SitemapComponent from "../components/general/sitemap.svelte";
 import { Link } from "astro-link";
+import type { TSitemapData } from "../../interfaces/common/types";
 const translationStore = await getTranslations();
 const url = new URL(Astro.request.url);
 const page = Number(url.searchParams.get("page")) || 1;
@@ -64,87 +66,11 @@ const totalRecords = [
 ];
 const totalRecordsCount = totalRecords.reduce((acc, curr) => acc + curr, 0);
 
-const sitemapRecordMap = {
-  users: 0,
-  "custom-pages": 0,
-  "slot-categories": 0,
-  "slot-providers": 0,
-  games: 0,
-};
-
-const sitemap = await fetchSitemapData(totalRecords, page);
-const sitemapData = sitemap.data || [];
-const sitemapDataKeys = [
-  ...new Set(sitemapData.map((item) => item.endpoint)),
-] as Array<keyof typeof sitemapRecordMap>;
-for (const key of sitemapDataKeys) {
-  sitemapRecordMap[key] =
-    sitemapData.findIndex((item) => item.endpoint === key) ?? 0;
+let sitemapData: TSitemapData[] = [];
+if (page === 1) {
+  const sitemapResponse = await fetchSitemapData(totalRecords, page);
+  sitemapData = sitemapResponse.data || [];
 }
-
-// Split into three columns
-const sitemapDataColumns: Array<
-  Array<{ url: string; title: string; endpoint: string }>
-> = [
-  sitemapData.length > 0 ? [...sitemapData.slice(0, 50)] : [],
-  sitemapData.length > 50 ? [...sitemapData.slice(50, 100)] : [],
-  sitemapData.length > 100 ? [...sitemapData.slice(100, 150)] : [],
-];
-
-let header: string[] = [];
-const headerMapObj: Record<string, string> = {
-  users: "Authors",
-  "custom-pages": "Custom Pages",
-  "slot-categories": "Slot Categories",
-  "slot-providers": "Software Slot Machines",
-  games: "Slot Machines",
-  "casino-providers": "Casino Providers",
-  casinos: "Casinos",
-};
-
-function generatePagination(
-  perPage = 150,
-  currentPage = 1,
-  maxPagesToShow = 10
-) {
-  const totalPages = Math.ceil(totalRecordsCount / perPage);
-  if (totalPages <= 1) return [1];
-
-  let pages = [];
-  let startPage, endPage;
-
-  // Always include first and last page
-  pages.push(1);
-
-  if (totalPages > maxPagesToShow) {
-    const half = Math.floor(maxPagesToShow / 2);
-
-    if (currentPage <= half) {
-      startPage = 2;
-      endPage = maxPagesToShow - 1;
-    } else if (currentPage >= totalPages - half) {
-      startPage = totalPages - maxPagesToShow + 2;
-      endPage = totalPages - 1;
-    } else {
-      startPage = currentPage - half + 1;
-      endPage = currentPage + half - 1;
-    }
-
-    if (startPage > 2) pages.push("...");
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-    if (endPage < totalPages - 1) pages.push("...");
-  } else {
-    for (let i = 2; i < totalPages; i++) {
-      pages.push(i);
-    }
-  }
-
-  pages.push(totalPages);
-  return pages;
-}
-const paginationList = generatePagination(150, 2);
 
 // TODO
 let seo = {
@@ -176,115 +102,12 @@ Astro.response.headers.set(
     </div>
   </div>
   <div class="xl:container content-auto px-2 pt-5">
-    <div class="md:flex gap-x-4">
-      {
-        sitemapDataColumns.map((column, i) => {
-          let showHeader = false;
-          return (
-            <div class="md:w-1/3">
-              {column.map((item, index) => {
-                if (!header.includes(item.endpoint)) {
-                  header.push(item.endpoint);
-                  showHeader = true;
-                } else {
-                  showHeader = false;
-                }
-                return (
-                  <div class="">
-                    {showHeader && (
-                      <h3 class="my-[15px]">{headerMapObj[item.endpoint]}</h3>
-                    )}
-                    <a href={item.url}>{item.title}</a>
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })
-      }
-    </div>
-
-    <div class="">
-      {
-        totalRecordsCount > 1 && (
-          <nav aria-label="page navigation" class="w-full mt-3">
-            <ul class="flex pagination justify-center">
-              {page !== 1 && (
-                <li class="page-item hidden sm:flex">
-                  <Link
-                    class="page-link"
-                    href={`/sitemap${page === 2 ? "" : "/page?=" + (page - 1)}`}
-                  >
-                    {translationStore?.paginationFirst}
-                  </Link>
-                </li>
-              )}
-              {paginationList.map((i) => (
-                <li
-                  class={`page-item ${(page === i || i === "...") && "disabled"} ${
-                    i !== "..." && "default"
-                  }`}
-                >
-                  <Link
-                    class="page-link"
-                    href={
-                      i === "..."
-                        ? "#"
-                        : `/sitemap${i === 1 ? "" : "/?page=" + i}`
-                    }
-                  >
-                    {i}
-                  </Link>
-                </li>
-              ))}
-              {page !== totalRecordsCount && (
-                <li class="page-item hidden sm:flex">
-                  <Link class="page-link" href={`/sitemap/?page=${page + 1}`}>
-                    {translationStore?.paginationLast}
-                  </Link>
-                </li>
-              )}
-            </ul>
-          </nav>
-        )
-      }
-    </div>
+    <SitemapComponent
+      {translationStore}
+      {sitemapData}
+      {totalRecords}
+      {page}
+      client:load
+    />
   </div>
 </MainLayout>
-
-<style lang="postcss">
-  .pagination {
-			.page-item {
-				&:first-child {
-					:global(.page-link) {
-						@apply rounded-tl-[6px] rounded-bl-[6px];
-					}
-				}
-				&:last-child {
-					:global(.page-link) {
-						@apply rounded-tr-[6px] rounded-br-[6px];
-					}
-				}
-				&.disabled {
-					:global(.page-link) {
-						@apply text-pagination-disabled-color pointer-events-none;
-					}
-				}
-				&.disabled.default {
-					:global(.page-link) {
-						@apply bg-pagination-disabled-bg;
-					}
-				}
-				:global(.page-link) {
-					@apply relative uppercase block px-3 py-[6px] text-link-color bg-pagination-bg-color border border-pagination-border-color hover:text-link-hover-color hover:bg-pagination-hover-bg;
-					transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-						border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-				}
-				&:not(:first-child) {
-					:global(.page-link) {
-						@apply -ml-[1px];
-					}
-				}
-			}
-		}
-</style>
