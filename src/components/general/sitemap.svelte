@@ -179,6 +179,7 @@
     sitemapDataColumnsHandler();
     totalRecordsCount = totalRecords.reduce((acc, curr) => acc + curr, 0);
     paginationList = generatePagination(150, page, 10);
+    console.log(paginationList);
   });
 </script>
 
@@ -205,7 +206,7 @@
           <li class="page-item hidden sm:flex">
             <Link
               class="px-3 py-2 border border-pagination-border-color bg-pagination-bg-color text-link-color hover:text-link-hover-color hover:bg-pagination-hover-bg transition-colors ease-in-out duration-150 rounded-l-md"
-              href={`/sitemap${page === 2 ? "" : "/page?=" + (page - 1)}`}
+              href={`/sitemap${page === 2 ? "" : "/?page=" + (page - 1)}`}
             >
               {translationStore?.paginationFirst}
             </Link>
