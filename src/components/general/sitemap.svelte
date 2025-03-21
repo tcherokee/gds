@@ -14,6 +14,7 @@
   let sitemapDataColumns: Array<Array<TSitemapData>> = [];
   let sitemapRecordMap = {
     users: [0, 0],
+    "casino-live": [0, 0],
     "custom-pages": [0, 0],
     "slot-categories": [0, 0],
     "slot-providers": [0, 0],
@@ -24,6 +25,7 @@
 
   const headerMapObj: Record<string, string> = {
     users: "Authors",
+    "casino-live": "Casino Live",
     "custom-pages": "Custom Pages",
     "slot-categories": "Slot Categories",
     "slot-providers": "Software Slot Machines",
@@ -92,6 +94,7 @@
       const headerLastIndex = sitemapData.findLastIndex(
         (item) => item.endpoint === header
       );
+      console.log(header, '==>', headerFirstIndex, headerLastIndex);
       const firstIndex =
         headerLastIndex < 50 || headerFirstIndex < 50
           ? 0
@@ -103,10 +106,12 @@
         headerFirstIndex < 50
           ? headerFirstIndex
           : headerFirstIndex > 50 && headerFirstIndex < 100
-            ? 100 - headerFirstIndex
-            : 150 - headerFirstIndex;
+            ? headerFirstIndex%50
+            : headerFirstIndex%100;
       sitemapRecordMap[header] = [firstIndex, secondIndex];
     }
+    console.log(sitemapDataColumns);
+    console.log(sitemapRecordMap);
   };
 
   const sitemapLastRecordHandler = async (
@@ -170,6 +175,7 @@
       const result = await response.json();
       sitemapData = result.data as TSitemapData[];
     }
+    console.log(sitemapData);
     sitemapDataColumnsHandler();
     totalRecordsCount = totalRecords.reduce((acc, curr) => acc + curr, 0);
     paginationList = generatePagination(150, page, 10);
@@ -181,7 +187,7 @@
     <div class="md:w-1/3">
       {#each column as item, index}
         {#if sitemapRecordMap[item.endpoint][0] === i && sitemapRecordMap[item.endpoint][1] === index}
-          <h2 class="text-2xl my-3">{headerMapObj[item.endpoint]}</h2>
+          <h2 class="text-2xl my-3">{translationStore[item.endpoint]}</h2>
         {/if}
         <div>
           <a href={item.url}>{item.title}</a>

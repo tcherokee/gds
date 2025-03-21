@@ -24,36 +24,66 @@ const sitemapEndpointMap = {
         $eq: true,
       },
     },
+    endpoint: "users",
     path: "author",
   },
   casinos: {
     fields: ["slug", "title"],
     filters: {},
+    endpoint: "casinos",
     path: "casino/recensione",
   },
   "casino-providers": {
     fields: ["slug", "title"],
     filters: {},
+    endpoint: "casino-providers",
     path: "casino-online",
+  },
+  "casino-live": {
+    fields: ["urlPath", "title"],
+    filters: {
+      pageType: {
+        $eq: "CASINO_LIVE",
+      },
+    },
+    endpoint: "custom-pages",
+    path: "",
   },
   "custom-pages": {
     fields: ["urlPath", "title"],
-    filters: {},
+    filters: {
+      $or: [
+        {
+          pageType: {
+            $eq: "GUIDA_CASINO",
+          },
+        },
+        {
+          pageType: {
+            $null: true,
+          },
+        },
+      ],
+    },
+    endpoint: "custom-pages",
     path: "",
   },
   "slot-categories": {
     fields: ["slug", "title"],
     filters: {},
+    endpoint: "slot-categories",
     path: "slot-machine",
   },
   "slot-providers": {
     fields: ["slug", "title"],
     filters: {},
+    endpoint: "slot-providers",
     path: "software-slot-machine",
   },
   games: {
     fields: ["slug", "title"],
     filters: {},
+    endpoint: "games",
     path: "slot-machines",
   },
 };
@@ -64,9 +94,10 @@ export async function fetchSitemapData(
   lastRecordId: number | null = null,
   pageSize = 150
 ) {
-  const sitemapEndpoints = Object.keys(sitemapEndpointMap) as Array<
+  const sitemapEndpointKeys = Object.keys(sitemapEndpointMap) as Array<
     keyof typeof sitemapEndpointMap
   >;
+  console.log(sitemapEndpointKeys);
 
   try {
     let startIndex = (page - 1) * pageSize;
@@ -76,16 +107,19 @@ export async function fetchSitemapData(
     let usedEndpoints: string[] = [];
     let newLastRecordId: number | null = lastRecordId; // Track last ID
 
-    for (let i = 0; i < sitemapEndpoints.length; i++) {
+    for (let i = 0; i < sitemapEndpointKeys.length; i++) {
       let endpointTotal = totalRecords[i];
       let previousTotal = cumulativeTotal;
       cumulativeTotal += endpointTotal;
 
       // If the startIndex falls within this endpoint
       if (startIndex < cumulativeTotal) {
-        let selectedEndpoint = sitemapEndpoints[i];
+        let selectedSitemapKey = sitemapEndpointKeys[i];
+        let selectedEndpoint = sitemapEndpointMap[selectedSitemapKey].endpoint;
         let adjustedStartIndex = startIndex - previousTotal;
         let adjustedPage = Math.floor(adjustedStartIndex / pageSize) + 1;
+
+        console.log(selectedSitemapKey, selectedEndpoint);
 
         while (remainingItems > 0) {
           // Determine how many records can be fetched from this endpoint
@@ -96,9 +130,9 @@ export async function fetchSitemapData(
 
           const endpointQuery = qs.stringify(
             sitemapPageQs(
-              sitemapEndpointMap[selectedEndpoint].fields,
+              sitemapEndpointMap[selectedSitemapKey].fields,
               {
-                ...sitemapEndpointMap[selectedEndpoint].filters,
+                ...sitemapEndpointMap[selectedSitemapKey].filters,
                 ...(lastRecordId &&
                   remainingItems === pageSize && { id: { $gt: lastRecordId } }),
               },
@@ -107,6 +141,7 @@ export async function fetchSitemapData(
             ),
             { encodeValuesOnly: true }
           );
+          console.log(endpointQuery);
 
           // Fetch data from the selected endpoint
           const result = await fetchApi<any[]>({
@@ -121,12 +156,12 @@ export async function fetchSitemapData(
           }
 
           const modifiedResult = result.map((item) => {
-            let baseUrl = `${import.meta.env.PUBLIC_FULL_URL}/${sitemapEndpointMap[selectedEndpoint].path}`;
+            let baseUrl = `${import.meta.env.PUBLIC_FULL_URL}/${sitemapEndpointMap[selectedSitemapKey].path}`;
             if (selectedEndpoint === "users") {
               return {
                 url: `${baseUrl}/${item.firstName.toLowerCase()}.${item.lastName.toLowerCase()}/`,
                 title: `${item.firstName} ${item.lastName}`,
-                endpoint: sitemapEndpoints[i],
+                endpoint: selectedEndpoint,
                 id: item.id,
               };
             }
@@ -134,8 +169,12 @@ export async function fetchSitemapData(
               return {
                 url: `${baseUrl}${item.attributes.urlPath}/`,
                 title: item.attributes.title,
-                endpoint: sitemapEndpoints[i],
+                endpoint: selectedSitemapKey,
                 id: item.id,
+                type:
+                  selectedSitemapKey === "casino-live"
+                    ? "CASINO_LIVE"
+                    : "GUIDA_CASINO",
               };
             }
             return {
@@ -153,8 +192,10 @@ export async function fetchSitemapData(
 
           // If we still need more data, move to the next endpoint
           if (remainingItems > 0) {
-            if (i + 1 < sitemapEndpoints.length) {
-              selectedEndpoint = sitemapEndpoints[++i];
+            if (i + 1 < sitemapEndpointKeys.length) {
+              selectedSitemapKey = sitemapEndpointKeys[++i];
+              selectedEndpoint =
+                sitemapEndpointMap[selectedSitemapKey].endpoint;
               adjustedPage = 1; // Reset page for new endpoint
               endpointTotal = totalRecords[i];
             } else {

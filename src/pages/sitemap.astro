@@ -45,6 +45,7 @@ const sitemapPage = await fetchApi<CustomPageItem[]>({
 const totalRecordsResponse = await fetchApi<{
   casinos: number;
   casinoProviders: number;
+  casinoLive: number;
   customPages: number;
   slotCategories: number;
   slotProviders: number;
@@ -59,12 +60,13 @@ const totalRecords = [
   totalRecordsResponse.author,
   totalRecordsResponse.casinos,
   totalRecordsResponse.casinoProviders,
+  totalRecordsResponse.casinoLive,
   totalRecordsResponse.customPages,
   totalRecordsResponse.slotCategories,
   totalRecordsResponse.slotProviders,
   totalRecordsResponse.games,
 ];
-const totalRecordsCount = totalRecords.reduce((acc, curr) => acc + curr, 0);
+console.log(totalRecordsResponse);
 
 let sitemapData: TSitemapData[] = [];
 if (page === 1) {
