@@ -67,7 +67,7 @@ const gamePage = await fetchApi<Gamepage[]>({
 
 // Set Page SEO DATA
 let seo = {
-  pageTitle: gamePage[0]?.attributes?.seo?.metaTitle,
+  pageTitle: `${gamePage[0]?.attributes?.title} Slot Machine Demo Gratis - Giochi di Slots`,
   metaDescription: gamePage[0]?.attributes?.seo?.metaDescription,
   url: siteURL,
 };

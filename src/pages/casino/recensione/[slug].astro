@@ -227,7 +227,7 @@ const reviewSchema = {
   reviewBody: `${casinoPage[0]?.attributes?.testimonial?.testimonial}`,
   publisher: {
     "@type": "Organization",
-    name: `${import.meta.env.PUBLIC_SITE_ID}`,
+    name: `${import.meta.env.SITE_NAME}`,
     url: `${import.meta.env.PUBLIC_FULL_URL}`,
     logo: `${casinoPage[0]?.attributes?.images?.data?.attributes?.url}`,
   },
