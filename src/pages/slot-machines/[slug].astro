@@ -36,13 +36,9 @@ import { getTranslations } from "../../../utils/api-requests";
 import { layoutQs } from "../../../qs/layout";
 import type { LayoutData } from "../../../interfaces/layout";
 import UserReviews from "../../components/general/userReviews.svelte";
-import {
-   getUserCountry,
-  userCountryHandler,
-} from "../../../utils/ip-request";
+import { getUserCountry, userCountryHandler } from "../../../utils/ip-request";
 
-
-const userCountry = await  getUserCountry();
+const userCountry = await getUserCountry();
 const country = await userCountryHandler(
   userCountry?.location?.country.toLowerCase() || ""
 );
@@ -66,8 +62,14 @@ const gamePage = await fetchApi<Gamepage[]>({
 });
 
 // Set Page SEO DATA
+let pageTitle =
+  import.meta.env.PUBLIC_SITE_ID === "gr"
+    ? `${gamePage[0]?.attributes?.title} Slot Machine Online - Gaming Report`
+    : import.meta.env.PUBLIC_SITE_ID === "tgs"
+      ? `${gamePage[0]?.attributes?.title} Tragamonedas gratis - ${import.meta.env.SITE_NAME}`
+      : `${gamePage[0]?.attributes?.title} Slot Machine Demo Gratis - ${import.meta.env.SITE_NAME}`;
 let seo = {
-  pageTitle: `${gamePage[0]?.attributes?.title} Slot Machine Demo Gratis - Giochi di Slots`,
+  pageTitle: pageTitle,
   metaDescription: gamePage[0]?.attributes?.seo?.metaDescription,
   url: siteURL,
 };
