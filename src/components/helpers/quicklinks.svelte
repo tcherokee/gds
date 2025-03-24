@@ -218,9 +218,9 @@ onMount(() => {
         {:else}
           {#each filterQuickLinks as link}
             <li class="py-0.5 px-0 m-0">
-              <Link class="underline underline-offset-4" href={`#${link.id}/`}>
+              <a class="underline underline-offset-4" href={`#${link.id}/`}>
                 {link.text}
-              </Link>
+              </a>
             </li>
           {/each}
         {/if}
