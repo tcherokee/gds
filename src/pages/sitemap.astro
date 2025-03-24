@@ -70,6 +70,7 @@ const totalRecordsCount = totalRecords.reduce((acc, curr) => acc + curr, 0);
 
 const pageCount = Math.ceil(totalRecordsCount / 150);
 const paginationList = generatePagination(page, pageCount, 6);
+console.log("PAGINATION LIST", paginationList);
 
 let lastRecordId = null;
 let sitemapRecordMap: Record<string, [number, number]> = {
@@ -138,7 +139,7 @@ sitemapHeaderHandler();
 let seo = {
   pageTitle: "Sitemap",
   metaDescription: "Sitemap",
-  url: "",
+  url: `${import.meta.env.PUBLIC_FULL_URL}/sitemap`,
 };
 
 // Tell the browser to always check the freshness of the cache
@@ -189,7 +190,7 @@ Astro.response.headers.set(
               <li class="hidden sm:flex">
                 <Link
                   class="px-3 py-1.5 border border-pagination-border-color bg-pagination-bg-color text-link-color hover:text-link-hover-color hover:bg-pagination-hover-bg transition-colors ease-in-out duration-150 rounded-l-md"
-                  href={`${page === 2 ? "" : "?page=" + (page - 1)}`}
+                  href={`${page === 2 ? "/sitemap" : "?page=" + (page - 1)}`}
                 >
                   {translationStore?.paginationFirst}
                 </Link>
@@ -207,7 +208,7 @@ Astro.response.headers.set(
                     group-[.disabled]:pointer-events-none group-[.disabled]:text-pagination-disabled-color group-[.disabled.default]:bg-pagination-disabled-bg`}
                   href={item === "..."
                     ? "#"
-                    : `${item === 1 ? "" : "?page=" + item}`}
+                    : `${item === 1 ? "/sitemap" : "?page=" + item}`}
                 >
                   {item}
                 </Link>
