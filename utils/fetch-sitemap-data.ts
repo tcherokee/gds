@@ -16,6 +16,7 @@ export const sitemapPageQs = (
     pageSize,
   },
 });
+
 const sitemapEndpointMap = {
   users: {
     fields: ["firstName", "lastName"],
@@ -97,7 +98,6 @@ export async function fetchSitemapData(
   const sitemapEndpointKeys = Object.keys(sitemapEndpointMap) as Array<
     keyof typeof sitemapEndpointMap
   >;
-  console.log(sitemapEndpointKeys);
 
   try {
     let startIndex = (page - 1) * pageSize;
@@ -119,8 +119,6 @@ export async function fetchSitemapData(
         let adjustedStartIndex = startIndex - previousTotal;
         let adjustedPage = Math.floor(adjustedStartIndex / pageSize) + 1;
 
-        console.log(selectedSitemapKey, selectedEndpoint);
-
         while (remainingItems > 0) {
           // Determine how many records can be fetched from this endpoint
           let availableRecords = endpointTotal - (adjustedPage - 1) * pageSize;
@@ -141,7 +139,6 @@ export async function fetchSitemapData(
             ),
             { encodeValuesOnly: true }
           );
-          console.log(endpointQuery);
 
           // Fetch data from the selected endpoint
           const result = await fetchApi<any[]>({
@@ -168,7 +165,7 @@ export async function fetchSitemapData(
             if (selectedEndpoint === "custom-pages") {
               return {
                 url: `${baseUrl}${item.attributes.urlPath}/`,
-                title: item.attributes.title,
+                title: removeGratis(item.attributes.title),
                 endpoint: selectedSitemapKey,
                 id: item.id,
                 type:
@@ -179,7 +176,10 @@ export async function fetchSitemapData(
             }
             return {
               url: `${baseUrl}/${item.attributes.slug}/`,
-              title: item.attributes.title,
+              title: sitemapAnchorTextResolver(
+                selectedEndpoint,
+                removeGratis(item.attributes.title)
+              ),
               endpoint: selectedEndpoint,
               id: item.id,
             };
@@ -222,3 +222,27 @@ export async function fetchSitemapData(
     return { error: "Failed to fetch data" };
   }
 }
+
+const sitemapAnchorTextResolver = (endpoint: string, title: string): string => {
+  switch (endpoint) {
+    case "casinos":
+      return `Recensione ${title}`;
+    case "casino-providers":
+      return `${title} Casino Online`;
+    case "games":
+      return `${title} Slot`;
+    case "slot-categories":
+      return `Slot Machine ${title}`;
+    case "slot-providers":
+      return `${title} Slot machines`;
+    default:
+      return title;
+  }
+};
+
+const removeGratis = (title: string): string => {
+  return title
+    .replace(/\bgratis\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+};
