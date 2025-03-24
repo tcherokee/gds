@@ -16,6 +16,9 @@ const page = Number(url.searchParams.get("page")) || 1;
 export const sitemapCustomPageQs = () => ({
   fields: ["slug", "title", "urlPath"],
   populate: {
+    seo: {
+      fields: ["metaTitle", "metaDescription"],
+    },
     blocks: {
       populate: {
         content: true,
@@ -41,6 +44,8 @@ const sitemapPage = await fetchApi<CustomPageItem[]>({
   wrappedByKey: "data",
   query: `?${query}`,
 });
+
+console.log("sitemapPage", sitemapPage);
 
 const totalRecordsResponse = await fetchApi<{
   casinos: number;
@@ -70,7 +75,6 @@ const totalRecordsCount = totalRecords.reduce((acc, curr) => acc + curr, 0);
 
 const pageCount = Math.ceil(totalRecordsCount / 150);
 const paginationList = generatePagination(page, pageCount, 6);
-console.log("PAGINATION LIST", paginationList);
 
 let lastRecordId = null;
 let sitemapRecordMap: Record<string, [number, number]> = {
@@ -135,11 +139,11 @@ const sitemapHeaderHandler = () => {
 };
 sitemapHeaderHandler();
 
-// TODO
-let seo = {
-  pageTitle: "Sitemap",
-  metaDescription: "Sitemap",
-  url: `${import.meta.env.PUBLIC_FULL_URL}/sitemap`,
+// SEO Object
+const seo = {
+  pageTitle: sitemapPage?.[0]?.attributes?.seo?.metaTitle,
+  metaDescription: sitemapPage?.[0]?.attributes?.seo?.metaDescription,
+  url: `${import.meta.env.FULL_URL}/sitemap${page > 1 ? `?page=${page}` : ""}`,
 };
 
 // Tell the browser to always check the freshness of the cache
