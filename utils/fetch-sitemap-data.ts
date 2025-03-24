@@ -53,16 +53,25 @@ const sitemapEndpointMap = {
   "custom-pages": {
     fields: ["urlPath", "title"],
     filters: {
-      $or: [
+      $and: [
         {
-          pageType: {
-            $eq: "GUIDA_CASINO",
+          urlPath: {
+            $ne: "sitemap",
           },
         },
         {
-          pageType: {
-            $null: true,
-          },
+          $or: [
+            {
+              pageType: {
+                $eq: "GUIDA_CASINO",
+              },
+            },
+            {
+              pageType: {
+                $null: true,
+              },
+            },
+          ],
         },
       ],
     },
