@@ -110,3 +110,37 @@ export const CleanAuthorCasinosForBlock = (casinoArr: any) => {
 		}
 	})
 }
+
+export const generatePagination = (
+  currentPage: number,
+  totalPageCount: number,
+  maxVisiblePages = 6
+): (number | string)[] => {
+  if (totalPageCount <= maxVisiblePages) {
+    return Array.from({ length: totalPageCount }, (_, i) => i + 1);
+  }
+
+  const pagination: (number | string)[] = [1];
+
+  let startPage = Math.max(2, currentPage - 1);
+  let endPage = Math.min(totalPageCount - 1, currentPage + 1);
+
+  if (currentPage <= 3) {
+    startPage = 2;
+    endPage = 4;
+  } else if (currentPage >= totalPageCount - 2) {
+    startPage = totalPageCount - 3;
+    endPage = totalPageCount - 1;
+  }
+
+  if (startPage > 2) pagination.push("...");
+  pagination.push(
+    ...Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i)
+  );
+  if (endPage < totalPageCount - 1) pagination.push("...");
+
+  pagination.push(totalPageCount);
+
+  return pagination;
+};
+

@@ -736,3 +736,16 @@ export type UserCountry = {
   };
   ip: string;
 };
+
+export type TSitemapData = {
+  url: string;
+  title: string;
+  endpoint:
+    | "users"
+    | "custom-pages"
+    | "slot-categories"
+    | "slot-providers"
+    | "games"
+    | "casino-providers"
+    | "casinos";
+};

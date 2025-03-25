@@ -1,0 +1,256 @@
+---
+import qs from "qs";
+import { getTranslations } from "../../utils/api-requests";
+import fetchApi from "../../lib/strapi";
+// Components
+import MainLayout from "../layouts/MainLayout.astro";
+import { fetchSitemapData } from "../../utils/fetch-sitemap-data";
+import type { CustomPageItem } from "../../interfaces/custom-pages";
+import IntroductionWithImage from "../components/general/introWithImage.astro";
+import { Link } from "astro-link";
+import { generatePagination } from "../../utils/utilities.util";
+const translationStore = await getTranslations();
+const url = new URL(Astro.request.url);
+const page = Number(url.searchParams.get("page")) || 1;
+
+export const sitemapCustomPageQs = () => ({
+  fields: ["slug", "title", "urlPath"],
+  populate: {
+    seo: {
+      fields: ["metaTitle", "metaDescription"],
+    },
+    blocks: {
+      populate: {
+        content: true,
+        image: {
+          fields: ["url", "alternativeText", "mime"],
+        },
+      },
+    },
+  },
+  filters: {
+    urlPath: {
+      $eq: "sitemap",
+    },
+  },
+});
+
+const query = qs.stringify(sitemapCustomPageQs(), {
+  encodeValuesOnly: true,
+});
+
+const sitemapPage = await fetchApi<CustomPageItem[]>({
+  endpoint: "custom-pages",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
+
+const totalRecordsResponse = await fetchApi<{
+  casinos: number;
+  casinoProviders: number;
+  casinoLive: number;
+  customPages: number;
+  slotCategories: number;
+  slotProviders: number;
+  games: number;
+  author: number;
+}>({
+  endpoint: "total-records",
+  wrappedByKey: "",
+  query: ``,
+});
+const totalRecords = [
+  totalRecordsResponse.author,
+  totalRecordsResponse.casinos,
+  totalRecordsResponse.casinoProviders,
+  totalRecordsResponse.casinoLive,
+  totalRecordsResponse.customPages,
+  totalRecordsResponse.slotCategories,
+  totalRecordsResponse.slotProviders,
+  totalRecordsResponse.games,
+];
+const totalRecordsCount = totalRecords.reduce((acc, curr) => acc + curr, 0);
+
+const pageCount = Math.ceil(totalRecordsCount / 150);
+const paginationList = generatePagination(page, pageCount, 6);
+
+let lastRecordId = null;
+let sitemapRecordMap: Record<string, [number, number]> = {
+  users: [0, 0],
+  "casino-live": [0, 0],
+  "custom-pages": [0, 0],
+  "slot-categories": [0, 0],
+  "slot-providers": [0, 0],
+  games: [0, 0],
+  "casino-providers": [0, 0],
+  casinos: [0, 0],
+};
+
+if (page > 1) {
+  for (let i = 1; i < page; i++) {
+    const sitemapResponse = await fetchSitemapData(
+      totalRecords,
+      i,
+      lastRecordId
+    );
+    lastRecordId = sitemapResponse.lastRecordId;
+  }
+}
+const sitemapResponse = await fetchSitemapData(
+  totalRecords,
+  page,
+  lastRecordId
+);
+const sitemapData = sitemapResponse.data || [];
+const sitemapDataColumns = [
+  sitemapData.length > 0 ? [...sitemapData.slice(0, 50)] : [],
+  sitemapData.length > 50 ? [...sitemapData.slice(50, 100)] : [],
+  sitemapData.length > 100 ? [...sitemapData.slice(100, 150)] : [],
+];
+const sitemapHeaderHandler = () => {
+  const headerList = [
+    ...new Set(sitemapData.map((item) => item.endpoint)),
+  ] as Array<keyof typeof sitemapRecordMap>;
+  for (const header of headerList) {
+    const headerFirstIndex = sitemapData.findIndex(
+      (item) => item.endpoint === header
+    );
+    const headerLastIndex = sitemapData.findLastIndex(
+      (item) => item.endpoint === header
+    );
+
+    const firstIndex =
+      headerLastIndex < 50 || headerFirstIndex < 50
+        ? 0
+        : (headerLastIndex > 49 && headerLastIndex < 100) ||
+            (headerFirstIndex > 49 && headerFirstIndex < 100)
+          ? 1
+          : 2;
+    const secondIndex =
+      headerFirstIndex < 50
+        ? headerFirstIndex
+        : headerFirstIndex > 50 && headerFirstIndex < 100
+          ? headerFirstIndex % 50
+          : headerFirstIndex % 100;
+    sitemapRecordMap[header] = [firstIndex, secondIndex];
+  }
+};
+sitemapHeaderHandler();
+
+// SEO Object
+const seo = {
+  pageTitle: sitemapPage?.[0]?.attributes?.seo?.metaTitle,
+  metaDescription: sitemapPage?.[0]?.attributes?.seo?.metaDescription,
+  url: `${import.meta.env.FULL_URL}/sitemap${page > 1 ? `?page=${page}` : ""}`,
+};
+
+// Tell the browser to always check the freshness of the cache
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+// CDN Cache Control
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
+---
+
+<MainLayout seoData={seo}>
+  <div class="featured-background curve pb-[50px]">
+    <div class="container">
+      <IntroductionWithImage
+        data={sitemapPage?.[0]?.attributes?.blocks?.[0]}
+        {translationStore}
+      />
+    </div>
+  </div>
+  <div class="xl:container content-auto px-2 pt-5">
+    <div class="md:flex gap-x-4">
+      {
+        sitemapDataColumns.map((column, rowIndex) => (
+          <div class="md:w-1/3">
+            {column.map((item, columnIndex) => (
+              <div>
+                {sitemapRecordMap[item.endpoint][0] === rowIndex &&
+                  sitemapRecordMap[item.endpoint][1] === columnIndex && (
+                    <h2 class="text-2xl my-3">
+                      {translationStore?.[item.endpoint]}
+                    </h2>
+                  )}
+                <a href={item.url} class="hover:underline">
+                  {item.title}
+                </a>
+              </div>
+            ))}
+          </div>
+        ))
+      }
+      <!-- {
+        sitemapDataColumns.map((column, rowIndex) => (
+          <div class="md:w-1/3">
+            {
+              column.map((item, columnIndex) => (
+                sitemapRecordMap[item.endpoint][0] === rowIndex && sitemapRecordMap[item.endpoint][1] === columnIndex ? <h2 class="text-2xl my-3">{translationStore?.[item.endpoint]}</h2> : <></>
+                <div>
+                  <a href={item.url} class="hover:underline">{item.title}</a>
+                </div>
+              ))
+            }
+        </div>
+        ))
+      } -->
+    </div>
+
+    <div>
+      {
+        totalRecordsCount > 1 && (
+          <nav aria-label="page navigation" class="w-full mt-3">
+            <ul class="flex pagination justify-center">
+              {page !== 1 && (
+                <li class="hidden sm:flex">
+                  <Link
+                    class="px-3 py-1.5 border border-pagination-border-color bg-pagination-bg-color text-link-color hover:text-link-hover-color hover:bg-pagination-hover-bg transition-colors ease-in-out duration-150 rounded-l-md"
+                    href={`${page === 2 ? "/sitemap" : "?page=" + (page - 1)}`}
+                  >
+                    {translationStore?.paginationFirst}
+                  </Link>
+                </li>
+              )}
+              {paginationList.map((item, index) => (
+                <li
+                  class={`group ${
+                    (page === item || item === "...") && "disabled"
+                  } ${item !== "..." && "default"}`}
+                >
+                  <Link
+                    class={`relative uppercase block px-3 py-1.5 text-link-color bg-pagination-bg-color border border-pagination-border-color hover:text-link-hover-color hover:bg-pagination-hover-bg group-first:rounded-tl-md group-first:rounded-bl-md transition-colors ease-in-out duration-150
+                    group-[.disabled]:pointer-events-none group-[.disabled]:text-pagination-disabled-color group-[.disabled.default]:bg-pagination-disabled-bg`}
+                    href={
+                      item === "..."
+                        ? "#"
+                        : `${item === 1 ? "/sitemap" : "?page=" + item}`
+                    }
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+              {page !== totalRecordsCount && (
+                <li class="hidden sm:flex">
+                  <Link
+                    class="px-3 py-1.5 border border-pagination-border-color bg-pagination-bg-color text-link-color hover:text-link-hover-color hover:bg-pagination-hover-bg transition-colors ease-in-out duration-150 rounded-r-md"
+                    href={`?page=${page + 1}`}
+                  >
+                    {translationStore?.paginationLast}
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </nav>
+        )
+      }
+    </div>
+  </div>
+</MainLayout>
