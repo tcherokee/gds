@@ -25,7 +25,8 @@
   export let isGamePage = false;
 
   // Regex to target H2 Headings
-  const h2Regex = /<h2>(.*?)<\/h2>/g;
+  // /<h2>(.*?)<\/h2>/g;
+  const h2Regex = /<h2[^>]*>(.*?)<\/h2>/g;
 
   //Function to Extract H2 Headings from Content Blocks
   const extractH2TextBlock = (components: Block[]): quicklinksObj[] => {
@@ -120,12 +121,12 @@
               }))
             );
             break;
-          case "proscons":
-            qlArray.push({
-              text: element[key].heading,
-              id: sanitizeAndHyphenate(element[key].heading),
-            });
-            break;
+          // case "proscons":
+          //   qlArray.push({
+          //     text: element[key].heading,
+          //     id: sanitizeAndHyphenate(element[key].heading),
+          //   });
+          //   break;
           case "heading":
             if (isGamePage) {
               qlArray.push({
@@ -176,7 +177,7 @@
 
 onMount(() => {
   const quickLinkNodes = document.querySelectorAll(
-    ".content-block h2, .howto-container h2, h2.faq-title"
+    ".content-block h2, .howto-container h2, .howto-title h2, h2.faq-title"
   );
 
   const processQuickLinkNodes = (nodes: any) => {
@@ -210,9 +211,9 @@ onMount(() => {
         {#if matches}
           {#each reorderedQuickLinks as link}
             <li class="py-0.5 px-0 m-0">
-              <Link class="underline underline-offset-4" href={`#${link.id}/`}>
+              <a class="underline underline-offset-4" href={`#${link.id}/`}>
                 {link.text}
-              </Link>
+              </a>
             </li>
           {/each}
         {:else}

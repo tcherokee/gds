@@ -995,7 +995,7 @@ Astro.response.headers.set(
       </div>
       <div class="grid md:grid-cols-4 gap-8">
         <div class="col-span-1 md:col-span-3">
-          <QuickLinks data={casinoPage[0]} block="" {translationStore} />
+          <QuickLinks data={casinoPage[0]} block="" {translationStore} client:load />
 
           <ImageCarousel
             data={casinoPage[0]?.attributes.blocks[0]}
@@ -1011,7 +1011,9 @@ Astro.response.headers.set(
 
           {
             casinoPage[0]?.attributes?.howTo && (
-              <h2>{casinoPage[0]?.attributes?.howTo.title}</h2>
+              <div class="howto-title">
+                <h2>{casinoPage[0]?.attributes?.howTo.title}</h2>
+              </div>
             )
           }
 
