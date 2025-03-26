@@ -10,7 +10,10 @@
     isProsAndConsType,
     isSingleContentBlock,
   } from "../../../interfaces/common/typeguards";
-  import type { Block, quicklinksObj } from "../../../interfaces/common/types.ts";
+  import type {
+    Block,
+    quicklinksObj,
+  } from "../../../interfaces/common/types.ts";
 
   // Helpers
   import { sanitizeAndHyphenate } from "../../../lib/sanitizeAndHyphenate";
@@ -20,9 +23,20 @@
   import Link from "./link.svelte";
   import MediaQuery from "./mediaQuery.svelte";
   export let data;
-  export let block;
+  export let block = [];
   export let translationStore;
   export let isGamePage = false;
+  export let orderMap: { [key: string]: number } = {
+    heading: 1,
+    introduction: 2,
+    gameInfoTable: 3,
+    content1: 4,
+    content2: 5,
+    content3: 6,
+    content4: 7,
+    howTo: 8,
+    faqs: 9,
+  };
 
   // Regex to target H2 Headings
   // /<h2>(.*?)<\/h2>/g;
@@ -102,11 +116,14 @@
     for (const key in element) {
       if (quickLinkKeys.includes(key) && element[key]) {
         switch (key) {
-          case "howTo":
-            qlArray.push({
-              text: element[key].title,
-              id: sanitizeAndHyphenate(element[key].title),
-            });
+          case "heading":
+            if (isGamePage) {
+              qlArray.push({
+                text: element[key],
+                id: sanitizeAndHyphenate(element[key]),
+                order: orderMap.heading,
+              });
+            }
             break;
           case "content1":
           case "content2":
@@ -118,6 +135,7 @@
               ...matches.map((match) => ({
                 text: match[1],
                 id: sanitizeAndHyphenate(match[1]),
+                order: orderMap[key],
               }))
             );
             break;
@@ -127,18 +145,18 @@
           //     id: sanitizeAndHyphenate(element[key].heading),
           //   });
           //   break;
-          case "heading":
-            if (isGamePage) {
-              qlArray.push({
-                text: element[key].heading,
-                id: sanitizeAndHyphenate(element[key].heading),
-              });
-            }
-            break;
           case "gameInfoTable":
             qlArray.push({
               text: translationStore.gameInfoTableH2,
               id: sanitizeAndHyphenate(translationStore.gameInfoTableH2),
+              order: orderMap.gameInfoTable,
+            });
+            break;
+          case "howTo":
+            qlArray.push({
+              text: element[key].title,
+              id: sanitizeAndHyphenate(element[key].title),
+              order: orderMap.howTo,
             });
             break;
           case "faqs":
@@ -146,6 +164,7 @@
               qlArray.push({
                 text: translationStore.faq,
                 id: sanitizeAndHyphenate(translationStore.faq),
+                order: orderMap.faqs,
               });
             }
             break;
@@ -158,10 +177,21 @@
     return qlArray;
   };
 
+  const optimizedSortByOrder = (arr) => {
+    return arr.sort((a, b) => {
+      // Handle cases where order might be missing or not a number
+      const orderA = typeof a.order === "number" ? a.order : Infinity;
+      const orderB = typeof b.order === "number" ? b.order : Infinity;
+      return orderA - orderB;
+    });
+  };
+
   const quickLinks = block
     ? extractH2TextBlock(block)
     : extractH2Text(data.attributes);
-  const filterQuickLinks = quickLinks.filter((elem) => elem.text);
+  const filterQuickLinks = optimizedSortByOrder(
+    quickLinks.filter((elem) => elem.text)
+  );
 
   // Quicklinks order
   let reorderedQuickLinks: quicklinksObj[] = [];
@@ -175,26 +205,27 @@
     }
   }
 
-onMount(() => {
-  const quickLinkNodes = document.querySelectorAll(
-    ".content-block h2, .howto-container h2, .howto-title h2, h2.faq-title"
-  );
+  onMount(() => {
+    const quickLinkNodes = document.querySelectorAll(
+      "h2.intro-title, .content-block h2, .howto-container h2, .howto-title h2, h2.game-info-table-title, h2.faq-title"
+    );
 
-  const processQuickLinkNodes = (nodes: any) => {
-    let qLObjs: Array<any> = [];
-    const nodeMedian = Math.round(nodes.length / 2);
+    const processQuickLinkNodes = (nodes: any) => {
+      let qLObjs: Array<any> = [];
+      const nodeMedian = Math.round(nodes.length / 2);
 
-    Array.from(nodes).map((h: any, index: number) => {
-      const safeHeading = h.innerHTML
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]/g, "");
+      Array.from(nodes).map((h: any, index: number) => {
+        const safeHeading = h.innerHTML
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^\w-]/g, "");
 
-      h.setAttribute("id", safeHeading + "/");
-    });
-  };
-  processQuickLinkNodes(quickLinkNodes);
-});
+        h.setAttribute("id", safeHeading + "/");
+      });
+    };
+    processQuickLinkNodes(quickLinkNodes);
+  });
 </script>
 
 <Collapse
@@ -226,7 +257,6 @@ onMount(() => {
           {/each}
         {/if}
       </MediaQuery>
-      
     </ul>
   </div>
 </Collapse>

@@ -197,6 +197,15 @@ let gamePageRelatedCasinoTitle =
     "{title}",
     gamePage[0]?.attributes?.title
   );
+
+const orderMap = {
+  heading: 1,
+  introduction: 2,
+  howTo: 3,
+  gameInfoTable: 4,
+  content1: 5,
+  faqs: 6,
+};
 ---
 
 <!-- <script define:vars={{ gamePage }}>
@@ -252,10 +261,18 @@ let gamePageRelatedCasinoTitle =
     <div class="flex flex-col md:flex-row gap-x-8">
       <div class="order-last md:order-first mt-5 md:mt-0">
         <div class="quicklinks mb-5">
-          <QuickLinks data={gamePage[0]} block="" {translationStore} />
+          <QuickLinks
+            data={gamePage[0]}
+            isGamePage={true}
+            {translationStore}
+            {orderMap}
+            client:load
+          />
         </div>
         <div class="intro-content">
-          <h1 class="text-blue-700 !mt-0">{gamePage[0].attributes?.heading}</h1>
+          <h2 class="intro-title text-blue-700 !mt-0">
+            {gamePage[0].attributes?.heading}
+          </h2>
           <ContentBlock pageContent={gamePage[0]?.attributes?.introduction} />
         </div>
 
@@ -282,7 +299,9 @@ let gamePageRelatedCasinoTitle =
         {
           gamePage[0]?.attributes?.gameInfoTable && (
             <div class="info-table-content">
-              <h2 class="mb-[15px]">{translationStore?.gameInfoTableH2}</h2>
+              <h2 class="game-info-table-title mb-[15px]">
+                {translationStore?.gameInfoTableH2}
+              </h2>
               <figure class="table">
                 <table class="inner-content-table table table-primary">
                   <thead class="">
@@ -367,7 +386,7 @@ let gamePageRelatedCasinoTitle =
         {
           gamePage[0]?.attributes?.faqs.length > 0 && (
             <div class="faq-content">
-              <h2 class="mb-4">{translationStore?.faq}</h2>
+              <h2 class="faq-title mb-4">{translationStore?.faq}</h2>
               <div>
                 {gamePage[0]?.attributes?.faqs.map((faq: FaqsType) => (
                   <FaqListBlock data={faq} {translationStore} />
