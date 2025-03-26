@@ -1,6 +1,7 @@
 // src/utils/fetchPaginatedData.ts
 import qs from "qs";
 import fetchApi from "../lib/strapi";
+import { urlTranslate } from "./data-store.util";
 
 export const sitemapPageQs = (
   fields: string[],
@@ -17,6 +18,7 @@ export const sitemapPageQs = (
   },
 });
 
+const siteID = import.meta.env.SITE_ID;
 const sitemapEndpointMap = {
   users: {
     fields: ["firstName", "lastName"],
@@ -26,19 +28,19 @@ const sitemapEndpointMap = {
       },
     },
     endpoint: "users",
-    path: "author",
+    path: "/author",
   },
   casinos: {
     fields: ["slug", "title"],
     filters: {},
     endpoint: "casinos",
-    path: "casino/recensione",
+    path: `${urlTranslate[siteID as keyof typeof urlTranslate]["casino-pages"]}`,
   },
   "casino-providers": {
     fields: ["slug", "title"],
     filters: {},
     endpoint: "casino-providers",
-    path: "casino-online",
+    path: `${urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"]}`,
   },
   "casino-live": {
     fields: ["urlPath", "title"],
@@ -48,7 +50,7 @@ const sitemapEndpointMap = {
       },
     },
     endpoint: "custom-pages",
-    path: "",
+    path: "/",
   },
   "custom-pages": {
     fields: ["urlPath", "title"],
@@ -76,25 +78,25 @@ const sitemapEndpointMap = {
       ],
     },
     endpoint: "custom-pages",
-    path: "",
+    path: "/",
   },
   "slot-categories": {
     fields: ["slug", "title"],
     filters: {},
     endpoint: "slot-categories",
-    path: "slot-machine",
+    path: `${urlTranslate[siteID as keyof typeof urlTranslate]["category-pages"]}`,
   },
   "slot-providers": {
     fields: ["slug", "title"],
     filters: {},
     endpoint: "slot-providers",
-    path: "software-slot-machine",
+    path: `${urlTranslate[siteID as keyof typeof urlTranslate]["provider-pages"]}`,
   },
   games: {
     fields: ["slug", "title"],
     filters: {},
     endpoint: "games",
-    path: "slot-machines",
+    path: `${urlTranslate[siteID as keyof typeof urlTranslate]["game-pages"]}`,
   },
 };
 
@@ -133,71 +135,75 @@ export async function fetchSitemapData(
           let availableRecords = endpointTotal - (adjustedPage - 1) * pageSize;
           let currentPageSize = Math.min(remainingItems, availableRecords);
 
-          if (currentPageSize <= 0) break; // No more records left in this endpoint
+          if (currentPageSize <= 0 && endpointTotal > 0) break; // No more records left in this endpoint
 
-          const endpointQuery = qs.stringify(
-            sitemapPageQs(
-              sitemapEndpointMap[selectedSitemapKey].fields,
-              {
-                ...sitemapEndpointMap[selectedSitemapKey].filters,
-                ...(lastRecordId &&
-                  remainingItems === pageSize && { id: { $gt: lastRecordId } }),
-              },
-              adjustedPage,
-              currentPageSize
-            ),
-            { encodeValuesOnly: true }
-          );
+          if (endpointTotal > 0) {
+            const endpointQuery = qs.stringify(
+              sitemapPageQs(
+                sitemapEndpointMap[selectedSitemapKey].fields,
+                {
+                  ...sitemapEndpointMap[selectedSitemapKey].filters,
+                  ...(lastRecordId &&
+                    remainingItems === pageSize && {
+                      id: { $gt: lastRecordId },
+                    }),
+                },
+                adjustedPage,
+                currentPageSize
+              ),
+              { encodeValuesOnly: true }
+            );
 
-          // Fetch data from the selected endpoint
-          const result = await fetchApi<any[]>({
-            endpoint: selectedEndpoint,
-            wrappedByKey: `${selectedEndpoint !== "users" ? "data" : ""}`,
-            query: `?${endpointQuery}`,
-          });
+            // Fetch data from the selected endpoint
+            const result = await fetchApi<any[]>({
+              endpoint: selectedEndpoint,
+              wrappedByKey: `${selectedEndpoint !== "users" ? "data" : ""}`,
+              query: `?${endpointQuery}`,
+            });
 
-          // Stop fetching if no data is returned
-          if (result.length === 0) {
-            break;
-          }
+            // Stop fetching if no data is returned
+            if (result.length === 0) {
+              break;
+            }
 
-          const modifiedResult = result.map((item) => {
-            let baseUrl = `${import.meta.env.PUBLIC_FULL_URL}/${sitemapEndpointMap[selectedSitemapKey].path}`;
-            if (selectedEndpoint === "users") {
+            const modifiedResult = result.map((item) => {
+              let baseUrl = `${import.meta.env.PUBLIC_FULL_URL}${sitemapEndpointMap[selectedSitemapKey].path}`;
+              if (selectedEndpoint === "users") {
+                return {
+                  url: `${baseUrl}/${item.firstName.toLowerCase()}.${item.lastName.toLowerCase()}/`,
+                  title: `${item.firstName} ${item.lastName}`,
+                  endpoint: selectedEndpoint,
+                  id: item.id,
+                };
+              }
+              if (selectedEndpoint === "custom-pages") {
+                return {
+                  url: `${baseUrl}${item.attributes.urlPath}/`,
+                  title: removeGratis(item.attributes.title),
+                  endpoint: selectedSitemapKey,
+                  id: item.id,
+                  type:
+                    selectedSitemapKey === "casino-live"
+                      ? "CASINO_LIVE"
+                      : "GUIDA_CASINO",
+                };
+              }
               return {
-                url: `${baseUrl}/${item.firstName.toLowerCase()}.${item.lastName.toLowerCase()}/`,
-                title: `${item.firstName} ${item.lastName}`,
+                url: `${baseUrl}/${item.attributes.slug}/`,
+                title: sitemapAnchorTextResolver(
+                  selectedEndpoint,
+                  removeGratis(item.attributes.title)
+                ),
                 endpoint: selectedEndpoint,
                 id: item.id,
               };
-            }
-            if (selectedEndpoint === "custom-pages") {
-              return {
-                url: `${baseUrl}${item.attributes.urlPath}/`,
-                title: removeGratis(item.attributes.title),
-                endpoint: selectedSitemapKey,
-                id: item.id,
-                type:
-                  selectedSitemapKey === "casino-live"
-                    ? "CASINO_LIVE"
-                    : "GUIDA_CASINO",
-              };
-            }
-            return {
-              url: `${baseUrl}/${item.attributes.slug}/`,
-              title: sitemapAnchorTextResolver(
-                selectedEndpoint,
-                removeGratis(item.attributes.title)
-              ),
-              endpoint: selectedEndpoint,
-              id: item.id,
-            };
-          });
+            });
 
-          results.push(...modifiedResult);
-          usedEndpoints.push(selectedEndpoint);
-          remainingItems -= result.length;
-          newLastRecordId = result[result.length - 1]?.id || newLastRecordId;
+            results.push(...modifiedResult);
+            usedEndpoints.push(selectedEndpoint);
+            remainingItems -= result.length;
+            newLastRecordId = result[result.length - 1]?.id || newLastRecordId;
+          }
 
           // If we still need more data, move to the next endpoint
           if (remainingItems > 0) {
@@ -243,7 +249,7 @@ const sitemapAnchorTextResolver = (endpoint: string, title: string): string => {
     case "slot-categories":
       return `Slot Machine ${title}`;
     case "slot-providers":
-      return `${title} Slot machines`;
+      return `${title} Slot machine`;
     default:
       return title;
   }
