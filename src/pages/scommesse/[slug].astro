@@ -244,6 +244,16 @@ if (howTo) {
   combinedSchema.push(howToSchema);
 }
 
+const orderMap = {
+  introduction: 1,
+  howTo: 2,
+  content1: 3,
+  content2: 4,
+  content3: 5,
+  content4: 6,
+  faqs: 7,
+};
+
 // Tell the browser to always check the freshness of the cache
 Astro.response.headers.set(
   "Cache-Control",
@@ -922,7 +932,12 @@ Astro.response.headers.set(
       </div>
       <div class="grid md:grid-cols-4 gap-8">
         <div class="col-span-1 md:col-span-3">
-          <QuickLinks data={sportPage[0]} block="" {translationStore} />
+          <QuickLinks
+            data={sportPage[0]}
+            {translationStore}
+            {orderMap}
+            client:load
+          />
 
           <ImageCarousel
             data={sportPage[0]?.attributes.blocks[0]}
