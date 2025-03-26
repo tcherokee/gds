@@ -186,7 +186,7 @@
     });
   };
 
-  const quickLinks = block
+  const quickLinks = block.length > 0
     ? extractH2TextBlock(block)
     : extractH2Text(data.attributes);
   const filterQuickLinks = optimizedSortByOrder(
