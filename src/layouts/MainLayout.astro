@@ -42,15 +42,19 @@ import CookiesConsent from "../components/general/cookiesConsent.svelte";
 import { getLocalisation, getTranslations } from "../../utils/api-requests";
 import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 import AdPopUp from "../components/helpers/ad-pop-up.svelte";
-import {  getUserCountry, userCountryHandler } from "../../utils/ip-request";
+import { getUserCountry, userCountryHandler } from "../../utils/ip-request";
 
 const localisation = await getLocalisation();
 
-const userCountry = await  getUserCountry();
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase() || ""
-);
-const countryCode = country?.sc || "";
+const userCountry = await getUserCountry();
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
+
+const countryCode = country !== null ? country?.sc || "" : "";
 
 const siteID = `${import.meta.env.SITE_ID}`;
 const siteLang = `${import.meta.env.LANG}`;
@@ -216,7 +220,7 @@ if (crumbLocation) {
   const lastBreadcrumbUrl = lastBreadcrumb?.breadCrumbUrl || "";
 
   console.log("lastBreadcrumbUrl", crumbData, "---");
-  
+
   const BreadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

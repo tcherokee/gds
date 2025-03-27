@@ -45,10 +45,14 @@ import type { LayoutData } from "../../../interfaces/layout";
 import { getUserCountry, userCountryHandler } from "../../../utils/ip-request";
 
 const userCountry = await getUserCountry();
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase() || ""
-);
-const casinoCountry = country?.sc || "";
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
+
+const casinoCountry = country !== null ? country?.sc || "" : null;
 
 const slug = Astro.params.slug as string;
 

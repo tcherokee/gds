@@ -42,19 +42,19 @@ import {
   getLocalisation,
 } from "../../../utils/api-requests";
 
-import {
-   getUserCountry,
-  userCountryHandler,
-} from "../../../utils/ip-request";
+import { getUserCountry, userCountryHandler } from "../../../utils/ip-request";
 
 const localisation = await getLocalisation();
 
+const userCountry = await getUserCountry();
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
 
-const userCountry = await  getUserCountry();
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase() || ""
-);
-const casinoCountry = country?.sc || "";
+const casinoCountry = country !== null ? country?.sc || "" : "";
 
 const slug = Astro.params.slug as string;
 

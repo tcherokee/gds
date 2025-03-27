@@ -1,17 +1,20 @@
 import { getDBCountries } from "./api-requests";
 
+const siteID = import.meta.env.SITE_ID;
 export const getUserCountry = async () => {
-  try {
-    //get country from google cloud
-    const location = await fetch(
-      `https://kenshomedia.ew.r.appspot.com/`
-    )
-      .then((res) => res.json())
-      .then();
+  if (siteID === "tgs") { // run this code for tgs only.
+    try {
+      //get country from google cloud
+      const location = await fetch(`https://kenshomedia.ew.r.appspot.com/`)
+        .then((res) => res.json())
+        .then();
 
-    return { location, ip: location.userIP };
-  } catch (error) {
-    console.error(error);
+      return { location, ip: location.userIP };
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    return null;
   }
 };
 

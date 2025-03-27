@@ -30,19 +30,19 @@ import MainLayout from "../../layouts/MainLayout.astro";
 
 import { getLocalisation, getTranslations } from "../../../utils/api-requests";
 import type { BreadcrumbData } from "../../../interfaces/common/types";
-import {
-  getUserCountry,
-  userCountryHandler,
-} from "../../../utils/ip-request";
+import { getUserCountry, userCountryHandler } from "../../../utils/ip-request";
 
 const localisation = await getLocalisation();
 
+const userCountry = await getUserCountry();
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
 
-const userCountry = await  getUserCountry();
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase() || ""
-);
-const casinoCountry = country?.sc || "";
+const casinoCountry = country !== null ? country?.sc || "" : "";
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();
@@ -120,12 +120,12 @@ Astro.response.headers.set(
   "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
 );
 ---
+
 <!-- <script
   define:vars={{ casinoProvider }}
 >
   console.log("Casino online", casinoProvider[0]);
 </script> -->
-
 <MainLayout
   seoData={seo}
   crumbLocation="casino-providers"

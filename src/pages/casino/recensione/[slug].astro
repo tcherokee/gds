@@ -54,12 +54,15 @@ import {
 
 const localisation = await getLocalisation();
 
-
 const userCountry = await  getUserCountry();
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase() || ""
-);
-const casinoCountry = country?.sc || "";
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
+
+const casinoCountry = country !== null ? country?.sc || "" : "";
 
 const slug = Astro.params.slug as string;
 const translationStore = await getTranslations();

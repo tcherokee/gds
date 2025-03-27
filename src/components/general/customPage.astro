@@ -60,10 +60,14 @@ import {
 
 const localisation = await getLocalisation();
 const userCountry = await  getUserCountry();
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase() || ""
-);
-const casinoCountry = country?.sc || "";
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
+
+const casinoCountry = country !== null ? country?.sc || "" : "";
 
 // const path = Astro.params.path as string;
 const { path } = Astro.props;

@@ -35,17 +35,23 @@ import { getLocalisation, getTranslations } from "../../utils/api-requests";
 import { getUserCountry, userCountryHandler } from "../../utils/ip-request";
 
 const localisation = await getLocalisation();
+
+// if the site 
 const userCountry = await getUserCountry();
 
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase() || ""
-);
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
 
-const countryCode = country?.sc || "";
+const countryCode = country !== null ? country?.sc || "" : null;
 
-const homeData = {
-  casinoCountry: countryCode,
-};
+const homeData =
+  countryCode !== null
+    ? { casinoCountry: countryCode}
+    : { casinoCountry: "" };
 
 const sortStore = sortOptions.get();
 
@@ -172,9 +178,9 @@ Astro.response.headers.set(
 );
 ---
 
-<!-- <script define:vars={{ country }}>
+<script define:vars={{ country }}>
   console.log("Home country", country);
-</script> -->
+</script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 
