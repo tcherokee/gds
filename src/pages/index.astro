@@ -35,8 +35,9 @@ import { getLocalisation, getTranslations } from "../../utils/api-requests";
 import { getUserCountry, userCountryHandler } from "../../utils/ip-request";
 
 const localisation = await getLocalisation();
-const userCountry =
-  import.meta.env.SITE_ID === "gds" ? await getUserCountry() : null;
+
+// if the site 
+const userCountry = await getUserCountry();
 
 const country =
   userCountry !== null

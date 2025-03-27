@@ -4,21 +4,21 @@ import fetchApi from "../../../lib/strapi";
 import { providerGamesQs } from "../../../qs/provider-games";
 import type { Gamepage } from "../../../interfaces/game-page";
 import CasinoTable from "../../components/casino/casinoTable.astro";
-import {
-   getUserCountry,
-  userCountryHandler,
-} from "../../../utils/ip-request";
+import { getUserCountry, userCountryHandler } from "../../../utils/ip-request";
 import type { UserCountry } from "../../../interfaces/common/types";
 import { getLocalisation } from "../../../utils/api-requests";
 
 const localisation = await getLocalisation();
 
+const userCountry = await getUserCountry();
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
 
-const userCountry = await  getUserCountry();
-const country = await userCountryHandler(
-  userCountry?.location?.country.toLowerCase() || ""
-);
-const casinoCountry = country?.sc || "";
+const casinoCountry = country !== null ? country?.sc || "" : "";
 
 const { slug, translationStore } = Astro.props;
 
