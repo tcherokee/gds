@@ -2,6 +2,7 @@ import type {
   CountriesQueryOptions,
   CountryQueryOptions,
   LayoutQueryOptions,
+  MainNavigationQueryOptions,
   MenuQueryOptions,
   TranslationsQueryOptions,
 } from "../interfaces/qs/layout";
@@ -184,4 +185,13 @@ export const translationsQs = (): TranslationsQueryOptions => ({
 
 export const countriesQs = (): CountriesQueryOptions => ({
   fields: ["countryName", "shortCode"],
+});
+
+export const mainNavigationQs = (): MainNavigationQueryOptions => ({
+  fields: ["mainNavigation"],
+  populate: {
+    mainNavigation: {
+      fields: ["title", "url"],
+    },
+  },
 });

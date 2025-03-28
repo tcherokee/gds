@@ -101,6 +101,15 @@ export type MenuQueryOptions = {
   };
 };
 
+export type MainNavigationQueryOptions = {
+  fields: string[];
+  populate: {
+    mainNavigation: {
+      fields: string[];
+    };
+  };
+};
+
 export type CountryQueryOptions = {
   fields: string[];
 };

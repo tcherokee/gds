@@ -12,7 +12,7 @@ import type {
 } from "../../interfaces/common/types";
 
 // QS Query Strings
-import { layoutQs, menuQs } from "../../qs/layout.ts";
+import { layoutQs, mainNavigationQs, menuQs } from "../../qs/layout.ts";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -67,18 +67,22 @@ const translationStore = await getTranslations();
 const queries = {
   layout: qs.stringify(layoutQs(), { encodeValuesOnly: true }),
   menus: qs.stringify(menuQs(), { encodeValuesOnly: true }),
+  "main-navigation": qs.stringify(mainNavigationQs(), {
+    encodeValuesOnly: true,
+  }),
 };
 
 // Set the types in an array for use in the promise all map
 type EndpointTypes = {
   layout: LayoutData;
   menus: NavigationItem[];
+  "main-navigation": NavigationItem[];
 };
 
 type Endpoint = keyof EndpointTypes;
 
 // Set the endpoint slugs in an array for use in the promise all
-const endpoints: Endpoint[] = ["layout", "menus"];
+const endpoints: Endpoint[] = ["layout", "menus", "main-navigation"];
 
 // Promise All Fetch to fetch all the api requests in parrallel
 const responses = await Promise.all(
@@ -246,6 +250,10 @@ if (otherSchema) {
   pageSchema.push(...otherSchema);
 }
 ---
+
+<script define:vars={{ responses }}>
+  console.log("responses", responses);
+</script>
 
 <html lang={siteLang}>
   <head>
