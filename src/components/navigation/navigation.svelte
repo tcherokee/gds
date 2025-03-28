@@ -91,12 +91,12 @@
           >
             <div class="px-4 sm:px-6">
               <div class="flex items-start justify-between">
-                <h2
+                <span
                   class="text-lg font-medium text-navbar-text"
                   id="slide-over-title"
                 >
                   Menu
-                </h2>
+              </span>
                 <div class="ml-3 flex h-7 items-center">
                   <button
                     type="button"
