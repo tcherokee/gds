@@ -26,9 +26,6 @@ const fetchApi = async <T>({
       import.meta.env.PUBLIC_API_URL ?? process.env.PUBLIC_API_URL
     }/api/${modifiedEndpoint}${query}`
   );
-  if (endpoint === "main-navigation") {
-    console.log(endpoint, "==>url", url.toString());
-  }
 
   const res = await fetch(url.toString(), opts);
   let data = await res.json();

@@ -101,12 +101,24 @@ export type MenuQueryOptions = {
   };
 };
 
+export type MainNavigationItemOptions = {
+  fields: string[];
+  populate: {
+    images?: {
+      fields: string[];
+    };
+    subMenu: {
+      fields: string[];
+    };
+  };
+};
 export type MainNavigationQueryOptions = {
   fields: string[];
   populate: {
-    mainNavigation: {
-      fields: string[];
-    };
+    mainNavigation: MainNavigationItemOptions;
+    footerNavigation: MainNavigationItemOptions;
+    footerNavigations: MainNavigationItemOptions;
+    subNavigation: MainNavigationItemOptions;
   };
 };
 

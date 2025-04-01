@@ -188,10 +188,51 @@ export const countriesQs = (): CountriesQueryOptions => ({
 });
 
 export const mainNavigationQs = (): MainNavigationQueryOptions => ({
-  fields: ["mainNavigation"],
+  fields: ["id"],
   populate: {
     mainNavigation: {
       fields: ["title", "url"],
+      populate: {
+        images: {
+          fields: ["url", "height", "width"],
+        },
+        subMenu: {
+          fields: ["title", "url"],
+        },
+      },
+    },
+    footerNavigation: {
+      fields: ["title", "url"],
+      populate: {
+        images: {
+          fields: ["url", "height", "width"],
+        },
+        subMenu: {
+          fields: ["title", "url"],
+        },
+      },
+    },
+    footerNavigations: {
+      fields: ["title", "url"],
+      populate: {
+        images: {
+          fields: ["url", "height", "width"],
+        },
+        subMenu: {
+          fields: ["title", "url"],
+        },
+      },
+    },
+    subNavigation: {
+      fields: ["title", "url"],
+      populate: {
+        images: {
+          fields: ["url", "height", "width"],
+        },
+        subMenu: {
+          fields: ["title", "url"],
+        },
+      },
     },
   },
 });

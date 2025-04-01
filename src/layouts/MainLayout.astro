@@ -23,6 +23,8 @@ import "../styles/app.postcss";
 //Types and TypeGuards
 import type { LayoutData } from "../../interfaces/layout";
 import type {
+  MainNavigationItem,
+  MainNavItem,
   MenuItem,
   MenuItemChild,
   NavigationItem,
@@ -76,7 +78,7 @@ const queries = {
 type EndpointTypes = {
   layout: LayoutData;
   menus: NavigationItem[];
-  "main-navigation": NavigationItem[];
+  "main-navigation": MainNavigationItem;
 };
 
 type Endpoint = keyof EndpointTypes;
@@ -167,6 +169,54 @@ const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
   {}
 );
 
+const processedMainNavigation = (navigation: MainNavItem[]) => {
+  return navigation.map((item) => {
+    return {
+      id: item.id,
+      attributes: {
+        title: item.title,
+        url: item.url,
+        children: {
+          data: item.subMenu.map((subMenuItem) => {
+            return {
+              id: subMenuItem.id,
+              attributes: {
+                title: subMenuItem.title,
+                url: subMenuItem.url,
+              },
+            };
+          }),
+        },
+        images: {
+          data: {
+            ...item?.images?.data,
+          },
+        },
+      },
+    };
+  });
+};
+const mainNavigation = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.mainNavigation
+    )
+  : [];
+const footerNavigation = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.footerNavigation
+    )
+  : [];
+const footerNavigations = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.footerNavigations
+    )
+  : [];
+const subNavigation = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.subNavigation
+    )
+  : [];
+
 const twitterImage =
   siteID === "gds"
     ? "https://images.giochidislots.com/Giochi_di_slots_logo_1cb2d97602.png"
@@ -251,8 +301,13 @@ if (otherSchema) {
 }
 ---
 
-<script define:vars={{ responses }}>
+<script
+  define:vars={{ responses, processedMenus, mainNavigation, subNavigation }}
+>
   console.log("responses", responses);
+  console.log("processedMenus", processedMenus);
+  console.log("mainNavigation", mainNavigation);
+  console.log("subNavigation", subNavigation);
 </script>
 
 <html lang={siteLang}>
@@ -316,8 +371,12 @@ if (otherSchema) {
       }
       <header class="bg-navbar-bkg">
         <Header
-          mainNavigation={processedMenus?.mainnavigation}
-          subNavigation={processedMenus?.subnavigation}
+          mainNavigation={mainNavigation.length > 0
+            ? mainNavigation
+            : processedMenus?.mainnavigation}
+          subNavigation={subNavigation.length > 0
+            ? subNavigation
+            : processedMenus?.subnavigation}
           logo={layout?.attributes?.Logo}
           {translationStore}
           {countryCode}
@@ -345,8 +404,12 @@ if (otherSchema) {
     <Footer
       footerContent={layout?.attributes?.footerContent}
       footerImages={layout?.attributes?.footerImages}
-      footerNavigation={processedMenus?.footernavigation}
-      footerNavigations={processedMenus.footernavigations}
+      footerNavigation={footerNavigation.length > 0
+        ? footerNavigation
+        : processedMenus?.footernavigation}
+      footerNavigations={footerNavigations.length > 0
+        ? footerNavigations
+        : processedMenus?.footernavigations}
       {translationStore}
     />
 
