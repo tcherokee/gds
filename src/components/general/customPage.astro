@@ -72,6 +72,9 @@ const casinoCountry = country !== null ? country?.sc || "" : "";
 // const path = Astro.params.path as string;
 const { path } = Astro.props;
 
+// Constructing SiteURL
+const siteURL: string = `${import.meta.env.FULL_URL}/${path}`;
+
 const translationStore = await translationResponse();
 const slotProviders = await slotProvidersResponse();
 const slotCategories = await slotCategoriesResponse();
@@ -160,6 +163,11 @@ if (allFAQs && allFAQs.length > 0) {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${siteURL}`,
+      "@id": `${siteURL}`,
+    },
     mainEntity: allFAQs?.map(({ answer, question }) => {
       return {
         "@type": "Question",
@@ -183,6 +191,11 @@ if (allHowTos && allHowTos.length > 0) {
     return {
       "@context": "https://schema.org",
       "@type": "HowTo",
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        url: `${siteURL}`,
+        "@id": `${siteURL}`,
+      },
       name: `${title}`,
       totalTime: "PT15M",
       description: `${title}`,
@@ -219,6 +232,11 @@ if (allHowTos && allHowTos.length > 0) {
 const breadSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${siteURL}`,
+      "@id": `${siteURL}`,
+    },
   itemListElement: (
     [...customPage[0]?.attributes?.breadcrumbs] as BreadcrumbData[]
   )
