@@ -72,6 +72,9 @@ const totalRecords = [
 const totalRecordsCount = totalRecords.reduce((acc, curr) => acc + curr, 0);
 
 const pageCount = Math.ceil(totalRecordsCount / 150);
+if (page > pageCount) {
+  return Astro.redirect(`${import.meta.env.PUBLIC_FULL_URL}/404`);
+}
 const paginationList = generatePagination(page, pageCount, 6);
 
 let lastRecordId = null;
@@ -205,7 +208,7 @@ Astro.response.headers.set(
 
     <div>
       {
-        totalRecordsCount > 1 && (
+        pageCount > 1 && (
           <nav aria-label="page navigation" class="w-full mt-3">
             <ul class="flex pagination justify-center">
               {page !== 1 && (
@@ -237,7 +240,7 @@ Astro.response.headers.set(
                   </Link>
                 </li>
               ))}
-              {page !== totalRecordsCount && (
+              {page !== pageCount && (
                 <li class="hidden sm:flex">
                   <Link
                     class="px-3 py-1.5 border border-pagination-border-color bg-pagination-bg-color text-link-color hover:text-link-hover-color hover:bg-pagination-hover-bg transition-colors ease-in-out duration-150 rounded-r-md"
