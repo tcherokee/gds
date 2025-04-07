@@ -13,6 +13,23 @@ export const homepageQs = (
         "shared.single-content": {
           populate: true,
         },
+        "homepage.home-game-list": {
+          fields: ["numberOfGames", "sortBy", "gameListTitle"],
+          populate: {
+            providers: {
+              populate: {
+                slotProvider: {
+                  fields: ["title", "slug"],
+                  populate: {
+                    images: {
+                      fields: ["url"],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
         "homepage.home-casino-list": {
           populate: {
             casinos: {
@@ -141,6 +158,11 @@ export const homepageQs = (
                 },
               },
             },
+          },
+        },
+        "homepage.home-blog-list": {
+          populate: {
+            fields: ["numOfBlogs"],
           },
         },
       },
