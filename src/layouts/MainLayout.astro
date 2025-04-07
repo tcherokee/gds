@@ -103,65 +103,67 @@ const menu = isNavigationItemArray(responses[1])
   : console.error("Invalid menu data");
 
 // Process menu data
-const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
-  (acc: ProcessedMenus, menu: NavigationItem) => {
-    const title = menu.attributes.title;
-    let items: MenuItem[] = [];
+const processedMenus: ProcessedMenus = menu
+  ? (menu as NavigationItem[]).reduce(
+      (acc: ProcessedMenus, menu: NavigationItem) => {
+        const title = menu.attributes.title;
+        let items: MenuItem[] = [];
 
-    if (localisation) {
-      if (title === "Main Navigation") {
-        items = menu.attributes.items.data.map((item: MenuItem) => {
-          if (item.attributes.children.data.length > 0) {
-            // Filter children with "- $coiuntryCode" in the title
-            const filteredChildren = item.attributes.children.data.filter(
-              (child) => {
-                //split child title and see if see if it has no country code attached or if the attached country code is same as visitor's country.
-                // let titleSplit = child.attributes.title.split("-");
-                // if (titleSplit.length === 1 || titleSplit[1] === countryCode) {
-                //   return child.attributes.title;
-                // }
+        if (localisation) {
+          if (title === "Main Navigation") {
+            items = menu.attributes.items.data.map((item: MenuItem) => {
+              if (item.attributes.children.data.length > 0) {
+                // Filter children with "- $coiuntryCode" in the title
+                const filteredChildren = item.attributes.children.data.filter(
+                  (child) => {
+                    //split child title and see if see if it has no country code attached or if the attached country code is same as visitor's country.
+                    // let titleSplit = child.attributes.title.split("-");
+                    // if (titleSplit.length === 1 || titleSplit[1] === countryCode) {
+                    //   return child.attributes.title;
+                    // }
 
-                // returns items with "-it" in their title OR items with no "-" in their title
-                return (
-                  child.attributes.title.includes(`-${countryCode}`) ||
-                  child.attributes.title.split("-").length === 1
+                    // returns items with "-it" in their title OR items with no "-" in their title
+                    return (
+                      child.attributes.title.includes(`-${countryCode}`) ||
+                      child.attributes.title.split("-").length === 1
+                    );
+                  }
                 );
+
+                // Return the updated item with filtered children
+                return {
+                  ...item,
+                  attributes: {
+                    ...item.attributes,
+                    children: {
+                      ...item.attributes.children,
+                      data: filteredChildren,
+                    },
+                  },
+                };
+              } else {
+                return item;
               }
-            );
-
-            // Return the updated item with filtered children
-            return {
-              ...item,
-              attributes: {
-                ...item.attributes,
-                children: {
-                  ...item.attributes.children,
-                  data: filteredChildren,
-                },
-              },
-            };
-          } else {
-            return item;
+            });
           }
-        });
-      }
-    } else {
-      items = menu.attributes.items.data;
-    }
+        } else {
+          items = menu.attributes.items.data;
+        }
 
-    if (
-      title === "Sub Navigation" ||
-      title === "Main Navigation" ||
-      title === "Footer Navigation" ||
-      title === "Footer Navigations"
-    ) {
-      acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
-    }
+        if (
+          title === "Sub Navigation" ||
+          title === "Main Navigation" ||
+          title === "Footer Navigation" ||
+          title === "Footer Navigations"
+        ) {
+          acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
+        }
 
-    return acc;
-  },
-  {}
-);
+        return acc;
+      },
+      {}
+    )
+  : {};
 
 const twitterImage =
   siteID === "gds"
@@ -308,8 +310,8 @@ if (otherSchema) {
       }
       <header class="bg-navbar-bkg">
         <Header
-          mainNavigation={processedMenus?.mainnavigation}
-          subNavigation={processedMenus?.subnavigation}
+          mainNavigation={processedMenus?.mainnavigation ?? []}
+          subNavigation={processedMenus?.subnavigation ?? []}
           logo={layout?.attributes?.Logo}
           {translationStore}
           {countryCode}
@@ -337,8 +339,8 @@ if (otherSchema) {
     <Footer
       footerContent={layout?.attributes?.footerContent}
       footerImages={layout?.attributes?.footerImages}
-      footerNavigation={processedMenus?.footernavigation}
-      footerNavigations={processedMenus.footernavigations}
+      footerNavigation={processedMenus?.footernavigation ?? []}
+      footerNavigations={processedMenus.footernavigations ?? []}
       {translationStore}
     />
 

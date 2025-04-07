@@ -18,6 +18,7 @@ const fetchApi = async <T>({
       Authorization: `Bearer ${
         import.meta.env.PUBLIC_API_TOKEN ?? process.env.PUBLIC_API_TOKEN
       }`,
+      "Strapi-Response-Format": "v4",
     },
   };
 
@@ -26,6 +27,10 @@ const fetchApi = async <T>({
       import.meta.env.PUBLIC_API_URL ?? process.env.PUBLIC_API_URL
     }/api/${modifiedEndpoint}${query}`
   );
+
+  if (modifiedEndpoint === "homepage") {
+    console.log("URL", url.toString());
+  }
 
   const res = await fetch(url.toString(), opts);
   let data = await res.json();
