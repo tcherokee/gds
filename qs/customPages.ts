@@ -380,7 +380,7 @@ export const customPageLayoutAddOnsQs = (
         logoIcon: {
           fields: ["url"],
         },
-        freeSpinsSection: true,
+        // freeSpinsSection: true,
       },
     },
   },

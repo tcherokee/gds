@@ -13,6 +13,19 @@ export const gamepageQs = (slug: string) => ({
     "gamesApiOverride",
   ],
   populate: {
+    blocks: {
+      on: {
+        "shared.image-carousel": {
+          // populate: "*",
+          fields: ["carouselTitle"],
+          populate: {
+            image: {
+              fields: ["url", "alternativeText", "mime"],
+            },
+          },
+        },
+      },
+    },
     author: {
       fields: [
         "firstName",
@@ -87,16 +100,6 @@ export const gamepageQs = (slug: string) => ({
     },
     seo: {
       fields: ["metaTitle", "metaDescription"],
-    },
-    blocks: {
-      populate: {
-        image: {
-          fields: ["url", "alternativeText", "mime"],
-        },
-        ImageCarousel: {
-          fields: ["url", "caption"],
-        },
-      },
     },
   },
   filters: {

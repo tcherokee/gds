@@ -28,7 +28,7 @@ const fetchApi = async <T>({
     }/api/${modifiedEndpoint}${query}`
   );
 
-  if (modifiedEndpoint === "homepage") {
+  if (modifiedEndpoint === "layout") {
     console.log("URL", url.toString());
   }
 
