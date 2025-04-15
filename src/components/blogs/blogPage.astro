@@ -68,6 +68,26 @@ const canonical =
   urlTranslate[siteID as keyof typeof urlTranslate]["blog-pages"] +
   `/${slug}`;
 
+let combinedSchema = [];
+
+// Blog Schema
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: `${singleBlog[0]?.attributes?.title}`,
+  image: `${singleBlog[0]?.attributes?.author?.data?.attributes?.photo?.data?.attributes.url}`,
+  author: {
+    "@type": "Person",
+    name: `${singleBlog[0]?.attributes?.author?.data?.attributes?.firstName} ${singleBlog[0]?.attributes?.author?.data?.attributes?.lastName}`,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Giochi Di Slots",
+  },
+  datePublished: `${singleBlog[0]?.attributes?.createdAt}`,
+};
+combinedSchema.push(blogSchema);
+
 const seo = {
   pageTitle: singleBlog[0]?.attributes?.seo?.metaTitle,
   metaDescription: singleBlog[0]?.attributes?.seo?.metaDescription,
@@ -104,7 +124,7 @@ Astro.response.headers.set(
 );
 ---
 
-<MainLayout seoData={seo}>
+<MainLayout seoData={seo} otherSchema={combinedSchema}>
   {
     isMatch ? (
       <div class="bg-blog-list-bkg mb-5">
