@@ -322,6 +322,7 @@ Astro.response.headers.set(
                 ratingClasses="flex-col"
                 ratingCount={sportPage[0].attributes.ratingCount}
                 itemId={sportPage[0].id + ""}
+                documentId={sportPage[0].documentId}
                 ratingType={"casinos"}
                 translations={translationStore ?? {}}
                 client:load
@@ -1086,7 +1087,8 @@ Astro.response.headers.set(
                 ratingClasses="flex-col"
                 ratingCount={sportPage[0].attributes.ratingCount}
                 itemId={sportPage[0].id + ""}
-                ratingType={"casinos"}
+                documentId={sportPage[0].documentId}
+                ratingType={"sports"}
                 translations={translationStore ?? {}}
                 client:load
               />

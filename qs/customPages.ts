@@ -42,157 +42,223 @@ export const customPageQs = (
         },
       },
       blocks: {
-        populate: {
-          content: true,
-          image: {
-            fields: ["url", "alternativeText", "mime"],
-          },
-          slot_categories: {
-            fields: ["title", "slug"],
-          },
-          slot_providers: {
-            fields: ["title", "slug"],
-          },
-          overviews: {
-            fields: ["title", "url"],
+        on: {
+          "shared.introduction-with-image": {
+            fields: ["heading", "introduction"],
             populate: {
-              card_img: {
-                fields: ["url"],
+              image: {
+                fields: ["url", "mime"],
               },
             },
           },
-          casinosList: {
-            fields: ["id"],
+          "games.new-and-loved-slots": {
             populate: {
-              casino: {
-                fields: [
-                  "title",
-                  "slug",
-                  "ratingAvg",
-                  "ratingCount",
-                  "publishedAt",
-                ],
+              slot_categories: {
+                fields: ["title", "slug"],
+              },
+              slot_providers: {
+                fields: ["title", "slug"],
+              },
+            },
+          },
+          "games.games-carousel": {
+            populate: {
+              gameProviders: {
+                fields: ["id"],
                 populate: {
-                  images: {
+                  slotProvider: {
+                    fields: ["id", "slug"],
+                  },
+                },
+              },
+              gameCategories: {
+                fields: ["id"],
+                populate: {
+                  slotCategory: {
+                    fields: ["id", "slug"],
+                  },
+                },
+              },
+            },
+          },
+          "shared.single-content": {
+            populate: true,
+          },
+          "shared.image": {
+            populate: {
+              image: {
+                fields: ["url", "alternativeText", "mime"],
+              },
+            },
+          },
+          "casinos.casino-list": {
+            populate: {
+              casinosList: {
+                fields: ["id"],
+                populate: {
+                  casino: {
+                    fields: [
+                      "title",
+                      "slug",
+                      "ratingAvg",
+                      "ratingCount",
+                      "publishedAt",
+                    ],
+                    populate: {
+                      images: {
+                        fields: ["url"],
+                      },
+                      casinoBonus: {
+                        fields: ["bonusUrl", "bonusLabel", "bonusCode"],
+                      },
+                      noDepositSection: {
+                        fields: ["bonusAmount", "termsConditions"],
+                      },
+                      freeSpinsSection: {
+                        fields: ["bonusAmount", "termsConditions"],
+                      },
+                      bonusSection: {
+                        fields: [
+                          "bonusAmount",
+                          "termsConditions",
+                          "cashBack",
+                          "freeSpin",
+                        ],
+                      },
+                      providers: {
+                        fields: ["title"],
+                        populate: {
+                          images: {
+                            fields: ["url"],
+                          },
+                        },
+                      },
+                      casinoGeneralInfo: {
+                        fields: ["wageringRequirements"],
+                      },
+                      termsAndConditions: {
+                        fields: ["copy", "gambleResponsibly"],
+                      },
+                      countries: {
+                        fields: ["countryName", "shortCode"],
+                      },
+                    },
+                    filters: {
+                      ...(localisation &&
+                        casinoCountry && {
+                          countries: {
+                            shortCode: {
+                              $in: casinoCountry,
+                            },
+                          },
+                        }),
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "casinos.casinos-comparison": {
+            populate: {
+              casinos: {
+                fields: ["id"],
+                populate: {
+                  casino: {
+                    fields: [
+                      "title",
+                      "slug",
+                      "ratingAvg",
+                      "ratingCount",
+                      "publishedAt",
+                    ],
+                    populate: {
+                      images: {
+                        fields: ["url"],
+                      },
+                      casinoBonus: {
+                        fields: ["bonusUrl", "bonusLabel", "bonusCode"],
+                      },
+                      noDepositSection: {
+                        fields: ["bonusAmount", "termsConditions"],
+                      },
+                      freeSpinsSection: {
+                        fields: ["bonusAmount", "termsConditions"],
+                      },
+                      bonusSection: {
+                        fields: [
+                          "bonusAmount",
+                          "termsConditions",
+                          "cashBack",
+                          "freeSpin",
+                        ],
+                      },
+                      termsAndConditions: {
+                        fields: ["copy", "gambleResponsibly"],
+                      },
+                      countries: {
+                        fields: ["countryName", "shortCode"],
+                      },
+                    },
+                    filters: {
+                      ...(localisation &&
+                        casinoCountry && {
+                          countries: {
+                            shortCode: {
+                              $in: casinoCountry,
+                            },
+                          },
+                        }),
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "shared.overview-block": {
+            populate: {
+              overviews: {
+                fields: ["title", "url"],
+                populate: {
+                  card_img: {
                     fields: ["url"],
                   },
-                  casinoBonus: {
-                    fields: ["bonusUrl", "bonusLabel", "bonusCode"],
-                  },
-                  noDepositSection: {
-                    fields: ["bonusAmount", "termsConditions"],
-                  },
-                  freeSpinsSection: {
-                    fields: ["bonusAmount", "termsConditions"],
-                  },
-                  bonusSection: {
-                    fields: [
-                      "bonusAmount",
-                      "termsConditions",
-                      "cashBack",
-                      "freeSpin",
-                    ],
-                  },
+                },
+              },
+            },
+          },
+          "homepage.home-featured-providers": {
+            populate: {
+              homeFeaturedProviders: {
+                populate: {
                   providers: {
-                    fields: ["title"],
+                    fields: ["title", "slug"],
                     populate: {
                       images: {
                         fields: ["url"],
                       },
                     },
                   },
-                  casinoGeneralInfo: {
-                    fields: ["wageringRequirements"],
-                  },
-                  termsAndConditions: {
-                    fields: ["copy", "gambleResponsibly"],
-                  },
-                  countries: {
-                    fields: ["countryName", "shortCode"],
-                  },
-                },
-                filters: {
-                  ...(localisation &&
-                    casinoCountry && {
-                      countries: {
-                        shortCode: {
-                          $in: casinoCountry,
-                        },
-                      },
-                    }),
                 },
               },
             },
           },
-          casinos: {
-            fields: ["id"],
+          "homepage.home-featured-categories": {
             populate: {
-              casino: {
-                fields: [
-                  "title",
-                  "slug",
-                  "ratingAvg",
-                  "ratingCount",
-                  "publishedAt",
-                ],
+              homeCategoriesList: {
                 populate: {
-                  images: {
-                    fields: ["url"],
-                  },
-                  casinoBonus: {
-                    fields: ["bonusUrl", "bonusLabel", "bonusCode"],
-                  },
-                  noDepositSection: {
-                    fields: ["bonusAmount", "termsConditions"],
-                  },
-                  freeSpinsSection: {
-                    fields: ["bonusAmount", "termsConditions"],
-                  },
-                  bonusSection: {
-                    fields: [
-                      "bonusAmount",
-                      "termsConditions",
-                      "cashBack",
-                      "freeSpin",
-                    ],
-                  },
-                  termsAndConditions: {
-                    fields: ["copy", "gambleResponsibly"],
-                  },
-                  countries: {
-                    fields: ["countryName", "shortCode"],
-                  },
-                },
-                filters: {
-                  ...(localisation &&
-                    casinoCountry && {
-                      countries: {
-                        shortCode: {
-                          $in: casinoCountry,
-                        },
+                  slot_categories: {
+                    fields: ["title", "slug"],
+                    populate: {
+                      images: {
+                        fields: ["url"],
                       },
-                    }),
+                    },
+                  },
                 },
               },
             },
           },
-          gameProviders: {
-            fields: ["id"],
-            populate: {
-              slotProvider: {
-                fields: ["id", "slug"],
-              },
-            },
-          },
-          gameCategories: {
-            fields: ["id"],
-            populate: {
-              slotCategory: {
-                fields: ["id", "slug"],
-              },
-            },
-          },
-          homeFeaturedProviders: {
+          "shared.provider-list": {
             populate: {
               providers: {
                 fields: ["title", "slug"],
@@ -204,55 +270,31 @@ export const customPageQs = (
               },
             },
           },
-          homeCategoriesList: {
+          "shared.how-to-group": {
             populate: {
-              slot_categories: {
-                fields: ["title", "slug"],
+              howToGroup: {
+                fields: ["heading", "copy"],
                 populate: {
-                  images: {
-                    fields: ["url"],
+                  image: {
+                    fields: ["url", "width", "height", "alternativeText"],
                   },
                 },
               },
             },
           },
-          providers: {
-            fields: ["title", "slug"],
+          "shared.image-with-paragraph": {
             populate: {
-              images: {
-                fields: ["url"],
-              },
-            },
-          },
-          categoriesList: {
-            populate: {
-              slot_categories: {
-                fields: ["title", "slug"],
+              imageWithParagraph: {
+                fields: ["heading", "copy"],
                 populate: {
-                  images: {
-                    fields: ["url"],
+                  image: {
+                    fields: ["url", "alternativeText"],
                   },
                 },
               },
             },
           },
-          howToGroup: {
-            fields: ["heading", "copy"],
-            populate: {
-              image: {
-                fields: ["url", "width", "height", "alternativeText"],
-              },
-            },
-          },
-          imageWithParagraph: {
-            fields: ["heading", "copy"],
-            populate: {
-              image: {
-                fields: ["url", "alternativeText"],
-              },
-            },
-          },
-          imageWithContent: {
+          "shared.medium-image-with-content": {
             fields: ["title", "content"],
             populate: {
               image: {
@@ -260,16 +302,25 @@ export const customPageQs = (
               },
             },
           },
-          pros: true,
-          cons: true,
-          proImage: {
-            fields: ["url", "width", "height"],
+          "shared.pros-and-cons": {
+            populate: {
+              pros: true,
+              cons: true,
+              proImage: {
+                fields: ["url", "width", "height"],
+              },
+              conImage: {
+                fields: ["url", "width", "height"],
+              },
+            },
           },
-          conImage: {
-            fields: ["url", "width", "height"],
-          },
-          ImageCarousel: {
-            fields: ["url", "caption"],
+          "shared.image-carousel": {
+            fields: ["carouselTitle"],
+            populate: {
+              image: {
+                fields: ["url", "alternativeText", "mime"],
+              },
+            },
           },
         },
       },

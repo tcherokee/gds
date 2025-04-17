@@ -133,10 +133,6 @@ export const casinopageQs = (
           fields: ["url"],
         },
       },
-      pagination: {
-        page: 1,
-        pageSize: 100,
-      },
     },
     seo: {
       fields: ["metaTitle", "metaDescription"],
@@ -173,10 +169,6 @@ export const casinopageQs = (
               fields: ["url"],
             },
           },
-          pagination: {
-            page: 1,
-            pageSize: 100,
-          },
         },
         termsAndConditions: {
           fields: ["copy"],
@@ -202,12 +194,14 @@ export const casinopageQs = (
       },
     },
     blocks: {
-      populate: {
-        image: {
-          fields: ["url", "alternativeText", "mime"],
-        },
-        ImageCarousel: {
-          fields: ["url", "caption"],
+      on: {
+        "shared.image-carousel": {
+          fields: ["carouselTitle"],
+          populate: {
+            image: {
+              fields: ["url", "alternativeText", "mime"],
+            },
+          },
         },
       },
     },

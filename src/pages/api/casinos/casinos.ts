@@ -6,6 +6,7 @@ export const GET: APIRoute = async ({ url }) => {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${import.meta.env.PUBLIC_API_TOKEN}`,
+      "Strapi-Response-Format": "v4",
     },
   };
 

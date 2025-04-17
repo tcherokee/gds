@@ -16,7 +16,6 @@ export const gamepageQs = (slug: string) => ({
     blocks: {
       on: {
         "shared.image-carousel": {
-          // populate: "*",
           fields: ["carouselTitle"],
           populate: {
             image: {

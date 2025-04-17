@@ -8,6 +8,7 @@
   export let itemId = "";
   export let ratingType: 'games' | 'casinos' | 'sports';
   export let translations: TranslationData;
+  export let documentId: string;
 
   let starRating: HTMLInputElement;
   let disabled = false;
@@ -15,8 +16,8 @@
   let ratingValuePercent = `${(avgRating * 100) / 5}%`;
   
   $: {
-    const isRated = $ratings.find(
-      (elem) => elem.id === +itemId && elem.type === ratingType
+    const isRated = $ratings?.find(
+      (elem) => (elem.id === +itemId || elem.id === documentId) && elem.type === ratingType
     );
     
     if (isRated) {
@@ -31,7 +32,7 @@
     starRating.disabled = true;
 
     const ratingVariables = {
-      id: itemId,
+      id: documentId,
       ratingValue: starRating.value+'',
       itemPath: ratingType,
     };
@@ -54,7 +55,7 @@
         ...ratings.get(),
         {
           type: ratingType,
-          id: +itemId,
+          id: documentId,
           ratingValue: +starRating.value,
         }
       ]);

@@ -34,7 +34,6 @@ export const blogpageQs = (slug: string) => ({
         "experience",
         "areaOfWork",
         "specialization",
-        "minutesRead",
       ],
       populate: {
         photo: {

@@ -68,23 +68,25 @@ const menu = isNavigationItemArray(responses[1])
   : console.error("Invalid menu data");
 
 // Process menu data
-const processedMenus: ProcessedMenus = (menu as NavigationItem[]).reduce(
-  (acc: ProcessedMenus, menu: NavigationItem) => {
-    const title = menu.attributes.title;
-    const items = menu.attributes.items.data;
-    if (
-      title === "Sub Navigation" ||
-      title === "Main Navigation" ||
-      title === "Footer Navigation" ||
-      title === "Footer Navigations"
-    ) {
-      acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
-    }
+const processedMenus: ProcessedMenus = menu
+  ? (menu as NavigationItem[]).reduce(
+      (acc: ProcessedMenus, menu: NavigationItem) => {
+        const title = menu.attributes.title;
+        const items = menu.attributes.items.data;
+        if (
+          title === "Sub Navigation" ||
+          title === "Main Navigation" ||
+          title === "Footer Navigation" ||
+          title === "Footer Navigations"
+        ) {
+          acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
+        }
 
-    return acc;
-  },
-  {}
-);
+        return acc;
+      },
+      {}
+    )
+  : {};
 
 const { translationStore } = Astro.props;
 ---
@@ -124,8 +126,8 @@ const { translationStore } = Astro.props;
       }
       <header class="bg-navbar-bkg sticky top-[35px] z-30">
         <Header
-          mainNavigation={processedMenus?.mainnavigation}
-          subNavigation={processedMenus?.subnavigation}
+          mainNavigation={processedMenus?.mainnavigation ?? []}
+          subNavigation={processedMenus?.subnavigation ?? []}
           logo={layout?.attributes?.Logo}
         />
       </header>
@@ -133,7 +135,7 @@ const { translationStore } = Astro.props;
         class="dashboard-bg -mb-5 mx-auto flex w-full h-full items-start py-10"
       >
         <DashboardSideNav
-          slotMachineURL={processedMenus.subnavigation[0].attributes.url}
+          slotMachineURL={processedMenus?.subnavigation?.[0]?.attributes?.url}
           pageUrl={Astro.url.pathname}
           translations={translationStore}
           client:load

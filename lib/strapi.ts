@@ -28,10 +28,6 @@ const fetchApi = async <T>({
     }/api/${modifiedEndpoint}${query}`
   );
 
-  if (modifiedEndpoint === "layout") {
-    console.log("URL", url.toString());
-  }
-
   const res = await fetch(url.toString(), opts);
   let data = await res.json();
 

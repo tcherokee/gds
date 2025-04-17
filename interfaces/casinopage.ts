@@ -18,6 +18,7 @@ import type {
 
 export type Casinopage = {
   id: number;
+  documentId: string;
   attributes: Attributes;
 };
 

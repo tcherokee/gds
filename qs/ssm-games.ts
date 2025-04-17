@@ -78,10 +78,6 @@ export const slotProvidersQs = (
         },
         providers: {
           fields: ["title"],
-          pagination: {
-            page: 1,
-            pageSize: 100,
-          },
           populate: {
             images: {
               fields: ["url"],
