@@ -4,7 +4,7 @@ import qs from "qs";
 import { Tooltips } from "astro-tooltips";
 
 // QS Query Strings
-import { layoutQs, menuQs } from "../../qs/layout.ts";
+import { layoutQs, mainNavigationQs, menuQs } from "../../qs/layout.ts";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -14,7 +14,12 @@ import "../styles/app.postcss";
 
 //Types and TypeGuards
 import type { LayoutData } from "../../interfaces/layout";
-import type { NavigationItem, ProcessedMenus } from "../../interfaces/menu.ts";
+import type {
+  MainNavigationItem,
+  MainNavItem,
+  NavigationItem,
+  ProcessedMenus,
+} from "../../interfaces/menu.ts";
 import {
   isMainLayoutData,
   isNavigationItemArray,
@@ -32,12 +37,16 @@ import { ViewTransitions } from "astro:transitions";
 const queries = {
   layout: qs.stringify(layoutQs(), { encodeValuesOnly: true }),
   menus: qs.stringify(menuQs(), { encodeValuesOnly: true }),
+  "main-navigation": qs.stringify(mainNavigationQs(), {
+    encodeValuesOnly: true,
+  }),
 };
 
 // Set the types in an array for use in the promise all map
 type EndpointTypes = {
   layout: LayoutData;
   menus: NavigationItem[];
+  "main-navigation": MainNavigationItem;
 };
 
 type Endpoint = keyof EndpointTypes;
@@ -82,11 +91,57 @@ const processedMenus: ProcessedMenus = menu
           acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
         }
 
-        return acc;
+    return acc;
+  },
+  {}
+): {};
+const processedMainNavigation = (navigation: MainNavItem[]) => {
+  return navigation.map((item) => {
+    return {
+      id: item.id,
+      attributes: {
+        title: item.title,
+        url: item.url,
+        children: {
+          data: item.subMenu.map((subMenuItem) => {
+            return {
+              id: subMenuItem.id,
+              attributes: {
+                title: subMenuItem.title,
+                url: subMenuItem.url,
+              },
+            };
+          }),
+        },
+        images: {
+          data: {
+            ...item?.images?.data,
+          },
+        },
       },
-      {}
+    };
+  });
+};
+const mainNavigation = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.mainNavigation
     )
-  : {};
+  : [];
+const footerNavigation = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.footerNavigation
+    )
+  : [];
+const footerNavigations = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.footerNavigations
+    )
+  : [];
+const subNavigation = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.subNavigation
+    )
+  : [];
 
 const { translationStore } = Astro.props;
 ---
@@ -126,8 +181,12 @@ const { translationStore } = Astro.props;
       }
       <header class="bg-navbar-bkg sticky top-[35px] z-30">
         <Header
-          mainNavigation={processedMenus?.mainnavigation ?? []}
-          subNavigation={processedMenus?.subnavigation ?? []}
+          mainNavigation={mainNavigation.length > 0
+            ? mainNavigation ?? []
+            : processedMenus?.mainnavigation ?? []}
+          subNavigation={subNavigation.length > 0
+            ? subNavigation ?? []
+            : processedMenus?.subnavigation ?? []}
           logo={layout?.attributes?.Logo}
         />
       </header>

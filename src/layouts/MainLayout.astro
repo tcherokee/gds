@@ -12,7 +12,7 @@ import type {
 } from "../../interfaces/common/types";
 
 // QS Query Strings
-import { layoutQs, menuQs } from "../../qs/layout.ts";
+import { layoutQs, mainNavigationQs, menuQs } from "../../qs/layout.ts";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -23,6 +23,8 @@ import "../styles/app.postcss";
 //Types and TypeGuards
 import type { LayoutData } from "../../interfaces/layout";
 import type {
+  MainNavigationItem,
+  MainNavItem,
   MenuItem,
   MenuItemChild,
   NavigationItem,
@@ -67,18 +69,22 @@ const translationStore = await getTranslations();
 const queries = {
   layout: qs.stringify(layoutQs(), { encodeValuesOnly: true }),
   menus: qs.stringify(menuQs(), { encodeValuesOnly: true }),
+  "main-navigation": qs.stringify(mainNavigationQs(), {
+    encodeValuesOnly: true,
+  }),
 };
 
 // Set the types in an array for use in the promise all map
 type EndpointTypes = {
   layout: LayoutData;
   menus: NavigationItem[];
+  "main-navigation": MainNavigationItem;
 };
 
 type Endpoint = keyof EndpointTypes;
 
 // Set the endpoint slugs in an array for use in the promise all
-const endpoints: Endpoint[] = ["layout", "menus"];
+const endpoints: Endpoint[] = ["layout", "menus", "main-navigation"];
 
 // Promise All Fetch to fetch all the api requests in parrallel
 const responses = await Promise.all(
@@ -165,6 +171,54 @@ const processedMenus: ProcessedMenus = menu
     )
   : {};
 
+const processedMainNavigation = (navigation: MainNavItem[]) => {
+  return navigation.map((item) => {
+    return {
+      id: item.id,
+      attributes: {
+        title: item.title,
+        url: item.url,
+        children: {
+          data: item.subMenu.map((subMenuItem) => {
+            return {
+              id: subMenuItem.id,
+              attributes: {
+                title: subMenuItem.title,
+                url: subMenuItem.url,
+              },
+            };
+          }),
+        },
+        images: {
+          data: {
+            ...item?.images?.data,
+          },
+        },
+      },
+    };
+  });
+};
+const mainNavigation = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.mainNavigation
+    )
+  : [];
+const footerNavigation = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.footerNavigation
+    )
+  : [];
+const footerNavigations = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.footerNavigations
+    )
+  : [];
+const subNavigation = responses[2]
+  ? processedMainNavigation(
+      (responses[2] as MainNavigationItem).attributes.subNavigation
+    )
+  : [];
+
 const twitterImage =
   siteID === "gds"
     ? "https://images.giochidislots.com/Giochi_di_slots_logo_1cb2d97602.png"
@@ -247,6 +301,15 @@ if (otherSchema) {
 }
 ---
 
+<script
+  define:vars={{ responses, processedMenus, mainNavigation, subNavigation }}
+>
+  console.log("responses", responses);
+  console.log("processedMenus", processedMenus);
+  console.log("mainNavigation", mainNavigation);
+  console.log("subNavigation", subNavigation);
+</script>
+
 <html lang={siteLang}>
   <head>
     <meta charset="UTF-8" />
@@ -308,8 +371,12 @@ if (otherSchema) {
       }
       <header class="bg-navbar-bkg">
         <Header
-          mainNavigation={processedMenus?.mainnavigation ?? []}
-          subNavigation={processedMenus?.subnavigation ?? []}
+          mainNavigation={mainNavigation.length > 0
+            ? mainNavigation
+            : processedMenus?.mainnavigation ?? []}
+          subNavigation={subNavigation.length > 0
+            ? subNavigation
+            : processedMenus?.subnavigation ?? []}
           logo={layout?.attributes?.Logo}
           {translationStore}
           {countryCode}
@@ -337,8 +404,12 @@ if (otherSchema) {
     <Footer
       footerContent={layout?.attributes?.footerContent}
       footerImages={layout?.attributes?.footerImages}
-      footerNavigation={processedMenus?.footernavigation ?? []}
-      footerNavigations={processedMenus.footernavigations ?? []}
+      footerNavigation={footerNavigation.length > 0
+        ? footerNavigation
+        : processedMenus?.footernavigation ?? []}
+      footerNavigations={footerNavigations.length > 0
+        ? footerNavigations
+        : processedMenus?.footernavigations ?? []}
       {translationStore}
     />
 

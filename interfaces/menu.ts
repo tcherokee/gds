@@ -47,6 +47,30 @@ export type NavigationItem = {
   attributes: NavigationItemAttributes;
 };
 
+export type MainNavigationItem = {
+  id: number;
+  attributes: {
+    mainNavigation: MainNavItem[];
+    footerNavigation: MainNavItem[];
+    footerNavigations: MainNavItem[];
+    subNavigation: MainNavItem[];
+  };
+};
+
+export type MainNavItem = {
+  id: number;
+  title: string;
+  url: string;
+  images: {
+    data: ImageData | null;
+  };
+  subMenu: {
+    id: number;
+    title: string;
+    url: string;
+  }[];
+};
+
 type ApiResponseMeta = {
   page: number;
   pageSize: number;

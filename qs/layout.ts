@@ -2,6 +2,7 @@ import type {
   CountriesQueryOptions,
   CountryQueryOptions,
   LayoutQueryOptions,
+  MainNavigationQueryOptions,
   MenuQueryOptions,
   TranslationsQueryOptions,
 } from "../interfaces/qs/layout";
@@ -184,4 +185,54 @@ export const translationsQs = (): TranslationsQueryOptions => ({
 
 export const countriesQs = (): CountriesQueryOptions => ({
   fields: ["countryName", "shortCode"],
+});
+
+export const mainNavigationQs = (): MainNavigationQueryOptions => ({
+  fields: ["id"],
+  populate: {
+    mainNavigation: {
+      fields: ["title", "url"],
+      populate: {
+        images: {
+          fields: ["url", "height", "width"],
+        },
+        subMenu: {
+          fields: ["title", "url"],
+        },
+      },
+    },
+    footerNavigation: {
+      fields: ["title", "url"],
+      populate: {
+        images: {
+          fields: ["url", "height", "width"],
+        },
+        subMenu: {
+          fields: ["title", "url"],
+        },
+      },
+    },
+    footerNavigations: {
+      fields: ["title", "url"],
+      populate: {
+        images: {
+          fields: ["url", "height", "width"],
+        },
+        subMenu: {
+          fields: ["title", "url"],
+        },
+      },
+    },
+    subNavigation: {
+      fields: ["title", "url"],
+      populate: {
+        images: {
+          fields: ["url", "height", "width"],
+        },
+        subMenu: {
+          fields: ["title", "url"],
+        },
+      },
+    },
+  },
 });
