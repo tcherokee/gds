@@ -36,7 +36,7 @@ import { getUserCountry, userCountryHandler } from "../../utils/ip-request";
 
 const localisation = await getLocalisation();
 
-// if the site 
+// if the site
 const userCountry = await getUserCountry();
 
 const country =
@@ -49,9 +49,7 @@ const country =
 const countryCode = country !== null ? country?.sc || "" : null;
 
 const homeData =
-  countryCode !== null
-    ? { casinoCountry: countryCode}
-    : { casinoCountry: "" };
+  countryCode !== null ? { casinoCountry: countryCode } : { casinoCountry: "" };
 
 const sortStore = sortOptions.get();
 
@@ -134,6 +132,8 @@ const [homepageBlogs, homepageGames] = await Promise.all([
   fetchHomepageGames,
 ]);
 
+console.log("HOMEPAGE", homepage);
+
 // Loop counter
 let loopCounter = 2;
 if (
@@ -178,8 +178,9 @@ Astro.response.headers.set(
 );
 ---
 
-<script define:vars={{ country }}>
+<script define:vars={{ country, homepage }}>
   console.log("Home country", country);
+  console.log("Homepage", homepage);
 </script>
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />

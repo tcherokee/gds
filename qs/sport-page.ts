@@ -157,10 +157,6 @@ export const sportPageQs = (slug: string) => ({
               fields: ["url"],
             },
           },
-          pagination: {
-            page: 1,
-            pageSize: 100,
-          },
         },
         termsAndConditions: {
           fields: ["copy"],
@@ -168,12 +164,14 @@ export const sportPageQs = (slug: string) => ({
       },
     },
     blocks: {
-      populate: {
-        image: {
-          fields: ["url", "alternativeText", "mime"],
-        },
-        ImageCarousel: {
-          fields: ["url", "caption"],
+      on: {
+        "shared.image-carousel": {
+          fields: ["carouselTitle"],
+          populate: {
+            image: {
+              fields: ["url", "alternativeText", "mime"],
+            },
+          },
         },
       },
     },

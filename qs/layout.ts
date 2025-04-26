@@ -17,9 +17,9 @@ export const layoutQs = (): LayoutQueryOptions => ({
     "localisation",
   ],
   populate: {
-    countries: {
-      fields: ["countryName", "shortCode"],
-    },
+    // countries: {
+    //   fields: ["countryName", "shortCode"],
+    // },
     footerImages: {
       fields: ["imageName", "imageLink"],
       populate: {

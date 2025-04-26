@@ -37,10 +37,6 @@ export const categoryPagesQs = (slug:string) => {
             },
             providers: {
               fields: ["title"],
-              pagination: {
-                page: 1,
-                pageSize: 100,
-              },
               populate: {
                 images: {
                   fields: ["url"],

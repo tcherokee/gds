@@ -22,10 +22,10 @@ export const providerGamesQs = (
             },
           },
           sort: "ratingAvg:desc",
-          pagination: {
-            page: 1,
-            pageSize: 10,
-          },
+          // pagination: {
+          //   page: 1,
+          //   pageSize: 10,
+          // },
         },
         relatedCasinos: {
           fields: ["title", "slug", "ratingAvg", "ratingCount"],

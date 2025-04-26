@@ -73,7 +73,7 @@
 
   const mostPlayedGamesHandler = async () => {
     const gameViewVariables = {
-      id: data.id,
+      id: data.documentId,
       views: 1
     };
     const res = await fetch(
@@ -333,6 +333,7 @@
             ratingClasses="flex-col"
             ratingCount={data?.attributes?.ratingCount}
             itemId={data?.id + ""}
+            documentId={data?.documentId}
             ratingType={"games"}
             {translations}
           />

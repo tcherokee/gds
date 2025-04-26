@@ -9,126 +9,160 @@ export const homepageQs = (
   fields: ["title", "heading", "updatedAt"],
   populate: {
     blocks: {
-      populate: {
-        content: true,
-        link: true,
-        image: {
-          fields: ["url"],
+      on: {
+        "shared.single-content": {
+          populate: true,
         },
-        casinos: {
-          fields: [
-            "title",
-            "slug",
-            "ratingAvg",
-            "ratingCount",
-            "publishedAt",
-            "badges",
-          ],
+        "homepage.home-game-list": {
+          fields: ["numberOfGames", "sortBy", "gameListTitle"],
           populate: {
-            images: {
-              fields: ["url"],
-            },
             providers: {
-              fields: ["title"],
               populate: {
-                images: {
-                  fields: ["url"],
-                },
-              },
-            },
-            bonusSection: true,
-            casinoBonus: true,
-            termsAndConditions: true,
-            noDepositSection: true,
-            freeSpinsSection: true,
-            countries: {
-              fields: ["countryName", "shortCode"],
-              populate: {
-                countryFlag: {
-                  fields: ["url"],
-                },
-              },
-            },
-          },
-          filters: {
-            ...(localisation &&
-              casinoCountry && {
-                countries: {
-                  shortCode: {
-                    $in: casinoCountry,
+                slotProvider: {
+                  fields: ["title", "slug"],
+                  populate: {
+                    images: {
+                      fields: ["url"],
+                    },
                   },
                 },
-              }),
-          },
-        },
-        providers: {
-          populate: {
-            slotProvider: {
-              fields: ["title", "slug"],
-              populate: {
-                images: {
-                  fields: ["url"],
-                },
               },
             },
           },
         },
-        introWithSlider: {
+        "homepage.home-casino-list": {
           populate: {
-            // slideBtn: {
-            //   fields: ["btnText", "btnLink", "btnType"],
-            // },
+            casinos: {
+              fields: [
+                "title",
+                "slug",
+                "ratingAvg",
+                "ratingCount",
+                "publishedAt",
+                "Badges",
+              ],
+              populate: {
+                images: {
+                  fields: ["url"],
+                },
+                providers: {
+                  fields: ["title"],
+                  populate: {
+                    images: {
+                      fields: ["url"],
+                    },
+                  },
+                },
+                bonusSection: true,
+                casinoBonus: true,
+                termsAndConditions: true,
+                noDepositSection: true,
+                freeSpinsSection: true,
+                countries: {
+                  fields: ["countryName", "shortCode"],
+                  populate: {
+                    countryFlag: {
+                      fields: ["url"],
+                    },
+                  },
+                },
+              },
+              filters: {
+                ...(localisation &&
+                  casinoCountry && {
+                    countries: {
+                      shortCode: {
+                        $in: casinoCountry,
+                      },
+                    },
+                  }),
+              },
+            },
+          },
+        },
+        "shared.introduction-with-image": {
+          fields: ["heading", "introduction"],
+          populate: {
             image: {
-              fields: ["url"],
+              fields: ["url", "mime"],
             },
           },
         },
-        homeTestimonies: {
-          fields: ["title", "testimony", "testifierName", "testifierTitle"],
+        "shared.intro-with-slider": {
           populate: {
-            provider: {
-              fields: ["title", "slug"],
+            introWithSlider: {
               populate: {
-                images: {
+                image: {
                   fields: ["url"],
                 },
               },
             },
           },
         },
-        homeFeaturedProviders: {
+        "homepage.home-providers": {
           populate: {
-            providers: {
-              fields: ["title", "slug"],
+            providersList: {
               populate: {
-                images: {
+                providers: {
+                  fields: ["title", "slug"],
+                  populate: {
+                    images: {
+                      fields: ["url"],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        "homepage.home-testimonies": {
+          populate: {
+            homeTestimonies: {
+              fields: ["title", "testimony", "testifierName", "testifierTitle"],
+              populate: {
+                provider: {
+                  fields: ["title", "slug"],
+                  populate: {
+                    images: {
+                      fields: ["url"],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        "homepage.home-featured-providers": {
+          populate: {
+            homeFeaturedProviders: {
+              populate: {
+                providers: {
+                  fields: ["title", "slug"],
+                  populate: {
+                    images: {
+                      fields: ["url"],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        "shared.overview-block": {
+          populate: {
+            overviews: {
+              fields: ["title", "url"],
+              populate: {
+                card_img: {
                   fields: ["url"],
                 },
               },
             },
           },
         },
-        overviews: {
-          fields: ["title", "url"],
+        "homepage.home-blog-list": {
           populate: {
-            card_img: {
-              fields: ["url"],
-            },
-          },
-        },
-        providersList: {
-          populate: {
-            images: {
-              fields: ["url"],
-            },
-            providers: {
-              fields: ["title", "slug"],
-              populate: {
-                images: {
-                  fields: ["url"],
-                },
-              },
-            },
+            fields: ["numOfBlogs"],
           },
         },
       },

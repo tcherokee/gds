@@ -374,7 +374,7 @@ const orderMap = {
 
         {
           //Image carousel block
-          __blocks.map(
+          __blocks?.map(
             (block: BlockType, i: number) =>
               block.__component === "shared.image-carousel" && (
                 <ImageCarousel

@@ -18,6 +18,7 @@ const fetchApi = async <T>({
       Authorization: `Bearer ${
         import.meta.env.PUBLIC_API_TOKEN ?? process.env.PUBLIC_API_TOKEN
       }`,
+      "Strapi-Response-Format": "v4",
     },
   };
 

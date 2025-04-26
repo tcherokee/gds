@@ -18,6 +18,7 @@ import type {
 
 export type SportPage = {
   id: number;
+  documentId: string;
   attributes: Attributes;
 };
 
