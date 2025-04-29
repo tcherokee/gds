@@ -2,7 +2,7 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
-    args: ['-c', 'docker pull gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}:latest || exit 0']
+    args: ['-c', 'docker pull ${_REGION}-docker.pkg.dev/${_DEPLOY_PROJECT}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:latest || exit 0']
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
@@ -61,26 +61,27 @@ steps:
         'PUBLIC_SUPABASE_URL=${_PUBLIC_SUPABASE_URL}',
         '--build-arg',
         'PUBLIC_SUPABASE_ANON_KEY=${_PUBLIC_SUPABASE_ANON_KEY}',
+        '--build-arg',
+        'NPM_TOKEN=${_NPM_TOKEN}',
         '-t',
-        'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}',
+        '${_REGION}-docker.pkg.dev/${_DEPLOY_PROJECT}/${_REPOSITORY_NAME}/${_SERVICE_NAME}',
         '--cache-from',
-        'gcr.io/${_DEPLOY_PROJECT}/${_SERVICE_NAME}:latest',
+        '${_REGION}-docker.pkg.dev/${_DEPLOY_PROJECT}/${_REPOSITORY_NAME}/${_SERVICE_NAME}:latest',
         '.'
       ]
 
-  # push the container image to Container Registry
+  # push the container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$_DEPLOY_PROJECT/$_SERVICE_NAME']
+    args: ['push', '${_REGION}-docker.pkg.dev/${_DEPLOY_PROJECT}/${_REPOSITORY_NAME}/${_SERVICE_NAME}']
 
   # Deploy container image to Cloud Run
-
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'run'
       - 'deploy'
       - '$_SERVICE_NAME'
       - '--image'
-      - 'gcr.io/$_DEPLOY_PROJECT/$_SERVICE_NAME'
+      - '${_REGION}-docker.pkg.dev/${_DEPLOY_PROJECT}/${_REPOSITORY_NAME}/${_SERVICE_NAME}'
       - '--region'
       - '$_REGION'
       - '--platform'
@@ -145,12 +146,15 @@ steps:
       - 'PUBLIC_SUPABASE_URL=${_PUBLIC_SUPABASE_URL}'
       - '--set-env-vars'
       - 'PUBLIC_SUPABASE_ANON_KEY=${_PUBLIC_SUPABASE_ANON_KEY}'
+      - '--set-env-vars'
+      - 'NPM_TOKEN=${_NPM_TOKEN}'
 
 substitutions:
   _OUTPUT_DIST_PATH: '/'
   _NODE_ENV: 'production'
   _DEPLOY_PROJECT: ''
   _SERVICE_NAME: ''
+  _REPOSITORY_NAME: 'eu-west8-svelte' # Name of your Artifact Registry repository
   _REGION: 'europe-west8'
   _AUTH_OPTION: '--allow-unauthenticated'
   _VPC_CONNECTOR_NAME: ''
@@ -180,5 +184,7 @@ substitutions:
   _PUBLIC_SWETRIX_ID: ''
   _PUBLIC_SUPABASE_URL: ''
   _PUBLIC_SUPABASE_ANON_KEY: ''
+  _SQL_INSTANCE: ''
+  _NPM_TOKEN: ''
 
 timeout: 2700s
