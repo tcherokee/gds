@@ -13,7 +13,7 @@ export const POST: APIRoute = async ({ request }) => {
   };
 
   const res = await fetch(
-    `${import.meta.env.PUBLIC_API_URL}/api/ezforms/submit`,
+    `${import.meta.env.PUBLIC_API_URL}/api/report-forms`,
     opts
   );
 
