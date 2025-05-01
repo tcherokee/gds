@@ -300,25 +300,127 @@ const faqIndex = customPage[0]?.attributes?.blocks.findIndex(
   (block: Block) => block.__component === "shared.faqs"
 );
 
-// Tell the browser to always check the freshness of the cache
+// Caching System
+// Add this code at the bottom of your page, just before the JSX/HTML portion
+// Replace the existing cache control headers
+
+// Set up cache tags (using Surrogate-Key as per your previous code)
+const surrogateKeys = [];
+
+// Page-specific tag
+surrogateKeys.push(`page:custom`);
+surrogateKeys.push(`page:${path}`);
+
+// Content-type tags
+surrogateKeys.push('type:custompage');
+
+// Add content-specific tags
+if (initialGames && initialGames.length > 0) {
+  surrogateKeys.push('content:games');
+  
+  // Add provider-specific tags if relevant
+  const gameProviderSlugs = [...new Set(initialGames.map(game => game.provider?.slug).filter(Boolean))];
+  if (gameProviderSlugs.length > 0) {
+    gameProviderSlugs.forEach(provider => {
+      if (provider) {
+        surrogateKeys.push(`provider:${provider}`);
+      }
+    });
+  }
+}
+
+// Add tag for custom page specific content types
+const componentTypes = customPage[0]?.attributes?.blocks.map(block => block.__component.split('.')[0]);
+const uniqueComponentTypes = [...new Set(componentTypes)];
+uniqueComponentTypes.forEach(type => {
+  if (type) {
+    surrogateKeys.push(`componentType:${type}`);
+  }
+});
+
+// Add FAQ tag if page has FAQs
+if (allFAQs && allFAQs.length > 0) {
+  surrogateKeys.push('content:faqs');
+}
+
+// Add HowTo tag if page has HowTos
+if (allHowTos && allHowTos.length > 0) {
+  surrogateKeys.push('content:howtos');
+}
+
+// Add country-specific tag if applicable
+if (casinoCountry) {
+  surrogateKeys.push(`country:${casinoCountry}`);
+}
+
+// Add version or timestamp tag to allow for complete cache refresh when needed
+const contentTimestamp = customPage[0]?.attributes?.updatedAt || Date.now();
+surrogateKeys.push(`version:${contentTimestamp}`);
+
+// Set Surrogate-Key header for GCP CDN cache invalidation
+Astro.response.headers.set('Surrogate-Key', surrogateKeys.join(' ')); // Space-separated list
+
+// Generate a proper ETag based on content
+// Create a content signature from key data that would trigger a cache refresh when changed
+const contentSignature = JSON.stringify({
+  // Include critical content identifiers that should trigger cache invalidation
+  path: path,
+  updatedAt: contentTimestamp,
+  gameIds: initialGames?.map(game => game.id)?.slice(0, 10), // Limit to avoid overly large ETags
+  blocksLength: customPage[0]?.attributes?.blocks?.length,
+  countryCode: casinoCountry || 'default',
+  seo: {
+    title: customPage[0]?.attributes?.seo?.metaTitle,
+    description: customPage[0]?.attributes?.seo?.metaDescription
+  }
+});
+
+// Generate a hash of the content signature for the ETag
+// In a production environment, you might want to use a more sophisticated hashing function
+const contentHash = Array.from(
+  new Uint8Array(
+    new TextEncoder().encode(contentSignature)
+  )
+).reduce((hash, byte) => (((hash << 5) - hash) + byte) | 0, 0).toString(36);
+
+// Create and set a proper ETag (weak validator with W/ prefix is appropriate for HTML content)
+const etagValue = `W/"${contentHash}"`;
+Astro.response.headers.set("ETag", etagValue);
+
+// Check for If-None-Match header to enable 304 responses
+const ifNoneMatch = Astro.request.headers.get("If-None-Match");
+if (ifNoneMatch === etagValue) {
+  return new Response(null, {
+    status: 304,
+    headers: {
+      "ETag": etagValue,
+      "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200",
+      "Surrogate-Key": surrogateKeys.join(' '),
+      "Surrogate-Control": "max-age=604800",
+      "Last-Modified": new Date(contentTimestamp).toUTCString()
+    }
+  });
+}
+
+// Set aggressive caching
+// Browser cache: 1 day
+// CDN cache: 7 days (via s-maxage)
+// Stale-while-revalidate: 1 hour
+// Stale-if-error: 3 days
 Astro.response.headers.set(
   "Cache-Control",
-  "public, max-age=0, must-revalidate"
+  "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200"
 );
 
-// CDN Cache Control
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
-);
+// Optional: Add Surrogate-Control header (might be useful for other CDNs)
+Astro.response.headers.set("Surrogate-Control", "max-age=604800");
+
+// Optional: Set cache validation headers
+const lastModifiedDate = new Date(contentTimestamp).toUTCString();
+Astro.response.headers.set("Last-Modified", lastModifiedDate);
+
 ---
 
-<script
-  define:vars={{ customPage}}
->
-  console.log("THIS IS A CUSTOM PAGE", customPage);
-  console.log("sideBarToShow", customPage[0].attributes.sideBarToShow);
-</script>
 <MainLayout seoData={seo} otherSchema={combinedSchema}>
   <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
 

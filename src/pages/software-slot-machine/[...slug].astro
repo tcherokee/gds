@@ -149,17 +149,130 @@ const seo = {
   url: `${import.meta.env.FULL_URL}${urlTranslate[import.meta.env.SITE_ID as keyof typeof urlTranslate]["provider-pages"]}/${slug}`,
 };
 
-// Tell the browser to always check the freshness of the cache
+// Caching System
+const surrogateKeys = [];
+
+// Page-specific tags
+surrogateKeys.push("page:provider");
+surrogateKeys.push(`provider:${slug}`);
+surrogateKeys.push(`provider:${strippedSlug}`);
+
+// Content-type tags
+surrogateKeys.push("type:slotprovider");
+
+// Add content-specific tags
+if (games && games.data && games.data.length > 0) {
+  surrogateKeys.push("content:games");
+}
+
+// Add FAQs tag if page has FAQs
+if (
+  slotProvider[0]?.attributes?.faqs &&
+  slotProvider[0]?.attributes?.faqs.length > 0
+) {
+  surrogateKeys.push("content:faqs");
+}
+
+// Add related casinos tag if present
+if (
+  slotProvider[0]?.attributes?.relatedCasinos?.data &&
+  slotProvider[0]?.attributes?.relatedCasinos?.data.length > 0
+) {
+  surrogateKeys.push("content:relatedcasinos");
+
+  // Add each casino ID to enable specific casino invalidation
+  slotProvider[0].attributes.relatedCasinos.data.forEach((casino) => {
+    if (casino.id) {
+      surrogateKeys.push(`casino:${casino.id}`);
+    }
+  });
+}
+
+// Add content block tags if present
+if (slotProvider[0]?.attributes?.content1) {
+  surrogateKeys.push("block:content1");
+}
+if (slotProvider[0]?.attributes?.content2) {
+  surrogateKeys.push("block:content2");
+}
+if (slotProvider[0]?.attributes?.content3) {
+  surrogateKeys.push("block:content3");
+}
+
+// Add country-specific tag if applicable
+if (casinoCountry) {
+  surrogateKeys.push(`country:${casinoCountry}`);
+}
+
+// Add version or timestamp tag to allow for complete cache refresh when needed
+const contentTimestamp = slotProvider[0]?.attributes?.updatedAt || Date.now();
+surrogateKeys.push(`version:${contentTimestamp}`);
+
+// Set Surrogate-Key header for GCP CDN cache invalidation
+Astro.response.headers.set("Surrogate-Key", surrogateKeys.join(" ")); // Space-separated list
+
+// Generate a proper ETag based on content
+// Create a content signature from key data that would trigger a cache refresh when changed
+const contentSignature = JSON.stringify({
+  // Include critical content identifiers that should trigger cache invalidation
+  slug: slug,
+  strippedSlug: strippedSlug,
+  updatedAt: contentTimestamp,
+  gameCount: games?.meta?.pagination?.total || 0,
+  faqsCount: slotProvider[0]?.attributes?.faqs?.length || 0,
+  relatedCasinosCount:
+    slotProvider[0]?.attributes?.relatedCasinos?.data?.length || 0,
+  countryCode: casinoCountry || "default",
+  seo: {
+    title: slotProvider[0]?.attributes?.seo?.metaTitle,
+    description: slotProvider[0]?.attributes?.seo?.metaDescription,
+  },
+});
+
+// Generate a hash of the content signature for the ETag
+// In a production environment, you might want to use a more sophisticated hashing function
+const contentHash = Array.from(
+  new Uint8Array(new TextEncoder().encode(contentSignature))
+)
+  .reduce((hash, byte) => ((hash << 5) - hash + byte) | 0, 0)
+  .toString(36);
+
+// Create and set a proper ETag (weak validator with W/ prefix is appropriate for HTML content)
+const etagValue = `W/"${contentHash}"`;
+Astro.response.headers.set("ETag", etagValue);
+
+// Check for If-None-Match header to enable 304 responses
+const ifNoneMatch = Astro.request.headers.get("If-None-Match");
+if (ifNoneMatch === etagValue) {
+  return new Response(null, {
+    status: 304,
+    headers: {
+      ETag: etagValue,
+      "Cache-Control":
+        "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200",
+      "Surrogate-Key": surrogateKeys.join(" "),
+      "Surrogate-Control": "max-age=604800",
+      "Last-Modified": new Date(contentTimestamp).toUTCString(),
+    },
+  });
+}
+
+// Set aggressive caching
+// Browser cache: 1 day
+// CDN cache: 7 days (via s-maxage)
+// Stale-while-revalidate: 1 hour
+// Stale-if-error: 3 days
 Astro.response.headers.set(
   "Cache-Control",
-  "public, max-age=0, must-revalidate"
+  "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200"
 );
 
-// CDN Cache Control
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
-);
+// Optional: Add Surrogate-Control header (might be useful for other CDNs)
+Astro.response.headers.set("Surrogate-Control", "max-age=604800");
+
+// Optional: Set cache validation headers
+const lastModifiedDate = new Date(contentTimestamp).toUTCString();
+Astro.response.headers.set("Last-Modified", lastModifiedDate);
 ---
 
 <MainLayout

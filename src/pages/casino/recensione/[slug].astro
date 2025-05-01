@@ -312,17 +312,195 @@ const orderMap = {
   faqs: 7,
 };
 
-// Tell the browser to always check the freshness of the cache
+// Caching System
+// Add this code at the bottom of your page, just before the JSX/HTML portion
+// Replace the existing cache control headers
+
+// Set up cache tags (using Surrogate-Key as per your previous code)
+const surrogateKeys = [];
+
+// Page-specific tags
+surrogateKeys.push('page:casino');
+surrogateKeys.push(`casino:${slug}`);
+
+// Content-type tags
+surrogateKeys.push('type:casinopage');
+
+// Add content-specific tags
+if (casinoPage[0]?.attributes?.introduction) {
+  surrogateKeys.push('content:introduction');
+}
+
+if (casinoPage[0]?.attributes?.howTo) {
+  surrogateKeys.push('content:howto');
+}
+
+// Add content section tags
+for (let i = 1; i <= 4; i++) {
+  if (casinoPage[0]?.attributes?.[`content${i}`]) {
+    surrogateKeys.push(`content:section${i}`);
+  }
+}
+
+// Add FAQ tag if page has FAQs
+if (casinoPage[0]?.attributes?.faqs && casinoPage[0]?.attributes?.faqs.length > 0) {
+  surrogateKeys.push('content:faqs');
+}
+
+// Add pros/cons tag if present
+if (casinoPage[0]?.attributes?.proscons) {
+  surrogateKeys.push('content:proscons');
+}
+
+// Add bonus information tags
+if (casinoPage[0]?.attributes?.casinoBonus) {
+  surrogateKeys.push('content:casinobonus');
+}
+if (casinoPage[0]?.attributes?.bonusSection) {
+  surrogateKeys.push('content:bonussection');
+}
+if (casinoPage[0]?.attributes?.noDepositSection) {
+  surrogateKeys.push('content:nodeposit');
+}
+if (casinoPage[0]?.attributes?.freeSpinsSection) {
+  surrogateKeys.push('content:freespins');
+}
+
+// Add payment method tags
+if (paymentChannels?.data && paymentChannels?.data.length > 0) {
+  surrogateKeys.push('content:paymentchannels');
+  // Tag each payment channel for selective invalidation
+  paymentChannels.data.forEach(channel => {
+    if (channel?.id) {
+      surrogateKeys.push(`payment:${channel.id}`);
+    }
+  });
+}
+
+// Add provider tags
+if (casinoPage[0]?.attributes?.providers?.data && casinoPage[0]?.attributes?.providers?.data.length > 0) {
+  surrogateKeys.push('content:providers');
+  // Tag each provider for selective invalidation
+  casinoPage[0].attributes.providers.data.forEach(provider => {
+    if (provider?.attributes?.slug) {
+      surrogateKeys.push(`provider:${provider.attributes.slug}`);
+    }
+  });
+}
+
+// Add game tags if games are present
+if (games && games.length > 0) {
+  surrogateKeys.push('content:games');
+  surrogateKeys.push(`gamecount:${Math.floor(games.length / 5) * 5}`); // Round to nearest 5
+}
+
+// Add related casinos tag if present
+if (casinoPage[0]?.attributes?.casinoComparison?.data && 
+    casinoPage[0]?.attributes?.casinoComparison?.data.length > 0) {
+  surrogateKeys.push('content:casinocomparison');
+  
+  // Add specific casino IDs for fine-grained invalidation
+  casinoPage[0].attributes.casinoComparison.data.forEach(casino => {
+    if (casino.id) {
+      surrogateKeys.push(`relatedcasino:${casino.id}`);
+    }
+  });
+}
+
+// Add rating tag to invalidate when ratings change
+if (casinoPage[0]?.attributes?.ratingCount && casinoPage[0]?.attributes?.ratingAvg) {
+  const ratingInfo = `${casinoPage[0]?.attributes?.ratingCount}-${casinoPage[0]?.attributes?.ratingAvg.toFixed(1)}`;
+  surrogateKeys.push(`rating:${ratingInfo}`);
+}
+
+// Add author tags for both review author and approver
+if (casinoPage[0]?.attributes?.author?.data?.id) {
+  surrogateKeys.push(`author:${casinoPage[0]?.attributes?.author?.data?.id}`);
+}
+
+if (casinoPage[0]?.attributes?.testimonial?.approvedBy?.data?.id) {
+  surrogateKeys.push(`approver:${casinoPage[0]?.attributes?.testimonial?.approvedBy?.data?.id}`);
+}
+
+// Add country-specific tag if applicable
+if (casinoCountry) {
+  surrogateKeys.push(`country:${casinoCountry}`);
+}
+
+// Add version or timestamp tag to allow for complete cache refresh when needed
+const contentTimestamp = casinoPage[0]?.attributes?.updatedAt || Date.now();
+surrogateKeys.push(`version:${contentTimestamp}`);
+
+// Set Surrogate-Key header for GCP CDN cache invalidation
+Astro.response.headers.set('Surrogate-Key', surrogateKeys.join(' ')); // Space-separated list
+
+// Generate a proper ETag based on content
+// Create a content signature from key data that would trigger a cache invalidation when changed
+const contentSignature = JSON.stringify({
+  // Include critical content identifiers that should trigger cache invalidation
+  slug: slug,
+  title: casinoPage[0]?.attributes?.title,
+  updatedAt: contentTimestamp,
+  ratingCount: casinoPage[0]?.attributes?.ratingCount || 0,
+  ratingAvg: casinoPage[0]?.attributes?.ratingAvg || 0,
+  bonusLabel: casinoPage[0]?.attributes?.casinoBonus?.bonusLabel,
+  faqsCount: casinoPage[0]?.attributes?.faqs?.length || 0,
+  gameCount: games?.length || 0,
+  hasHowTo: !!casinoPage[0]?.attributes?.howTo,
+  hasProscons: !!casinoPage[0]?.attributes?.proscons,
+  countryCode: casinoCountry || 'default',
+  providersCount: casinoPage[0]?.attributes?.providers?.data?.length || 0,
+  paymentsCount: paymentChannels?.data?.length || 0,
+  casinoComparisonCount: casinoPage[0]?.attributes?.casinoComparison?.data?.length || 0,
+  seo: {
+    title: casinoPage[0]?.attributes?.seo?.metaTitle,
+    description: casinoPage[0]?.attributes?.seo?.metaDescription
+  }
+});
+
+// Generate a hash of the content signature for the ETag
+// In a production environment, you might want to use a more sophisticated hashing function
+const contentHash = Array.from(
+  new Uint8Array(
+    new TextEncoder().encode(contentSignature)
+  )
+).reduce((hash, byte) => (((hash << 5) - hash) + byte) | 0, 0).toString(36);
+
+// Create and set a proper ETag (weak validator with W/ prefix is appropriate for HTML content)
+const etagValue = `W/"${contentHash}"`;
+Astro.response.headers.set("ETag", etagValue);
+
+// Check for If-None-Match header to enable 304 responses
+const ifNoneMatch = Astro.request.headers.get("If-None-Match");
+if (ifNoneMatch === etagValue) {
+  return new Response(null, {
+    status: 304,
+    headers: {
+      "ETag": etagValue,
+      "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200",
+      "Surrogate-Key": surrogateKeys.join(' '),
+      "Surrogate-Control": "max-age=604800",
+      "Last-Modified": new Date(contentTimestamp).toUTCString()
+    }
+  });
+}
+
+// Set aggressive caching
+// Browser cache: 1 day
+// CDN cache: 7 days (via s-maxage)
+// Stale-while-revalidate: 1 hour
+// Stale-if-error: 3 days
 Astro.response.headers.set(
   "Cache-Control",
-  "public, max-age=0, must-revalidate"
+  "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200"
 );
 
-// CDN Cache Control
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
-);
+// Optional: Add Surrogate-Control header (might be useful for other CDNs)
+Astro.response.headers.set("Surrogate-Control", "max-age=604800");
+
+// Optional: Set cache validation headers
+const lastModifiedDate = new Date(contentTimestamp).toUTCString();
+Astro.response.headers.set("Last-Modified", lastModifiedDate);
 ---
 
 <MainLayout
