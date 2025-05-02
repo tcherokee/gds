@@ -36,8 +36,6 @@ import type { CustomPageItem } from "../../interfaces/custom-pages";
 // Astro Layouts & Components
 import type { TUserGame } from "../../interfaces/games";
 import { getUserCountry, userCountryHandler } from "../../utils/ip-request";
-import Breadcrumbs from "../components/layout/breadcrumbs.astro";
-import MainLayout from "../layouts/MainLayout.astro";
 
 const path = Astro.params.path as string;
 // Constructing SiteURL
@@ -278,16 +276,3 @@ Astro.response.headers.set(
   {slotCategories}
   {initialGames}
 />
-<!-- <MainLayout seoData={seo} otherSchema={combinedSchema}>
-  <Breadcrumbs breadcrumbs={customPage?.[0]?.attributes?.breadcrumbs} />
-  <CustomPage
-    customPage={customPage}
-    {translationStore}
-    {slotProviders}
-    {casinoCountry}
-    {localisation}
-    {gameProviders}
-    {slotCategories}
-    {initialGames}
-  />
-</MainLayout> -->
