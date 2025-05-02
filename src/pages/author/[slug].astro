@@ -41,7 +41,6 @@ const authorPage = await fetchApi<TAuthor[]>({
   wrappedByKey: "",
   query: `?${query}`,
 });
-console.log("authorPage", authorPage);
 
 const gamesQueryObj: GameFilters = {
   limit: 18,

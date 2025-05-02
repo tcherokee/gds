@@ -30,9 +30,6 @@ const { data, isCustom = false, translationStore } = Astro.props
 const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) => item.casino.data) : data
 
 ---
-<script define:vars={{ data }}>
-    console.log("casinoCompare", data);
-</script>
 
 <div class="rounded-[6px]">
 	<div class="text-center px-3 py-[11px] bg-casino-table-header-bkg rounded-tr-[6px] rounded-tl-[6px] md:text-start">

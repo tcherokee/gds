@@ -42,7 +42,6 @@ export const PUT: APIRoute = async ({ url }) => {
   const id = url.searchParams.get("id");
   const views = url.searchParams.get("views");
 
-  console.log("GAME_VIEWS_PAYLOAD:", id, views);
   const body = {
     data: {
       views,

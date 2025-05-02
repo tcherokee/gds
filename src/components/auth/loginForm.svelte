@@ -67,7 +67,6 @@
 
       // Get review param value
       const paramValue = urlParams.get("review");
-      console.log(paramValue);
       const reviewSourceType =
         await window.localStorage?.getItem("_reviewSourceType");
         window.localStorage?.removeItem("_reviewSourceType")
