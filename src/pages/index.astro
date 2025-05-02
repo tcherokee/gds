@@ -176,6 +176,10 @@ Astro.response.headers.set(
 );
 ---
 
+<script define:vars={{ homepage }}>
+  console.log("HOMEPAGE", homepage);
+</script>
+
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 
@@ -201,7 +205,7 @@ Astro.response.headers.set(
               }
               {...(homepage?.attributes?.blocks[i]?.__component ===
               "homepage.home-casino-list"
-                ? { isTop: true }
+                ? { isTop: true, isCustom: true }
                 : {})}
               {...(homepage?.attributes?.blocks[i]?.__component ===
               "homepage.home-blog-list"
