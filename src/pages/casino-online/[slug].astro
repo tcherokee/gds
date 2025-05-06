@@ -237,11 +237,6 @@ const lastModifiedDate = new Date(contentTimestamp).toUTCString();
 Astro.response.headers.set("Last-Modified", lastModifiedDate);
 ---
 
-<!-- <script
-  define:vars={{ casinoProvider }}
->
-  console.log("Casino online", casinoProvider[0]);
-</script> -->
 <MainLayout
   seoData={seo}
   crumbLocation="casino-providers"

@@ -3,40 +3,37 @@
 import qs from "qs";
 
 // Types
-import type { Gamepage } from "../../../interfaces/game-page";
 import type {
-  HowToGroup,
-  Faqs as FaqsType,
   Block as BlockType,
-  UserCountry,
+  Faqs as FaqsType,
+  HowToGroup,
 } from "../../../interfaces/common/types";
+import type { Gamepage } from "../../../interfaces/game-page";
 
 // Helpers
-import { urlTranslate, GameInfoTable } from "../../../utils/data-store.util";
 import fetchApi from "../../../lib/strapi";
+import { GameInfoTable, urlTranslate } from "../../../utils/data-store.util";
 
 // Queries
 import { gamepageQs } from "../../../qs/game-page";
 
 // Components
-import MainLayout from "../../layouts/MainLayout.astro";
-import Breadcrumb from "../../components/layout/breadcrumbs.astro";
-import RelatedCasino from "../../components/games/relatedCasino.astro";
-import ProviderGames from "../../components/games/providerGames.astro";
-import HowTo from "../../components/general/howTo.astro";
-import ContentBlock from "../../components/blocks/contentBlock.astro";
-import ProsCons from "../../components/general/proCons.astro";
-import CasinoSideBar from "../../components/casino/casinoSidebar.astro";
-import ImageCarousel from "../../components/general/imageCarousel.svelte";
-import FaqListBlock from "../../components/blocks/faqListBlock.astro";
-import GamePlayer from "../../components/games/gamePlayer.svelte";
-import QuickLinks from "../../components/helpers/quicklinks.svelte";
-import AuthorCard from "../../components/general/authorCard.astro";
 import { getTranslations } from "../../../utils/api-requests";
-import { layoutQs } from "../../../qs/layout";
-import type { LayoutData } from "../../../interfaces/layout";
-import UserReviews from "../../components/general/userReviews.svelte";
 import { getUserCountry, userCountryHandler } from "../../../utils/ip-request";
+import ContentBlock from "../../components/blocks/contentBlock.astro";
+import FaqListBlock from "../../components/blocks/faqListBlock.astro";
+import CasinoSideBar from "../../components/casino/casinoSidebar.astro";
+import GamePlayer from "../../components/games/gamePlayer.svelte";
+import ProviderGames from "../../components/games/providerGames.astro";
+import RelatedCasino from "../../components/games/relatedCasino.astro";
+import AuthorCard from "../../components/general/authorCard.astro";
+import HowTo from "../../components/general/howTo.astro";
+import ImageCarousel from "../../components/general/imageCarousel.svelte";
+import ProsCons from "../../components/general/proCons.astro";
+import UserReviews from "../../components/general/userReviews.svelte";
+import QuickLinks from "../../components/helpers/quicklinks.svelte";
+import Breadcrumb from "../../components/layout/breadcrumbs.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
 
 const userCountry = await getUserCountry();
 const country =
@@ -360,9 +357,6 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
 
 ---
 
-<!-- <script define:vars={{ gamePage }}>
-  console.log("gamePage", gamePage);
-</script> -->
 <MainLayout
   seoData={seo}
   crumbLocation="games"

@@ -1,22 +1,41 @@
 ---
+import qs from "qs";
 
+import { sortOptions } from "../../../stores/sortFilters";
 
 // Helpers
 import {
   loadComponents,
   mapBlocksToDynamicComponents,
 } from "../../../lib/loadBlockComponents";
+import fetchApi from "../../../lib/strapi";
 
 // Query Strings
+import { customPageQs } from "../../../qs/customPages";
+import { gamesQs } from "../../../qs/games.ts";
 
+import {
+  getLocalisation,
+  slotCategories as slotCategoriesResponse,
+  slotProviders as slotProvidersResponse,
+  getTranslations as translationResponse,
+} from "../../../utils/api-requests";
 
 //types and typeguards
 import type {
   Block,
+  BreadcrumbData,
   CasinoListBlock,
+  CustomGameList,
+  Faqs,
+  GameFilters,
+  HowToGroup,
   TCasinoLiveVideo,
-  TGameListBlock
+  TGameListBlock,
+  TProviderAttributesOnly,
+  UserCountry,
 } from "../../../interfaces/common/types.ts";
+import type { CustomPageItem } from "../../../interfaces/custom-pages";
 
 // Import Svelte Components
 import GameListBlock from "../blocks/gameListBlock.svelte";
@@ -26,19 +45,223 @@ import CasinoLiveVideo from "../general/casinoLiveVideo.svelte";
 import LiveStatsBlock from "../blocks/liveStatsBlock.svelte";
 
 // Astro Layouts & Components
-import type { TQuickLinks } from "../../../interfaces/common/types.ts";
-import CasinoSidebar from "../casino/casinoSidebar.astro";
-import Quicklinks from "../helpers/quicklinks.svelte";
-import SportSidebar from "../sport/sportSidebar.astro";
-import AuthorCard from "./authorCard.astro";
+import type { TUserGame } from "../../../interfaces/games";
 import MainLayout from "../../layouts/MainLayout.astro";
+import CasinoSidebar from "../casino/casinoSidebar.astro";
 import Breadcrumbs from "../layout/breadcrumbs.astro";
+import AuthorCard from "./authorCard.astro";
+import SportSidebar from "../sport/sportSidebar.astro";
+import type { TQuickLinks } from "../../../interfaces/common/types.ts";
+import Quicklinks from "../helpers/quicklinks.svelte";
+import {
+   getUserCountry,
+  userCountryHandler,
+} from "../../../utils/ip-request";
 
-const { seoData, otherSchema, breadcrumbs, customPage, translationStore, slotProviders, casinoCountry, localisation, gameProviders, slotCategories, initialGames } = Astro.props;
+const localisation = await getLocalisation();
+const userCountry = await  getUserCountry();
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
+
+const casinoCountry = country !== null ? country?.sc || "" : "";
+
+// const path = Astro.params.path as string;
+const { path } = Astro.props;
+
+// Constructing SiteURL
+const siteURL: string = `${import.meta.env.FULL_URL}/${path}`;
+
+const translationStore = await translationResponse();
+const slotProviders = await slotProvidersResponse();
+const slotCategories = await slotCategoriesResponse();
+
+// Fetch Game Providers Filter
+const gameProviders = await fetchApi<{
+  id: number;
+  attributes: {
+    filterProviders: {
+      data: TProviderAttributesOnly[];
+    };
+  };
+}>({
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
+});
+
+const query = qs.stringify(customPageQs(path, casinoCountry, localisation), {
+  encodeValuesOnly: true,
+});
+
+let gamesQueryObj: GameFilters = {
+  limit: 18,
+  sort: "views:desc",
+  page: 1,
+  providers: [],
+  categories: [],
+  author: "",
+};
+
+// Request to the Fetch Function to get the custom page slugs from the API
+const customPage = await fetchApi<CustomPageItem[]>({
+  endpoint: "custom-pages",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
+
+const gameQuery = customPage[0]?.attributes?.blocks?.find(
+  (block) => block.__component === "games.games-carousel"
+) as CustomGameList;
+
+let initialGames: TUserGame[] = [];
+
+if (gameQuery) {
+  gamesQueryObj = {
+    ...gamesQueryObj,
+    limit: gameQuery.numberOfGames,
+    sort: sortOptions.get()[gameQuery.sortBy],
+  };
+
+  const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
+    encodeValuesOnly: true,
+  });
+
+  const customPageGames = await fetchApi<any[]>({
+    endpoint: "games",
+    wrappedByKey: "data",
+    query: `?${gamesQuery}`,
+  });
+
+  initialGames = customPageGames.map((elem) => {
+    return {
+      id: elem.id,
+      ...elem.attributes,
+      images: {
+        url: elem.attributes.images.data.attributes.url,
+      },
+      categories: elem.attributes.categories.data,
+      provider: {
+        slug: elem.attributes.provider.data?.attributes.slug,
+        title: elem.attributes.provider.data?.attributes.title,
+      },
+    };
+  });
+}
+
+let combinedSchema = [];
+
+// FAQs Schema
+const allFAQs = customPage[0]?.attributes?.blocks.filter(
+  (block: Block) => block.__component === "shared.faqs"
+) as Faqs[];
+
+if (allFAQs && allFAQs.length > 0) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${siteURL}`,
+      "@id": `${siteURL}`,
+    },
+    mainEntity: allFAQs?.map(({ answer, question }) => {
+      return {
+        "@type": "Question",
+        name: `${question}`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${answer}`,
+        },
+      };
+    }),
+  };
+  combinedSchema.push(faqSchema);
+}
+
+const allHowTos = customPage[0]?.attributes?.blocks.filter(
+  (block: Block) => block.__component === "shared.how-to-group"
+) as unknown as HowToGroup[];
+
+if (allHowTos && allHowTos.length > 0) {
+  const howToSchema = allHowTos?.map(({ title, howToGroup }) => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        url: `${siteURL}`,
+        "@id": `${siteURL}`,
+      },
+      name: `${title}`,
+      totalTime: "PT15M",
+      description: `${title}`,
+      tool: [
+        {
+          "@type": "HowToTool",
+          name: "smartphone, PC, tablet, metodo di pagamento",
+        },
+      ],
+      step: howToGroup?.map(({ heading, copy, image }, i: number) => {
+        return {
+          "@type": "HowToStep",
+          url: `${customPage[0]?.attributes?.urlPath}#step0${i + 1}`,
+          name: heading,
+          itemListElement: {
+            "@type": "HowToDirection",
+            text: copy,
+          },
+          ...(image?.data?.attributes && {
+            image: {
+              "@type": "ImageObject",
+              url: image?.data?.attributes.url,
+            },
+          }),
+        };
+      }),
+    };
+  });
+
+  combinedSchema.push(...howToSchema);
+}
+
+// Breadcrumb Schema
+const breadSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      url: `${siteURL}`,
+      "@id": `${siteURL}`,
+    },
+  itemListElement: (
+    [...customPage[0]?.attributes?.breadcrumbs] as BreadcrumbData[]
+  )
+    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
+    .map((bread, i) => {
+      return {
+        "@type": "ListItem",
+        position: i + 1,
+        name: bread?.breadCrumbText,
+        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+      };
+    }),
+};
+combinedSchema.push(breadSchema);
+
+// SEO Object
+const seo = {
+  pageTitle: customPage[0].attributes?.seo?.metaTitle,
+  metaDescription: customPage[0].attributes?.seo?.metaDescription,
+  url: `${import.meta.env.FULL_URL}/${path}`,
+};
 
 // First mapping components so I can check them against the svelte extentsion
 const mappedComponents = mapBlocksToDynamicComponents(
-  customPage.attributes.blocks
+  customPage[0].attributes.blocks
 );
 
 // Dynamically importing the components
@@ -70,16 +293,29 @@ const getLoopCounter = (blocks: Block[]): number => {
   return 2;
 };
 
-let loopCounter = getLoopCounter(customPage?.attributes?.blocks);
+let loopCounter = getLoopCounter(customPage[0]?.attributes?.blocks);
 
 // Get the index of the first occurrence of the FAQ
-const faqIndex = customPage?.attributes?.blocks.findIndex(
+const faqIndex = customPage[0]?.attributes?.blocks.findIndex(
   (block: Block) => block.__component === "shared.faqs"
 );
 
+// Tell the browser to always check the freshness of the cache
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, must-revalidate"
+);
+
+// CDN Cache Control
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
+);
 ---
-<MainLayout {seoData} {otherSchema}>
-  <Breadcrumbs {breadcrumbs} />
+
+<MainLayout seoData={seo} otherSchema={combinedSchema}>
+  <Breadcrumbs breadcrumbs={customPage[0]?.attributes?.breadcrumbs} />
+
   <div class:list={["featured-background curve pb-[50px]"]}>
     {
       Components.map((Component, i) => {
@@ -88,11 +324,11 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
             return (
               <div>
                 <Component
-                  data={customPage.attributes.blocks[i]}
-                  timeDate={customPage?.attributes?.updatedAt}
-                  authorData={customPage?.attributes?.author}
-                  isDateEnabled={customPage?.attributes?.showContentDate}
-                  {...(customPage?.attributes?.blocks[i]?.__component ===
+                  data={customPage[0].attributes.blocks[i]}
+                  timeDate={customPage[0]?.attributes?.updatedAt}
+                  authorData={customPage[0]?.attributes?.author}
+                  isDateEnabled={customPage[0]?.attributes?.showContentDate}
+                  {...(customPage[0]?.attributes?.blocks[i]?.__component ===
                   "casinos.casino-list"
                     ? { isCustom: true, isTop: true }
                     : {})}
@@ -103,7 +339,7 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
           } else {
             switch (mappedComponents[i].name) {
               case "casinoTable": {
-                const casinoListBlock = customPage.attributes.blocks[
+                const casinoListBlock = customPage[0].attributes.blocks[
                   i
                 ] as CasinoListBlock;
                 return (
@@ -127,7 +363,7 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
                   <div class="relative z-50">
                     <GameListBlock
                       data={
-                        customPage.attributes.blocks[i] as TGameListBlock
+                        customPage[0].attributes.blocks[i] as TGameListBlock
                       }
                       {initialGames}
                       gameProviders={
@@ -150,7 +386,7 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
                       translations={translationStore}
                       playbackUrl={
                         (
-                          customPage?.attributes?.blocks[
+                          customPage[0]?.attributes?.blocks[
                             i
                           ] as TCasinoLiveVideo
                         ).playbackUrl
@@ -162,11 +398,11 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
               }
               case "quicklinks": {
                 return (
-                  (customPage.attributes.blocks[i] as TQuickLinks).showQuickLinks ?
+                  (customPage[0].attributes.blocks[i] as TQuickLinks).showQuickLinks ?
                   <div class="relative z-50">
                     <Quicklinks
-                      data={customPage.attributes.blocks[i]}
-                      block={customPage.attributes.blocks}
+                      data={customPage[0].attributes.blocks[i]}
+                      block={customPage[0].attributes.blocks}
                       {translationStore}
                       client:load
                     />
@@ -190,17 +426,17 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
               if (mappedComponents[i].extension === "astro") {
                 return (
                   <Component
-                    data={customPage.attributes.blocks[i]}
-                    timeDate={customPage?.attributes?.updatedAt}
-                    authorData={customPage?.attributes?.author}
-                    {...(customPage?.attributes?.blocks[i]?.__component ===
+                    data={customPage[0].attributes.blocks[i]}
+                    timeDate={customPage[0]?.attributes?.updatedAt}
+                    authorData={customPage[0]?.attributes?.author}
+                    {...(customPage[0]?.attributes?.blocks[i]?.__component ===
                     "shared.quicklinks"
-                      ? { block: customPage.attributes.blocks }
+                      ? { block: customPage[0].attributes.blocks }
                       : {})}
                     {...(i === faqIndex ? { firstFaq: true } : {})}
-                    {...(customPage?.attributes?.blocks[i]?.__component ===
+                    {...(customPage[0]?.attributes?.blocks[i]?.__component ===
                       "casinos.casino-list" ||
-                    customPage?.attributes?.blocks[i]?.__component ===
+                    customPage[0]?.attributes?.blocks[i]?.__component ===
                       "casinos.casinos-comparison"
                       ? { isCustom: true }
                       : {})}
@@ -213,13 +449,13 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
                     return (
                       <LiveStatsBlock
                         data={
-                          customPage.attributes.blocks[i] }
+                          customPage[0].attributes.blocks[i] }
                         client:load
                       />
                     );
                   }
                   case "casinoTable": {
-                    const casinoListBlock = customPage.attributes.blocks[
+                    const casinoListBlock = customPage[0].attributes.blocks[
                       i
                     ] as CasinoListBlock;
                     return (
@@ -240,7 +476,7 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
                     return (
                       <GameListBlock
                         data={
-                          customPage.attributes.blocks[i] as TGameListBlock
+                          customPage[0].attributes.blocks[i] as TGameListBlock
                         }
                         {initialGames}
                         gameProviders={
@@ -261,7 +497,7 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
                         translations={translationStore}
                         playbackUrl={
                           (
-                            customPage?.attributes?.blocks[
+                            customPage[0]?.attributes?.blocks[
                               i
                             ] as TCasinoLiveVideo
                           ).playbackUrl
@@ -272,11 +508,11 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
                   }
                   case "quicklinks": {
                     return (
-                      (customPage.attributes.blocks[i] as TQuickLinks).showQuickLinks ?
+                      (customPage[0].attributes.blocks[i] as TQuickLinks).showQuickLinks ?
                       <div class="relative z-50">
                         <Quicklinks
-                          data={customPage.attributes.blocks[i]}
-                          block={customPage.attributes.blocks}
+                          data={customPage[0].attributes.blocks[i]}
+                          block={customPage[0].attributes.blocks}
                           {translationStore}
                           client:load
                         />
@@ -289,7 +525,7 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
                         translations={translationStore}
                         playbackUrl={
                           (
-                            customPage?.attributes?.blocks[
+                            customPage[0]?.attributes?.blocks[
                               i
                             ] as TCasinoLiveVideo
                           ).playbackUrl
@@ -303,24 +539,24 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
             }
           })
         }
-        <AuthorCard data={customPage.attributes.author} {translationStore} />
+        <AuthorCard data={customPage[0].attributes.author} {translationStore} />
       </div>
       {
-        !customPage.attributes.sideBarToShow ? (
+        !customPage[0].attributes.sideBarToShow ? (
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
             <CasinoSidebar
               {casinoCountry}
               translationStore={translationStore}
             />
           </div>
-        ) : customPage.attributes.sideBarToShow === "casino" ? (
+        ) : customPage[0].attributes.sideBarToShow === "casino" ? (
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
             <CasinoSidebar
               {casinoCountry}
               translationStore={translationStore}
             />
           </div>
-        ) : customPage.attributes.sideBarToShow === "sport" ? (
+        ) : customPage[0].attributes.sideBarToShow === "sport" ? (
           <div class="basis-[315px] shrink-0 order-first mb-5 order-last">
             <SportSidebar translationStore={translationStore} />
           </div>
@@ -328,4 +564,6 @@ const faqIndex = customPage?.attributes?.blocks.findIndex(
       }
     </div>
   </div>
-</MainLayou>
+
+
+</MainLayout>

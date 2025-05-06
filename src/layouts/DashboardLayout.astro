@@ -1,10 +1,10 @@
 ---
 //1st and 3rd Party Tools
-import qs from "qs";
 import { Tooltips } from "astro-tooltips";
+import qs from "qs";
 
 // QS Query Strings
-import { layoutQs, mainNavigationQs, menuQs } from "../../qs/layout.ts";
+import { layoutQs, mainNavigationQs } from "../../qs/layout.ts";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -13,30 +13,21 @@ import fetchApi from "../../lib/strapi";
 import "../styles/app.postcss";
 
 //Types and TypeGuards
+import { isMainLayoutData } from "../../interfaces/common/typeguards";
 import type { LayoutData } from "../../interfaces/layout";
-import type {
-  MainNavigationItem,
-  MainNavItem,
-  NavigationItem,
-  ProcessedMenus,
-} from "../../interfaces/menu.ts";
-import {
-  isMainLayoutData,
-  isNavigationItemArray,
-} from "../../interfaces/common/typeguards";
+import type { MainNavigationItem, MainNavItem } from "../../interfaces/menu.ts";
 
 //Components
-import Legal from "../components/layout/legal.astro";
-import Header from "../components/layout/header.astro";
-import DashboardSideNav from "../components/dashboard/dashboardSideNav.svelte";
 import DashboardFooter from "../components/dashboard/dashboardFooter.svelte";
+import DashboardSideNav from "../components/dashboard/dashboardSideNav.svelte";
+import Header from "../components/layout/header.astro";
+import Legal from "../components/layout/legal.astro";
 
 import { ViewTransitions } from "astro:transitions";
 
 // Setting up the queries in array for use in the promise all map
 const queries = {
   layout: qs.stringify(layoutQs(), { encodeValuesOnly: true }),
-  menus: qs.stringify(menuQs(), { encodeValuesOnly: true }),
   "main-navigation": qs.stringify(mainNavigationQs(), {
     encodeValuesOnly: true,
   }),
@@ -45,14 +36,13 @@ const queries = {
 // Set the types in an array for use in the promise all map
 type EndpointTypes = {
   layout: LayoutData;
-  menus: NavigationItem[];
   "main-navigation": MainNavigationItem;
 };
 
 type Endpoint = keyof EndpointTypes;
 
 // Set the endpoint slugs in an array for use in the promise all
-const endpoints: Endpoint[] = ["layout", "menus"];
+const endpoints: Endpoint[] = ["layout", "main-navigation"];
 
 // Promise All Fetch to fetch all the api requests in parrallel
 const responses = await Promise.all(
@@ -60,10 +50,7 @@ const responses = await Promise.all(
     fetchApi<EndpointTypes[typeof endpoint]>({
       endpoint,
       wrappedByKey: "data",
-      query:
-        endpoint === "menus"
-          ? `?nested&${queries[endpoint]}`
-          : `?${queries[endpoint]}`,
+      query: `?${queries[endpoint]}`,
     })
   )
 );
@@ -72,29 +59,7 @@ const responses = await Promise.all(
 const layout = isMainLayoutData(responses[0])
   ? responses[0]
   : console.error("Invalid layout data");
-const menu = isNavigationItemArray(responses[1])
-  ? responses[1]
-  : console.error("Invalid menu data");
 
-// Process menu data
-const processedMenus: ProcessedMenus = menu
-  ? (menu as NavigationItem[]).reduce(
-      (acc: ProcessedMenus, menu: NavigationItem) => {
-        const title = menu.attributes.title;
-        const items = menu.attributes.items.data;
-        if (
-          title === "Sub Navigation" ||
-          title === "Main Navigation" ||
-          title === "Footer Navigation" ||
-          title === "Footer Navigations"
-        ) {
-          acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
-        }
-
-    return acc;
-  },
-  {}
-): {};
 const processedMainNavigation = (navigation: MainNavItem[]) => {
   return navigation.map((item) => {
     return {
@@ -122,24 +87,14 @@ const processedMainNavigation = (navigation: MainNavItem[]) => {
     };
   });
 };
-const mainNavigation = responses[2]
+const mainNavigation = responses[1]
   ? processedMainNavigation(
-      (responses[2] as MainNavigationItem).attributes.mainNavigation
+      (responses[1] as MainNavigationItem).attributes.mainNavigation
     )
   : [];
-const footerNavigation = responses[2]
+const subNavigation = responses[1]
   ? processedMainNavigation(
-      (responses[2] as MainNavigationItem).attributes.footerNavigation
-    )
-  : [];
-const footerNavigations = responses[2]
-  ? processedMainNavigation(
-      (responses[2] as MainNavigationItem).attributes.footerNavigations
-    )
-  : [];
-const subNavigation = responses[2]
-  ? processedMainNavigation(
-      (responses[2] as MainNavigationItem).attributes.subNavigation
+      (responses[1] as MainNavigationItem).attributes.subNavigation
     )
   : [];
 
@@ -181,12 +136,8 @@ const { translationStore } = Astro.props;
       }
       <header class="bg-navbar-bkg sticky top-[35px] z-30">
         <Header
-          mainNavigation={mainNavigation.length > 0
-            ? mainNavigation ?? []
-            : processedMenus?.mainnavigation ?? []}
-          subNavigation={subNavigation.length > 0
-            ? subNavigation ?? []
-            : processedMenus?.subnavigation ?? []}
+          mainNavigation={mainNavigation.length > 0 ? mainNavigation : []}
+          subNavigation={subNavigation.length > 0 ? subNavigation : []}
           logo={layout?.attributes?.Logo}
         />
       </header>
@@ -194,7 +145,7 @@ const { translationStore } = Astro.props;
         class="dashboard-bg -mb-5 mx-auto flex w-full h-full items-start py-10"
       >
         <DashboardSideNav
-          slotMachineURL={processedMenus?.subnavigation?.[0]?.attributes?.url}
+          slotMachineURL={subNavigation?.[0]?.attributes?.url}
           pageUrl={Astro.url.pathname}
           translations={translationStore}
           client:load
@@ -202,10 +153,7 @@ const { translationStore } = Astro.props;
         <div
           class="w-full px-4 h-full pb-[50px] overflow-hidden overflow-y-auto"
         >
-          <slot
-            data-slot-machine-url={processedMenus.subnavigation[0].attributes
-              .url}
-          />
+          <slot data-slot-machine-url={subNavigation[0].attributes.url} />
         </div>
       </div>
     </main>

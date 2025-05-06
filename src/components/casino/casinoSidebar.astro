@@ -60,9 +60,6 @@ const casinoArray = [
 const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
 ---
 
-<script define:vars={{ casinoArray, casinoCountry }}>
-  console.log("Page Sidebar", casinoArray, casinoCountry);
-</script>
 <div class="sticky top-2">
   {
     casinoArray.map(

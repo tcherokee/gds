@@ -2,8 +2,17 @@
 import Link from "../helpers/link.astro";
 import Images from "../../components/helpers/images.astro";
 import { urlTranslate } from "../../../utils/data-store.util";
+import type { Slotprovider } from "../../../interfaces/slot-provider";
 
 const { data } = Astro.props;
+const seen = new Set();
+const distinctProviders = data?.homeFeaturedProviders?.providers?.data.filter(
+  (provider: Slotprovider) => {
+    if (seen.has(provider.documentId)) return false;
+    seen.add(provider.documentId);
+    return true;
+  }
+);
 
 const siteID = import.meta.env.PUBLIC_SITE_ID;
 const providerBaseURL = `${import.meta.env.FULL_URL}${urlTranslate[siteID as keyof typeof urlTranslate]["provider-pages"]}`;
@@ -19,7 +28,7 @@ const providerBaseURL = `${import.meta.env.FULL_URL}${urlTranslate[siteID as key
   }
   <div class="flex gap-5 justify-center flex-wrap w-full">
     {
-      data?.homeFeaturedProviders?.providers?.data.map((item: any) => (
+      distinctProviders.map((item: any) => (
         <Link href={`${providerBaseURL}/${item.attributes.slug}/`}>
           <div class="provider-img bg-white rounded-lg">
             <Images

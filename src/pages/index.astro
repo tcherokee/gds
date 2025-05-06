@@ -132,8 +132,6 @@ const [homepageBlogs, homepageGames] = await Promise.all([
   fetchHomepageGames,
 ]);
 
-console.log("HOMEPAGE", homepage);
-
 // Loop counter
 let loopCounter = 2;
 if (
@@ -262,10 +260,10 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
 
 ---
 
-<script define:vars={{ country, homepage }}>
-  console.log("Home country", country);
-  console.log("Homepage", homepage);
+<script define:vars={{ homepage }}>
+  console.log("HOMEPAGE", homepage);
 </script>
+
 <MainLayout seoData={seo} isHomePage={true} crumbLocation="home">
   <Breadcrumbs breadcrumbs={[]} breadcrumbKey="homeBreadcrumbs" />
 
@@ -291,7 +289,7 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
               }
               {...(homepage?.attributes?.blocks[i]?.__component ===
               "homepage.home-casino-list"
-                ? { isTop: true }
+                ? { isTop: true, isCustom: true }
                 : {})}
               {...(homepage?.attributes?.blocks[i]?.__component ===
               "homepage.home-blog-list"
@@ -323,6 +321,10 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
                     ? homepageBlogs
                     : homepage?.attributes?.blocks[i]
               }
+              {...(homepage?.attributes?.blocks[i]?.__component ===
+              "homepage.home-casino-list"
+                ? { isTop: true, isCustom: true }
+                : {})}
               timeDate={homepage?.attributes?.updatedAt}
               isHomePage={true}
               {translationStore}

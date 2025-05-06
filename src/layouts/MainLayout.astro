@@ -1,18 +1,14 @@
 ---
 //1st and 3rd Party Tools
-import qs from "qs";
 import { Tooltips } from "astro-tooltips";
-import { ViewTransitions } from "astro:transitions";
+import qs from "qs";
 import LDTag from "../components/helpers/LDTag.svelte";
 
 // Types
-import type {
-  BreadcrumbData,
-  UserCountry,
-} from "../../interfaces/common/types";
+import type { BreadcrumbData } from "../../interfaces/common/types";
 
 // QS Query Strings
-import { layoutQs, mainNavigationQs, menuQs } from "../../qs/layout.ts";
+import { layoutQs, mainNavigationQs } from "../../qs/layout.ts";
 
 // Helpers
 import fetchApi from "../../lib/strapi";
@@ -21,30 +17,20 @@ import fetchApi from "../../lib/strapi";
 import "../styles/app.postcss";
 
 //Types and TypeGuards
+import { isMainLayoutData } from "../../interfaces/common/typeguards";
 import type { LayoutData } from "../../interfaces/layout";
-import type {
-  MainNavigationItem,
-  MainNavItem,
-  MenuItem,
-  MenuItemChild,
-  NavigationItem,
-  ProcessedMenus,
-} from "../../interfaces/menu.ts";
-import {
-  isMainLayoutData,
-  isNavigationItemArray,
-} from "../../interfaces/common/typeguards";
+import type { MainNavigationItem, MainNavItem } from "../../interfaces/menu.ts";
 
 //Components
-import Legal from "../components/layout/legal.astro";
-import Header from "../components/layout/header.astro";
 import Footer from "../components/layout/footer.astro";
+import Header from "../components/layout/header.astro";
+import Legal from "../components/layout/legal.astro";
 // import Newsletter from "../components/layout/newsletter.astro";
-import CookiesConsent from "../components/general/cookiesConsent.svelte";
 import { getLocalisation, getTranslations } from "../../utils/api-requests";
-import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
-import AdPopUp from "../components/helpers/ad-pop-up.svelte";
 import { getUserCountry, userCountryHandler } from "../../utils/ip-request";
+import CookiesConsent from "../components/general/cookiesConsent.svelte";
+import AdPopUp from "../components/helpers/ad-pop-up.svelte";
+import Plus18PopUp from "../components/helpers/plus18-pop-up.svelte";
 
 const localisation = await getLocalisation();
 
@@ -68,7 +54,6 @@ const translationStore = await getTranslations();
 // Setting up the queries in array for use in the promise all map
 const queries = {
   layout: qs.stringify(layoutQs(), { encodeValuesOnly: true }),
-  menus: qs.stringify(menuQs(), { encodeValuesOnly: true }),
   "main-navigation": qs.stringify(mainNavigationQs(), {
     encodeValuesOnly: true,
   }),
@@ -77,14 +62,13 @@ const queries = {
 // Set the types in an array for use in the promise all map
 type EndpointTypes = {
   layout: LayoutData;
-  menus: NavigationItem[];
   "main-navigation": MainNavigationItem;
 };
 
 type Endpoint = keyof EndpointTypes;
 
 // Set the endpoint slugs in an array for use in the promise all
-const endpoints: Endpoint[] = ["layout", "menus", "main-navigation"];
+const endpoints: Endpoint[] = ["layout", "main-navigation"];
 
 // Promise All Fetch to fetch all the api requests in parrallel
 const responses = await Promise.all(
@@ -92,10 +76,7 @@ const responses = await Promise.all(
     fetchApi<EndpointTypes[typeof endpoint]>({
       endpoint,
       wrappedByKey: "data",
-      query:
-        endpoint === "menus"
-          ? `?nested&${queries[endpoint]}`
-          : `?${queries[endpoint]}`,
+      query: `?${queries[endpoint]}`,
     })
   )
 );
@@ -104,72 +85,72 @@ const responses = await Promise.all(
 const layout = isMainLayoutData(responses[0])
   ? responses[0]
   : console.error("Invalid layout data");
-const menu = isNavigationItemArray(responses[1])
-  ? responses[1]
-  : console.error("Invalid menu data");
+// const menu = isNavigationItemArray(responses[1])
+//   ? responses[1]
+//   : console.error("Invalid menu data");
 
 // Process menu data
-const processedMenus: ProcessedMenus = menu
-  ? (menu as NavigationItem[]).reduce(
-      (acc: ProcessedMenus, menu: NavigationItem) => {
-        const title = menu.attributes.title;
-        let items: MenuItem[] = [];
+// const processedMenus: ProcessedMenus = menu
+//   ? (menu as NavigationItem[]).reduce(
+//       (acc: ProcessedMenus, menu: NavigationItem) => {
+//         const title = menu.attributes.title;
+//         let items: MenuItem[] = [];
 
-        if (localisation) {
-          if (title === "Main Navigation") {
-            items = menu.attributes.items.data.map((item: MenuItem) => {
-              if (item.attributes.children.data.length > 0) {
-                // Filter children with "- $coiuntryCode" in the title
-                const filteredChildren = item.attributes.children.data.filter(
-                  (child) => {
-                    //split child title and see if see if it has no country code attached or if the attached country code is same as visitor's country.
-                    // let titleSplit = child.attributes.title.split("-");
-                    // if (titleSplit.length === 1 || titleSplit[1] === countryCode) {
-                    //   return child.attributes.title;
-                    // }
+//         if (localisation) {
+//           if (title === "Main Navigation") {
+//             items = menu.attributes.items.data.map((item: MenuItem) => {
+//               if (item.attributes.children.data.length > 0) {
+//                 // Filter children with "- $coiuntryCode" in the title
+//                 const filteredChildren = item.attributes.children.data.filter(
+//                   (child) => {
+//                     //split child title and see if see if it has no country code attached or if the attached country code is same as visitor's country.
+//                     // let titleSplit = child.attributes.title.split("-");
+//                     // if (titleSplit.length === 1 || titleSplit[1] === countryCode) {
+//                     //   return child.attributes.title;
+//                     // }
 
-                    // returns items with "-it" in their title OR items with no "-" in their title
-                    return (
-                      child.attributes.title.includes(`-${countryCode}`) ||
-                      child.attributes.title.split("-").length === 1
-                    );
-                  }
-                );
+//                     // returns items with "-it" in their title OR items with no "-" in their title
+//                     return (
+//                       child.attributes.title.includes(`-${countryCode}`) ||
+//                       child.attributes.title.split("-").length === 1
+//                     );
+//                   }
+//                 );
 
-                // Return the updated item with filtered children
-                return {
-                  ...item,
-                  attributes: {
-                    ...item.attributes,
-                    children: {
-                      ...item.attributes.children,
-                      data: filteredChildren,
-                    },
-                  },
-                };
-              } else {
-                return item;
-              }
-            });
-          }
-        } else {
-          items = menu.attributes.items.data;
-        }
+//                 // Return the updated item with filtered children
+//                 return {
+//                   ...item,
+//                   attributes: {
+//                     ...item.attributes,
+//                     children: {
+//                       ...item.attributes.children,
+//                       data: filteredChildren,
+//                     },
+//                   },
+//                 };
+//               } else {
+//                 return item;
+//               }
+//             });
+//           }
+//         } else {
+//           items = menu.attributes.items.data;
+//         }
 
-        if (
-          title === "Sub Navigation" ||
-          title === "Main Navigation" ||
-          title === "Footer Navigation" ||
-          title === "Footer Navigations"
-        ) {
-          acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
-        }
+//         if (
+//           title === "Sub Navigation" ||
+//           title === "Main Navigation" ||
+//           title === "Footer Navigation" ||
+//           title === "Footer Navigations"
+//         ) {
+//           acc[`${title.toLowerCase().replace(/ /g, "")}`] = items;
+//         }
 
-        return acc;
-      },
-      {}
-    )
-  : {};
+//         return acc;
+//       },
+//       {}
+//     )
+//   : {};
 
 const processedMainNavigation = (navigation: MainNavItem[]) => {
   return navigation.map((item) => {
@@ -198,24 +179,24 @@ const processedMainNavigation = (navigation: MainNavItem[]) => {
     };
   });
 };
-const mainNavigation = responses[2]
+const mainNavigation = responses[1]
   ? processedMainNavigation(
-      (responses[2] as MainNavigationItem).attributes.mainNavigation
+      (responses[1] as MainNavigationItem).attributes.mainNavigation
     )
   : [];
-const footerNavigation = responses[2]
+const footerNavigation = responses[1]
   ? processedMainNavigation(
-      (responses[2] as MainNavigationItem).attributes.footerNavigation
+      (responses[1] as MainNavigationItem).attributes.footerNavigation
     )
   : [];
-const footerNavigations = responses[2]
+const footerNavigations = responses[1]
   ? processedMainNavigation(
-      (responses[2] as MainNavigationItem).attributes.footerNavigations
+      (responses[1] as MainNavigationItem).attributes.footerNavigations
     )
   : [];
-const subNavigation = responses[2]
+const subNavigation = responses[1]
   ? processedMainNavigation(
-      (responses[2] as MainNavigationItem).attributes.subNavigation
+      (responses[1] as MainNavigationItem).attributes.subNavigation
     )
   : [];
 
@@ -301,15 +282,6 @@ if (otherSchema) {
 }
 ---
 
-<script
-  define:vars={{ responses, processedMenus, mainNavigation, subNavigation }}
->
-  console.log("responses", responses);
-  console.log("processedMenus", processedMenus);
-  console.log("mainNavigation", mainNavigation);
-  console.log("subNavigation", subNavigation);
-</script>
-
 <html lang={siteLang}>
   <head>
     <meta charset="UTF-8" />
@@ -371,12 +343,8 @@ if (otherSchema) {
       }
       <header class="bg-navbar-bkg">
         <Header
-          mainNavigation={mainNavigation.length > 0
-            ? mainNavigation
-            : processedMenus?.mainnavigation ?? []}
-          subNavigation={subNavigation.length > 0
-            ? subNavigation
-            : processedMenus?.subnavigation ?? []}
+          mainNavigation={mainNavigation.length > 0 ? mainNavigation : []}
+          subNavigation={subNavigation.length > 0 ? subNavigation : []}
           logo={layout?.attributes?.Logo}
           {translationStore}
           {countryCode}
@@ -404,12 +372,8 @@ if (otherSchema) {
     <Footer
       footerContent={layout?.attributes?.footerContent}
       footerImages={layout?.attributes?.footerImages}
-      footerNavigation={footerNavigation.length > 0
-        ? footerNavigation
-        : processedMenus?.footernavigation ?? []}
-      footerNavigations={footerNavigations.length > 0
-        ? footerNavigations
-        : processedMenus?.footernavigations ?? []}
+      footerNavigation={footerNavigation.length > 0 ? footerNavigation : []}
+      footerNavigations={footerNavigations.length > 0 ? footerNavigations : []}
       {translationStore}
     />
 

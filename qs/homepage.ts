@@ -32,37 +32,41 @@ export const homepageQs = (
         },
         "homepage.home-casino-list": {
           populate: {
-            casinos: {
-              fields: [
-                "title",
-                "slug",
-                "ratingAvg",
-                "ratingCount",
-                "publishedAt",
-                "Badges",
-              ],
+            casinosList: {
               populate: {
-                images: {
-                  fields: ["url"],
-                },
-                providers: {
-                  fields: ["title"],
+                casino: {
+                  fields: [
+                    "title",
+                    "slug",
+                    "ratingAvg",
+                    "ratingCount",
+                    "publishedAt",
+                    "Badges",
+                  ],
                   populate: {
                     images: {
                       fields: ["url"],
                     },
-                  },
-                },
-                bonusSection: true,
-                casinoBonus: true,
-                termsAndConditions: true,
-                noDepositSection: true,
-                freeSpinsSection: true,
-                countries: {
-                  fields: ["countryName", "shortCode"],
-                  populate: {
-                    countryFlag: {
-                      fields: ["url"],
+                    providers: {
+                      fields: ["title"],
+                      populate: {
+                        images: {
+                          fields: ["url"],
+                        },
+                      },
+                    },
+                    bonusSection: true,
+                    casinoBonus: true,
+                    termsAndConditions: true,
+                    noDepositSection: true,
+                    freeSpinsSection: true,
+                    countries: {
+                      fields: ["countryName", "shortCode"],
+                      populate: {
+                        countryFlag: {
+                          fields: ["url"],
+                        },
+                      },
                     },
                   },
                 },

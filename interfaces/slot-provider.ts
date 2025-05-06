@@ -12,6 +12,7 @@ import type {
 
 export type Slotprovider = {
   id: number;
+  documentId: number;
   attributes: Attributes;
 };
 
