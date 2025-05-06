@@ -74,7 +74,7 @@ type Attributes = {
   content4: string;
   proscons: ProsConsBlock;
   casinoComparison: {
-    data: CasinoComparison;
+    data: CasinoComparison[];
   };
   paymentChannels: {
     data: PaymentChannels[];

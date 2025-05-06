@@ -45,150 +45,23 @@ const authors = await fetchApi<TAuthor[]>({
 const canonical: string = `${import.meta.env.PUBLIC_FULL_URL}`;
 
 const seo = {
-  pageTitle: authorIndex.attributes?.authorPage?.metaTitle,
-  metaDescription: authorIndex.attributes?.authorPage?.metaDescription,
+  pageTitle: authorIndex?.attributes?.authorPage?.metaTitle,
+  metaDescription: authorIndex?.attributes?.authorPage?.metaDescription,
   url: canonical,
 };
 
-// caching system
-const surrogateKeys = [];
-
-// Page-specific tags
-surrogateKeys.push("page:authorindex");
-surrogateKeys.push("type:authorlist");
-
-// Add content-specific tags
-surrogateKeys.push("content:authors");
-
-// Add page content section tags
-if (authorIndex?.attributes?.authorPage?.content1) {
-  surrogateKeys.push("content:section1");
-}
-if (authorIndex?.attributes?.authorPage?.content2) {
-  surrogateKeys.push("content:section2");
-}
-if (authorIndex?.attributes?.authorPage?.content3) {
-  surrogateKeys.push("content:section3");
-}
-
-// Add author count tag - useful for detecting when authors are added or removed
-const authorCount = authors?.length || 0;
-surrogateKeys.push(`authorcount:${authorCount}`);
-
-// Add author ID tags for all authors
-// This allows invalidation when specific authors are updated
-if (authors && authors.length > 0) {
-  // Create a tag with all author IDs
-  const authorIds = authors.map((author) => author.id).join("-");
-  surrogateKeys.push(`authors:${authorIds}`);
-
-  // Add individual author tags
-  authors.forEach((author) => {
-    surrogateKeys.push(`author:${author.id}`);
-  });
-
-  // Track most recent author profile update time for versioning
-  const latestAuthorUpdate = authors.reduce((latest, author) => {
-    const authorDate = new Date(author?.updatedAt || 0).getTime();
-    return authorDate > latest ? authorDate : latest;
-  }, 0);
-
-  if (latestAuthorUpdate > 0) {
-    surrogateKeys.push(
-      `authorupdated:${new Date(latestAuthorUpdate).toISOString().slice(0, 10)}`
-    );
-  }
-}
-
-// Add tag for layout/page data
-if (authorIndex?.attributes?.authorPage) {
-  surrogateKeys.push("content:authorpagemeta");
-}
-
-// Add version or timestamp tag to allow for complete cache refresh when needed
-const contentTimestamp = Date.now();
-surrogateKeys.push(`version:${contentTimestamp}`);
-
-// Set Surrogate-Key header for GCP CDN cache invalidation
-Astro.response.headers.set("Surrogate-Key", surrogateKeys.join(" ")); // Space-separated list
-
-// Generate a proper ETag based on content
-// Create a content signature from key data that would trigger a cache invalidation when changed
-const contentSignature = JSON.stringify({
-  // Include critical content identifiers that should trigger cache invalidation
-  authorCount: authorCount,
-  authorIds: authors?.map((author) => author.id) || [],
-  latestUpdate:
-    authors?.length > 0
-      ? Math.max(
-          ...authors.map((author) => new Date(author?.updatedAt || 0).getTime())
-        )
-      : 0,
-  hasContent1: !!authorIndex?.attributes?.authorPage?.content1,
-  hasContent2: !!authorIndex?.attributes?.authorPage?.content2,
-  hasContent3: !!authorIndex?.attributes?.authorPage?.content3,
-  seo: {
-    title: authorIndex?.attributes?.authorPage?.metaTitle,
-    description: authorIndex?.attributes?.authorPage?.metaDescription,
-  },
-});
-
-// Generate a hash of the content signature for the ETag
-// In a production environment, you might want to use a more sophisticated hashing function
-const contentHash = Array.from(
-  new Uint8Array(new TextEncoder().encode(contentSignature))
-)
-  .reduce((hash, byte) => ((hash << 5) - hash + byte) | 0, 0)
-  .toString(36);
-
-// Create and set a proper ETag (weak validator with W/ prefix is appropriate for HTML content)
-const etagValue = `W/"${contentHash}"`;
-Astro.response.headers.set("ETag", etagValue);
-
-// Check for If-None-Match header to enable 304 responses
-const ifNoneMatch = Astro.request.headers.get("If-None-Match");
-if (ifNoneMatch === etagValue) {
-  return new Response(null, {
-    status: 304,
-    headers: {
-      ETag: etagValue,
-      "Cache-Control":
-        "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200",
-      "Surrogate-Key": surrogateKeys.join(" "),
-      "Surrogate-Control": "max-age=604800",
-      "Last-Modified": new Date(contentTimestamp).toUTCString(),
-    },
-  });
-}
-
-// Set aggressive caching
-// Browser cache: 1 day
-// CDN cache: 7 days (via s-maxage)
-// Stale-while-revalidate: 1 hour
-// Stale-if-error: 3 days
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200"
-);
-
-// Optional: Add Surrogate-Control header (might be useful for other CDNs)
-Astro.response.headers.set("Surrogate-Control", "max-age=604800");
-
-// Optional: Set cache validation headers
-const lastModifiedDate = new Date(contentTimestamp).toUTCString();
-Astro.response.headers.set("Last-Modified", lastModifiedDate);
 ---
 
 <MainLayout seoData={seo}>
   <div class="featured-background curve">
     <div class="intro-content">
       <div class="relative px-2 py-20 xl:container xl:px-0">
-        <Fragment set:html={authorIndex.attributes?.authorPage?.content1} />
+        <Fragment set:html={authorIndex?.attributes?.authorPage?.content1} />
       </div>
     </div>
   </div>
   {
-    authorIndex.attributes?.authorPage?.content2 && (
+    authorIndex?.attributes?.authorPage?.content2 && (
       <div class="py-5 xl:container xl:px-0">
         <ContentBlock
           pageContent={authorIndex.attributes?.authorPage?.content2}
@@ -216,7 +89,7 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
   </div>
 
   {
-    authorIndex.attributes?.authorPage?.content3 && (
+    authorIndex?.attributes?.authorPage?.content3 && (
       <div class="py-5 xl:container xl:px-0">
         <ContentBlock
           pageContent={authorIndex.attributes?.authorPage?.content3}

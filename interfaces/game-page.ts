@@ -66,9 +66,20 @@ type Attributes = {
       };
     };
   };
+  categories: {
+    data: Category[];
+  };
   faqs: {
     answer: string;
     id: number;
     question: string;
   }[];
+};
+
+type Category = {
+  id: number;
+  attributes: {
+    title?: string;
+    slug?: string;
+  };
 };

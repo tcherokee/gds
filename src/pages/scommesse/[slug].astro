@@ -254,17 +254,95 @@ const orderMap = {
   faqs: 7,
 };
 
-// Tell the browser to always check the freshness of the cache
+// ============= CACHE IMPLEMENTATION START =============
+// Set up cache tags (using Surrogate-Key)
+const surrogateKeys: string[] = [];
+
+// --- Core Page & Content Type Tags ---
+// Path-based tag (Sport-specific path tag)
+surrogateKeys.push(`path:${slug}`);
+
+// Content-type tag (Useful for invalidating all pages of this type)
+surrogateKeys.push("type:sportpage");
+
+// --- Versioning Tag ---
+// Add version or timestamp tag based on the main entry's update time
+const contentTimestamp = sportPage[0]?.attributes?.updatedAt || Date.now();
+surrogateKeys.push(`version:${contentTimestamp}`);
+
+// --- Set Headers ---
+// Set Surrogate-Key header for CDN cache invalidation (e.g., GCP CDN)
+// Space-separated list
+Astro.response.headers.set("Surrogate-Key", surrogateKeys.join(" "));
+
+// --- ETag Generation (Essential for Conditional Requests / 304 Responses) ---
+// Create a content signature from key data that would trigger cache invalidation when changed.
+const contentSignature = JSON.stringify({
+  slug: slug,
+  title: sportPage[0]?.attributes?.title,
+  updatedAt: contentTimestamp,
+  faqsCount: sportPage[0]?.attributes?.faqs?.length || 0,
+  hasHowTo: !!sportPage[0]?.attributes?.howTo,
+  authorRatings: sportPage[0]?.attributes?.authorRatings || 0,
+  ratingCount: sportPage[0]?.attributes?.ratingCount || 0,
+  ratingAvg: sportPage[0]?.attributes?.ratingAvg || 0,
+  seo: {
+    title: sportPage[0]?.attributes?.seo?.metaTitle,
+    description: sportPage[0]?.attributes?.seo?.metaDescription,
+  },
+});
+
+// --- Generate SHA-256 hash for ETag using Web Crypto API ---
+const encoder = new TextEncoder();
+const data = encoder.encode(contentSignature);
+// Hash the data using SHA-256 (ensure this code runs in an async context)
+const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+// Convert the ArrayBuffer to a hex string
+const hashArray = Array.from(new Uint8Array(hashBuffer));
+const contentHash = hashArray
+  .map((b) => b.toString(16).padStart(2, "0"))
+  .join("");
+// --- End SHA-256 Hashing ---
+
+// Create and set a proper ETag (weak validator W/ prefix is appropriate for HTML content)
+const etagValue = `W/"${contentHash}"`; // Using the SHA-256 hash
+Astro.response.headers.set("ETag", etagValue);
+
+// --- Conditional Request Handling (304 Not Modified) ---
+// Check for If-None-Match header to enable 304 responses
+const ifNoneMatch = Astro.request.headers.get("If-None-Match");
+if (ifNoneMatch === etagValue) {
+  // Content hasn't changed, send back 304 Not Modified
+  return new Response(null, {
+    status: 304,
+    headers: {
+      ETag: etagValue,
+      "Cache-Control":
+        "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200",
+      "Surrogate-Key": surrogateKeys.join(" "), // Resend keys for intermediate caches
+      "Surrogate-Control": "max-age=604800",
+      "Last-Modified": new Date(contentTimestamp).toUTCString(),
+    },
+  });
+}
+
+// --- Caching Directives for New Responses (200 OK) ---
+// Set aggressive caching directives
+// Browser cache: 1 day (max-age)
+// CDN cache: 7 days (s-maxage)
+// Stale-while-revalidate: 1 hour (allow serving stale while revalidating)
+// Stale-if-error: 3 days (allow serving stale if origin error)
 Astro.response.headers.set(
   "Cache-Control",
-  "public, max-age=0, must-revalidate"
+  "public, max-age=86400, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200"
 );
 
-// CDN Cache Control
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=300, s-maxage=3600, stale-while-revalidate=30"
-);
+// Optional: Add Surrogate-Control header (might be useful for other CDNs like Fastly)
+Astro.response.headers.set("Surrogate-Control", "max-age=604800");
+
+// Set cache validation headers
+const lastModifiedDate = new Date(contentTimestamp).toUTCString();
+Astro.response.headers.set("Last-Modified", lastModifiedDate);
 ---
 
 <MainLayout
