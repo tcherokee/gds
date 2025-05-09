@@ -8,7 +8,7 @@ export const filterOptions = atom<FilterStore>({
 });
 
 export const sortOptions = atom<SortStore>({
-  Newest: "publishedAt:desc",
+  Newest: "createdAt:desc",
   "Most Popular": "views:desc",
   "Top Rated": "ratingAvg:desc",
   "Top Rated Author": "authorRatings:desc",
