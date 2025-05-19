@@ -170,6 +170,7 @@ export type CasinoAttributes = {
   ratingAvg: number;
   ratingCount: number;
   publishedAt: string;
+  createdAt: string;
   Badges?: string | null;
   images: ImageInfo;
   providers: {
@@ -192,6 +193,7 @@ export type AuthorCasinoAttributes = {
   slug: string;
   ratingAvg: number;
   ratingCount: number;
+  createdAt: string;
   publishedAt: string;
   Badges?: string | null;
   images: {
@@ -227,6 +229,7 @@ export type AuthorSportAttributes = {
   slug: string;
   ratingAvg: number;
   ratingCount: number;
+  createdAt: string;
   publishedAt: string;
   Badges?: string | null;
   images: {
@@ -707,6 +710,7 @@ export type SportAttributes = {
   slug: string;
   ratingAvg: number;
   ratingCount: number;
+  createdAt: string;
   publishedAt: string;
   Badges?: string | null;
   images: ImageInfo;

@@ -23,7 +23,7 @@
     urlTranslate[siteID as keyof typeof urlTranslate]["casino-providers-page"] +
     "/" +
     game?.provider?.slug;
-  const diffInDays = dayjs().diff(game?.publishedAt, "day") <= 14;
+  const diffInDays = dayjs().diff(game?.createdAt, "day") <= 14;
 
 </script>
 

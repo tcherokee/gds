@@ -44,7 +44,7 @@ const casinos = isCustom === true ? data.casinos.map((item: CasinoComparison) =>
                         {
                            casinoData?.attributes?.Badges 
                             ? <span class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.exclusive}</span>
-                            :casinoData?.attributes?.publishedAt && dayjs().diff(casinoData?.attributes.publishedAt, 'day') <= 14 
+                            :casinoData?.attributes?.createdAt && dayjs().diff(casinoData?.attributes.createdAt, 'day') <= 14 
                             ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.newCasino}</span>
                             :<></>
                         }

@@ -42,7 +42,7 @@ const PUBLIC_SITE_ID = import.meta.env.SITE_ID;
                                     {
                                         ((sport as SportData)?.attributes?.Badges ?? (sport as AuthorSportAttributes)?.Badges) 
                                         ? <span class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.exclusive}</span>
-                                        : ((sport as SportData)?.attributes?.publishedAt ?? (sport as AuthorSportAttributes)?.publishedAt) && dayjs().diff(((sport as SportData)?.attributes?.publishedAt ?? (sport as AuthorSportAttributes)?.publishedAt), 'day') <= 14 
+                                        : ((sport as SportData)?.attributes?.createdAt ?? (sport as AuthorSportAttributes)?.createdAt) && dayjs().diff(((sport as SportData)?.attributes?.createdAt ?? (sport as AuthorSportAttributes)?.createdAt), 'day') <= 14 
                                         ? <span class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]">{translationStore?.newCasino}</span>
                                         :<></>
                                     }

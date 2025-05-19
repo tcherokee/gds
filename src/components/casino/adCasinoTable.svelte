@@ -83,7 +83,7 @@
                           class="z-10 rotate-45 absolute exclusive-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
                           >{translations?.exclusive}</span
                         >
-                      {:else if casino?.attributes?.publishedAt && dayjs().diff(casino?.attributes?.publishedAt, "day") <= 14}
+                      {:else if casino?.attributes?.createdAt && dayjs().diff(casino?.attributes?.createdAt, "day") <= 14}
                         <span
                           class="z-10 rotate-45 absolute new-casino-badge text-white text-xs px-[36.4px] uppercase top-[25px] -right-[40px]"
                           >{translations?.newCasino}</span

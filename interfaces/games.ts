@@ -67,6 +67,7 @@ export type TUserGame = {
   title: string;
   slug: string;
   ratingAvg: number;
+  createdAt: string;
   publishedAt: string;
   images: TUserGameImage;
   provider: TUserGameProvider;

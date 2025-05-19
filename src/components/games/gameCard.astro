@@ -27,7 +27,7 @@ let provideURL =
   "/" +
   (game?.attributes?.provider?.data?.attributes?.slug || game?.provider?.slug);
 const diffInDays =
-  dayjs().diff(game?.attributes?.publishedAt ?? game.publishedAt, "day") <= 14;
+  dayjs().diff(game?.attributes?.createdAt ?? game.createdAt, "day") <= 14;
 ---
 
 <aside
