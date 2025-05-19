@@ -44,214 +44,200 @@ const path =
 // Constructing SiteURL
 const siteURL: string = `${import.meta.env.FULL_URL}/${path}`;
 
-let localisation: any;
-let userCountry: any;
-let casinoCountry: any;
-let translationStore: any;
-let slotProviders: any;
-let slotCategories: any;
-let gameProviders: any;
-let customPage: CustomPageItem;
 let initialGames: TUserGame[] = [];
 let combinedSchema: any[] = [];
-let seo: any;
 
-try {
-  localisation = await getLocalisation();
-  userCountry = await getUserCountry();
-  const country =
-    userCountry !== null
-      ? await userCountryHandler(
-          userCountry?.location?.country.toLowerCase() || ""
-        )
-      : null;
+const localisation = await getLocalisation();
+const userCountry = await getUserCountry();
+const country =
+  userCountry !== null
+    ? await userCountryHandler(
+        userCountry?.location?.country.toLowerCase() || ""
+      )
+    : null;
 
-  const casinoCountry = country !== null ? country?.sc || "" : "";
+const casinoCountry = country !== null ? country?.sc || "" : "";
 
-  translationStore = await translationResponse();
-  slotProviders = await slotProvidersResponse();
-  slotCategories = await slotCategoriesResponse();
+const translationStore = await translationResponse();
+const slotProviders = await slotProvidersResponse();
+const slotCategories = await slotCategoriesResponse();
 
-  // Fetch Game Providers Filter
-  gameProviders = await fetchApi<{
-    id: number;
-    attributes: {
-      filterProviders: {
-        data: TProviderAttributesOnly[];
-      };
+// Fetch Game Providers Filter
+const gameProviders = await fetchApi<{
+  id: number;
+  attributes: {
+    filterProviders: {
+      data: TProviderAttributesOnly[];
     };
-  }>({
-    endpoint: "layout",
-    wrappedByKey: "data",
-    query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
-  });
+  };
+}>({
+  endpoint: "layout",
+  wrappedByKey: "data",
+  query: `?fields[0]=id&populate[filterProviders][fields][0]=slug&populate[filterProviders][populate][images][fields][0]=url`,
+});
 
-  const query = qs.stringify(customPageQs(path, casinoCountry, localisation), {
+const query = qs.stringify(customPageQs(path, casinoCountry, localisation), {
+  encodeValuesOnly: true,
+});
+
+let gamesQueryObj: GameFilters = {
+  limit: 18,
+  sort: "views:desc",
+  page: 1,
+  providers: [],
+  categories: [],
+  author: "",
+};
+
+// Request to the Fetch Function to get the custom page slugs from the API
+const customPageData = await fetchApi<CustomPageItem[]>({
+  endpoint: "custom-pages",
+  wrappedByKey: "data",
+  query: `?${query}`,
+});
+const customPage = customPageData[0];
+
+const gameQuery = customPage?.attributes?.blocks?.find(
+  (block) => block.__component === "games.games-carousel"
+) as CustomGameList;
+
+if (gameQuery) {
+  gamesQueryObj = {
+    ...gamesQueryObj,
+    limit: gameQuery.numberOfGames,
+    sort: sortOptions.get()[gameQuery.sortBy],
+  };
+
+  const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
     encodeValuesOnly: true,
   });
 
-  let gamesQueryObj: GameFilters = {
-    limit: 18,
-    sort: "views:desc",
-    page: 1,
-    providers: [],
-    categories: [],
-    author: "",
-  };
-
-  // Request to the Fetch Function to get the custom page slugs from the API
-  const customPageData = await fetchApi<CustomPageItem[]>({
-    endpoint: "custom-pages",
+  const customPageGames = await fetchApi<any[]>({
+    endpoint: "games",
     wrappedByKey: "data",
-    query: `?${query}`,
+    query: `?${gamesQuery}`,
   });
-  customPage = customPageData[0];
 
-  const gameQuery = customPage?.attributes?.blocks?.find(
-    (block) => block.__component === "games.games-carousel"
-  ) as CustomGameList;
-
-  if (gameQuery) {
-    gamesQueryObj = {
-      ...gamesQueryObj,
-      limit: gameQuery.numberOfGames,
-      sort: sortOptions.get()[gameQuery.sortBy],
-    };
-
-    const gamesQuery = qs.stringify(gamesQs(gamesQueryObj), {
-      encodeValuesOnly: true,
-    });
-
-    const customPageGames = await fetchApi<any[]>({
-      endpoint: "games",
-      wrappedByKey: "data",
-      query: `?${gamesQuery}`,
-    });
-
-    initialGames = customPageGames.map((elem) => {
-      return {
-        id: elem.id,
-        ...elem.attributes,
-        images: {
-          url: elem.attributes.images.data.attributes.url,
-        },
-        categories: elem.attributes.categories.data,
-        provider: {
-          slug: elem.attributes.provider.data?.attributes.slug,
-          title: elem.attributes.provider.data?.attributes.title,
-        },
-      };
-    });
-  }
-  let combinedSchema = [];
-
-  // FAQs Schema
-  const allFAQs = customPage?.attributes?.blocks.filter(
-    (block: Block) => block.__component === "shared.faqs"
-  ) as Faqs[];
-
-  if (allFAQs && allFAQs.length > 0) {
-    const faqSchema = {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntityOfPage: {
-        "@type": "WebPage",
-        url: `${siteURL}`,
-        "@id": `${siteURL}`,
+  initialGames = customPageGames.map((elem) => {
+    return {
+      id: elem.id,
+      ...elem.attributes,
+      images: {
+        url: elem.attributes.images.data.attributes.url,
       },
-      mainEntity: allFAQs?.map(({ answer, question }) => {
-        return {
-          "@type": "Question",
-          name: `${question}`,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: `${answer}`,
-          },
-        };
-      }),
+      categories: elem.attributes.categories.data,
+      provider: {
+        slug: elem.attributes.provider.data?.attributes.slug,
+        title: elem.attributes.provider.data?.attributes.title,
+      },
     };
-    combinedSchema.push(faqSchema);
-  }
+  });
+}
 
-  const allHowTos = customPage?.attributes?.blocks.filter(
-    (block: Block) => block.__component === "shared.how-to-group"
-  ) as unknown as HowToGroup[];
+// FAQs Schema
+const allFAQs = customPage?.attributes?.blocks.filter(
+  (block: Block) => block.__component === "shared.faqs"
+) as Faqs[];
 
-  if (allHowTos && allHowTos.length > 0) {
-    const howToSchema = allHowTos?.map(({ title, howToGroup }) => {
-      return {
-        "@context": "https://schema.org",
-        "@type": "HowTo",
-        mainEntityOfPage: {
-          "@type": "WebPage",
-          url: `${siteURL}`,
-          "@id": `${siteURL}`,
-        },
-        name: `${title}`,
-        totalTime: "PT15M",
-        description: `${title}`,
-        tool: [
-          {
-            "@type": "HowToTool",
-            name: "smartphone, PC, tablet, metodo di pagamento",
-          },
-        ],
-        step: howToGroup?.map(({ heading, copy, image }, i: number) => {
-          return {
-            "@type": "HowToStep",
-            url: `${customPage?.attributes?.urlPath}#step0${i + 1}`,
-            name: heading,
-            itemListElement: {
-              "@type": "HowToDirection",
-              text: copy,
-            },
-            ...(image?.data?.attributes && {
-              image: {
-                "@type": "ImageObject",
-                url: image?.data?.attributes.url,
-              },
-            }),
-          };
-        }),
-      };
-    });
-
-    combinedSchema.push(...howToSchema);
-  }
-
-  // Breadcrumb Schema
-  const breadSchema = {
+if (allFAQs && allFAQs.length > 0) {
+  const faqSchema = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
+    "@type": "FAQPage",
     mainEntityOfPage: {
       "@type": "WebPage",
       url: `${siteURL}`,
       "@id": `${siteURL}`,
     },
-    itemListElement: (
-      [...customPage?.attributes?.breadcrumbs] as BreadcrumbData[]
-    )
-      .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
-      .map((bread, i) => {
+    mainEntity: allFAQs?.map(({ answer, question }) => {
+      return {
+        "@type": "Question",
+        name: `${question}`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${answer}`,
+        },
+      };
+    }),
+  };
+  combinedSchema.push(faqSchema);
+}
+
+const allHowTos = customPage?.attributes?.blocks.filter(
+  (block: Block) => block.__component === "shared.how-to-group"
+) as unknown as HowToGroup[];
+
+if (allHowTos && allHowTos.length > 0) {
+  const howToSchema = allHowTos?.map(({ title, howToGroup }) => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        url: `${siteURL}`,
+        "@id": `${siteURL}`,
+      },
+      name: `${title}`,
+      totalTime: "PT15M",
+      description: `${title}`,
+      tool: [
+        {
+          "@type": "HowToTool",
+          name: "smartphone, PC, tablet, metodo di pagamento",
+        },
+      ],
+      step: howToGroup?.map(({ heading, copy, image }, i: number) => {
         return {
-          "@type": "ListItem",
-          position: i + 1,
-          name: bread?.breadCrumbText,
-          ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+          "@type": "HowToStep",
+          url: `${customPage?.attributes?.urlPath}#step0${i + 1}`,
+          name: heading,
+          itemListElement: {
+            "@type": "HowToDirection",
+            text: copy,
+          },
+          ...(image?.data?.attributes && {
+            image: {
+              "@type": "ImageObject",
+              url: image?.data?.attributes.url,
+            },
+          }),
         };
       }),
-  };
-  combinedSchema.push(breadSchema);
+    };
+  });
 
-  // SEO Object
-  seo = {
-    pageTitle: customPage.attributes?.seo?.metaTitle,
-    metaDescription: customPage.attributes?.seo?.metaDescription,
-    url: `${import.meta.env.FULL_URL}/${path}`,
-  };
-} catch (error) {
-  return Astro.redirect(`${import.meta.env.PUBLIC_FULL_URL}/404`);
+  combinedSchema.push(...howToSchema);
 }
+
+// Breadcrumb Schema
+const breadSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    url: `${siteURL}`,
+    "@id": `${siteURL}`,
+  },
+  itemListElement: (
+    [...customPage?.attributes?.breadcrumbs] as BreadcrumbData[]
+  )
+    .filter((elem) => elem.breadCrumbText.toLowerCase() !== "home")
+    .map((bread, i) => {
+      return {
+        "@type": "ListItem",
+        position: i + 1,
+        name: bread?.breadCrumbText,
+        ...(bread?.breadCrumbUrl && { item: bread?.breadCrumbUrl }),
+      };
+    }),
+};
+combinedSchema.push(breadSchema);
+
+// SEO Object
+const seo = {
+  pageTitle: customPage.attributes?.seo?.metaTitle,
+  metaDescription: customPage.attributes?.seo?.metaDescription,
+  url: `${import.meta.env.FULL_URL}/${path}`,
+};
 
 // ============= CACHE IMPLEMENTATION START =============
 // Set up cache tags (using Surrogate-Key)
@@ -351,7 +337,6 @@ Astro.response.headers.set("Surrogate-Control", "max-age=604800");
 // Set cache validation headers
 const lastModifiedDate = new Date(contentTimestamp).toUTCString();
 Astro.response.headers.set("Last-Modified", lastModifiedDate);
-
 ---
 
 <CustomPage

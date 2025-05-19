@@ -62,6 +62,12 @@ const gamePage = await fetchApi<Gamepage[]>({
   query: `?${query}`,
 });
 
+if (gamePage.length === 0) {
+  return new Response(null, {
+    status: 404,
+  });
+}
+
 // Set Page SEO DATA
 let pageTitle =
   import.meta.env.PUBLIC_SITE_ID === "gr"
@@ -292,7 +298,6 @@ Astro.response.headers.set("Surrogate-Control", "max-age=604800");
 // Set cache validation headers
 const lastModifiedDate = new Date(contentTimestamp).toUTCString();
 Astro.response.headers.set("Last-Modified", lastModifiedDate);
-
 ---
 
 <MainLayout

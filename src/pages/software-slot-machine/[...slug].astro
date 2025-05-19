@@ -101,6 +101,12 @@ const slotProvider = await fetchApi<Slotprovider[]>({
   query: `?${query}`,
 });
 
+if (slotProvider.length === 0) {
+  return new Response(null, {
+    status: 404,
+  });
+}
+
 const providerQuery = qs.stringify(gamesQs(slug, "views:desc", 1), {
   encodeValuesOnly: true,
 });

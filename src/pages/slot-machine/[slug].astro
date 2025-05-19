@@ -91,6 +91,12 @@ const categoryPage = await fetchApi<CategoryPageItem[]>({
   query: `?${query}`,
 });
 
+if (categoryPage.length === 0) {
+  return new Response(null, {
+    status: 404,
+  });
+}
+
 let slotCategories: TUserGameProvider[] = [];
 
 slotCategories.push({ title: categoryPage[0]?.attributes?.slug, slug });

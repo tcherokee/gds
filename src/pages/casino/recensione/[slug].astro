@@ -76,6 +76,12 @@ const casinoPage = await fetchApi<Casinopage[]>({
   query: `?${casino}`,
 });
 
+if (casinoPage.length === 0) {
+  return new Response(null, {
+    status: 404,
+  });
+}
+
 //get games 10 games for this casino providers
 const providerSlugs = new Array();
 casinoPage[0]?.attributes?.providers?.data.map((provider: any) => {

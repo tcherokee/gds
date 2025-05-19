@@ -56,11 +56,17 @@ const query = qs.stringify(
 );
 
 // Request to the Fetch Function to get page data from API
-const casinoProvider = await fetchApi<Casinoprovider[]>({
+const casinoProviderData = await fetchApi<Casinoprovider[]>({
   endpoint: "casino-providers",
   wrappedByKey: "data",
   query: `?${query}`,
 });
+const casinoProvider = casinoProviderData?.[0];
+if (!casinoProvider) {
+  return new Response(null, {
+    status: 404,
+  });
+}
 
 const block = {
   showCasinoFilters: false,
@@ -72,8 +78,8 @@ let canonical: string = `${import.meta.env.FULL_URL}${urlTranslate[siteID as key
 
 //set page seo data
 let seo = {
-  pageTitle: casinoProvider[0]?.attributes?.seo?.metaTitle,
-  metaDescription: casinoProvider[0]?.attributes?.seo?.metaDescription,
+  pageTitle: casinoProvider?.attributes?.seo?.metaTitle,
+  metaDescription: casinoProvider?.attributes?.seo?.metaDescription,
   url: canonical,
 };
 
@@ -81,8 +87,8 @@ let combinedSchema = [];
 
 // FAQs Schema
 if (
-  casinoProvider[0]?.attributes?.faqs &&
-  casinoProvider[0]?.attributes?.faqs.length > 0
+  casinoProvider?.attributes?.faqs &&
+  casinoProvider?.attributes?.faqs.length > 0
 ) {
   const faqSchema = {
     "@context": "https://schema.org",
@@ -92,7 +98,7 @@ if (
       url: `${canonical}`,
       "@id": `${canonical}`,
     },
-    mainEntity: casinoProvider[0]?.attributes?.faqs?.map(
+    mainEntity: casinoProvider?.attributes?.faqs?.map(
       ({ answer, question }) => {
         return {
           "@type": "Question",
@@ -126,7 +132,7 @@ if (casinoCountry) {
 
 // --- Versioning Tag ---
 // Add version or timestamp tag based on the main entry's update time
-const contentTimestamp = casinoProvider[0]?.attributes?.updatedAt || Date.now();
+const contentTimestamp = casinoProvider?.attributes?.updatedAt || Date.now();
 surrogateKeys.push(`version:${contentTimestamp}`);
 
 // --- Set Headers ---
@@ -138,18 +144,18 @@ Astro.response.headers.set("Surrogate-Key", surrogateKeys.join(" "));
 // Create a content signature from key data that would trigger cache invalidation when changed.
 const contentSignature = JSON.stringify({
   slug: slug,
-  title: casinoProvider[0]?.attributes?.title,
+  title: casinoProvider?.attributes?.title,
   updatedAt: contentTimestamp,
-  faqsCount: casinoProvider[0]?.attributes?.faqs?.length || 0,
-  hasContent1: !!casinoProvider[0]?.attributes?.content1,
-  hasContent2: !!casinoProvider[0]?.attributes?.content2,
-  hasContent3: !!casinoProvider[0]?.attributes?.content3,
+  faqsCount: casinoProvider?.attributes?.faqs?.length || 0,
+  hasContent1: !!casinoProvider?.attributes?.content1,
+  hasContent2: !!casinoProvider?.attributes?.content2,
+  hasContent3: !!casinoProvider?.attributes?.content3,
   casinoComparisonCount:
-    casinoProvider[0]?.attributes?.casinoComparison?.data?.length || 0,
+    casinoProvider?.attributes?.casinoComparison?.data?.length || 0,
   countryCode: casinoCountry || "default",
   seo: {
-    title: casinoProvider[0]?.attributes?.seo?.metaTitle,
-    description: casinoProvider[0]?.attributes?.seo?.metaDescription,
+    title: casinoProvider?.attributes?.seo?.metaTitle,
+    description: casinoProvider?.attributes?.seo?.metaDescription,
   },
 });
 
@@ -209,14 +215,14 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
 <MainLayout
   seoData={seo}
   crumbLocation="casino-providers"
-  crumbTitle={casinoProvider[0]?.attributes?.title}
+  crumbTitle={casinoProvider?.attributes?.title}
   crumbUrl={canonical}
   otherSchema={combinedSchema}
 >
   <Breadcrumb
     breadcrumbs={[
       {
-        breadCrumbText: casinoProvider[0]?.attributes?.title,
+        breadCrumbText: casinoProvider?.attributes?.title,
         breadCrumbUrl: null,
       },
     ]}
@@ -225,15 +231,15 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
 
   <div class="featured-background curve">
     <IntroBlock
-      data={casinoProvider[0]?.attributes?.IntroductionWithImage}
-      timeDate={casinoProvider[0]?.attributes?.updatedAt}
-      authorData={casinoProvider[0]?.attributes?.author}
+      data={casinoProvider?.attributes?.IntroductionWithImage}
+      timeDate={casinoProvider?.attributes?.updatedAt}
+      authorData={casinoProvider?.attributes?.author}
       {translationStore}
     />
 
     <div class="mb-[40px] relative z-10">
       <ProviderCasino
-        slug={casinoProvider[0]?.attributes?.slug}
+        slug={casinoProvider?.attributes?.slug}
         {translationStore}
         {casinoCountry}
       />
@@ -242,46 +248,45 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
 
   <div class="xl:container px-2 pb-5 pt-4">
     {
-      (casinoProvider[0]?.attributes?.content1 ||
-        casinoProvider[0]?.attributes?.content2 ||
-        casinoProvider[0]?.attributes?.content3 ||
-        casinoProvider[0]?.attributes?.faqs?.length > 0) && (
+      (casinoProvider?.attributes?.content1 ||
+        casinoProvider?.attributes?.content2 ||
+        casinoProvider?.attributes?.content3 ||
+        casinoProvider?.attributes?.faqs?.length > 0) && (
         <div class="flex flex-col md:flex-row gap-x-8">
           <div class="order-last md:order-first">
             <div class="content">
-              {casinoProvider[0]?.attributes?.content1 && (
+              {casinoProvider?.attributes?.content1 && (
                 <ContentBlock
-                  pageContent={casinoProvider[0]?.attributes?.content1}
+                  pageContent={casinoProvider?.attributes?.content1}
                 />
               )}
-              {casinoProvider[0]?.attributes?.content2 && (
+              {casinoProvider?.attributes?.content2 && (
                 <ContentBlock
-                  pageContent={casinoProvider[0]?.attributes?.content2}
+                  pageContent={casinoProvider?.attributes?.content2}
                 />
               )}
-              {casinoProvider[0]?.attributes?.content3 && (
+              {casinoProvider?.attributes?.content3 && (
                 <ContentBlock
-                  pageContent={casinoProvider[0]?.attributes?.content3}
+                  pageContent={casinoProvider?.attributes?.content3}
                 />
               )}
             </div>
 
-            {casinoProvider[0]?.attributes?.casinoComparison?.data.length >
-              0 && (
+            {casinoProvider?.attributes?.casinoComparison?.data.length > 0 && (
               <CasinoComparison
                 block={{}}
-                data={casinoProvider[0]?.attributes?.casinoComparison?.data.slice(
+                data={casinoProvider?.attributes?.casinoComparison?.data.slice(
                   0,
                   3
                 )}
                 {translationStore}
               />
             )}
-            {casinoProvider[0]?.attributes?.faqs?.length > 0 && (
+            {casinoProvider?.attributes?.faqs?.length > 0 && (
               <div class="content">
                 <h2 class="mb-4">{translationStore?.faq}</h2>
 
-                {casinoProvider[0]?.attributes?.faqs.map((faq: FaqsType) => (
+                {casinoProvider?.attributes?.faqs.map((faq: FaqsType) => (
                   <Faqs data={faq} />
                 ))}
               </div>
