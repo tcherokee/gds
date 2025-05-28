@@ -9,7 +9,7 @@ import CustomPage from "../components/general/customPage.astro";
 import fetchApi from "../../lib/strapi";
 
 // Query Strings
-import { customPageQs } from "../../qs/customPages";
+import { customPageQs, customPageMetadataQs } from "../../qs/customPages";
 import { gamesQs } from "../../qs/games.ts";
 
 import {
@@ -29,7 +29,10 @@ import type {
   HowToGroup,
   TProviderAttributesOnly,
 } from "../../interfaces/common/types.ts";
-import type { CustomPageItem } from "../../interfaces/custom-pages";
+import type {
+  CustomPageItem,
+  CustomPageMetadata,
+} from "../../interfaces/custom-pages";
 
 // Import Svelte Components
 
@@ -37,7 +40,70 @@ import type { CustomPageItem } from "../../interfaces/custom-pages";
 import type { TUserGame } from "../../interfaces/games";
 import { getUserCountry, userCountryHandler } from "../../utils/ip-request";
 
+// Get path and country from params/request
 const path = Astro.params.path as string;
+
+// ============= STEP 1: METADATA CHECK FOR ETAG =============
+// First, fetch minimal metadata for cache validation
+const metadataQuery = qs.stringify(customPageMetadataQs(path), {
+  encodeValuesOnly: true,
+});
+
+const metadataData = await fetchApi<CustomPageMetadata[]>({
+  endpoint: "custom-pages",
+  wrappedByKey: "data",
+  query: `?${metadataQuery}`,
+});
+
+const metadata = metadataData?.[0];
+
+if (!metadata) {
+  return Astro.redirect("/404");
+}
+
+// Use metadata for the ETag calculation
+const metadataSignature = JSON.stringify({
+  title: metadata?.attributes?.title,
+  urlPath: metadata?.attributes?.urlPath,
+  publishedAt: metadata?.attributes?.publishedAt,
+});
+
+// --- Generate SHA-256 hash for ETag using Web Crypto API ---
+const encoder = new TextEncoder();
+const data = encoder.encode(metadataSignature);
+const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+const hashArray = Array.from(new Uint8Array(hashBuffer));
+const contentHash = hashArray
+  .map((b) => b.toString(16).padStart(2, "0"))
+  .join("");
+// --- End SHA-256 Hashing ---
+
+// Create and set a proper ETag (weak validator 'W/' prefix is appropriate for HTML)
+const etagValue = `W/"${contentHash}"`;
+Astro.response.headers.set("ETag", etagValue);
+
+// --- 3. Conditional Request Handling (304 Not Modified) ---
+// This logic is crucial for efficient browser caching.
+const ifNoneMatch = Astro.request.headers.get("If-None-Match");
+
+if (ifNoneMatch === etagValue) {
+  // Content hasn't changed, send back 304 Not Modified
+  // The browser will use its local copy.
+  return new Response(null, {
+    status: 304,
+    headers: {
+      ETag: etagValue,
+      // CHANGED: Adjusted Cache-Control for the 304 response.
+      // This ensures consistency and re-informs caches of the caching policy.
+      "Cache-Control":
+        "public, max-age=0, must-revalidate, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200",
+      // Also resend the tags for any intermediate caches.
+      "Cache-Tag": `path:${path.replace(/\//g, "-")},type:custompage`,
+      "Last-Modified": new Date(metadata.attributes.publishedAt).toUTCString(),
+    },
+  });
+}
+
 // Constructing SiteURL
 const siteURL: string = `${import.meta.env.FULL_URL}/${path}`;
 
@@ -242,119 +308,23 @@ const seo = {
 
 // / ============= CACHE IMPLEMENTATION START =============
 
-// --- 1. Cache Tag Generation (for Google Cloud CDN) ---
-// CHANGED: Replaced 'Surrogate-Key' with 'Cache-Tag' for GCP compatibility.
-// GCP uses the 'Cache-Tag' header to associate content with invalidation tags.
 const cacheTags: string[] = [];
-
-// --- Core Page & Content Type Tags ---
-// Path-based tag (ensure it's a valid tag format, no slashes)
-if (customPage?.attributes?.urlPath) {
-  // Tags should not contain characters like '/'. Replace them.
-  const pathTag = customPage.attributes.urlPath
-    .replace(/\//g, "-")
-    .replace(/^-|-$/g, "");
-  cacheTags.push(`path:${pathTag}`);
-}
-
-// Content-type tag (Useful for invalidating all pages of this type)
+cacheTags.push(`path:${path.replace(/\//g, "-")}`);
 cacheTags.push("type:custompage");
+if (casinoCountry) cacheTags.push(`country:${casinoCountry}`);
+cacheTags.push(`version:${metadata.attributes.publishedAt}`);
 
-// --- Related Entity Tags ---
-// Add country-specific tag if applicable
-if (casinoCountry) {
-  cacheTags.push(`country:${casinoCountry}`);
-}
-
-// --- Versioning Tag ---
-// Using the update timestamp as a tag can be useful for targeted invalidation.
-const contentTimestamp = customPage?.attributes?.updatedAt || Date.now();
-cacheTags.push(`version:${contentTimestamp}`);
-
-// --- Set Headers for CDN ---
-// CHANGED: Set the 'Cache-Tag' header for Google Cloud CDN.
-// You must configure your GCP Load Balancer backend to read this header for caching.
-// A comma-separated list is a common convention.
 Astro.response.headers.set("Cache-Tag", cacheTags.join(","));
-
-// REMOVED: The 'Surrogate-Key' header is not used by Google Cloud CDN.
-// Astro.response.headers.set("Surrogate-Key", surrogateKeys.join(" "));
-
-// --- 2. ETag Generation (for Conditional Requests / 304 Responses) ---
-// This logic remains the same as it is a robust way to generate a content signature.
-const contentSignature = JSON.stringify({
-  urlPath: customPage?.attributes?.urlPath,
-  updatedAt: contentTimestamp,
-  blocks: customPage?.attributes?.blocks.map((block: any) => ({
-    component: block.__component,
-    id: block.id,
-  })),
-  countryCode: casinoCountry || null,
-  seo: {
-    title: seo?.pageTitle,
-    description: seo?.metaDescription,
-  },
-});
-
-// --- Generate SHA-256 hash for ETag using Web Crypto API ---
-const encoder = new TextEncoder();
-const data = encoder.encode(contentSignature);
-const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-const hashArray = Array.from(new Uint8Array(hashBuffer));
-const contentHash = hashArray
-  .map((b) => b.toString(16).padStart(2, "0"))
-  .join("");
-// --- End SHA-256 Hashing ---
-
-// Create and set a proper ETag (weak validator 'W/' prefix is appropriate for HTML)
-const etagValue = `W/"${contentHash}"`;
-Astro.response.headers.set("ETag", etagValue);
-
-// --- 3. Conditional Request Handling (304 Not Modified) ---
-// This logic is crucial for efficient browser caching.
-const ifNoneMatch = Astro.request.headers.get("If-None-Match");
-
-if (ifNoneMatch === etagValue) {
-  // Content hasn't changed, send back 304 Not Modified
-  // The browser will use its local copy.
-  return new Response(null, {
-    status: 304,
-    headers: {
-      ETag: etagValue,
-      // CHANGED: Adjusted Cache-Control for the 304 response.
-      // This ensures consistency and re-informs caches of the caching policy.
-      "Cache-Control":
-        "public, max-age=0, must-revalidate, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200",
-      // Also resend the tags for any intermediate caches.
-      "Cache-Tag": cacheTags.join(","),
-      "Last-Modified": new Date(contentTimestamp).toUTCString(),
-    },
-  });
-}
-
-// --- 4. Caching Directives for New Responses (200 OK) ---
-// CHANGED: The Cache-Control header is the most critical change for fixing the browser issue.
-//
-// - `public`: Allows proxies and CDNs to cache the response.
-// - `max-age=0`: FORCES THE BROWSER to re-validate with the server on every visit. It will send an `If-None-Match` header. This prevents users from seeing stale content.
-// - `must-revalidate`: Tells caches (including browsers) they must revalidate once the content is stale.
-// - `s-maxage=604800`: TELLS THE CDN (GCP) to cache the content for 7 days (604800s). This directive overrides `max-age` for shared caches like CDNs.
-// - `stale-while-revalidate=3600`: Allows the CDN to serve a stale response for 1 hour while it fetches a new version in the background.
-// - `stale-if-error=259200`: Allows the CDN to serve a stale response for 3 days if your origin server is down.
 Astro.response.headers.set(
   "Cache-Control",
   "public, max-age=0, must-revalidate, s-maxage=604800, stale-while-revalidate=3600, stale-if-error=259200"
 );
-
-// REMOVED: The 'Surrogate-Control' header is not used by Google Cloud CDN.
-// Astro.response.headers.set("Surrogate-Control", "max-age=604800");
-
-// Set cache validation headers (remains the same)
-const lastModifiedDate = new Date(contentTimestamp).toUTCString();
-Astro.response.headers.set("Last-Modified", lastModifiedDate);
+Astro.response.headers.set(
+  "Last-Modified",
+  new Date(metadata.attributes.publishedAt).toUTCString()
+);
 
 // ============= CACHE IMPLEMENTATION END =============
-
 ---
 
 <CustomPage

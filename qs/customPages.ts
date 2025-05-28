@@ -1,6 +1,14 @@
 import { populate } from "dotenv";
 import { slotCategories } from "../utils/api-requests";
 
+export const customPageMetadataQs = (path: string) => ({
+  fields: ["title", "urlPath", "publishedAt"], // Only the metadata fields you need
+  filters: {
+    urlPath: { $eq: path },
+  },
+  pagination: { page: 1, pageSize: 1 },
+});
+
 export const customPageQs = (
   path: string,
   casinoCountry: string,

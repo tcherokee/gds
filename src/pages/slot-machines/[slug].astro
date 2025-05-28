@@ -389,7 +389,7 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
           gamePage[0]?.attributes?.gameInfoTable && (
             <div class="info-table-content">
               <h2 class="game-info-table-title mb-[15px]">
-                {translationStore?.gameInfoTableH2}
+                {translationStore?.gameInfoTableH2} di {gamePage[0]?.attributes?.title}
               </h2>
               <figure class="table">
                 <table class="inner-content-table table table-primary">
@@ -475,7 +475,7 @@ Astro.response.headers.set("Last-Modified", lastModifiedDate);
         {
           gamePage[0]?.attributes?.faqs.length > 0 && (
             <div class="faq-content">
-              <h2 class="faq-title mb-4">{translationStore?.faq}</h2>
+              <h2 class="faq-title mb-4">{translationStore?.faq} su {gamePage[0]?.attributes?.title}</h2>
               <div>
                 {gamePage[0]?.attributes?.faqs.map((faq: FaqsType) => (
                   <FaqListBlock data={faq} {translationStore} />
